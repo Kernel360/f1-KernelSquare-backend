@@ -1,10 +1,19 @@
 name: Java CI with Gradle
 
+env:
+  PROJECT_NAME: kernelsquare
+  BUCKET_NAME: kernel-square-bucket
+  CODE_DEPLOY_APP_NAME: KernelSquare
+  DEPLOYMENT_GROUP_NAME: KernelSquareDeployGroup
+
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  # pull_request:
+  #   branches: [ "main" ]
+
+
+
 
 permissions:
   contents: read
@@ -23,10 +32,22 @@ jobs:
         distribution: 'temurin'
     - name: Run chmod to make gradlew executable
       run: chmod +x ./gradlew
+
     - name: Build with Gradle
       uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
       with:
         arguments: build -x test
-    # - name: Build with Gradle (without tests)
-    #   run: ./gradlew build -x test
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }} # 등록한 Github Secret이 자동으로 불려온다.
+        aws-secret-access-key: ${{ secrets.AWS_ACCESS_SECRET }} # 등록한 Github Secret이 자동으로 불려온다.
+        aws-region: ap-northeast-2
+
+    - name: Upload to S3
+      run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://$BUCKET_NAME/$PROJECT_NAME/$GITHUB_SHA.zip
+
+    - name: Code Deploy
+      run: aws deploy create-deployment --application-name $CODE_DEPLOY_APP_NAME --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name $DEPLOYMENT_GROUP_NAME --s3-location bucket=$BUCKET_NAME,bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip
 

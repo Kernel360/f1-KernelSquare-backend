@@ -1,0 +1,15 @@
+version: 0.0
+os: linux
+
+files:
+  - source: /
+    destination: /home/ks_project/KernelSquare
+permissions:
+  - object: /home/ks_project/KernelSquare
+    owner: ks_project
+    group: ks_project
+hooks:
+  AfterInstall:
+    - location: scripts/deploy.sh
+      timeout: 60
+      runas: ks_project

@@ -1,0 +1,67 @@
+name: Bug Report
+description: File a bug report
+title: "[Bug]: "
+labels: [ "bug" ]
+projects: [ "f1-KernelSquare-backend" ]
+assignees:
+  - fingersdanny
+  - mooncw
+  - Hju95
+  - RossKWSang
+body:
+  - type: markdown
+    attributes:
+      value: |
+        저희 서비스 개선에 참여해주셔서 감사합니다.
+  - type: input
+    id: contact
+    attributes:
+      label: 연락 정보
+      description: 버그에 대한 설명이 더 필요할 시 저희가 연락할 이메일을 남겨주세요.
+      placeholder: 예시. email@example.com
+    validations:
+      required: false
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: 어떤 버그가 있었나요?
+      description: 어떻게 실행되어야 했을지 기대하신 내용을 포함해 주세요!
+      placeholder: Tell us what you see!
+      value: "제가 등록한 질문이 보이지 않아요!"
+    validations:
+      required: true
+  - type: dropdown
+    id: version
+    attributes:
+      label: Version
+      description: 저희 서비스의 어떤 버전을 사용하고 계신지 알려주세요!
+      options:
+        - 1.0.0 (Default)
+      default: 0
+    validations:
+      required: true
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: 어느 브라우저에서 사용 중 일어난 일인가요?
+      multiple: true
+      options:
+        - Firefox
+        - Chrome
+        - Safari
+        - Microsoft Edge
+        - Naver Whale
+  - type: textarea
+    id: logs
+    attributes:
+      label: 로그 내역
+      description: 어떠한 관련 로그 내역도 괜찮습니다. 남겨주시면 저희 서비스 개선에 큰 도움이 됩니다!
+      render: shell
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: 이슈를 제출하시면, 다음 [Code of Conduct](https://github.com/Kernel360/code-of-conduct)에 동의함으로 간주됩니다.
+      options:
+        - label: KernelSquare의 Code of Conduct에 동의합니다.
+          required: true

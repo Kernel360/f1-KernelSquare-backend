@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class KernelsquareApplication {
+public class KernelSquareApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(KernelsquareApplication.class, args);
+		SpringApplication.run(KernelSquareApplication.class, args);
 	}
 
 }

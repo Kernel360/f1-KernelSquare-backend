@@ -5,9 +5,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.kernel360.kernelsquare.domain.member.dto.FindMemberResponse;
 import com.kernel360.kernelsquare.domain.member.dto.UpdateMemberRequest;
-import com.kernel360.kernelsquare.domain.member.dto.UpdateMemberResponse;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
+import com.kernel360.kernelsquare.global.error.code.MemberErrorCode;
+import com.kernel360.kernelsquare.global.error.exception.BusinessException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,26 +18,31 @@ public class MemberService {
 	private final MemberRepository memberRepository;
 
 	@Transactional
-	public UpdateMemberResponse update(Long id, UpdateMemberRequest updateMemberRequest) {
-		Member member = getMember(id);
-		member.updateImageUrl(updateMemberRequest.imageUrl());
-		return UpdateMemberResponse.from(member);
+	public void updateMember(Long id, UpdateMemberRequest updateMemberRequest) {
+		Member member = getMemberById(id);
+		member.updateImageUrl(updateMemberRequest.imageUrl(), updateMemberRequest.introduction());
 	}
 
 	@Transactional(readOnly = true)
-	public FindMemberResponse find(Long id) {
-		Member member = getMember(id);
+	public FindMemberResponse findMember(Long id) {
+		Member member = getMemberById(id);
 		return FindMemberResponse.from(member);
 	}
 
 	@Transactional
-	public void delete(Long id) {
-		Member member = getMember(id);
+	public void updateMemberPassword(Long id, String password) {
+		Member member = getMemberById(id);
+		member.updatePassword(password);
+	}
+
+	@Transactional
+	public void deleteMember(Long id) {
+		Member member = getMemberById(id);
 		memberRepository.delete(member);
 	}
 
-	private Member getMember(Long id) {
+	private Member getMemberById(Long id) {
 		return memberRepository.findById(id)
-			.orElseThrow(() -> new RuntimeException());
+			.orElseThrow(() -> new BusinessException(MemberErrorCode.NOT_FOUND_MEMBER));
 	}
 }

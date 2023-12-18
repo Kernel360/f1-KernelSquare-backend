@@ -1,8 +1,13 @@
 package com.kernel360.kernelsquare.domain.member.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SQLDelete;
 
 import com.kernel360.kernelsquare.domain.level.entity.Level;
+import com.kernel360.kernelsquare.domain.member_authority.entity.MemberAuthority;
 import com.kernel360.kernelsquare.global.entity.BaseEntity;
 
 import jakarta.persistence.Column;
@@ -15,6 +20,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,6 +28,7 @@ import lombok.NoArgsConstructor;
 
 @Entity(name = "member")
 @Getter
+@DynamicUpdate
 @SQLDelete(sql = "UPDATE member SET account_status = 0 WHERE id = ?")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseEntity {
@@ -47,14 +54,23 @@ public class Member extends BaseEntity {
 	@Column(nullable = false, name = "account_status", columnDefinition = "tinyint")
 	private Boolean accountStatus;
 
-	@Column(nullable = false, name = "introduction", columnDefinition = "")
+	@Column(nullable = false, name = "introduction", columnDefinition = "varchar(300)")
+	private String introduction;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "level_id", columnDefinition = "bigint", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
 	private Level level;
 
-	public void updateImageUrl(String imageUrl) {
+	@OneToMany(mappedBy = "member")
+	private List<MemberAuthority> authorities = new ArrayList<>();
+
+	public void updateImageUrl(String imageUrl, String introduction) {
 		this.imageUrl = imageUrl;
+		this.introduction = introduction;
+	}
+
+	public void updatePassword(String password) {
+		this.password = password;
 	}
 
 	@Builder

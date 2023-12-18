@@ -1,13 +1,15 @@
 package com.kernel360.kernelsquare.global.dto;
 
+import org.springframework.http.HttpStatus;
+
 public record CommonApiResponse<D>(
-	String code,
+	HttpStatus code,
 	String msg,
 	D data
 ) {
 
 	public static <D> CommonApiResponse<D> of(
-		String code,
+		HttpStatus code,
 		String msg,
 		D data) {
 		return new CommonApiResponse(

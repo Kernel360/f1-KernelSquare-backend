@@ -1,7 +1,7 @@
 name: Java CI with Gradle
 
 env:
-  PROJECT_NAME: KernelSquare
+  PROJECT_NAME: kernelsquare
   BUCKET_NAME: kernel-square-bucket
   CODE_DEPLOY_APP_NAME: KernelSquare
   DEPLOYMENT_GROUP_NAME: KernelSquareDeployGroup

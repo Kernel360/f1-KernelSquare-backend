@@ -1,5 +1,6 @@
 package com.kernel360.kernelsquare.global.error;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -13,8 +14,12 @@ import jakarta.servlet.http.HttpServletRequest;
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler(BusinessException.class)
-	public CommonApiResponse<ErrorResponse> handleBusinessException(BusinessException e, HttpServletRequest request) {
-		return CommonApiResponse.of(e.getErrorCode().getStatus(),
-			e.getErrorCode().getMsg(), null);
+	public ResponseEntity<CommonApiResponse<ErrorResponse>> handleBusinessException(BusinessException e,
+		HttpServletRequest request) {
+		return ResponseEntity.status(e.getErrorCode().getStatus())
+			.body(CommonApiResponse.of(
+				e.getErrorCode().getStatus(),
+				e.getErrorCode().getMsg(),
+				null));
 	}
 }

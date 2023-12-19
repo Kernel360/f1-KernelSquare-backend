@@ -7,8 +7,8 @@ import com.kernel360.kernelsquare.domain.member.dto.FindMemberResponse;
 import com.kernel360.kernelsquare.domain.member.dto.UpdateMemberRequest;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
-import com.kernel360.kernelsquare.global.error.code.MemberErrorCode;
-import com.kernel360.kernelsquare.global.error.exception.BusinessException;
+import com.kernel360.kernelsquare.global.common_response.error.code.MemberErrorCode;
+import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
 
 import lombok.RequiredArgsConstructor;
 

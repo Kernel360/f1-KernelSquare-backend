@@ -1,4 +1,4 @@
-package com.kernel360.kernelsquare.global.error.code;
+package com.kernel360.kernelsquare.global.common_response.error.code;
 
 import org.springframework.http.HttpStatus;
 

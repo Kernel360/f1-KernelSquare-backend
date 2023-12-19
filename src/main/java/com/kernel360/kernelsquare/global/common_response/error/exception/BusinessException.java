@@ -1,6 +1,6 @@
-package com.kernel360.kernelsquare.global.error.exception;
+package com.kernel360.kernelsquare.global.common_response.error.exception;
 
-import com.kernel360.kernelsquare.global.error.code.ErrorCode;
+import com.kernel360.kernelsquare.global.common_response.error.code.ErrorCode;
 
 import lombok.Getter;
 

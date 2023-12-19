@@ -1,8 +1,8 @@
-package com.kernel360.kernelsquare.global.error.code;
+package com.kernel360.kernelsquare.global.common_response;
 
 import org.springframework.http.HttpStatus;
 
-public interface ErrorCode {
+public interface StatusCode {
 	HttpStatus getStatus();
 
 	String getMsg();

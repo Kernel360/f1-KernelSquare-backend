@@ -3,7 +3,7 @@ package com.kernel360.kernelsquare.global.common_response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 public record ApiResponse<T>(
-	int code,
+	Integer code,
 	String msg,
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	T data

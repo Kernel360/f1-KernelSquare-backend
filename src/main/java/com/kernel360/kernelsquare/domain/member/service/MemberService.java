@@ -43,6 +43,6 @@ public class MemberService {
 
 	private Member getMemberById(Long id) {
 		return memberRepository.findById(id)
-			.orElseThrow(() -> new BusinessException(MemberErrorCode.NOT_FOUND_MEMBER));
+			.orElseThrow(() -> new BusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
 	}
 }

@@ -13,7 +13,7 @@ public record ApiResponse<T>(
 		StatusCode statusCode,
 		T data) {
 		return new ApiResponse(
-			statusCode.getStatus().value(),
+			statusCode.getCode(),
 			statusCode.getMsg(),
 			data
 		);
@@ -23,7 +23,7 @@ public record ApiResponse<T>(
 		StatusCode statusCode
 	) {
 		return new ApiResponse<>(
-			statusCode.getStatus().value(),
+			statusCode.getCode(),
 			statusCode.getMsg(),
 			null
 		);

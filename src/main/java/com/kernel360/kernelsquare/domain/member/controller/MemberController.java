@@ -15,6 +15,7 @@ import com.kernel360.kernelsquare.domain.member.dto.FindMemberResponse;
 import com.kernel360.kernelsquare.domain.member.dto.UpdateMemberRequest;
 import com.kernel360.kernelsquare.domain.member.service.MemberService;
 import com.kernel360.kernelsquare.global.common_response.ApiResponse;
+import com.kernel360.kernelsquare.global.common_response.ResponseEntityFactory;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,13 +31,14 @@ public class MemberController {
 	public ResponseEntity<ApiResponse> updateMember(@PathVariable Long memberId,
 		@RequestBody UpdateMemberRequest updateMemberRequest) {
 		memberService.updateMember(memberId, updateMemberRequest);
-		return ResponseEntity.ok(ApiResponse.of(MEMBER_INFO_UPDATED));
+		return ResponseEntityFactory.of(MEMBER_INFO_UPDATED);
 	}
 
 	@PutMapping("/members/{memberId}/password")
 	public ResponseEntity<ApiResponse> updateMemberPassword(@PathVariable Long memberId,
 		@RequestBody String password) {
 		memberService.updateMemberPassword(memberId, password);
+		ResponseEntityFactory.of(MEMBER_PASSWORD_UPDATED);
 		return ResponseEntity.ok(ApiResponse.of(MEMBER_PASSWORD_UPDATED));
 	}
 

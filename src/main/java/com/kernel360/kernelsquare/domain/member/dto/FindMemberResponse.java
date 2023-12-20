@@ -5,6 +5,7 @@ import com.kernel360.kernelsquare.domain.member.entity.Member;
 public record FindMemberResponse(
 	String nickname,
 	Long experience,
+	String introduction,
 	String imageUrl
 ) {
 
@@ -12,6 +13,7 @@ public record FindMemberResponse(
 		return new FindMemberResponse(
 			member.getNickname(),
 			member.getExperience(),
+			member.getIntroduction(),
 			member.getImageUrl());
 	}
 }

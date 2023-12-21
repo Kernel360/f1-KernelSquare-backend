@@ -35,7 +35,6 @@
 // import io.jsonwebtoken.UnsupportedJwtException;
 // import io.jsonwebtoken.io.Decoders;
 // import io.jsonwebtoken.security.Keys;
-// import kr.kernel360.anabada.domain.auth.entity.RefreshToken;
 // import lombok.RequiredArgsConstructor;
 // import lombok.extern.slf4j.Slf4j;
 //

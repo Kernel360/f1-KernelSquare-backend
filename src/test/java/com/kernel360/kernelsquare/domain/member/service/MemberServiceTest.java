@@ -94,7 +94,7 @@ public class MemberServiceTest {
 
 		//then
 		assertThat(exception.getErrorCode()).isExactlyInstanceOf(MemberErrorCode.class);
-		assertThat(exception.getErrorCode()).isEqualTo(MemberErrorCode.NOT_FOUND_MEMBER);
+		assertThat(exception.getErrorCode()).isEqualTo(MemberErrorCode.MEMBER_NOT_FOUND);
 		assertThat(exception.getErrorCode().getStatus()).isEqualTo(HttpStatus.NOT_FOUND);
 		assertThat(exception.getErrorCode().getMsg()).isEqualTo("존재하지 않는 회원입니다.");
 	}
@@ -102,7 +102,7 @@ public class MemberServiceTest {
 	private Member getFoundMember() {
 		return memberRepository
 			.findById(createdMemberId)
-			.orElseThrow(() -> new BusinessException(MemberErrorCode.NOT_FOUND_MEMBER));
+			.orElseThrow(() -> new BusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
 	}
 
 	private Member createTestMember() {

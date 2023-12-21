@@ -15,10 +15,9 @@ import com.kernel360.kernelsquare.domain.member.dto.FindMemberResponse;
 import com.kernel360.kernelsquare.domain.member.dto.UpdateMemberRequest;
 import com.kernel360.kernelsquare.domain.member.service.MemberService;
 import com.kernel360.kernelsquare.global.common_response.ApiResponse;
+import com.kernel360.kernelsquare.global.common_response.ResponseEntityFactory;
 
 import lombok.RequiredArgsConstructor;
-
-// todo : data가 존재하지 않는 응답일 때 data에 어떤 것을 넣을지? 혹은 어떻게 리팩토링을 통해서 data가 없는 응답을 만들어낼지..
 
 @RestController
 @RequestMapping("/api/v1")
@@ -30,25 +29,25 @@ public class MemberController {
 	public ResponseEntity<ApiResponse> updateMember(@PathVariable Long memberId,
 		@RequestBody UpdateMemberRequest updateMemberRequest) {
 		memberService.updateMember(memberId, updateMemberRequest);
-		return ResponseEntity.ok(ApiResponse.of(MEMBER_INFO_UPDATED));
+		return ResponseEntityFactory.toResponseEntity(MEMBER_INFO_UPDATED);
 	}
 
 	@PutMapping("/members/{memberId}/password")
 	public ResponseEntity<ApiResponse> updateMemberPassword(@PathVariable Long memberId,
 		@RequestBody String password) {
 		memberService.updateMemberPassword(memberId, password);
-		return ResponseEntity.ok(ApiResponse.of(MEMBER_PASSWORD_UPDATED));
+		return ResponseEntityFactory.toResponseEntity(MEMBER_PASSWORD_UPDATED);
 	}
 
 	@GetMapping("/members/{memberId}")
 	public ResponseEntity<ApiResponse<FindMemberResponse>> findMember(@PathVariable Long memberId) {
 		FindMemberResponse findMemberResponse = memberService.findMember(memberId);
-		return ResponseEntity.ok(ApiResponse.of(MEMBER_FOUND, findMemberResponse));
+		return ResponseEntityFactory.toResponseEntity(MEMBER_FOUND, findMemberResponse);
 	}
 
 	@DeleteMapping("/members/{memberId}")
 	public ResponseEntity<ApiResponse> deleteMember(@PathVariable Long memberId) {
 		memberService.deleteMember(memberId);
-		return ResponseEntity.ok(ApiResponse.of(MEMBER_DELETED));
+		return ResponseEntityFactory.toResponseEntity(MEMBER_DELETED);
 	}
 }

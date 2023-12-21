@@ -110,7 +110,7 @@ public class MemberControllerTest {
 	@DisplayName("존재하지 않는 회원 정보 조회 시, 404 Not Found와 이유를 반환한다.")
 	void testFindMemberDoNotExist() throws Exception {
 		//given
-		doThrow(new BusinessException(NOT_FOUND_MEMBER))
+		doThrow(new BusinessException(MEMBER_NOT_FOUND))
 			.when(memberService)
 			.findMember(anyLong());
 
@@ -122,8 +122,8 @@ public class MemberControllerTest {
 				.characterEncoding("UTF-8"))
 			.andExpect(status().isNotFound())
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.code").value(NOT_FOUND_MEMBER.getStatus().value()))
-			.andExpect(jsonPath("$.msg").value(NOT_FOUND_MEMBER.getMsg()));
+			.andExpect(jsonPath("$.code").value(MEMBER_NOT_FOUND.getStatus().value()))
+			.andExpect(jsonPath("$.msg").value(MEMBER_NOT_FOUND.getMsg()));
 
 		//verify
 		verify(memberService, times(1)).findMember(anyLong());

@@ -7,12 +7,15 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
 
     properties:
       hibernate:
         #        show-sql: true
         format_sql: true
+
+  jackson:
+    property-naming-strategy: SNAKE_CASE
 
 #  redis:
 #    host: localhost

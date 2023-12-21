@@ -9,7 +9,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity(name = "rank")
+@Entity(name = "answer_rank")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Rank {

@@ -75,8 +75,7 @@ public class Member extends BaseEntity {
 
 	@Builder
 	public Member(String nickname, String email, String password, Long experience, String imageUrl,
-		Boolean accountStatus,
-		String introduction) {
+				  Boolean accountStatus, String introduction, Level level) {
 		this.nickname = nickname;
 		this.email = email;
 		this.password = password;
@@ -84,5 +83,6 @@ public class Member extends BaseEntity {
 		this.imageUrl = imageUrl;
 		this.accountStatus = accountStatus;
 		this.introduction = introduction;
+		this.level = level;
 	}
 }

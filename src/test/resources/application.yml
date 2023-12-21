@@ -5,6 +5,7 @@ spring:
     username: ${LOCAL_DB_HOST}
     password: ${LOCAL_DB_PASSWORD}
 
+
   jpa:
     hibernate:
       ddl-auto: create
@@ -13,15 +14,15 @@ spring:
       hibernate:
         #        show-sql: true
         format_sql: true
-    defer-datasource-initialization: true
 
-  jackson:
-    property-naming-strategy: SNAKE_CASE
+    defer-datasource-initialization: true
 
   sql:
     init:
-      mode: always
+      mode: never
 
+  jackson:
+    property-naming-strategy: SNAKE_CASE
 
 #  redis:
 #    host: localhost

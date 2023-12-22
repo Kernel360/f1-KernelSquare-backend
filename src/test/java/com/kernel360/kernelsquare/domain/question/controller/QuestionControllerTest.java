@@ -136,7 +136,7 @@ class QuestionControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .characterEncoding("UTF-8")
                 .content(jsonRequest))
-            .andExpect(status().isOk())
+            .andExpect(status().is(QUESTION_CREATED.getStatus().value()))
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.code").value(QUESTION_CREATED.getCode()))
             .andExpect(jsonPath("$.msg").value(QUESTION_CREATED.getMsg()));
@@ -163,7 +163,7 @@ class QuestionControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .characterEncoding("UTF-8"))
-            .andExpect(status().isOk())
+            .andExpect(status().is(QUESTION_FOUND.getStatus().value()))
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.code").value(QUESTION_FOUND.getCode()))
             .andExpect(jsonPath("$.msg").value(QUESTION_FOUND.getMsg()));
@@ -192,7 +192,7 @@ class QuestionControllerTest {
 
         doReturn(response)
             .when(questionService)
-            .findAllQuestions(testPageable);
+            .findAllQuestions(any(Pageable.class));
 
         //when & then
         mockMvc.perform(get("/api/v1/questions")
@@ -200,7 +200,7 @@ class QuestionControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .characterEncoding("UTF-8"))
-            .andExpect(status().isOk())
+            .andExpect(status().is(QUESTION_ALL_FOUND.getStatus().value()))
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.code").value(QUESTION_ALL_FOUND.getCode()))
             .andExpect(jsonPath("$.msg").value(QUESTION_ALL_FOUND.getMsg()));
@@ -223,7 +223,7 @@ class QuestionControllerTest {
 
         doNothing()
             .when(questionService)
-            .updateQuestion(testQuestionId, request);
+            .updateQuestion(anyLong(), any(PutQuestionRequest.class));
 
         objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
         String jsonRequest = objectMapper.writeValueAsString(request);
@@ -235,7 +235,7 @@ class QuestionControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .characterEncoding("UTF-8")
                 .content(jsonRequest))
-            .andExpect(status().isOk())
+            .andExpect(status().is(QUESTION_UPDATED.getStatus().value()))
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.code").value(QUESTION_UPDATED.getCode()))
             .andExpect(jsonPath("$.msg").value(QUESTION_UPDATED.getMsg()));
@@ -248,19 +248,19 @@ class QuestionControllerTest {
     @DisplayName("질문 삭제 성공시 200 OK와 메시지를 반환한다")
     void testDeleteQuestion() throws Exception {
         //given
-//        Long testQuestionId = 1L;
+        Long testQuestionId = 1L;
 
         doNothing()
             .when(questionService)
             .deleteQuestion(anyLong());
 
         //when & then
-        mockMvc.perform(delete("/api/v1/questions/" + anyLong())
+        mockMvc.perform(delete("/api/v1/questions/" + testQuestionId)
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .characterEncoding("UTF-8"))
-            .andExpect(status().isOk())
+            .andExpect(status().is(QUESTION_DELETED.getStatus().value()))
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.code").value(QUESTION_DELETED.getCode()))
             .andExpect(jsonPath("$.msg").value(QUESTION_DELETED.getMsg()));

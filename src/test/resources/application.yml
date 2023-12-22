@@ -1,10 +1,12 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/kernel_square?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8
-    driver-class-name: com.mysql.cj.jdbc.Driver
+#    ToDo service test 부분 mocking 작업이 끝나면 추가 작업할 예정
+#    url: ${TEST_DB_URL}
+#    url: jdbc:h2:mem:test_kernel_square;MODE=MySQL
+    url: jdbc:h2:mem:test_kernel_square
+    driver-class-name: org.h2.Driver
     username: ${LOCAL_DB_HOST}
     password: ${LOCAL_DB_PASSWORD}
-
 
   jpa:
     hibernate:
@@ -14,6 +16,9 @@ spring:
       hibernate:
         #        show-sql: true
         format_sql: true
+#        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+
+    database-platform: org.hibernate.dialect.H2Dialect
 
     defer-datasource-initialization: true
 

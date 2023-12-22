@@ -35,7 +35,7 @@ public class Question extends BaseEntity {
 	private Boolean closedStatus;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "created_by", columnDefinition = "bigint", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
+	@JoinColumn(name = "member_id", columnDefinition = "bigint", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
 	private Member member;
 
 	@OneToMany(mappedBy = "question")

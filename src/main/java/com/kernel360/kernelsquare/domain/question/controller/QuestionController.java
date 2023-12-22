@@ -2,7 +2,7 @@ package com.kernel360.kernelsquare.domain.question.controller;
 
 import com.kernel360.kernelsquare.domain.question.dto.CreateQuestionRequest;
 import com.kernel360.kernelsquare.domain.question.dto.FindQuestionResponse;
-import com.kernel360.kernelsquare.domain.question.dto.PutQuestionRequest;
+import com.kernel360.kernelsquare.domain.question.dto.UpdateQuestionRequest;
 import com.kernel360.kernelsquare.domain.question.service.QuestionService;
 import com.kernel360.kernelsquare.global.common_response.ApiResponse;
 import com.kernel360.kernelsquare.global.common_response.ResponseEntityFactory;
@@ -56,9 +56,9 @@ public class QuestionController {
         Long questionId,
         @Valid
         @RequestBody
-        PutQuestionRequest putQuestionRequest
+        UpdateQuestionRequest updateQuestionRequest
     ) {
-        questionService.updateQuestion(questionId, putQuestionRequest);
+        questionService.updateQuestion(questionId, updateQuestionRequest);
 
         return ResponseEntityFactory.toResponseEntity(QUESTION_UPDATED);
     }

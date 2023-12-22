@@ -6,7 +6,7 @@ import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
 import com.kernel360.kernelsquare.domain.question.dto.CreateQuestionRequest;
 import com.kernel360.kernelsquare.domain.question.dto.FindQuestionResponse;
-import com.kernel360.kernelsquare.domain.question.dto.PutQuestionRequest;
+import com.kernel360.kernelsquare.domain.question.dto.UpdateQuestionRequest;
 import com.kernel360.kernelsquare.domain.question.entity.Question;
 import com.kernel360.kernelsquare.domain.question.repository.QuestionRepository;
 import com.kernel360.kernelsquare.domain.tech_stack.entity.TechStack;
@@ -68,7 +68,6 @@ class QuestionServiceTest {
             .nickname("hongjugwang")
             .email("jugwang@naver.com")
             .password("hashedPassword")
-            .accountStatus(false)
             .experience(10000L)
             .introduction("hi, i'm hongjugwang.")
             .imageUrl("s3:qwe12fasdawczx")
@@ -122,7 +121,7 @@ class QuestionServiceTest {
         ));
 
         Question testCreatedQuestion = questionRepository.findById(testQuestionId)
-            .orElseThrow(() -> new BusinessException(QuestionErrorCode.NOT_FOUND_QUESTION));
+            .orElseThrow(() -> new BusinessException(QuestionErrorCode.QUESTION_NOT_FOUND));
 
         //then
         assertThat(testCreatedQuestion).isNotNull();
@@ -150,13 +149,11 @@ class QuestionServiceTest {
         assertThat(testFindQuestionResponse.questionImageUrl()).isEqualTo(testQuestion.getImageUrl());
         assertThat(testFindQuestionResponse.nickname()).isEqualTo(testMember.getNickname());
         assertThat(testFindQuestionResponse.memberImageUrl()).isEqualTo(testMember.getImageUrl());
-        //ToDo FindQuestionResponse에 Level 데이터가 필요한데, 현재 멤버에 Level이 들어가는 로직이 없음
-//        assertThat(testFindQuestionResponse.level()).isEqualTo();
-//        assertThat(testFindQuestionResponse.levelImageUrl()).isEqualTo();
+        assertThat(testFindQuestionResponse.level()).isEqualTo(testMember.getLevel().getName());
+        assertThat(testFindQuestionResponse.levelImageUrl()).isEqualTo(testMember.getImageUrl());
         assertThat(testFindQuestionResponse.skills()).isEqualTo(testQuestion.getTechStackList()
             .stream().map(x -> x.getTechStack().getSkill()).toList());
         //ToDo 답변에 대한 로직이 구현된 후 해당 질문에 대한 답변 list가 잘담기는지 테스트해야 하는지 생각해볼 필요가 있음
-//        assertThat();
     }
 
     @Test
@@ -194,7 +191,7 @@ class QuestionServiceTest {
         List<String> testSkills = List.of("Java");
 
         //when
-        questionService.updateQuestion(testQuestion.getId(), new PutQuestionRequest(testTitle, testContent, testImageUrl, testSkills));
+        questionService.updateQuestion(testQuestion.getId(), new UpdateQuestionRequest(testTitle, testContent, testImageUrl, testSkills));
 
         //then
         assertThat(testQuestion).isNotNull();
@@ -215,13 +212,13 @@ class QuestionServiceTest {
 
         BusinessException TestException = assertThrows(BusinessException.class, () ->
             questionRepository.findById(TestQuestionId).orElseThrow(() ->
-                new BusinessException(QuestionErrorCode.NOT_FOUND_QUESTION)));
+                new BusinessException(QuestionErrorCode.QUESTION_NOT_FOUND)));
 
         //then
         assertThat(TestException).isNotNull();
         assertThat(TestException.getErrorCode()).isExactlyInstanceOf(QuestionErrorCode.class);
-        assertThat(TestException.getErrorCode()).isEqualTo(QuestionErrorCode.NOT_FOUND_QUESTION);
-        assertThat(TestException.getErrorCode().getStatus()).isEqualTo(QuestionErrorCode.NOT_FOUND_QUESTION.getStatus());
-        assertThat(TestException.getErrorCode().getMsg()).isEqualTo(QuestionErrorCode.NOT_FOUND_QUESTION.getMsg());
+        assertThat(TestException.getErrorCode()).isEqualTo(QuestionErrorCode.QUESTION_NOT_FOUND);
+        assertThat(TestException.getErrorCode().getStatus()).isEqualTo(QuestionErrorCode.QUESTION_NOT_FOUND.getStatus());
+        assertThat(TestException.getErrorCode().getMsg()).isEqualTo(QuestionErrorCode.QUESTION_NOT_FOUND.getMsg());
     }
 }

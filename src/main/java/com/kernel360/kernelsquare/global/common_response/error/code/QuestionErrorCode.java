@@ -7,8 +7,8 @@ import org.springframework.http.HttpStatus;
 
 @RequiredArgsConstructor
 public enum QuestionErrorCode implements ErrorCode{
-    NOT_FOUND_QUESTION(HttpStatus.NOT_FOUND, QuestionServiceStatus.QUESTION_NOT_FOUND, "존재하지 않는 질문"),
-    NOT_FOUND_PAGE(HttpStatus.NOT_FOUND, QuestionServiceStatus.PAGE_NOT_FOUND, "존재하지 않는 페이지");
+    QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, QuestionServiceStatus.QUESTION_NOT_FOUND, "존재하지 않는 질문"),
+    PAGE_NOT_FOUND(HttpStatus.NOT_FOUND, QuestionServiceStatus.PAGE_NOT_FOUND, "존재하지 않는 페이지");
 
     private final HttpStatus code;
     private final ServiceStatus serviceStatus;

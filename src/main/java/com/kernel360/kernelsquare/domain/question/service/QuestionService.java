@@ -4,7 +4,7 @@ import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
 import com.kernel360.kernelsquare.domain.question.dto.CreateQuestionRequest;
 import com.kernel360.kernelsquare.domain.question.dto.FindQuestionResponse;
-import com.kernel360.kernelsquare.domain.question.dto.PutQuestionRequest;
+import com.kernel360.kernelsquare.domain.question.dto.UpdateQuestionRequest;
 import com.kernel360.kernelsquare.domain.question.entity.Question;
 import com.kernel360.kernelsquare.domain.question.repository.QuestionRepository;
 import com.kernel360.kernelsquare.domain.question_tech_stack.entity.QuestionTechStack;
@@ -57,7 +57,7 @@ public class QuestionService {
         Long questionId
     ) {
         Question question = questionRepository.findById(questionId)
-            .orElseThrow(() -> new BusinessException(QuestionErrorCode.NOT_FOUND_QUESTION));
+            .orElseThrow(() -> new BusinessException(QuestionErrorCode.QUESTION_NOT_FOUND));
 
         Member member = question.getMember();
 
@@ -76,7 +76,7 @@ public class QuestionService {
         if (totalPages == 0) totalPages+=1;
 
         if (currentPage > totalPages) {
-            throw new BusinessException(QuestionErrorCode.NOT_FOUND_PAGE);
+            throw new BusinessException(QuestionErrorCode.PAGE_NOT_FOUND);
         }
 
         Pagination pagination = Pagination.builder()
@@ -94,13 +94,13 @@ public class QuestionService {
     }
 
     @Transactional
-    public void updateQuestion(Long questionId, PutQuestionRequest putQuestionRequest) {
+    public void updateQuestion(Long questionId, UpdateQuestionRequest updateQuestionRequest) {
         Question question = questionRepository.findById(questionId)
-            .orElseThrow(() -> new BusinessException(QuestionErrorCode.NOT_FOUND_QUESTION));
+            .orElseThrow(() -> new BusinessException(QuestionErrorCode.QUESTION_NOT_FOUND));
 
-        question.update(putQuestionRequest.title(), putQuestionRequest.content(), putQuestionRequest.imageUrl());
+        question.update(updateQuestionRequest.title(), updateQuestionRequest.content(), updateQuestionRequest.imageUrl());
 
-        List<String> skills = putQuestionRequest.skills();
+        List<String> skills = updateQuestionRequest.skills();
         List<QuestionTechStack> techStackList = new ArrayList<>();
 
         questionTechStackRepository.deleteAllByQuestionId(questionId);
@@ -125,7 +125,7 @@ public class QuestionService {
 
     @Transactional
     public void deleteQuestion(Long questionId) {
-        questionRepository.findById(questionId).orElseThrow(() -> new BusinessException(QuestionErrorCode.NOT_FOUND_QUESTION));
+        questionRepository.findById(questionId).orElseThrow(() -> new BusinessException(QuestionErrorCode.QUESTION_NOT_FOUND));
 
         questionRepository.deleteById(questionId);
 

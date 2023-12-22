@@ -6,7 +6,7 @@ import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.question.dto.CreateQuestionRequest;
 import com.kernel360.kernelsquare.domain.question.dto.FindQuestionResponse;
-import com.kernel360.kernelsquare.domain.question.dto.PutQuestionRequest;
+import com.kernel360.kernelsquare.domain.question.dto.UpdateQuestionRequest;
 import com.kernel360.kernelsquare.domain.question.entity.Question;
 import com.kernel360.kernelsquare.domain.question.service.QuestionService;
 import com.kernel360.kernelsquare.domain.tech_stack.entity.TechStack;
@@ -72,7 +72,6 @@ class QuestionControllerTest {
             .nickname("hongjugwang")
             .email("jugwang@naver.com")
             .password("hashedPassword")
-            .accountStatus(false)
             .experience(10000L)
             .introduction("hi, i'm hongjugwang.")
             .imageUrl("s3:qwe12fasdawczx")
@@ -219,11 +218,11 @@ class QuestionControllerTest {
         String testImageUrl = "put.jpg";
         List<String> testSkills = List.of();
 
-        PutQuestionRequest request = new PutQuestionRequest(testTitle, testContent, testImageUrl, testSkills);
+        UpdateQuestionRequest request = new UpdateQuestionRequest(testTitle, testContent, testImageUrl, testSkills);
 
         doNothing()
             .when(questionService)
-            .updateQuestion(anyLong(), any(PutQuestionRequest.class));
+            .updateQuestion(anyLong(), any(UpdateQuestionRequest.class));
 
         objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
         String jsonRequest = objectMapper.writeValueAsString(request);
@@ -241,7 +240,7 @@ class QuestionControllerTest {
             .andExpect(jsonPath("$.msg").value(QUESTION_UPDATED.getMsg()));
 
         //verify
-        verify(questionService, times(1)).updateQuestion(anyLong(), any(PutQuestionRequest.class));
+        verify(questionService, times(1)).updateQuestion(anyLong(), any(UpdateQuestionRequest.class));
     }
 
     @Test

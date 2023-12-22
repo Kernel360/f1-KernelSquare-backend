@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
-public record PutQuestionRequest(
+public record UpdateQuestionRequest(
     @NotBlank
     String title,
     @NotBlank
@@ -15,11 +15,11 @@ public record PutQuestionRequest(
     @NotNull
     List<String> skills
 ) {
-    public static Question toEntity(PutQuestionRequest putQuestionRequest) {
+    public static Question toEntity(UpdateQuestionRequest updateQuestionRequest) {
         return Question.builder()
-            .title(putQuestionRequest.title())
-            .content(putQuestionRequest.content())
-            .imageUrl(putQuestionRequest.imageUrl())
+            .title(updateQuestionRequest.title())
+            .content(updateQuestionRequest.content())
+            .imageUrl(updateQuestionRequest.imageUrl())
             .build();
     }
 }

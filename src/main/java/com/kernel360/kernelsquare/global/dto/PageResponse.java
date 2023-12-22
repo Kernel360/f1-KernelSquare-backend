@@ -2,13 +2,13 @@ package com.kernel360.kernelsquare.global.dto;
 
 import java.util.List;
 
-public record PageResponse<D>(
+public record PageResponse<T>(
     Pagination pagination,
-    List<D> list
+    List<T> list
 ) {
-    public static <D> PageResponse<D> of(
+    public static <T> PageResponse<T> of(
         Pagination pagination,
-        List<D> list
+        List<T> list
     ) {
         return new PageResponse<>(pagination, list);
     }

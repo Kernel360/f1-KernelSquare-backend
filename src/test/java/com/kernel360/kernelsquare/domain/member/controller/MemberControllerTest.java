@@ -71,7 +71,7 @@ public class MemberControllerTest {
 				.content(jsonRequest))
 			.andExpect(status().isOk())
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.code").value(MEMBER_INFO_UPDATED.getStatus().value()))
+			.andExpect(jsonPath("$.code").value(MEMBER_INFO_UPDATED.getCode()))
 			.andExpect(jsonPath("$.msg").value(MEMBER_INFO_UPDATED.getMsg()));
 
 		//verify
@@ -98,7 +98,7 @@ public class MemberControllerTest {
 				.content(newPassword))
 			.andExpect(status().isOk())
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.code").value(MEMBER_PASSWORD_UPDATED.getStatus().value()))
+			.andExpect(jsonPath("$.code").value(MEMBER_PASSWORD_UPDATED.getCode()))
 			.andExpect(jsonPath("$.msg").value(MEMBER_PASSWORD_UPDATED.getMsg()));
 
 		//verify
@@ -122,7 +122,7 @@ public class MemberControllerTest {
 				.characterEncoding("UTF-8"))
 			.andExpect(status().isNotFound())
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.code").value(MEMBER_NOT_FOUND.getStatus().value()))
+			.andExpect(jsonPath("$.code").value(MEMBER_NOT_FOUND.getCode()))
 			.andExpect(jsonPath("$.msg").value(MEMBER_NOT_FOUND.getMsg()));
 
 		//verify
@@ -146,7 +146,7 @@ public class MemberControllerTest {
 				.characterEncoding("UTF-8"))
 			.andExpect(status().isOk())
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.code").value(MEMBER_FOUND.getStatus().value()))
+			.andExpect(jsonPath("$.code").value(MEMBER_FOUND.getCode()))
 			.andExpect(jsonPath("$.msg").value(MEMBER_FOUND.getMsg()))
 			.andExpect(jsonPath("$.data.nickname").value(testMember.getNickname()))
 			.andExpect(jsonPath("$.data.experience").value(testMember.getExperience()))
@@ -174,7 +174,7 @@ public class MemberControllerTest {
 				.characterEncoding("UTF-8"))
 			.andExpect(status().isOk())
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.code").value(MEMBER_DELETED.getStatus().value()))
+			.andExpect(jsonPath("$.code").value(MEMBER_DELETED.getCode()))
 			.andExpect(jsonPath("$.msg").value(MEMBER_DELETED.getMsg()));
 
 		//verify

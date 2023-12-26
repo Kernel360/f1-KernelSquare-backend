@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 
 @RequiredArgsConstructor
 public enum QuestionResponseCode implements ResponseCode {
-    QUESTION_CREATED(HttpStatus.OK, QuestionServiceStatus.QUESTION_CREATED,"질문 생성 성공"),
+    QUESTION_CREATED(HttpStatus.CREATED, QuestionServiceStatus.QUESTION_CREATED,"질문 생성 성공"),
     QUESTION_FOUND(HttpStatus.OK, QuestionServiceStatus.QUESTION_FOUND,"질문 조회 성공"),
     QUESTION_ALL_FOUND(HttpStatus.OK,QuestionServiceStatus.QUESTION_ALL_FOUND, "모든 질문 조회 성공"),
     QUESTION_UPDATED(HttpStatus.OK,QuestionServiceStatus.QUESTION_UPDATED , "질문 수정 성공"),

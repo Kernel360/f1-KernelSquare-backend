@@ -150,7 +150,7 @@ class QuestionServiceTest {
         assertThat(testFindQuestionResponse.nickname()).isEqualTo(testMember.getNickname());
         assertThat(testFindQuestionResponse.memberImageUrl()).isEqualTo(testMember.getImageUrl());
         assertThat(testFindQuestionResponse.level()).isEqualTo(testMember.getLevel().getName());
-        assertThat(testFindQuestionResponse.levelImageUrl()).isEqualTo(testMember.getImageUrl());
+        assertThat(testFindQuestionResponse.levelImageUrl()).isEqualTo(testMember.getLevel().getImageUrl());
         assertThat(testFindQuestionResponse.skills()).isEqualTo(testQuestion.getTechStackList()
             .stream().map(x -> x.getTechStack().getSkill()).toList());
         //ToDo 답변에 대한 로직이 구현된 후 해당 질문에 대한 답변 list가 잘담기는지 테스트해야 하는지 생각해볼 필요가 있음

@@ -24,14 +24,14 @@ public class QuestionController {
     private final QuestionService questionService;
 
     @PostMapping("/questions")
-    public ResponseEntity<ApiResponse> createQuestion(
+    public ResponseEntity<ApiResponse<Long>> createQuestion(
         @Valid
         @RequestBody
         CreateQuestionRequest createQuestionRequest
     ) {
-        questionService.createQuestion(createQuestionRequest);
+        Long questionId = questionService.createQuestion(createQuestionRequest);
 
-        return ResponseEntityFactory.toResponseEntity(QUESTION_CREATED);
+        return ResponseEntityFactory.toResponseEntity(QUESTION_CREATED, questionId);
     }
 
     @GetMapping("/questions/{questionId}")
@@ -39,7 +39,9 @@ public class QuestionController {
         @PathVariable
         Long questionId
     ) {
-        return ResponseEntityFactory.toResponseEntity(QUESTION_FOUND, questionService.findQuestion(questionId));
+        FindQuestionResponse findQuestionResponse = questionService.findQuestion(questionId);
+
+        return ResponseEntityFactory.toResponseEntity(QUESTION_FOUND, findQuestionResponse);
     }
 
     @GetMapping("questions")
@@ -47,7 +49,9 @@ public class QuestionController {
         @PageableDefault(page = 0, size = 5, sort = "id", direction = Sort.Direction.DESC)
         Pageable pageable
     ) {
-        return ResponseEntityFactory.toResponseEntity(QUESTION_ALL_FOUND, questionService.findAllQuestions(pageable));
+        PageResponse<FindQuestionResponse> pageResponse = questionService.findAllQuestions(pageable);
+
+        return ResponseEntityFactory.toResponseEntity(QUESTION_ALL_FOUND, pageResponse);
     }
 
     @PutMapping("/questions/{questionId}")

@@ -28,7 +28,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class QuestionService {
     private final QuestionRepository questionRepository;
     private final MemberRepository memberRepository;

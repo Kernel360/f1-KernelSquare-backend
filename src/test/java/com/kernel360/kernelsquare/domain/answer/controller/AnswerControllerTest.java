@@ -97,7 +97,7 @@ public class AnswerControllerTest {
                 .andExpect(jsonPath("$.code").value(ANSWERS_ALL_FOUND.getCode()))
                 .andExpect(jsonPath("$.msg").value(ANSWERS_ALL_FOUND.getMsg()))
                 .andExpect(jsonPath("$.data[0].content").value(testAnswer.getContent()))
-                .andExpect(jsonPath("$.data[0].image_url").value(testAnswer.getImageUrl()))
+                .andExpect(jsonPath("$.data[0].answer_image_url").value(testAnswer.getImageUrl()))
                 .andExpect(jsonPath("$.data[0].vote_count").value(testAnswer.getVoteCount()));
 
         //verify

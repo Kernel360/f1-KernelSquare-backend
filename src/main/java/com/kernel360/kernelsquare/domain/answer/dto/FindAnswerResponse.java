@@ -21,7 +21,7 @@ public record FindAnswerResponse(
                 answer.getId(),
                 answer.getQuestion().getId(),
                 answer.getContent(),
-                "rankUrl",// answer.getRank().getImageUrl(),
+                "rankUrl",
                 answer.getMember().getNickname(),
                 answer.getImageUrl(),
                 answer.getCreatedDate().toLocalDate().toString(),

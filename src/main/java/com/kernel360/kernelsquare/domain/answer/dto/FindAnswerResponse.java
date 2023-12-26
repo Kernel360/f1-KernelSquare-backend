@@ -11,8 +11,9 @@ public record FindAnswerResponse(
     Long questionId,
     String content,
     String rankImageUrl,
+    String memberImageUrl,
     String createdBy,
-    String imageUrl,
+    String answerImageUrl,
     String createdDate,
     Long voteCount
 ) {
@@ -22,6 +23,7 @@ public record FindAnswerResponse(
                 answer.getQuestion().getId(),
                 answer.getContent(),
                 "rankUrl",
+                answer.getMember().getImageUrl(),
                 answer.getMember().getNickname(),
                 answer.getImageUrl(),
                 answer.getCreatedDate().toLocalDate().toString(),

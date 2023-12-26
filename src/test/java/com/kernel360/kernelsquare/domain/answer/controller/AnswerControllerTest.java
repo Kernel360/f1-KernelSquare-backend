@@ -68,7 +68,8 @@ public class AnswerControllerTest {
             .content(testAnswer.getContent())
             .rankImageUrl("s3:RankURL")
             .createdBy("HongJuGwang")
-            .imageUrl(testAnswer.getImageUrl())
+            .answerImageUrl(testAnswer.getImageUrl())
+            .memberImageUrl(testMember.getImageUrl())
             .createdDate(LocalDate.now().toString())
             .voteCount(testAnswer.getVoteCount())
             .build();

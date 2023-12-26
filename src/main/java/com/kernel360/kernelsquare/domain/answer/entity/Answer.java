@@ -43,7 +43,6 @@ public class Answer extends BaseEntity {
 	@OneToMany(mappedBy = "answer")
 	private List<MemberAnswerVote> memberAnswerVote = new ArrayList<>();
 
-	@Lob
 	@Column(name = "content", columnDefinition = "text")
 	private String content;
 

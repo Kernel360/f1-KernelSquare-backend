@@ -3,6 +3,7 @@ package com.kernel360.kernelsquare.domain.answer.controller;
 import com.kernel360.kernelsquare.domain.answer.dto.FindAnswerResponse;
 import com.kernel360.kernelsquare.domain.answer.service.AnswerService;
 import com.kernel360.kernelsquare.global.common_response.ApiResponse;
+import com.kernel360.kernelsquare.global.common_response.ResponseEntityFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +25,6 @@ public class AnswerController {
     @GetMapping("/questions/{questionId}/answers")
     public ResponseEntity<ApiResponse<List<FindAnswerResponse>>> findAllAnswers(@PathVariable Long questionId) {
         List<FindAnswerResponse> findAnswerResponses = answerService.findAllAnswer(questionId);
-        return ResponseEntity.ok(ApiResponse.of(ANSWERS_ALL_FOUND, findAnswerResponses));
+        return ResponseEntityFactory.toResponseEntity(ANSWERS_ALL_FOUND, findAnswerResponses);
     }
 }

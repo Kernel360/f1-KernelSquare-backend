@@ -20,6 +20,12 @@ spring:
 
     database-platform: org.hibernate.dialect.H2Dialect
 
+    defer-datasource-initialization: true
+
+  sql:
+    init:
+      mode: never
+
   jackson:
     property-naming-strategy: SNAKE_CASE
 

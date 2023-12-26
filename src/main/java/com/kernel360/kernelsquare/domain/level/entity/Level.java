@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -26,4 +27,10 @@ public class Level extends BaseEntity {
 
 	@Column(nullable = false, name = "image_url", columnDefinition = "varchar(100)")
 	private String imageUrl;
+
+	@Builder
+	public Level(Long name, String imageUrl) {
+		this.name = name;
+		this.imageUrl = imageUrl;
+	}
 }

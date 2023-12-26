@@ -13,9 +13,15 @@ spring:
       hibernate:
         #        show-sql: true
         format_sql: true
+    defer-datasource-initialization: true
 
   jackson:
     property-naming-strategy: SNAKE_CASE
+
+  sql:
+    init:
+      mode: always
+
 
 #  redis:
 #    host: localhost

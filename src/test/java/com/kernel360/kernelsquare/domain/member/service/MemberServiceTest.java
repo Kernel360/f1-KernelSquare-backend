@@ -111,7 +111,6 @@ public class MemberServiceTest {
 			.nickname("hongjugwang")
 			.email("jugwang@naver.com")
 			.password("hashedPassword")
-			.accountStatus(false)
 			.experience(10000L)
 			.introduction("hi, i'm hongjugwang.")
 			.imageUrl("s3:qwe12fasdawczx")

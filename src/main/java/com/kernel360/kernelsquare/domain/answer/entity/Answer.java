@@ -1,26 +1,24 @@
 package com.kernel360.kernelsquare.domain.answer.entity;
 
 import com.kernel360.kernelsquare.domain.member.entity.Member;
+import com.kernel360.kernelsquare.domain.member_answer_vote.entity.MemberAnswerVote;
 import com.kernel360.kernelsquare.domain.question.entity.Question;
 import com.kernel360.kernelsquare.domain.rank.entity.Rank;
 import com.kernel360.kernelsquare.global.entity.BaseEntity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.ConstraintMode;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.ForeignKey;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity(name = "answer")
 @Getter
+@DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Answer extends BaseEntity {
 	@Id
@@ -41,4 +39,23 @@ public class Answer extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "question_id", columnDefinition = "bigint", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
 	private Question question;
+
+	@OneToMany(mappedBy = "answer")
+	private List<MemberAnswerVote> memberAnswerVote = new ArrayList<>();
+
+	@Lob
+	@Column(name = "content", columnDefinition = "text")
+	private String content;
+
+	@Column(name = "vote_count", columnDefinition = "smallint")
+	private Long voteCount;
+
+	@Builder
+	private Answer(String imageUrl, String content, Long voteCount, Member member, Question question) {
+		this.content = content;
+		this.voteCount = voteCount;
+		this.imageUrl = imageUrl;
+		this.member = member;
+		this.question = question;
+	}
 }

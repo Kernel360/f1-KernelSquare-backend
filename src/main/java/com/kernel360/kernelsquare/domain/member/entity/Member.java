@@ -51,9 +51,6 @@ public class Member extends BaseEntity {
 	@Column(name = "image_url", columnDefinition = "varchar(100)")
 	private String imageUrl;
 
-	@Column(nullable = false, name = "account_status", columnDefinition = "tinyint")
-	private Boolean accountStatus;
-
 	@Column(nullable = false, name = "introduction", columnDefinition = "varchar(300)")
 	private String introduction;
 
@@ -75,14 +72,13 @@ public class Member extends BaseEntity {
 
 	@Builder
 	public Member(String nickname, String email, String password, Long experience, String imageUrl,
-		Boolean accountStatus,
-		String introduction) {
+				  String introduction, Level level) {
 		this.nickname = nickname;
 		this.email = email;
 		this.password = password;
 		this.experience = experience;
 		this.imageUrl = imageUrl;
-		this.accountStatus = accountStatus;
 		this.introduction = introduction;
+		this.level = level;
 	}
 }

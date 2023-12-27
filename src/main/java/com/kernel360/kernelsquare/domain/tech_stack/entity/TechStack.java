@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -21,4 +22,9 @@ public class TechStack extends BaseEntity {
 
 	@Column(nullable = false, name = "skill", columnDefinition = "varchar(20)")
 	private String skill;
+
+	@Builder
+	public TechStack(String skill) {
+		this.skill = skill;
+	}
 }

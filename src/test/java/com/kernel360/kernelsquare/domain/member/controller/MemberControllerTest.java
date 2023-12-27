@@ -38,7 +38,6 @@ public class MemberControllerTest {
 		.nickname("hongjugwang")
 		.email("jugwang@naver.com")
 		.password("hashedPassword")
-		.accountStatus(false)
 		.experience(10000L)
 		.introduction("hi, i'm hongjugwang.")
 		.imageUrl("s3:qwe12fasdawczx")
@@ -69,9 +68,9 @@ public class MemberControllerTest {
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
 				.content(jsonRequest))
-			.andExpect(status().isOk())
+			.andExpect(status().is(MEMBER_INFO_UPDATED.getStatus().value()))
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.code").value(MEMBER_INFO_UPDATED.getStatus().value()))
+			.andExpect(jsonPath("$.code").value(MEMBER_INFO_UPDATED.getCode()))
 			.andExpect(jsonPath("$.msg").value(MEMBER_INFO_UPDATED.getMsg()));
 
 		//verify
@@ -96,9 +95,9 @@ public class MemberControllerTest {
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
 				.content(newPassword))
-			.andExpect(status().isOk())
+			.andExpect(status().is(MEMBER_PASSWORD_UPDATED.getStatus().value()))
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.code").value(MEMBER_PASSWORD_UPDATED.getStatus().value()))
+			.andExpect(jsonPath("$.code").value(MEMBER_PASSWORD_UPDATED.getCode()))
 			.andExpect(jsonPath("$.msg").value(MEMBER_PASSWORD_UPDATED.getMsg()));
 
 		//verify
@@ -120,9 +119,9 @@ public class MemberControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8"))
-			.andExpect(status().isNotFound())
+			.andExpect(status().is(MEMBER_NOT_FOUND.getStatus().value()))
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.code").value(MEMBER_NOT_FOUND.getStatus().value()))
+			.andExpect(jsonPath("$.code").value(MEMBER_NOT_FOUND.getCode()))
 			.andExpect(jsonPath("$.msg").value(MEMBER_NOT_FOUND.getMsg()));
 
 		//verify
@@ -136,7 +135,7 @@ public class MemberControllerTest {
 		//given
 		doReturn(FindMemberResponse.from(testMember))
 			.when(memberService)
-			.findMember(testMemberId);
+			.findMember(anyLong());
 
 		//when & then
 		mockMvc.perform(get("/api/v1/members/" + testMemberId)
@@ -144,9 +143,9 @@ public class MemberControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8"))
-			.andExpect(status().isOk())
+			.andExpect(status().is(MEMBER_FOUND.getStatus().value()))
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.code").value(MEMBER_FOUND.getStatus().value()))
+			.andExpect(jsonPath("$.code").value(MEMBER_FOUND.getCode()))
 			.andExpect(jsonPath("$.msg").value(MEMBER_FOUND.getMsg()))
 			.andExpect(jsonPath("$.data.nickname").value(testMember.getNickname()))
 			.andExpect(jsonPath("$.data.experience").value(testMember.getExperience()))
@@ -172,9 +171,9 @@ public class MemberControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8"))
-			.andExpect(status().isOk())
+			.andExpect(status().is(MEMBER_DELETED.getStatus().value()))
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.code").value(MEMBER_DELETED.getStatus().value()))
+			.andExpect(jsonPath("$.code").value(MEMBER_DELETED.getCode()))
 			.andExpect(jsonPath("$.msg").value(MEMBER_DELETED.getMsg()));
 
 		//verify

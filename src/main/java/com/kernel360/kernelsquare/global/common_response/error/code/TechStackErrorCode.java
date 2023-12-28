@@ -7,7 +7,8 @@ import org.springframework.http.HttpStatus;
 
 @RequiredArgsConstructor
 public enum TechStackErrorCode implements ErrorCode {
-    TECH_STACK_NOT_FOUND(HttpStatus.NOT_FOUND, TechStackServiceStatus.TECH_STACK_NOT_FOUND, "존재하지 않는 기술 스택");
+    TECH_STACK_NOT_FOUND(HttpStatus.NOT_FOUND, TechStackServiceStatus.TECH_STACK_NOT_FOUND, "존재하지 않는 기술 스택"),
+    TECH_STACK_ALREADY_EXISTED(HttpStatus.CONFLICT, TechStackServiceStatus.TECH_STACK_ALREADY_EXISTED, "이미 존재하는 기술 스택");
 
     private final HttpStatus code;
     private final ServiceStatus serviceStatus;

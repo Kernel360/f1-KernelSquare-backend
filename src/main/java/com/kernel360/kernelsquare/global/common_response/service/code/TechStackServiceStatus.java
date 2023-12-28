@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 public enum TechStackServiceStatus implements ServiceStatus {
     //error
     TECH_STACK_NOT_FOUND(2105),
+    TECH_STACK_ALREADY_EXISTED(2106),
 
     //sccess
     TECH_STACK_CREATED(2146);

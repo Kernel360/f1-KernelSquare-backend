@@ -21,7 +21,7 @@ import static com.kernel360.kernelsquare.global.common_response.response.code.Te
 public class TechStackController {
     private final TechStackService techStackService;
 
-    @PostMapping("techs")
+    @PostMapping("/techs")
     public ResponseEntity<ApiResponse<CreateTechStackResponse>> createTechStack(
         @Valid
         @RequestBody

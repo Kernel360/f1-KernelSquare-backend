@@ -121,7 +121,7 @@ public class AnswerControllerTest {
                 .andExpect(jsonPath("$.data[0].vote_count").value(testAnswer.getVoteCount()));
 
         //verify
-        verify(answerService, times(1)).findAllAnswer(anyLong());
+        verify(answerService, times(1)).findAllAnswer(testQuestionId);
     }
 
     @Test
@@ -131,6 +131,10 @@ public class AnswerControllerTest {
         //given
         objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
         String jsonRequest = objectMapper.writeValueAsString(createAnswerRequest);
+
+        doReturn(testAnswer.getId())
+                .when(answerService)
+                .createAnswer(any(CreateAnswerRequest.class), anyLong());
 
         //when & then
         mockMvc.perform(post("/api/v1/questions/" + testQuestionId + "/answers")
@@ -161,7 +165,7 @@ public class AnswerControllerTest {
         String jsonRequest = objectMapper.writeValueAsString(updateAnswerRequest);
 
         //when & then
-        mockMvc.perform(put("/api/v1/questions/answers/1")
+        mockMvc.perform(put("/api/v1/questions/answers/" + testQuestionId)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -173,7 +177,7 @@ public class AnswerControllerTest {
                 .andExpect(jsonPath("$.msg").value(ANSWER_UPDATED.getMsg()));
 
         //verify
-        verify(answerService, times(1)).updateAnswer(updateAnswerRequest, 1L);
+        verify(answerService, times(1)).updateAnswer(updateAnswerRequest, testQuestionId);
     }
 
     @Test
@@ -186,7 +190,7 @@ public class AnswerControllerTest {
                 .deleteAnswer(anyLong());
 
         //when & then
-        mockMvc.perform(delete("/api/v1/questions/answers/1")
+        mockMvc.perform(delete("/api/v1/questions/answers/" + testQuestionId)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -197,6 +201,6 @@ public class AnswerControllerTest {
                 .andExpect(jsonPath("$.msg").value(ANSWER_DELETED.getMsg()));
 
         //verify
-        verify(answerService, times(1)).deleteAnswer(anyLong());
+        verify(answerService, times(1)).deleteAnswer(testQuestionId);
     }
 }

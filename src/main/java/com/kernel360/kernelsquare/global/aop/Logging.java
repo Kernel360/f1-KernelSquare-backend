@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class Logging {
+    //ToDo 로그 정책이 정해지면 리팩토링
     @Pointcut("execution(* com.kernel360.kernelsquare.domain.member.service.MemberService.*(..)) || " +
         "execution(* com.kernel360.kernelsquare.domain.question.service.QuestionService.*(..))")
     public void allController() {}
@@ -45,7 +46,7 @@ public class Logging {
         }
     }
 
-    //ToDo 일단은 레포지토리 메서드가 정상적으로 동작하면 DB에 반영됨을 전제로 함.
+    /*일단은 레포지토리 메서드가 정상적으로 동작하면 DB에 반영됨을 전제로 함.*/
     @Pointcut("execution(* com.kernel360.kernelsquare.domain.member.repository.MemberRepository.*(..)) || " +
         "execution(* com.kernel360.kernelsquare.domain.question.repository.QuestionRepository.*(..))")
     public void allRepositoty() {}

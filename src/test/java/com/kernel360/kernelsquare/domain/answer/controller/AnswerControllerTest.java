@@ -4,9 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.kernel360.kernelsquare.domain.answer.dto.CreateAnswerRequest;
 import com.kernel360.kernelsquare.domain.answer.dto.FindAnswerResponse;
+import com.kernel360.kernelsquare.domain.answer.dto.UpdateAnswerRequest;
 import com.kernel360.kernelsquare.domain.answer.entity.Answer;
 import com.kernel360.kernelsquare.domain.answer.service.AnswerService;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
+import com.kernel360.kernelsquare.domain.question.dto.UpdateQuestionRequest;
 import com.kernel360.kernelsquare.domain.question.entity.Question;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,13 +23,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.kernel360.kernelsquare.global.common_response.response.code.AnswerResponseCode.ANSWERS_ALL_FOUND;
-import static com.kernel360.kernelsquare.global.common_response.response.code.AnswerResponseCode.ANSWER_CREATED;
+import static com.kernel360.kernelsquare.global.common_response.response.code.AnswerResponseCode.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -86,6 +89,11 @@ public class AnswerControllerTest {
             "Test Image Url"
     );
 
+    private final UpdateAnswerRequest updateAnswerRequest = new UpdateAnswerRequest(
+            "Test Updated Content",
+            "Test Updated Image Url"
+    );
+
     private List<FindAnswerResponse> answerResponseList = new ArrayList<>();
 
     @Test
@@ -138,5 +146,57 @@ public class AnswerControllerTest {
 
         //verify
         verify(answerService, times(1)).createAnswer(createAnswerRequest, testQuestionId);
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("답변 수정 성공시, 200 OK, 메시지, 답변정보를 반환한다.")
+    void testUpdateAnswer() throws Exception {
+        //given
+        doNothing()
+                .when(answerService)
+                .updateAnswer(any(UpdateAnswerRequest.class), anyLong());
+
+        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+        String jsonRequest = objectMapper.writeValueAsString(updateAnswerRequest);
+
+        //when & then
+        mockMvc.perform(put("/api/v1/questions/answers/1")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+                        .content(jsonRequest))
+                .andExpect(status().is(ANSWER_UPDATED.getStatus().value()))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.code").value(ANSWER_UPDATED.getCode()))
+                .andExpect(jsonPath("$.msg").value(ANSWER_UPDATED.getMsg()));
+
+        //verify
+        verify(answerService, times(1)).updateAnswer(updateAnswerRequest, 1L);
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("답변 삭제 성공시, 200 OK, 메시지, 답변정보를 반환한다.")
+    void testDeleteAnswer() throws Exception {
+        //given
+        doNothing()
+                .when(answerService)
+                .deleteAnswer(anyLong());
+
+        //when & then
+        mockMvc.perform(delete("/api/v1/questions/answers/1")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8"))
+                .andExpect(status().is(ANSWER_DELETED.getStatus().value()))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.code").value(ANSWER_DELETED.getCode()))
+                .andExpect(jsonPath("$.msg").value(ANSWER_DELETED.getMsg()));
+
+        //verify
+        verify(answerService, times(1)).deleteAnswer(anyLong());
     }
 }

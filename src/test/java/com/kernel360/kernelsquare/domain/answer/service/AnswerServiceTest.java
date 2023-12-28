@@ -1,5 +1,6 @@
 package com.kernel360.kernelsquare.domain.answer.service;
 
+import com.kernel360.kernelsquare.domain.answer.dto.CreateAnswerRequest;
 import com.kernel360.kernelsquare.domain.answer.dto.FindAnswerResponse;
 import com.kernel360.kernelsquare.domain.answer.entity.Answer;
 import com.kernel360.kernelsquare.domain.answer.repository.AnswerRepository;
@@ -28,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-@DisplayName("회원 서비스 통합 테스트")
+@DisplayName("답변 서비스 통합 테스트")
 @Transactional
 @SpringBootTest
 @ActiveProfiles("test")
@@ -48,6 +49,7 @@ public class AnswerServiceTest {
     Long createdMemberId;
     Member testMember;
 
+    CreateAnswerRequest createAnswerRequest;
     List<Answer> testAnswers = new ArrayList<>();
 
     @BeforeEach
@@ -58,9 +60,9 @@ public class AnswerServiceTest {
 
         for (int i=1; i<4; i++) {
             testMember = memberRepository.save(createTestMember(i));
-            System.out.println(testMember.getId());
             testAnswers.add(answerRepository.save(createTestAnswer((long) i, testMember, testQuestion)));
         }
+        createdMemberId = testMember.getId();
     }
 
     @Test
@@ -72,6 +74,23 @@ public class AnswerServiceTest {
         List<FindAnswerResponse> newAnswerList = answerService.findAllAnswer(newQuestionId);
         //then
         assertThat(testAnswers.size()).isEqualTo(newAnswerList.size());
+    }
+
+    @Test
+    @DisplayName("질문에 대한 답변 생성")
+    void createAnswer() throws Exception {
+        //given
+        createAnswerRequest = new CreateAnswerRequest(
+                createdMemberId,
+                createdQuestionId,
+                "Test Content",
+                "Test Image URL"
+        );
+        //when
+        Long newCreatedAnswerId = answerService.createAnswer(createAnswerRequest);
+        //then
+        assertThat(answerRepository.findById(newCreatedAnswerId).isPresent()).isTrue();
+        assertThat(createAnswerRequest.content()).isEqualTo(answerRepository.findById(newCreatedAnswerId).get().getContent());
     }
 
 

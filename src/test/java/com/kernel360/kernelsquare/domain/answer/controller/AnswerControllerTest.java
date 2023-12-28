@@ -1,5 +1,8 @@
 package com.kernel360.kernelsquare.domain.answer.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.kernel360.kernelsquare.domain.answer.dto.CreateAnswerRequest;
 import com.kernel360.kernelsquare.domain.answer.dto.FindAnswerResponse;
 import com.kernel360.kernelsquare.domain.answer.entity.Answer;
 import com.kernel360.kernelsquare.domain.answer.service.AnswerService;
@@ -14,15 +17,17 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.kernel360.kernelsquare.global.common_response.response.code.AnswerResponseCode.ANSWERS_ALL_FOUND;
+import static com.kernel360.kernelsquare.global.common_response.response.code.AnswerResponseCode.ANSWER_CREATED;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -34,6 +39,7 @@ public class AnswerControllerTest {
     @MockBean
     private AnswerService answerService;
     private final Long testQuestionId = 1L;
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private final Question testQuestion = Question
             .builder()
             .title("Test Question")
@@ -61,18 +67,25 @@ public class AnswerControllerTest {
             .question(testQuestion)
             .build();
 
-    private final FindAnswerResponse findAnswerResponse = FindAnswerResponse
-            .builder()
-            .id(1L)
-            .questionId(1L)
-            .content(testAnswer.getContent())
-            .rankImageUrl("s3:RankURL")
-            .createdBy("HongJuGwang")
-            .answerImageUrl(testAnswer.getImageUrl())
-            .memberImageUrl(testMember.getImageUrl())
-            .createdDate(LocalDate.now().toString())
-            .voteCount(testAnswer.getVoteCount())
-            .build();
+    private final FindAnswerResponse findAnswerResponse = new FindAnswerResponse(
+            testAnswer.getId(),
+            testQuestion.getId(),
+            testAnswer.getContent(),
+            "s3:RankURL",
+            testMember.getImageUrl(),
+            testMember.getNickname(),
+            testAnswer.getImageUrl(),
+            LocalDateTime.now(),
+            null,
+            testAnswer.getVoteCount()
+    );
+
+    private final CreateAnswerRequest createAnswerRequest = new CreateAnswerRequest(
+            1L,
+            1L,
+            "Test Content",
+            "Test Image Url"
+    );
 
     private List<FindAnswerResponse> answerResponseList = new ArrayList<>();
 
@@ -102,5 +115,29 @@ public class AnswerControllerTest {
 
         //verify
         verify(answerService, times(1)).findAllAnswer(anyLong());
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("답변 생성 성공시, 200 OK, 메시지, 답변정보를 반환한다.")
+    void testCreateAnswer() throws Exception {
+        //given
+        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+        String jsonRequest = objectMapper.writeValueAsString(createAnswerRequest);
+
+        //when & then
+        mockMvc.perform(post("/api/v1/questions/" + testQuestionId + "/answers")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+                        .content(jsonRequest))
+                .andExpect(status().is(ANSWER_CREATED.getStatus().value()))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.code").value(ANSWER_CREATED.getCode()))
+                .andExpect(jsonPath("$.msg").value(ANSWER_CREATED.getMsg()));
+
+        //verify
+        verify(answerService, times(1)).createAnswer(createAnswerRequest);
     }
 }

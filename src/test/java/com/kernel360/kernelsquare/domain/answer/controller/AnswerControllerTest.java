@@ -82,7 +82,6 @@ public class AnswerControllerTest {
 
     private final CreateAnswerRequest createAnswerRequest = new CreateAnswerRequest(
             1L,
-            1L,
             "Test Content",
             "Test Image Url"
     );
@@ -138,6 +137,6 @@ public class AnswerControllerTest {
                 .andExpect(jsonPath("$.msg").value(ANSWER_CREATED.getMsg()));
 
         //verify
-        verify(answerService, times(1)).createAnswer(createAnswerRequest);
+        verify(answerService, times(1)).createAnswer(createAnswerRequest, testQuestionId);
     }
 }

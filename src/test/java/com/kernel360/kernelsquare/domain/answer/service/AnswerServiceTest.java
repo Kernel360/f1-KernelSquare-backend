@@ -82,12 +82,11 @@ public class AnswerServiceTest {
         //given
         createAnswerRequest = new CreateAnswerRequest(
                 createdMemberId,
-                createdQuestionId,
                 "Test Content",
                 "Test Image URL"
         );
         //when
-        Long newCreatedAnswerId = answerService.createAnswer(createAnswerRequest);
+        Long newCreatedAnswerId = answerService.createAnswer(createAnswerRequest, createdQuestionId);
         //then
         assertThat(answerRepository.findById(newCreatedAnswerId).isPresent()).isTrue();
         assertThat(createAnswerRequest.content()).isEqualTo(answerRepository.findById(newCreatedAnswerId).get().getContent());

@@ -9,8 +9,6 @@ import jakarta.validation.constraints.NotNull;
 public record CreateAnswerRequest (
     @NotNull
     Long memberId,
-    @NotNull
-    Long questionId,
     @NotBlank
     String content,
     String imageUrl

@@ -35,10 +35,10 @@ public class AnswerService {
     }
 
     @Transactional
-    public Long createAnswer(CreateAnswerRequest createAnswerRequest) {
+    public Long createAnswer(CreateAnswerRequest createAnswerRequest, Long questionId) {
         Member member = memberRepository.findById(createAnswerRequest.memberId())
                 .orElseThrow(() -> new BusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
-        Question question = questionRepository.findById(createAnswerRequest.questionId())
+        Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new BusinessException(QuestionErrorCode.QUESTION_NOT_FOUND));
         Answer answer = CreateAnswerRequest.toEntity(createAnswerRequest, question, member);
         answerRepository.save(answer);

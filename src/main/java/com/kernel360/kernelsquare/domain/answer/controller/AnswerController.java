@@ -30,9 +30,10 @@ public class AnswerController {
 
     @PostMapping("/questions/{questionId}/answers")
     public ResponseEntity<ApiResponse<Long>> createAnswer(
-            @Valid @RequestBody CreateAnswerRequest createAnswerRequest
+            @Valid @RequestBody CreateAnswerRequest createAnswerRequest,
+            @PathVariable Long questionId
     ) {
-        Long answerId = answerService.createAnswer(createAnswerRequest);
+        Long answerId = answerService.createAnswer(createAnswerRequest, questionId);
         return ResponseEntityFactory.toResponseEntity(ANSWER_CREATED, answerId);
     }
 }

@@ -49,9 +49,9 @@ public class Logging {
     /*일단은 레포지토리 메서드가 정상적으로 동작하면 DB에 반영됨을 전제로 함.*/
     @Pointcut("execution(* com.kernel360.kernelsquare.domain.member.repository.MemberRepository.*(..)) || " +
         "execution(* com.kernel360.kernelsquare.domain.question.repository.QuestionRepository.*(..))")
-    public void allRepositoty() {}
+    public void allRepository() {}
 
-    @Around("allRepositoty()")
+    @Around("allRepository()")
     public Object aroundRepositoryMethod(ProceedingJoinPoint joinPoint) throws Throwable {
         Signature signature = joinPoint.getSignature();
 

@@ -2,16 +2,13 @@ package com.kernel360.kernelsquare.global.common_response.response.code;
 
 import com.kernel360.kernelsquare.global.common_response.service.code.QuestionServiceStatus;
 import com.kernel360.kernelsquare.global.common_response.service.code.ServiceStatus;
+import com.kernel360.kernelsquare.global.common_response.service.code.TechStackServiceStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @RequiredArgsConstructor
-public enum QuestionResponseCode implements ResponseCode {
-    QUESTION_CREATED(HttpStatus.OK, QuestionServiceStatus.QUESTION_CREATED,"질문 생성 성공"),
-    QUESTION_FOUND(HttpStatus.OK, QuestionServiceStatus.QUESTION_FOUND,"질문 조회 성공"),
-    QUESTION_ALL_FOUND(HttpStatus.OK,QuestionServiceStatus.QUESTION_ALL_FOUND, "모든 질문 조회 성공"),
-    QUESTION_UPDATED(HttpStatus.OK,QuestionServiceStatus.QUESTION_UPDATED , "질문 수정 성공"),
-    QUESTION_DELETED(HttpStatus.OK,QuestionServiceStatus.QUESTION_DELETED , "질문 삭제 성공");
+public enum TechStackResponseCode implements ResponseCode {
+    TECH_STACK_CREATED(HttpStatus.OK, TechStackServiceStatus.TECH_STACK_CREATED,"기슬 스택 생성 성공");
 
     private final HttpStatus code;
     private final ServiceStatus serviceStatus;
@@ -31,4 +28,5 @@ public enum QuestionResponseCode implements ResponseCode {
     public String getMsg() {
         return msg;
     }
+
 }

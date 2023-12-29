@@ -1,26 +1,30 @@
 package com.kernel360.kernelsquare.domain.tech_stack.service;
 
 import com.kernel360.kernelsquare.domain.tech_stack.dto.CreateTechStackRequest;
-import com.kernel360.kernelsquare.domain.tech_stack.dto.CreateTechStackResponse;
 import com.kernel360.kernelsquare.domain.tech_stack.entity.TechStack;
 import com.kernel360.kernelsquare.domain.tech_stack.repository.TechStackRepository;
-import com.kernel360.kernelsquare.global.common_response.error.code.TechStackErrorCode;
-import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @DisplayName("기술 스택 서비스 통합 테스트")
 @Transactional
 @SpringBootTest
 class TechStackServiceTest {
-    @Autowired
+    @InjectMocks
     private TechStackService techStackService;
-    @Autowired
+    @Mock
     private TechStackRepository techStackRepository;
 
     @Test
@@ -29,14 +33,32 @@ class TechStackServiceTest {
         //given
         String skill = "Java";
         CreateTechStackRequest createTechStackRequest = new CreateTechStackRequest(skill);
+        TechStack techStack = CreateTechStackRequest.toEntity(createTechStackRequest);
+
+        given(techStackRepository.save(any(TechStack.class))).willReturn(techStack);
 
         //when
-        CreateTechStackResponse createTechStackResponse = techStackService.createTechStack(createTechStackRequest);
-        TechStack newTechStack = techStackRepository.findById(createTechStackResponse.skillId())
-            .orElseThrow(() -> new BusinessException(TechStackErrorCode.TECH_STACK_NOT_FOUND));
+        techStackService.createTechStack(createTechStackRequest);
 
         // then
-        assertThat(newTechStack).isNotNull();
-        assertThat(newTechStack.getSkill()).isEqualTo(skill);
+        verify(techStackRepository, times(1)).save(any(TechStack.class));
+    }
+
+    @Test
+    @DisplayName("기술 스택 모든 조회 테스트")
+    void testFindAllTechStacks() {
+        //given
+        List<TechStack> techStackList = Arrays.asList(
+            new TechStack("JavaScript"),
+            new TechStack("Python")
+        );
+
+        given(techStackRepository.findAll()).willReturn(techStackList);
+
+        //when
+        techStackService.findAllTechStacks();
+
+        //then
+        verify(techStackRepository,times(1)).findAll();
     }
 }

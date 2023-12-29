@@ -19,7 +19,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @DisplayName("기술 스택 서비스 통합 테스트")
-@Transactional
 @SpringBootTest
 class TechStackServiceTest {
     @InjectMocks

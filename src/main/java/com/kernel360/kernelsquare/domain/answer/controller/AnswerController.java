@@ -2,6 +2,7 @@ package com.kernel360.kernelsquare.domain.answer.controller;
 
 import com.kernel360.kernelsquare.domain.answer.dto.CreateAnswerRequest;
 import com.kernel360.kernelsquare.domain.answer.dto.FindAnswerResponse;
+import com.kernel360.kernelsquare.domain.answer.dto.UpdateAnswerRequest;
 import com.kernel360.kernelsquare.domain.answer.service.AnswerService;
 import com.kernel360.kernelsquare.global.common_response.ApiResponse;
 import com.kernel360.kernelsquare.global.common_response.ResponseEntityFactory;
@@ -12,8 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.kernel360.kernelsquare.global.common_response.response.code.AnswerResponseCode.ANSWERS_ALL_FOUND;
-import static com.kernel360.kernelsquare.global.common_response.response.code.AnswerResponseCode.ANSWER_CREATED;
+import static com.kernel360.kernelsquare.global.common_response.response.code.AnswerResponseCode.*;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -29,12 +29,29 @@ public class AnswerController {
     }
 
     @PostMapping("/questions/{questionId}/answers")
-    public ResponseEntity<ApiResponse<Long>> createAnswer(
+    public ResponseEntity<ApiResponse> createAnswer(
             @Valid @RequestBody CreateAnswerRequest createAnswerRequest,
             @PathVariable Long questionId
     ) {
-        Long answerId = answerService.createAnswer(createAnswerRequest, questionId);
-        return ResponseEntityFactory.toResponseEntity(ANSWER_CREATED, answerId);
+        answerService.createAnswer(createAnswerRequest, questionId);
+        return ResponseEntityFactory.toResponseEntity(ANSWER_CREATED);
+    }
+
+    @PutMapping("/questions/answers/{answerId}")
+    public ResponseEntity<ApiResponse> updateAnswer(
+            @Valid @RequestBody UpdateAnswerRequest updateAnswerRequest,
+            @PathVariable Long answerId
+    ) {
+        answerService.updateAnswer(updateAnswerRequest, answerId);
+        return ResponseEntityFactory.toResponseEntity(ANSWER_UPDATED);
+    }
+
+    @DeleteMapping("/questions/answers/{answerId}")
+    public ResponseEntity<ApiResponse> deleteAnswer(
+            @PathVariable Long answerId
+    ) {
+        answerService.deleteAnswer(answerId);
+        return ResponseEntityFactory.toResponseEntity(ANSWER_DELETED);
     }
 }
 

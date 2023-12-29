@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 
 @RequiredArgsConstructor
 public enum TechStackResponseCode implements ResponseCode {
-    TECH_STACK_CREATED(HttpStatus.OK, TechStackServiceStatus.TECH_STACK_CREATED,"기슬 스택 생성 성공"),
+    TECH_STACK_CREATED(HttpStatus.OK, TechStackServiceStatus.TECH_STACK_CREATED,"기술 스택 생성 성공"),
     TECH_STACK_ALL_FOUND(HttpStatus.OK, TechStackServiceStatus.TECH_STACK_ALL_FOUND, "기술 스택 모든 조회 성공");
 
     private final HttpStatus code;

@@ -8,7 +8,6 @@ import com.kernel360.kernelsquare.domain.answer.dto.UpdateAnswerRequest;
 import com.kernel360.kernelsquare.domain.answer.entity.Answer;
 import com.kernel360.kernelsquare.domain.answer.service.AnswerService;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
-import com.kernel360.kernelsquare.domain.question.dto.UpdateQuestionRequest;
 import com.kernel360.kernelsquare.domain.question.entity.Question;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -102,6 +101,7 @@ public class AnswerControllerTest {
     void testFindAllAnswers() throws Exception {
         //given
         answerResponseList.add(findAnswerResponse);
+
         doReturn(answerResponseList)
                 .when(answerService)
                 .findAllAnswer(anyLong());
@@ -157,12 +157,12 @@ public class AnswerControllerTest {
     @DisplayName("답변 수정 성공시, 200 OK, 메시지, 답변정보를 반환한다.")
     void testUpdateAnswer() throws Exception {
         //given
+        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+        String jsonRequest = objectMapper.writeValueAsString(updateAnswerRequest);
+
         doNothing()
                 .when(answerService)
                 .updateAnswer(any(UpdateAnswerRequest.class), anyLong());
-
-        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
-        String jsonRequest = objectMapper.writeValueAsString(updateAnswerRequest);
 
         //when & then
         mockMvc.perform(put("/api/v1/questions/answers/" + testQuestionId)

@@ -2,7 +2,11 @@ package com.kernel360.kernelsquare.domain.member.dto;
 
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 
+import lombok.Builder;
+
+@Builder
 public record FindMemberResponse(
+	Long id,
 	String nickname,
 	Long experience,
 	String introduction,
@@ -10,10 +14,15 @@ public record FindMemberResponse(
 ) {
 
 	public static FindMemberResponse from(Member member) {
-		return new FindMemberResponse(
-			member.getNickname(),
-			member.getExperience(),
-			member.getIntroduction(),
-			member.getImageUrl());
+		return FindMemberResponse
+			.builder()
+			.id(member.getId())
+			.nickname(member.getNickname())
+			.experience(member.getExperience())
+			.introduction(member.getIntroduction())
+			.imageUrl(member.getImageUrl())
+			.build();
 	}
 }
+
+

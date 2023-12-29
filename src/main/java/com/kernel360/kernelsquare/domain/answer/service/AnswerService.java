@@ -2,12 +2,16 @@ package com.kernel360.kernelsquare.domain.answer.service;
 
 import com.kernel360.kernelsquare.domain.answer.dto.CreateAnswerRequest;
 import com.kernel360.kernelsquare.domain.answer.dto.FindAnswerResponse;
+import com.kernel360.kernelsquare.domain.answer.dto.UpdateAnswerRequest;
 import com.kernel360.kernelsquare.domain.answer.entity.Answer;
 import com.kernel360.kernelsquare.domain.answer.repository.AnswerRepository;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
+import com.kernel360.kernelsquare.domain.question.dto.UpdateQuestionRequest;
 import com.kernel360.kernelsquare.domain.question.entity.Question;
 import com.kernel360.kernelsquare.domain.question.repository.QuestionRepository;
+import com.kernel360.kernelsquare.domain.question_tech_stack.entity.QuestionTechStack;
+import com.kernel360.kernelsquare.global.common_response.error.code.AnswerErrorCode;
 import com.kernel360.kernelsquare.global.common_response.error.code.MemberErrorCode;
 import com.kernel360.kernelsquare.global.common_response.error.code.QuestionErrorCode;
 import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
@@ -43,5 +47,18 @@ public class AnswerService {
         Answer answer = CreateAnswerRequest.toEntity(createAnswerRequest, question, member);
         answerRepository.save(answer);
         return answer.getId();
+    }
+
+    @Transactional
+    public void updateAnswer(UpdateAnswerRequest updateAnswerRequest, Long answerId) {
+        Answer answer = answerRepository.findById(answerId)
+                .orElseThrow(() -> new BusinessException(AnswerErrorCode.ANSWER_NOT_FOUND));
+
+        answer.update(updateAnswerRequest.content(), updateAnswerRequest.imageUrl());
+    }
+
+    @Transactional
+    public void deleteAnswer(Long answerId) {
+        answerRepository.deleteById(answerId);
     }
 }

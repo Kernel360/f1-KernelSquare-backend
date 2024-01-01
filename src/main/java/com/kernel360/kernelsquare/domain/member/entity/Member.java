@@ -70,9 +70,13 @@ public class Member extends BaseEntity {
 		this.password = password;
 	}
 
+	public void initAuthorities(List<MemberAuthority> authorities) {
+		this.authorities = authorities;
+	}
+
 	@Builder
 	public Member(String nickname, String email, String password, Long experience, String imageUrl,
-				  String introduction, Level level) {
+		String introduction, Level level, List<MemberAuthority> authorities) {
 		this.nickname = nickname;
 		this.email = email;
 		this.password = password;
@@ -80,5 +84,6 @@ public class Member extends BaseEntity {
 		this.imageUrl = imageUrl;
 		this.introduction = introduction;
 		this.level = level;
+		this.authorities = new ArrayList<>();
 	}
 }

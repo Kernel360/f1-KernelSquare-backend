@@ -7,7 +7,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-//todo : @Component 추가 해야하나..?
 public class CorsConfig implements CorsConfigurationSource {
 	@Override
 	public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {

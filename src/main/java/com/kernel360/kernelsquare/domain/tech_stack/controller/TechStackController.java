@@ -2,16 +2,14 @@ package com.kernel360.kernelsquare.domain.tech_stack.controller;
 
 import com.kernel360.kernelsquare.domain.tech_stack.dto.CreateTechStackRequest;
 import com.kernel360.kernelsquare.domain.tech_stack.dto.CreateTechStackResponse;
+import com.kernel360.kernelsquare.domain.tech_stack.dto.FindAllTechStacksResponse;
 import com.kernel360.kernelsquare.domain.tech_stack.service.TechStackService;
 import com.kernel360.kernelsquare.global.common_response.ApiResponse;
 import com.kernel360.kernelsquare.global.common_response.ResponseEntityFactory;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static com.kernel360.kernelsquare.global.common_response.response.code.TechStackResponseCode.*;
 
@@ -27,8 +25,15 @@ public class TechStackController {
         @RequestBody
         CreateTechStackRequest createTechStackRequest
     ) {
-        CreateTechStackResponse response = techStackService.createTechStack(createTechStackRequest);
+        CreateTechStackResponse createTechStackResponse = techStackService.createTechStack(createTechStackRequest);
 
-        return ResponseEntityFactory.toResponseEntity(TECH_STACK_CREATED, response);
+        return ResponseEntityFactory.toResponseEntity(TECH_STACK_CREATED, createTechStackResponse);
+    }
+
+    @GetMapping("/techs")
+    public ResponseEntity<ApiResponse<FindAllTechStacksResponse>> findAllTechStacks() {
+        FindAllTechStacksResponse findAllTechStacksResponse = techStackService.findAllTechStacks();
+
+        return ResponseEntityFactory.toResponseEntity(TECH_STACK_ALL_FOUND, findAllTechStacksResponse);
     }
 }

@@ -1,5 +1,6 @@
 package com.kernel360.kernelsquare.domain.question.dto;
 
+import com.kernel360.kernelsquare.domain.answer.dto.FindAnswerResponse;
 import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.question.entity.Question;
@@ -20,10 +21,10 @@ public record FindQuestionResponse(
     String levelImageUrl,
     List<String> skills,
     LocalDateTime createdDate,
-    LocalDateTime modifiedDate
-//    List<Answer> answerList
+    LocalDateTime modifiedDate,
+    List<FindAnswerResponse> answerList
 ) {
-    public static FindQuestionResponse of (Member member, Question question, Level level) {
+    public static FindQuestionResponse of (Member member, Question question, Level level, List<FindAnswerResponse> answerList) {
         return new FindQuestionResponse(
             question.getId(),
             question.getTitle(),
@@ -37,7 +38,8 @@ public record FindQuestionResponse(
             level.getImageUrl(),
             question.getTechStackList().stream().map(x -> x.getTechStack().getSkill()).toList(),
             question.getCreatedDate(),
-            question.getModifiedDate()
+            question.getModifiedDate(),
+            answerList
         );
     }
 }

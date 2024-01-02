@@ -13,4 +13,12 @@ public record Pagination(
         this.pageable = pageable;
         this.isEnd = isEnd;
     }
+
+    public static Pagination toEntity(Integer totalPage, Integer pageable, Boolean isEnd) {
+        return Pagination.builder()
+            .totalPage(totalPage)
+            .pageable(pageable)
+            .isEnd(isEnd)
+            .build();
+    }
 }

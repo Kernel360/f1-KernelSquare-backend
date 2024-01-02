@@ -15,14 +15,14 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static com.kernel360.kernelsquare.global.common_response.response.code.TechStackResponseCode.TECH_STACK_ALL_FOUND;
 import static com.kernel360.kernelsquare.global.common_response.response.code.TechStackResponseCode.TECH_STACK_CREATED;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -43,10 +43,9 @@ class TechStackControllerTest {
     @DisplayName("기술 스택 생성 성공시 200 OK와 응답 메시지를 반환한다")
     void testCreateTechStack() throws Exception {
         //given
-        String skill = "java";
-        TechStack techStack = new TechStack(skill);
-        CreateTechStackRequest createTechStackRequest = new CreateTechStackRequest(skill);
-        CreateTechStackResponse createTechStackResponse = CreateTechStackResponse.of(techStack);
+        TechStack techStack = new TechStack(1L, "Java");
+        CreateTechStackRequest createTechStackRequest = new CreateTechStackRequest(techStack.getSkill());
+        CreateTechStackResponse createTechStackResponse = CreateTechStackResponse.from(techStack);
 
         given(techStackService.createTechStack(any(CreateTechStackRequest.class))).willReturn(createTechStackResponse);
 
@@ -62,7 +61,8 @@ class TechStackControllerTest {
             .andExpect(status().is(TECH_STACK_CREATED.getStatus().value()))
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.code").value(TECH_STACK_CREATED.getCode()))
-            .andExpect(jsonPath("$.msg").value(TECH_STACK_CREATED.getMsg()));
+            .andExpect(jsonPath("$.msg").value(TECH_STACK_CREATED.getMsg()))
+            .andExpect(jsonPath("$.data.skill_id").value(techStack.getId()));
 
         //verify
         verify(techStackService, times(1)).createTechStack(any(CreateTechStackRequest.class));
@@ -72,12 +72,15 @@ class TechStackControllerTest {
     @DisplayName("기술 스택 모든 조회 성공시 200 OK와 응답 메시지를 반환한다.")
     void testFindAllTechStacks() throws Exception {
         //given
-        List<String> testSkills = Arrays.asList(
-            "JavaScript",
-            "Python"
+        TechStack techStack1 = new TechStack(1L, "JavaScript");
+        TechStack techStack2 = new TechStack(2L, "Python");
+
+        List<String> testSkills = List.of(
+            techStack1.getSkill(),
+            techStack2.getSkill()
         );
 
-        FindAllTechStacksResponse findAllTechStacksResponse = new FindAllTechStacksResponse(testSkills);
+        FindAllTechStacksResponse findAllTechStacksResponse = FindAllTechStacksResponse.from(testSkills);
 
         given(techStackService.findAllTechStacks()).willReturn(findAllTechStacksResponse);
 
@@ -88,8 +91,11 @@ class TechStackControllerTest {
             .accept(MediaType.APPLICATION_JSON)
             .characterEncoding("UTF-8"))
         .andExpect(status().is(TECH_STACK_ALL_FOUND.getStatus().value()))
+        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.code").value(TECH_STACK_ALL_FOUND.getCode()))
-        .andExpect(jsonPath("$.msg").value(TECH_STACK_ALL_FOUND.getMsg()));
+        .andExpect(jsonPath("$.msg").value(TECH_STACK_ALL_FOUND.getMsg()))
+        .andExpect(jsonPath("$.data.skills[0]").value(testSkills.get(0)))
+        .andExpect(jsonPath("$.data.skills[1]").value(testSkills.get(1)));
 
         //verify
         verify(techStackService, times(1)).findAllTechStacks();

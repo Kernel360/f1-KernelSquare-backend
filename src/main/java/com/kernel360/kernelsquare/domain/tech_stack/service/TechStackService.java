@@ -23,11 +23,12 @@ public class TechStackService {
     public CreateTechStackResponse createTechStack(CreateTechStackRequest createTechStackRequest) {
         TechStack techStack = CreateTechStackRequest.toEntity(createTechStackRequest);
         try {
-            techStackRepository.save(techStack);
+            TechStack saveTechStack = techStackRepository.save(techStack);
+
+            return CreateTechStackResponse.from(saveTechStack);
         } catch (DataIntegrityViolationException e) {
             throw new BusinessException(TechStackErrorCode.TECH_STACK_ALREADY_EXISTED);
         }
-        return CreateTechStackResponse.of(techStack);
     }
 
     @Transactional(readOnly = true)
@@ -36,6 +37,6 @@ public class TechStackService {
 
         List<String> skills = techStackList.stream().map(TechStack::getSkill).toList();
 
-        return FindAllTechStacksResponse.of(skills);
+        return FindAllTechStacksResponse.from(skills);
     }
 }

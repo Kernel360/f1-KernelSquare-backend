@@ -12,11 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 
 
@@ -69,8 +65,8 @@ class LevelServiceTest {
         FindAllLevelResponse actualLevels = levelService.findAllLevel();
 
         // then
-        assertThat(actualLevels.levels().get(0).getId()).isEqualTo(expectedLevels.get(0).getId());
-        assertThat(actualLevels.levels().get(1).getId()).isEqualTo(expectedLevels.get(1).getId());
+        assertThat(actualLevels.levels().get(0).name()).isEqualTo(expectedLevels.get(0).getName());
+        assertThat(actualLevels.levels().get(1).imageUrl()).isEqualTo(expectedLevels.get(1).getImageUrl());
 
         verify(levelRepository, times(1)).findAll();
     }

@@ -3,6 +3,7 @@ package com.kernel360.kernelsquare.domain.level.service;
 import com.kernel360.kernelsquare.domain.level.dto.CreateLevelRequest;
 import com.kernel360.kernelsquare.domain.level.dto.CreateLevelResponse;
 import com.kernel360.kernelsquare.domain.level.dto.FindAllLevelResponse;
+import com.kernel360.kernelsquare.domain.level.dto.LevelDto;
 import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.level.repository.LevelRepository;
 import com.kernel360.kernelsquare.global.common_response.error.code.LevelErrorCode;

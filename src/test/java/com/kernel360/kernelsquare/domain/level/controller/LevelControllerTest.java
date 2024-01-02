@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kernel360.kernelsquare.domain.level.dto.CreateLevelRequest;
 import com.kernel360.kernelsquare.domain.level.dto.CreateLevelResponse;
 import com.kernel360.kernelsquare.domain.level.dto.FindAllLevelResponse;
+import com.kernel360.kernelsquare.domain.level.dto.LevelDto;
 import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.level.service.LevelService;
 import org.junit.jupiter.api.DisplayName;
@@ -20,13 +21,11 @@ import java.util.List;
 
 import static com.kernel360.kernelsquare.global.common_response.response.code.LevelResponseCode.LEVEL_CREATED;
 import static com.kernel360.kernelsquare.global.common_response.response.code.LevelResponseCode.LEVEL_FOUND;
-import static com.kernel360.kernelsquare.global.common_response.response.code.TechStackResponseCode.TECH_STACK_CREATED;
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayName("등급 컨트롤러 통합 테스트")
@@ -77,16 +76,6 @@ class LevelControllerTest {
 
     }
 
-//    @Test
-//    @DisplayName("등급 조회 성공시 200 OK와 응답 메시지를 반환한다")
-//    void testFindAllLevel() throws Exception {
-//        // Given
-//        Long
-//
-//        // When
-//
-//        // Then
-//    }
 
     @Test
     @DisplayName("모든 레벨 조회 성공시 200 OK와 레벨 목록을 반환한다")

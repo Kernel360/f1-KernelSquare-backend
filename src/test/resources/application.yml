@@ -1,12 +1,19 @@
 spring:
   datasource:
-#    ToDo service test 부분 mocking 작업이 끝나면 추가 작업할 예정
-#    url: ${TEST_DB_URL}
-#    url: jdbc:h2:mem:test_kernel_square;MODE=MySQL
+    #    ToDo service test 부분 mocking 작업이 끝나면 추가 작업할 예정
+    #    url: ${TEST_DB_URL}
+    #    url: jdbc:h2:mem:test_kernel_square;MODE=MySQL
     url: jdbc:h2:mem:test_kernel_square
     driver-class-name: org.h2.Driver
     username: ${LOCAL_DB_HOST}
     password: ${LOCAL_DB_PASSWORD}
+
+  security:
+    jwt:
+      header: Authorization
+      secret: ${JWT_SECRET_KEY}
+      access-token-validity-in-seconds: 86_400     # 1일
+      refresh-token-validity-in-seconds: 1_209_600  # 2주
 
   jpa:
     hibernate:
@@ -16,7 +23,7 @@ spring:
       hibernate:
         #        show-sql: true
         format_sql: true
-#        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+    #        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
 
     database-platform: org.hibernate.dialect.H2Dialect
 

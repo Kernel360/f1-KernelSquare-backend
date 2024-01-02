@@ -121,11 +121,12 @@ public class TokenProvider implements InitializingBean {
 			return refreshTokenJson;
 		} catch (JsonProcessingException exception) {
 			exception.printStackTrace();
+			//todo : 예외 처리
 			throw new IllegalArgumentException("JsonProcessingException 발생");
 		}
 	}
 
-	private RefreshToken toRefreshToken(String refreshTokenToString) {
+	public RefreshToken toRefreshToken(String refreshTokenToString) {
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.registerModule(new JavaTimeModule());
@@ -133,6 +134,7 @@ public class TokenProvider implements InitializingBean {
 			return mapper.readValue(refreshTokenToString, RefreshToken.class);
 		} catch (JsonProcessingException exception) {
 			exception.printStackTrace();
+			//todo : 예외 처리
 			throw new IllegalArgumentException("JsonProcessingException 발생");
 		}
 	}

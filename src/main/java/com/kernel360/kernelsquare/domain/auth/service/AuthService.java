@@ -12,7 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.kernel360.kernelsquare.domain.auth.dto.LoginRequest;
 import com.kernel360.kernelsquare.domain.auth.dto.LoginResponse;
 import com.kernel360.kernelsquare.domain.auth.dto.SignUpRequest;
+import com.kernel360.kernelsquare.domain.auth.dto.SignUpResponse;
 import com.kernel360.kernelsquare.domain.auth.dto.TokenDto;
+import com.kernel360.kernelsquare.domain.auth.entity.RefreshToken;
 import com.kernel360.kernelsquare.domain.authority.entity.Authority;
 import com.kernel360.kernelsquare.domain.authority.repository.AuthorityRepository;
 import com.kernel360.kernelsquare.domain.level.entity.Level;
@@ -22,11 +24,16 @@ import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
 import com.kernel360.kernelsquare.domain.member_authority.entity.MemberAuthority;
 import com.kernel360.kernelsquare.domain.member_authority.repository.MemberAuthorityRepository;
 import com.kernel360.kernelsquare.global.common_response.error.code.AuthErrorCode;
+import com.kernel360.kernelsquare.global.common_response.error.code.AuthorityErrorCode;
+import com.kernel360.kernelsquare.global.common_response.error.code.LevelErrorCode;
 import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
+import com.kernel360.kernelsquare.global.domain.AuthorityType;
 import com.kernel360.kernelsquare.global.jwt.TokenProvider;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -38,7 +45,7 @@ public class AuthService {
 	private final LevelRepository levelRepository;
 	private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
-	public LoginResponse authenticate(LoginRequest loginRequest) {
+	public LoginResponse login(final LoginRequest loginRequest) {
 		Member findMember = memberRepository.findByEmail(loginRequest.email())
 			.orElseThrow(() -> new BusinessException(AuthErrorCode.INVALID_ACCOUNT));
 		validateLogin(loginRequest, findMember);
@@ -52,22 +59,22 @@ public class AuthService {
 	}
 
 	@Transactional
-	public Long signUp(SignUpRequest signUpRequest) {
-		//todo : 에러 처리 해야함
-		Level level = levelRepository.findLevelByName("level 1").orElseThrow(() -> new RuntimeException());
+	public SignUpResponse signUp(final SignUpRequest signUpRequest) {
+		// todo : 첫 레벨에 대한 아이디 필요..
+		Level level = levelRepository.findLevelByName(9L)
+			.orElseThrow(() -> new BusinessException(LevelErrorCode.LEVEL_NOT_FOUND));
 		String encodedPassword = passwordEncoder.encode(signUpRequest.password());
 		Member savedMember = memberRepository.save(SignUpRequest.toEntity(signUpRequest, encodedPassword, level));
 
-		//todo : 에러 처리...
-		Authority authority = authorityRepository.findAuthorityByAuthorityType("ROLE_USER")
-			.orElseThrow(() -> new RuntimeException());
+		Authority authority = authorityRepository.findAuthorityByAuthorityType(AuthorityType.ROLE_USER)
+			.orElseThrow(() -> new BusinessException(AuthorityErrorCode.AUTHORITY_NOT_FOUND));
 		MemberAuthority memberAuthority = MemberAuthority.builder().member(savedMember).authority(authority).build();
 		memberAuthorityRepository.save(memberAuthority);
 
 		List<MemberAuthority> authorities = List.of(memberAuthority);
 		savedMember.initAuthorities(authorities);
 
-		return savedMember.getId();
+		return SignUpResponse.of(savedMember);
 	}
 
 	private void validateLogin(LoginRequest loginRequest, Member member) {
@@ -76,17 +83,23 @@ public class AuthService {
 		}
 	}
 
-	public TokenDto reissueAccessToken(TokenDto requestTokenDto) {
+	public void logout(final TokenDto tokenDto) {
+		RefreshToken refreshToken = tokenProvider.toRefreshToken(tokenDto.refreshToken());
+		Long memberId = refreshToken.getMemberId();
+		tokenProvider.removeRedisRefreshToken(memberId);
+	}
+
+	public TokenDto reissueAccessToken(final TokenDto requestTokenDto) {
 		return tokenProvider.reissueToken(requestTokenDto);
 	}
 
-	public void isEmailUnique(String email) {
+	public void isEmailUnique(final String email) {
 		if (memberRepository.existsByEmail(email)) {
 			throw new BusinessException(AuthErrorCode.ALREADY_SAVED_EMAIL);
 		}
 	}
 
-	public void isNicknameUnique(String nickname) {
+	public void isNicknameUnique(final String nickname) {
 		if (memberRepository.existsByNickname(nickname)) {
 			throw new BusinessException(AuthErrorCode.ALREADY_SAVED_NICKNAME);
 		}

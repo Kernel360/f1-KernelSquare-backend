@@ -44,9 +44,12 @@ public class JWTTokenSettingFilter extends OncePerRequestFilter {
 
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-		if (request.getServletPath().equals("/api/v1/auth/reissue")) {
+		if (request.getServletPath().contains("/api/v1/auth")) {
+			return true;
+		} else if (request.getServletPath().equals("/api/v1/auth/reissue") || request.getServletPath()
+			.equals("/api/v1/questions")) {
 			return true;
 		}
-		return !request.getServletPath().contains("/api/v1/auth");
+		return false;
 	}
 }

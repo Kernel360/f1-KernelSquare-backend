@@ -2,15 +2,14 @@ package com.kernel360.kernelsquare.global.common_response.error.code;
 
 import org.springframework.http.HttpStatus;
 
+import com.kernel360.kernelsquare.global.common_response.service.code.AuthorityServiceStatus;
 import com.kernel360.kernelsquare.global.common_response.service.code.ServiceStatus;
-import com.kernel360.kernelsquare.global.common_response.service.code.TechStackServiceStatus;
 
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public enum TechStackErrorCode implements ErrorCode {
-	TECH_STACK_NOT_FOUND(HttpStatus.NOT_FOUND, TechStackServiceStatus.TECH_STACK_NOT_FOUND, "존재하지 않는 기술 스택"),
-	TECH_STACK_ALREADY_EXISTED(HttpStatus.CONFLICT, TechStackServiceStatus.TECH_STACK_ALREADY_EXISTED, "이미 존재하는 기술 스택");
+public enum AuthorityErrorCode implements ErrorCode {
+	AUTHORITY_NOT_FOUND(HttpStatus.NOT_FOUND, AuthorityServiceStatus.AUTHORITY_NOT_FOUND, "권한이 존재하지 않습니다.");
 
 	private final HttpStatus httpStatus;
 	private final ServiceStatus serviceStatus;

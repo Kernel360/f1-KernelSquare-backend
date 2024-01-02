@@ -16,13 +16,13 @@ public enum TokenErrorCode implements ErrorCode {
 	WRONG_TOKEN(HttpStatus.UNAUTHORIZED, TokenServiceStatus.WRONG_TOKEN, "잘못된 토큰 입니다."),
 	EXPIRED_LOGIN_INFO(HttpStatus.UNAUTHORIZED, TokenServiceStatus.EXPIRED_LOGIN_INFO, "로그인 정보가 만료 되었습니다.");
 
-	private final HttpStatus code;
+	private final HttpStatus httpStatus;
 	private final ServiceStatus serviceStatus;
 	private final String msg;
 
 	@Override
 	public HttpStatus getStatus() {
-		return code;
+		return httpStatus;
 	}
 
 	@Override

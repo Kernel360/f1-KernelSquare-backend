@@ -3,6 +3,7 @@ package com.kernel360.kernelsquare.domain.tech_stack.service;
 import com.kernel360.kernelsquare.domain.tech_stack.dto.CreateTechStackRequest;
 import com.kernel360.kernelsquare.domain.tech_stack.dto.CreateTechStackResponse;
 import com.kernel360.kernelsquare.domain.tech_stack.dto.FindAllTechStacksResponse;
+import com.kernel360.kernelsquare.domain.tech_stack.dto.UpdateTechStackRequest;
 import com.kernel360.kernelsquare.domain.tech_stack.entity.TechStack;
 import com.kernel360.kernelsquare.domain.tech_stack.repository.TechStackRepository;
 import com.kernel360.kernelsquare.global.common_response.error.code.TechStackErrorCode;
@@ -41,5 +42,13 @@ public class TechStackService {
     @Transactional
     public void deleteTechStack(Long techStackId) {
         techStackRepository.deleteById(techStackId);
+    }
+
+    @Transactional
+    public void updateTechStack(Long techStackId, UpdateTechStackRequest updateTechStackRequest) {
+        TechStack techStack = techStackRepository.findById(techStackId)
+            .orElseThrow(() -> new BusinessException(TechStackErrorCode.TECH_STACK_NOT_FOUND));
+
+        techStack.update(updateTechStackRequest.skill());
     }
 }

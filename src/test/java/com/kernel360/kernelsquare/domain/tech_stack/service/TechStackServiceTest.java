@@ -3,6 +3,7 @@ package com.kernel360.kernelsquare.domain.tech_stack.service;
 import com.kernel360.kernelsquare.domain.tech_stack.dto.CreateTechStackRequest;
 import com.kernel360.kernelsquare.domain.tech_stack.dto.CreateTechStackResponse;
 import com.kernel360.kernelsquare.domain.tech_stack.dto.FindAllTechStacksResponse;
+import com.kernel360.kernelsquare.domain.tech_stack.dto.UpdateTechStackRequest;
 import com.kernel360.kernelsquare.domain.tech_stack.entity.TechStack;
 import com.kernel360.kernelsquare.domain.tech_stack.repository.TechStackRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -14,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -69,6 +71,27 @@ class TechStackServiceTest {
 
         //verify
         verify(techStackRepository,times(1)).findAll();
+    }
+
+    @Test
+    @DisplayName("기술 스택 수정 테스트")
+    void testUpdateTechStack() {
+        //given
+        TechStack techStack = new TechStack(1L, "Spring");
+
+        given(techStackRepository.findById(anyLong())).willReturn(Optional.of(techStack));
+
+        UpdateTechStackRequest updateTechStackRequest = new UpdateTechStackRequest("Django");
+
+        //when
+        techStackService.updateTechStack(1L, updateTechStackRequest);
+
+        //then
+        assertThat(techStack).isNotNull();
+        assertThat(techStack.getSkill()).isEqualTo(updateTechStackRequest.skill());
+
+        //verify
+        verify(techStackRepository, times(1)).findById(anyLong());
     }
 
     @Test

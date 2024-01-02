@@ -11,6 +11,7 @@ public enum TechStackServiceStatus implements ServiceStatus {
     //sccess
     TECH_STACK_CREATED(2346),
     TECH_STACK_ALL_FOUND(2347),
+    TECH_STACK_UPDATED(2348),
     TECH_STACK_DELETED(2349);
 
     private final Integer code;

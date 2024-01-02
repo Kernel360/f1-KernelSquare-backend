@@ -28,4 +28,8 @@ public class TechStack extends BaseEntity {
 		this.id = id;
 		this.skill = skill;
 	}
+
+	public void update(String skill) {
+		this.skill = skill;
+	}
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kernel360.kernelsquare.domain.tech_stack.dto.CreateTechStackRequest;
 import com.kernel360.kernelsquare.domain.tech_stack.dto.CreateTechStackResponse;
 import com.kernel360.kernelsquare.domain.tech_stack.dto.FindAllTechStacksResponse;
+import com.kernel360.kernelsquare.domain.tech_stack.dto.UpdateTechStackRequest;
 import com.kernel360.kernelsquare.domain.tech_stack.entity.TechStack;
 import com.kernel360.kernelsquare.domain.tech_stack.service.TechStackService;
 import org.junit.jupiter.api.DisplayName;
@@ -96,6 +97,36 @@ class TechStackControllerTest {
 
         //verify
         verify(techStackService, times(1)).findAllTechStacks();
+    }
+
+    @Test
+    @DisplayName("기술 스택 수정 성공시 200 Ok와 응답 메시지를 반환한다.")
+    void testUpdateTechStack() throws Exception {
+        //given
+        TechStack techStack = new TechStack(1L, "Spring");
+
+        UpdateTechStackRequest updateTechStackRequest = new UpdateTechStackRequest("Django");
+
+        doNothing()
+            .when(techStackService)
+            .updateTechStack(anyLong(), any(UpdateTechStackRequest.class));
+
+        String jsonRequest = objectMapper.writeValueAsString(updateTechStackRequest);
+
+        //when & then
+        mockMvc.perform(put("/api/v1/techs/" + techStack.getId())
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+                .content(jsonRequest))
+            .andExpect(status().is(TECH_STACK_ALL_FOUND.getStatus().value()))
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.code").value(TECH_STACK_UPDATED.getCode()))
+            .andExpect(jsonPath("$.msg").value(TECH_STACK_UPDATED.getMsg()));
+
+        //verify
+        verify(techStackService, times(1)).updateTechStack(anyLong(), any(UpdateTechStackRequest.class));
     }
 
     @Test

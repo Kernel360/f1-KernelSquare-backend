@@ -9,7 +9,8 @@ public enum LevelServiceStatus implements ServiceStatus {
     LEVEL_ALREADY_EXISTED(1401),
 
     //success
-    LEVEL_CREATED(1440);
+    LEVEL_CREATED(1440),
+    LEVEL_FOUND(1441);
 
     private final Integer code;
 

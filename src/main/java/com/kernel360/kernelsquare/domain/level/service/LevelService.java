@@ -2,14 +2,16 @@ package com.kernel360.kernelsquare.domain.level.service;
 
 import com.kernel360.kernelsquare.domain.level.dto.CreateLevelRequest;
 import com.kernel360.kernelsquare.domain.level.dto.CreateLevelResponse;
+import com.kernel360.kernelsquare.domain.level.dto.FindAllLevelResponse;
 import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.level.repository.LevelRepository;
-import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
 import com.kernel360.kernelsquare.global.common_response.error.code.LevelErrorCode;
 import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,8 +26,13 @@ public class LevelService {
         } catch (DataIntegrityViolationException e) {
             throw new BusinessException(LevelErrorCode.LEVEL_ALREADY_EXISTED);
         }
-        return CreateLevelResponse.of(level);
+        return CreateLevelResponse.from(level);
 
+    }
+
+    public FindAllLevelResponse findAllLevel() {
+        List<Level> levelList = levelRepository.findAll();
+        return FindAllLevelResponse.from(levelList);
     }
 
 }

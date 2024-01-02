@@ -44,14 +44,14 @@ public class QuestionService {
 
         Question question = CreateQuestionRequest.toEntity(createQuestionRequest, member);
 
-        questionRepository.save(question);
+        Question saveQuestion = questionRepository.save(question);
 
         List<String> skills = createQuestionRequest.skills();
         List<QuestionTechStack> techStackList = new ArrayList<>();
 
         saveTechStackList(question, skills, techStackList);
 
-        return CreateQuestionResponse.from(question);
+        return CreateQuestionResponse.from(saveQuestion);
     }
 
     @Transactional(readOnly = true)

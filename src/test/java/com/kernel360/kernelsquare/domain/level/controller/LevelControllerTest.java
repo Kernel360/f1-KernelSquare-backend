@@ -104,7 +104,6 @@ class LevelControllerTest {
                 .andExpect(jsonPath("$.data.levels[0].id").value(levelList.get(0).getId()))
                 .andExpect(jsonPath("$.data.levels[0].name").value(levelList.get(0).getName()))
                 .andExpect(jsonPath("$.data.levels[0].image_url").value(levelList.get(0).getImageUrl()));
-//                .andExpect(jsonPath("$.data.levels[1]").value(levelList.get(1)));
 
         // verify
         verify(levelService, times(1)).findAllLevel();

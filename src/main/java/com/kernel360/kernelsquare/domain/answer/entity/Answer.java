@@ -57,4 +57,9 @@ public class Answer extends BaseEntity {
 		this.member = member;
 		this.question = question;
 	}
+
+	public void update(String content, String imageUrl) {
+		this.content = content;
+		this.imageUrl = imageUrl;
+	}
 }

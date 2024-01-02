@@ -26,4 +26,9 @@ public class TechStackService {
         }
         return CreateTechStackResponse.of(techStack);
     }
+
+    @Transactional
+    public void deleteTechStack(Long techStackId) {
+        techStackRepository.deleteById(techStackId);
+    }
 }

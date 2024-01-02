@@ -9,7 +9,8 @@ public enum TechStackServiceStatus implements ServiceStatus {
     TECH_STACK_ALREADY_EXISTED(2106),
 
     //sccess
-    TECH_STACK_CREATED(2146);
+    TECH_STACK_CREATED(2146),
+    TECH_STACK_DELETED(2149);
 
     private final Integer code;
 

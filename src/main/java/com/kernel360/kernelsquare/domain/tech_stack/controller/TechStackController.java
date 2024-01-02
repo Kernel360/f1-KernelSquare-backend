@@ -8,10 +8,7 @@ import com.kernel360.kernelsquare.global.common_response.ResponseEntityFactory;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static com.kernel360.kernelsquare.global.common_response.response.code.TechStackResponseCode.*;
 
@@ -30,5 +27,15 @@ public class TechStackController {
         CreateTechStackResponse response = techStackService.createTechStack(createTechStackRequest);
 
         return ResponseEntityFactory.toResponseEntity(TECH_STACK_CREATED, response);
+    }
+
+    @DeleteMapping("/techs/{techStackId}")
+    public ResponseEntity<ApiResponse> deleteTechStack(
+        @PathVariable
+        Long techStackId
+    ) {
+        techStackService.deleteTechStack(techStackId);
+
+        return ResponseEntityFactory.toResponseEntity(TECH_STACK_DELETED);
     }
 }

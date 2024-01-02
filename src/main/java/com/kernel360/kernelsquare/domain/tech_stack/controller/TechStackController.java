@@ -36,4 +36,16 @@ public class TechStackController {
 
         return ResponseEntityFactory.toResponseEntity(TECH_STACK_ALL_FOUND, findAllTechStacksResponse);
     }
+
+    @PutMapping("/techs/{techStackId}")
+    public ResponseEntity<ApiResponse> updateTechStacks(
+        @PathVariable
+        Long techStackId,
+        @RequestBody
+        String skill
+    ) {
+        techStackService.updateTechStack(techStackId, skill);
+
+        return ResponseEntityFactory.toResponseEntity(TECH_STACK_UPDATED);
+    }
 }

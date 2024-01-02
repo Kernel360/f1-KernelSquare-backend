@@ -39,4 +39,12 @@ public class TechStackService {
 
         return FindAllTechStacksResponse.from(skills);
     }
+
+    @Transactional
+    public void updateTechStack(Long techStackId, String skill) {
+        TechStack techStack = techStackRepository.findById(techStackId)
+            .orElseThrow(() -> new BusinessException(TechStackErrorCode.TECH_STACK_NOT_FOUND));
+
+        techStack.update(skill);
+    }
 }

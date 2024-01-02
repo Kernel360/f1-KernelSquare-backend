@@ -73,9 +73,9 @@ class TechStackControllerTest {
         TechStack techStack1 = new TechStack(1L, "JavaScript");
         TechStack techStack2 = new TechStack(2L, "Python");
 
-        List<String> testSkills = List.of(
-            techStack1.getSkill(),
-            techStack2.getSkill()
+        List<TechStack> testSkills = List.of(
+            techStack1,
+            techStack2
         );
 
         FindAllTechStacksResponse findAllTechStacksResponse = FindAllTechStacksResponse.from(testSkills);
@@ -92,8 +92,8 @@ class TechStackControllerTest {
         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.code").value(TECH_STACK_ALL_FOUND.getCode()))
         .andExpect(jsonPath("$.msg").value(TECH_STACK_ALL_FOUND.getMsg()))
-        .andExpect(jsonPath("$.data.skills[0]").value(testSkills.get(0)))
-        .andExpect(jsonPath("$.data.skills[1]").value(testSkills.get(1)));
+        .andExpect(jsonPath("$.data.skills[0].id").value(testSkills.get(0).getId()))
+        .andExpect(jsonPath("$.data.skills[1].id").value(testSkills.get(1).getId()));
 
         //verify
         verify(techStackService, times(1)).findAllTechStacks();
@@ -127,5 +127,30 @@ class TechStackControllerTest {
 
         //verify
         verify(techStackService, times(1)).updateTechStack(anyLong(), any(UpdateTechStackRequest.class));
+    }
+
+    @Test
+    @DisplayName("기술 스택 삭제 성공시 200 OK와 응답 메시지를 반환한다.")
+    void testDeleteTechStack() throws Exception {
+        //given
+        TechStack techStack = new TechStack(1L, "HTTP");
+
+        doNothing()
+            .when(techStackService)
+            .deleteTechStack(anyLong());
+
+        //when & then
+        mockMvc.perform(delete("/api/v1/techs/" + techStack.getId())
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8"))
+            .andExpect(status().is(TECH_STACK_ALL_FOUND.getStatus().value()))
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.code").value(TECH_STACK_DELETED.getCode()))
+            .andExpect(jsonPath("$.msg").value(TECH_STACK_DELETED.getMsg()));
+
+        //verify
+        verify(techStackService, times(1)).deleteTechStack(anyLong());
     }
 }

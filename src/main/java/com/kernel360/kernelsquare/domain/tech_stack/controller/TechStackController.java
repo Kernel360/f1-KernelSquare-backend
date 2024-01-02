@@ -49,4 +49,14 @@ public class TechStackController {
 
         return ResponseEntityFactory.toResponseEntity(TECH_STACK_UPDATED);
     }
+
+    @DeleteMapping("/techs/{techStackId}")
+    public ResponseEntity<ApiResponse> deleteTechStack(
+        @PathVariable
+        Long techStackId
+    ) {
+        techStackService.deleteTechStack(techStackId);
+
+        return ResponseEntityFactory.toResponseEntity(TECH_STACK_DELETED);
+    }
 }

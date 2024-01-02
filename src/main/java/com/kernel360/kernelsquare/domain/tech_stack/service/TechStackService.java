@@ -36,9 +36,12 @@ public class TechStackService {
     public FindAllTechStacksResponse findAllTechStacks() {
         List<TechStack> techStackList = techStackRepository.findAll();
 
-        List<String> skills = techStackList.stream().map(TechStack::getSkill).toList();
+        return FindAllTechStacksResponse.from(techStackList);
+    }
 
-        return FindAllTechStacksResponse.from(skills);
+    @Transactional
+    public void deleteTechStack(Long techStackId) {
+        techStackRepository.deleteById(techStackId);
     }
 
     @Transactional

@@ -21,8 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @DisplayName("기술 스택 서비스 통합 테스트")
 @ExtendWith(MockitoExtension.class)
@@ -68,7 +67,7 @@ class TechStackServiceTest {
 
         //then
         assertThat(findAllTechStacksResponse).isNotNull();
-        assertThat(findAllTechStacksResponse.skills()).isEqualTo(techStackList.stream().map(TechStack::getSkill).toList());
+        assertThat(findAllTechStacksResponse.skills()).isEqualTo(techStackList);
 
         //verify
         verify(techStackRepository,times(1)).findAll();
@@ -93,5 +92,22 @@ class TechStackServiceTest {
 
         //verify
         verify(techStackRepository, times(1)).findById(anyLong());
+    }
+
+    @Test
+    @DisplayName("기술 스택 삭제 테스트")
+    void testDeleteTechStack() {
+        //given
+        TechStack techStack = new TechStack(1L, "HTTP");
+
+        doNothing()
+            .when(techStackRepository)
+            .deleteById(anyLong());
+
+        //when
+        techStackService.deleteTechStack(techStack.getId());
+
+        //then
+        verify(techStackRepository, times(1)).deleteById(anyLong());
     }
 }

@@ -24,7 +24,8 @@ public class TechStack extends BaseEntity {
 	private String skill;
 
 	@Builder
-	public TechStack(String skill) {
+	public TechStack(Long id, String skill) {
+		this.id = id;
 		this.skill = skill;
 	}
 }

@@ -5,12 +5,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum TechStackServiceStatus implements ServiceStatus {
     //error
-    TECH_STACK_NOT_FOUND(2105),
-    TECH_STACK_ALREADY_EXISTED(2106),
+    TECH_STACK_NOT_FOUND(2305),
+    TECH_STACK_ALREADY_EXISTED(2306),
 
     //sccess
-    TECH_STACK_CREATED(2146),
-    TECH_STACK_DELETED(2149);
+    TECH_STACK_CREATED(2346),
+    TECH_STACK_ALL_FOUND(2347),
+    TECH_STACK_DELETED(2349);
 
     private final Integer code;
 

@@ -1,8 +1,6 @@
 package com.kernel360.kernelsquare.domain.level.service;
 
-import com.kernel360.kernelsquare.domain.level.dto.CreateLevelRequest;
-import com.kernel360.kernelsquare.domain.level.dto.CreateLevelResponse;
-import com.kernel360.kernelsquare.domain.level.dto.FindAllLevelResponse;
+import com.kernel360.kernelsquare.domain.level.dto.*;
 import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.level.repository.LevelRepository;
 import com.kernel360.kernelsquare.global.common_response.error.code.LevelErrorCode;
@@ -85,6 +83,27 @@ class LevelServiceTest {
 
         // Then
         verify(levelRepository).deleteById(level.getId());
+    }
+
+    @Test
+    @DisplayName("등급 수정 테스트")
+    void testUpdateLevel() {
+        // Given
+        Level level = new Level(1L, 1L, "image1.jpg");
+        UpdateLevelRequest updateLevelRequest = new UpdateLevelRequest(1L, 2L, "image2.jpg");
+        given(levelRepository.findById(anyLong())).willReturn(Optional.of(level));
+
+        // When
+        levelService.updateLevel(1L,updateLevelRequest);
+
+        // Then
+        assertThat(level).isNotNull();
+        assertThat(level.getName()).isEqualTo(updateLevelRequest.name());
+        assertThat(level.getImageUrl()).isEqualTo(updateLevelRequest.imageUrl());
+
+        // Verify
+        verify(levelRepository, times(1)).findById(anyLong());
+
     }
 
 }

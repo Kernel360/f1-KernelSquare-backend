@@ -1,9 +1,6 @@
 package com.kernel360.kernelsquare.domain.level.service;
 
-import com.kernel360.kernelsquare.domain.level.dto.CreateLevelRequest;
-import com.kernel360.kernelsquare.domain.level.dto.CreateLevelResponse;
-import com.kernel360.kernelsquare.domain.level.dto.FindAllLevelResponse;
-import com.kernel360.kernelsquare.domain.level.dto.LevelDto;
+import com.kernel360.kernelsquare.domain.level.dto.*;
 import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.level.repository.LevelRepository;
 import com.kernel360.kernelsquare.global.common_response.error.code.LevelErrorCode;
@@ -11,6 +8,7 @@ import com.kernel360.kernelsquare.global.common_response.error.exception.Busines
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,6 +18,7 @@ public class LevelService {
 
     private final LevelRepository levelRepository;
 
+    @Transactional
     public CreateLevelResponse createLevel(CreateLevelRequest createLevelRequest) {
         Level level = CreateLevelRequest.toEntity(createLevelRequest);
         try {
@@ -31,13 +30,25 @@ public class LevelService {
 
     }
 
+    @Transactional(readOnly = true)
     public FindAllLevelResponse findAllLevel() {
         List<Level> levelList = levelRepository.findAll();
         return FindAllLevelResponse.from(levelList);
     }
 
+    @Transactional
     public void deleteLevel(Long levelId) {
         levelRepository.deleteById(levelId);
+    }
+
+    @Transactional
+    public UpdateLevelResponse updateLevel(Long levelId, UpdateLevelRequest updateLevelRequest) {
+        Level level = levelRepository.findById(levelId)
+                .orElseThrow(() -> new BusinessException(LevelErrorCode.LEVEL_NOT_FOUND));
+
+        level.update(updateLevelRequest.name(), updateLevelRequest.imageUrl());
+
+        return UpdateLevelResponse.from(level);
     }
 
 }

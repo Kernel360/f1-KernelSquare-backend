@@ -1,8 +1,6 @@
 package com.kernel360.kernelsquare.domain.level.controller;
 
-import com.kernel360.kernelsquare.domain.level.dto.CreateLevelRequest;
-import com.kernel360.kernelsquare.domain.level.dto.CreateLevelResponse;
-import com.kernel360.kernelsquare.domain.level.dto.FindAllLevelResponse;
+import com.kernel360.kernelsquare.domain.level.dto.*;
 import com.kernel360.kernelsquare.domain.level.service.LevelService;
 import com.kernel360.kernelsquare.global.common_response.ApiResponse;
 import com.kernel360.kernelsquare.global.common_response.ResponseEntityFactory;
@@ -46,6 +44,18 @@ public class LevelController {
         levelService.deleteLevel(levelId);
 
         return ResponseEntityFactory.toResponseEntity(LEVEL_DELETED);
+    }
+
+    @PutMapping("/levels/{levelId}")
+    public ResponseEntity<ApiResponse<UpdateLevelResponse>> updateLevel(
+            @PathVariable
+            Long levelId,
+            @RequestBody
+            UpdateLevelRequest updateLevelRequest
+    ) {
+        UpdateLevelResponse response = levelService.updateLevel(levelId, updateLevelRequest);
+
+        return ResponseEntityFactory.toResponseEntity(LEVEL_UPDATED, response);
     }
 
 }

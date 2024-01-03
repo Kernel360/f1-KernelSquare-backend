@@ -36,6 +36,12 @@ jobs:
           files: ./src/test/resources/application.yml
         env:
           spring.security.jwt.secret: ${{ secrets.JWT_SECRET_KEY }}
+      - name: Set main yml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./src/main/resources/application.yml
+        env:
+          spring.security.jwt.secret: ${{ secrets.JWT_SECRET_KEY }}
       - name: Run chmod to make gradlew executable
         run: chmod +x ./gradlew
 

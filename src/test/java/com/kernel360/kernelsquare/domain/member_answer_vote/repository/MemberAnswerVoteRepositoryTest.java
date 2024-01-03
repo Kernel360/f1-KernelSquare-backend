@@ -2,10 +2,8 @@ package com.kernel360.kernelsquare.domain.member_answer_vote.repository;
 
 import com.kernel360.kernelsquare.domain.answer.entity.Answer;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
-import com.kernel360.kernelsquare.domain.member_answer_vote.dto.CreateMemberAnswerVoteRequest;
 import com.kernel360.kernelsquare.domain.member_answer_vote.entity.MemberAnswerVote;
 import com.kernel360.kernelsquare.domain.question.entity.Question;
-import com.kernel360.kernelsquare.domain.tech_stack.repository.TechStackRepository;
 import com.kernel360.kernelsquare.global.common_response.error.code.MemberAnswerVoteErrorCode;
 import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
 import com.kernel360.kernelsquare.global.config.JpaAuditingConfig;

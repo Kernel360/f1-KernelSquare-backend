@@ -50,7 +50,6 @@ public class MemberAnswerVoteService {
     @Transactional
     public void deleteVote(Long answerId) {
         Long memberId = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
-
         MemberAnswerVote memberAnswerVote = memberAnswerVoteRepository.findByMemberIdAndAnswerId(memberId, answerId)
                 .orElseThrow(() -> new BusinessException(MemberAnswerVoteErrorCode.MEMBER_ANSWER_VOTE_NOT_FOUND));
 

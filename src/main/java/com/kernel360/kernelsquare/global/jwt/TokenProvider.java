@@ -50,13 +50,13 @@ public class TokenProvider implements InitializingBean {
 
 	private final String AUTHORITIES_KEY = "auth";
 
-	@Value("${spring.security.jwt.secret:not found!}")
+	@Value("${spring.security.jwt.secret}")
 	private String secret;
 
-	@Value("${spring.security.jwt.access-token-validity-in-seconds:not found!}")
+	@Value("${spring.security.jwt.access-token-validity-in-seconds}")
 	private long accessTokenValidityInSeconds;
 
-	@Value("${spring.security.jwt.refresh-token-validity-in-seconds:not found!}")
+	@Value("${spring.security.jwt.refresh-token-validity-in-seconds}")
 	private long refreshTokenValidityInSeconds;
 
 	private final RedisTemplate<Long, String> redisTemplate;

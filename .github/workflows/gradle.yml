@@ -30,7 +30,7 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-      - name: Set yml
+      - name: Set test yml
         uses: microsoft/variable-substitution@v1
         with:
           files: ./src/test/resources/application.yml

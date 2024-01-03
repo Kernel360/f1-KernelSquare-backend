@@ -12,10 +12,12 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Entity(name = "level")
 @Getter
 @Table
+@DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Level extends BaseEntity {
 	@Id
@@ -30,6 +32,11 @@ public class Level extends BaseEntity {
 
 	@Builder
 	public Level(Long name, String imageUrl) {
+		this.name = name;
+		this.imageUrl = imageUrl;
+	}
+
+	public void update(Long name, String imageUrl) {
 		this.name = name;
 		this.imageUrl = imageUrl;
 	}

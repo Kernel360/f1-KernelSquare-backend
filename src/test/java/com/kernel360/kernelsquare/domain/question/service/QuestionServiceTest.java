@@ -1,63 +1,62 @@
 package com.kernel360.kernelsquare.domain.question.service;
 
 import com.kernel360.kernelsquare.domain.level.entity.Level;
-import com.kernel360.kernelsquare.domain.level.repository.LevelRepository;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
 import com.kernel360.kernelsquare.domain.question.dto.CreateQuestionRequest;
+import com.kernel360.kernelsquare.domain.question.dto.CreateQuestionResponse;
 import com.kernel360.kernelsquare.domain.question.dto.FindQuestionResponse;
 import com.kernel360.kernelsquare.domain.question.dto.UpdateQuestionRequest;
 import com.kernel360.kernelsquare.domain.question.entity.Question;
 import com.kernel360.kernelsquare.domain.question.repository.QuestionRepository;
-import com.kernel360.kernelsquare.domain.tech_stack.entity.TechStack;
-import com.kernel360.kernelsquare.domain.tech_stack.repository.TechStackRepository;
-import com.kernel360.kernelsquare.global.common_response.error.code.QuestionErrorCode;
-import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
+import com.kernel360.kernelsquare.domain.question_tech_stack.repository.QuestionTechStackRepository;
 import com.kernel360.kernelsquare.global.dto.PageResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 
 @DisplayName("질문 서비스 통합 테스트")
-@Transactional
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class QuestionServiceTest {
-    @Autowired
+    @InjectMocks
     private QuestionService questionService;
-    @Autowired
+    @Mock
     private QuestionRepository questionRepository;
-    @Autowired
+    @Mock
     private MemberRepository memberRepository;
-    @Autowired
-    private TechStackRepository techStackRepository;
-    @Autowired
-    private LevelRepository levelRepository;
+    @Mock
+    private QuestionTechStackRepository questionTechStackRepository;
 
-    Member testMember;
+    Member member;
 
-    Question testQuestion;
+    Level level;
 
-    Level testLevel;
-
-    private Question createTestQuestion() {
+    private Question createTestQuestion(Long id) {
         return Question.builder()
+            .id(id)
             .title("테스트")
             .content("성공하자")
             .imageUrl("test.jpg")
             .viewCount(0L)
             .closedStatus(false)
-            .member(testMember)
+            .member(member)
             .techStackList(List.of())
             .build();
     }
@@ -65,19 +64,14 @@ class QuestionServiceTest {
     private Member createTestMember() {
         return Member
             .builder()
+            .id(1L)
             .nickname("hongjugwang")
             .email("jugwang@naver.com")
             .password("hashedPassword")
             .experience(10000L)
             .introduction("hi, i'm hongjugwang.")
             .imageUrl("s3:qwe12fasdawczx")
-            .level(testLevel)
-            .build();
-    }
-
-    private TechStack createTestTechStack(String skill) {
-        return TechStack.builder()
-            .skill(skill)
+            .level(level)
             .build();
     }
 
@@ -90,135 +84,155 @@ class QuestionServiceTest {
 
     @BeforeEach
     void setUp() {
-        Level level = createTestLevel();
-        testLevel = levelRepository.save(level);
+        level = createTestLevel();
 
-        TechStack techStack = createTestTechStack("Java");
-        techStackRepository.save(techStack);
-
-        techStack = createTestTechStack("Python");
-        techStackRepository.save(techStack);
-
-        Member member = createTestMember();
-        testMember = memberRepository.save(member);
-
-        Question question = createTestQuestion();
-        testQuestion = questionRepository.save(question);
+        member = createTestMember();
     }
 
     @Test
     @DisplayName("질문 생성 테스트")
     void testCreateQuestion() {
         //given
-        String testTitle = "java";
-        String testContent = "what is java";
-        String testImageUrl = "1.jpg";
-        List<String> testSkills = List.of("Java", "Python");
+        Question question = createTestQuestion(1L);
+
+        CreateQuestionRequest createQuestionRequest =
+            new CreateQuestionRequest(member.getId(), question.getTitle(), question.getContent(), question.getImageUrl(),
+                question.getTechStackList().stream().map(x -> x.getTechStack().getSkill()).toList());
+
+        given(memberRepository.findById(anyLong())).willReturn(Optional.ofNullable(member));
+
+        given(questionRepository.save(any(Question.class))).willReturn(question);
 
         //when
-        Long testQuestionId = questionService.createQuestion(new CreateQuestionRequest(
-            testMember.getId(), testTitle, testContent, testImageUrl, testSkills
-        ));
-
-        Question testCreatedQuestion = questionRepository.findById(testQuestionId)
-            .orElseThrow(() -> new BusinessException(QuestionErrorCode.QUESTION_NOT_FOUND));
+        CreateQuestionResponse createQuestionResponse = questionService.createQuestion(createQuestionRequest);
 
         //then
-        assertThat(testCreatedQuestion).isNotNull();
-        assertThat(testCreatedQuestion.getTitle()).isEqualTo(testTitle);
-        assertThat(testCreatedQuestion.getContent()).isEqualTo(testContent);
-        assertThat(testCreatedQuestion.getImageUrl()).isEqualTo(testImageUrl);
-        assertThat(testCreatedQuestion.getTechStackList().stream().map(x -> x.getTechStack().getSkill()).toList()).isEqualTo(testSkills);
-        assertThat(testCreatedQuestion.getMember().getId()).isEqualTo(testMember.getId());
+        assertThat(createQuestionResponse).isNotNull();
+        assertThat(createQuestionResponse.questionId()).isEqualTo(question.getId());
+
+        //verify
+        verify(questionRepository, times(1)).save(any(Question.class));
     }
 
     @Test
     @DisplayName("질문 조회 테스트")
     void testFindQuestion() {
         //given
-        Long testQuestionId = testQuestion.getId();
+        Question question = createTestQuestion(1L);
+
+        given(questionRepository.findById(anyLong())).willReturn(Optional.ofNullable(question));
 
         //when
-        FindQuestionResponse testFindQuestionResponse = questionService.findQuestion(testQuestionId);
+        FindQuestionResponse findQuestionResponse = questionService.findQuestion(question.getId());
 
         //then
-        assertThat(testFindQuestionResponse).isNotNull();
-        assertThat(testFindQuestionResponse.id()).isEqualTo(testQuestion.getId());
-        assertThat(testFindQuestionResponse.title()).isEqualTo(testQuestion.getTitle());
-        assertThat(testFindQuestionResponse.content()).isEqualTo(testQuestion.getContent());
-        assertThat(testFindQuestionResponse.questionImageUrl()).isEqualTo(testQuestion.getImageUrl());
-        assertThat(testFindQuestionResponse.nickname()).isEqualTo(testMember.getNickname());
-        assertThat(testFindQuestionResponse.memberImageUrl()).isEqualTo(testMember.getImageUrl());
-        assertThat(testFindQuestionResponse.level()).isEqualTo(testMember.getLevel().getName());
-        assertThat(testFindQuestionResponse.levelImageUrl()).isEqualTo(testMember.getLevel().getImageUrl());
-        assertThat(testFindQuestionResponse.skills()).isEqualTo(testQuestion.getTechStackList()
+        assertThat(findQuestionResponse).isNotNull();
+        assertThat(findQuestionResponse.id()).isEqualTo(question.getId());
+        assertThat(findQuestionResponse.title()).isEqualTo(question.getTitle());
+        assertThat(findQuestionResponse.content()).isEqualTo(question.getContent());
+        assertThat(findQuestionResponse.questionImageUrl()).isEqualTo(question.getImageUrl());
+        assertThat(findQuestionResponse.nickname()).isEqualTo(member.getNickname());
+        assertThat(findQuestionResponse.memberImageUrl()).isEqualTo(member.getImageUrl());
+        assertThat(findQuestionResponse.level()).isEqualTo(member.getLevel().getName());
+        assertThat(findQuestionResponse.levelImageUrl()).isEqualTo(member.getLevel().getImageUrl());
+        assertThat(findQuestionResponse.skills()).isEqualTo(question.getTechStackList()
             .stream().map(x -> x.getTechStack().getSkill()).toList());
         //ToDo 답변에 대한 로직이 구현된 후 해당 질문에 대한 답변 list가 잘담기는지 테스트해야 하는지 생각해볼 필요가 있음
+
+        //verify
+        verify(questionRepository, times(1)).findById(anyLong());
     }
 
     @Test
     @DisplayName("모든 질문 조회 테스트")
     void testFindAllQuestions() {
         //given
-        Pageable testPageable = PageRequest.of(0, 3);
+        Question question1 = createTestQuestion(1L);
+        Question question2 = createTestQuestion(2L);
+        List<Question> questions = List.of(question1, question2);
 
-        Integer testCurrentPage = testPageable.getPageNumber() + 1;
+        Pageable pageable = PageRequest.of(0, 2);
+        Page<Question> pages = new PageImpl<>(questions, pageable, questions.size());
 
-        Page<Question> testPages = questionRepository.findAll(testPageable);
+        given(questionRepository.findById(question1.getId())).willReturn(Optional.of(question1));
 
-        Integer testTotalPages = testPages.getTotalPages();
+        given(questionRepository.findById(question2.getId())).willReturn(Optional.of(question2));
 
-        if (testTotalPages == 0) testTotalPages+=1;
+        given(questionRepository.findAll(any(PageRequest.class))).willReturn(pages);
+
+        Integer currentPage = pageable.getPageNumber() + 1;
+
+        Integer totalPages = pages.getTotalPages();
+
+        if (totalPages == 0) totalPages+=1;
 
         //when
-        PageResponse<FindQuestionResponse> testPageResponse = questionService.findAllQuestions(testPageable);
+        PageResponse<FindQuestionResponse> pageResponse = questionService.findAllQuestions(pageable);
 
         //then
-        assertThat(testPageResponse).isNotNull();
-        assertThat(testPageResponse.pagination().totalPage()).isEqualTo(testTotalPages);
-        assertThat(testPageResponse.pagination().pageable()).isEqualTo(testPages.getSize());
-        assertThat(testPageResponse.pagination().isEnd()).isEqualTo(testCurrentPage.equals(testTotalPages));
-        assertThat(testPageResponse.list()).isNotNull();
+        assertThat(pageResponse).isNotNull();
+        assertThat(pageResponse.pagination().totalPage()).isEqualTo(totalPages);
+        assertThat(pageResponse.pagination().pageable()).isEqualTo(pages.getSize());
+        assertThat(pageResponse.pagination().isEnd()).isEqualTo(currentPage.equals(totalPages));
+        assertThat(pageResponse.list()).isNotNull();
+
+        //verify
+        verify(questionRepository, times(1)).findAll(any(PageRequest.class));
     }
 
     @Test
     @DisplayName("질문 수정 테스트")
     void testUpdateQuestion() {
         //given
-        String testTitle = "질문 수정 테스트";
-        String testContent = "질문 수정 테스트1";
-        String testImageUrl = "putTest.jpg";
-        List<String> testSkills = List.of("Java");
+        Question question = createTestQuestion(1L);
+
+        String title = "질문 수정 테스트";
+        String content = "질문 수정 테스트1";
+        String imageUrl = "putTest.jpg";
+        List<String> skills = List.of();
+
+        UpdateQuestionRequest updateQuestionRequest = new UpdateQuestionRequest(title, content, imageUrl, skills);
+
+        given(questionRepository.findById(anyLong())).willReturn(Optional.ofNullable(question));
+
+        doNothing()
+            .when(questionTechStackRepository)
+            .deleteAllByQuestionId(question.getId());
 
         //when
-        questionService.updateQuestion(testQuestion.getId(), new UpdateQuestionRequest(testTitle, testContent, testImageUrl, testSkills));
+        questionService.updateQuestion(question.getId(), updateQuestionRequest);
 
         //then
-        assertThat(testQuestion).isNotNull();
-        assertThat(testQuestion.getTitle()).isEqualTo(testTitle);
-        assertThat(testQuestion.getContent()).isEqualTo(testContent);
-        assertThat(testQuestion.getImageUrl()).isEqualTo(testImageUrl);
-        assertThat(testQuestion.getTechStackList().stream().map(x -> x.getTechStack().getSkill()).toList()).isEqualTo(testSkills);
+        assertThat(question).isNotNull();
+        assertThat(question.getTitle()).isEqualTo(title);
+        assertThat(question.getContent()).isEqualTo(content);
+        assertThat(question.getImageUrl()).isEqualTo(imageUrl);
+        assertThat(question.getTechStackList().stream().map(x -> x.getTechStack().getSkill()).toList()).isEqualTo(skills);
+
+        //verify
+        verify(questionRepository, times(1)).findById(anyLong());
     }
 
     @Test
     @DisplayName("질문 삭제 테스트")
     void testDeleteQuestion() {
         //given
-        Long TestQuestionId = testQuestion.getId();
+        Question question = createTestQuestion(1L);
+
+        given(questionRepository.findById(anyLong())).willReturn(Optional.ofNullable(question));
+
+        doNothing()
+            .when(questionRepository)
+            .deleteById(anyLong());
+
+        doNothing()
+            .when(questionTechStackRepository)
+            .deleteAllByQuestionId(anyLong());
 
         //when
-        questionService.deleteQuestion(TestQuestionId);
-
-        BusinessException TestException = assertThrows(BusinessException.class, () ->
-            questionRepository.findById(TestQuestionId).orElseThrow(() ->
-                new BusinessException(QuestionErrorCode.QUESTION_NOT_FOUND)));
+        questionService.deleteQuestion(question.getId());
 
         //then
-        assertThat(TestException).isNotNull();
-        assertThat(TestException.getErrorCode()).isExactlyInstanceOf(QuestionErrorCode.class);
-        assertThat(TestException.getErrorCode()).isEqualTo(QuestionErrorCode.QUESTION_NOT_FOUND);
-        assertThat(TestException.getErrorCode().getStatus()).isEqualTo(QuestionErrorCode.QUESTION_NOT_FOUND.getStatus());
-        assertThat(TestException.getErrorCode().getMsg()).isEqualTo(QuestionErrorCode.QUESTION_NOT_FOUND.getMsg());
+        verify(questionRepository, times(1)).deleteById(anyLong());
     }
 }

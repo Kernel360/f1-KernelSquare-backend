@@ -1,9 +1,7 @@
 package com.kernel360.kernelsquare.domain.level.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kernel360.kernelsquare.domain.level.dto.CreateLevelRequest;
-import com.kernel360.kernelsquare.domain.level.dto.CreateLevelResponse;
-import com.kernel360.kernelsquare.domain.level.dto.FindAllLevelResponse;
+import com.kernel360.kernelsquare.domain.level.dto.*;
 import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.level.service.LevelService;
 import org.junit.jupiter.api.DisplayName;
@@ -133,6 +131,41 @@ class LevelControllerTest {
 
         // Verify
         verify(levelService, times(1)).deleteLevel(anyLong());
+    }
+
+    @Test
+    @DisplayName("레벨 수정 성공 시 200 OK와 메시지를 반환한다")
+    void testUpdateLevel() throws Exception {
+        // Given
+        Long id = 1L;
+        Long name = 3L;
+        String imageUrl = "image1.jpg";
+
+        Level level = Level.builder()
+                .id(id)
+                .name(name)
+                .imageUrl(imageUrl)
+                .build();
+        UpdateLevelRequest updateLevelRequest = new UpdateLevelRequest(id, name, imageUrl);
+        UpdateLevelResponse updateLevelResponse = UpdateLevelResponse.from(level);
+
+        doReturn(updateLevelResponse)
+                .when(levelService)
+                .updateLevel(anyLong(),any(UpdateLevelRequest.class));
+
+        String jsonRequest = objectMapper.writeValueAsString(updateLevelRequest);
+
+        // When & Then
+        mockMvc.perform(put("/api/v1/levels/" + level.getId())
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+                        .content(jsonRequest))
+                .andExpect(status().is(LEVEL_UPDATED.getStatus().value()))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.code").value(LEVEL_UPDATED.getCode()))
+                .andExpect(jsonPath("$.msg").value(LEVEL_UPDATED.getMsg()));
     }
 
 }

@@ -20,6 +20,7 @@ public class LevelService {
 
     private final LevelRepository levelRepository;
 
+    @Transactional
     public CreateLevelResponse createLevel(CreateLevelRequest createLevelRequest) {
         Level level = CreateLevelRequest.toEntity(createLevelRequest);
         try {
@@ -31,11 +32,13 @@ public class LevelService {
 
     }
 
+    @Transactional
     public FindAllLevelResponse findAllLevel() {
         List<Level> levelList = levelRepository.findAll();
         return FindAllLevelResponse.from(levelList);
     }
 
+    @Transactional
     public void deleteLevel(Long levelId) {
         levelRepository.deleteById(levelId);
     }

@@ -18,12 +18,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @DisplayName("등급 서비스 통합 테스트")
 @ExtendWith(MockitoExtension.class)
@@ -56,8 +57,8 @@ class LevelServiceTest {
     void testFindAllLevel() {
         // given
         List<Level> expectedLevels = Arrays.asList(
-                new Level(1L, "image1.jpg"),
-                new Level(2L, "image2.jpg")
+                Level.builder().name(1L).imageUrl("image1.jpg").build(),
+                Level.builder().name(2L).imageUrl("image2.jpg").build()
         );
         given(levelRepository.findAll()).willReturn(expectedLevels);
 
@@ -70,6 +71,20 @@ class LevelServiceTest {
         assertThat(actualLevels.levels().get(1).imageUrl()).isEqualTo(expectedLevels.get(1).getImageUrl());
 
         verify(levelRepository, times(1)).findAll();
+    }
+
+    @Test
+    @DisplayName("등급 삭제 테스트")
+    void testDeleteLevel() {
+        // Given
+        Level level = new Level(1L, 11L, "image1.jpg");
+
+        doNothing().when(levelRepository).deleteById(level.getId());
+        // When
+        levelService.deleteLevel(level.getId());
+
+        // Then
+        verify(levelRepository).deleteById(level.getId());
     }
 
 }

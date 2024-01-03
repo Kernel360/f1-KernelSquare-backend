@@ -7,6 +7,7 @@ import com.kernel360.kernelsquare.domain.answer.entity.Answer;
 import com.kernel360.kernelsquare.domain.answer.repository.AnswerRepository;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
+import com.kernel360.kernelsquare.domain.member_answer_vote.dto.CreateMemberAnswerVoteRequest;
 import com.kernel360.kernelsquare.domain.question.dto.UpdateQuestionRequest;
 import com.kernel360.kernelsquare.domain.question.entity.Question;
 import com.kernel360.kernelsquare.domain.question.repository.QuestionRepository;
@@ -51,6 +52,14 @@ public class AnswerService {
 
     @Transactional
     public void updateAnswer(UpdateAnswerRequest updateAnswerRequest, Long answerId) {
+        Answer answer = answerRepository.findById(answerId)
+                .orElseThrow(() -> new BusinessException(AnswerErrorCode.ANSWER_NOT_FOUND));
+
+        answer.update(updateAnswerRequest.content(), updateAnswerRequest.imageUrl());
+    }
+
+    @Transactional
+    public void updateAnswerVote(UpdateAnswerRequest updateAnswerRequest, Long answerId) {
         Answer answer = answerRepository.findById(answerId)
                 .orElseThrow(() -> new BusinessException(AnswerErrorCode.ANSWER_NOT_FOUND));
 

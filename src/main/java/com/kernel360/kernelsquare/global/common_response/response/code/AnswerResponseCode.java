@@ -1,6 +1,7 @@
 package com.kernel360.kernelsquare.global.common_response.response.code;
 
 import com.kernel360.kernelsquare.global.common_response.service.code.AnswerServiceStatus;
+import com.kernel360.kernelsquare.global.common_response.service.code.MemberAnswerVoteStatus;
 import com.kernel360.kernelsquare.global.common_response.service.code.ServiceStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,9 +16,7 @@ public enum AnswerResponseCode implements ResponseCode {
 	ANSWER_CREATED(HttpStatus.OK, AnswerServiceStatus.ANSWER_CREATED, "답변 생성 성공"),
 	ANSWERS_ALL_FOUND(HttpStatus.OK, AnswerServiceStatus.ANSWERS_ALL_FOUND, "질문에 대한 모든 답변 조회 성공"),
 	ANSWER_UPDATED(HttpStatus.OK, AnswerServiceStatus.ANSWER_UPDATED, "답변 수정 성공"),
-	ANSWER_DELETED(HttpStatus.OK, AnswerServiceStatus.ANSWER_DELETED, "답변 삭제 성공"),
-	VOTE_CREATED(HttpStatus.OK, AnswerServiceStatus.VOTE_CREATED, "투표 생성"),
-	VOTE_DELETED(HttpStatus.OK, AnswerServiceStatus.VOTE_DELETED, "투표 삭제");
+	ANSWER_DELETED(HttpStatus.OK, AnswerServiceStatus.ANSWER_DELETED, "답변 삭제 성공");
 
 	private final HttpStatus code;
 	private final ServiceStatus serviceStatus;

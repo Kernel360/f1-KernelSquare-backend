@@ -36,4 +36,8 @@ public class LevelService {
         return FindAllLevelResponse.from(levelList);
     }
 
+    public void deleteLevel(Long levelId) {
+        levelRepository.deleteById(levelId);
+    }
+
 }

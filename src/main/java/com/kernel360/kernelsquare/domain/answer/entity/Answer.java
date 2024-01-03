@@ -50,7 +50,8 @@ public class Answer extends BaseEntity {
 	private Long voteCount;
 
 	@Builder
-	private Answer(String imageUrl, String content, Long voteCount, Member member, Question question) {
+	private Answer(Long id, String imageUrl, String content, Long voteCount, Member member, Question question) {
+		this.id = id;
 		this.content = content;
 		this.voteCount = voteCount;
 		this.imageUrl = imageUrl;

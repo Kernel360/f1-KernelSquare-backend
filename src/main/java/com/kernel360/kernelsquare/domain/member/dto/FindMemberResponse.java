@@ -6,7 +6,7 @@ import lombok.Builder;
 
 @Builder
 public record FindMemberResponse(
-	Long id,
+	Long memberId,
 	String nickname,
 	Long experience,
 	String introduction,
@@ -16,7 +16,7 @@ public record FindMemberResponse(
 	public static FindMemberResponse from(Member member) {
 		return FindMemberResponse
 			.builder()
-			.id(member.getId())
+			.memberId(member.getId())
 			.nickname(member.getNickname())
 			.experience(member.getExperience())
 			.introduction(member.getIntroduction())

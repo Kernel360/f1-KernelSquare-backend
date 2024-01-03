@@ -3,7 +3,7 @@ package com.kernel360.kernelsquare.domain.auth.dto;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 
 public record SignUpResponse(
-	Long id
+	Long memberId
 ) {
 
 	public static SignUpResponse of(Member member) {

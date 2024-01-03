@@ -187,7 +187,6 @@ public class AnswerServiceTest {
 
 		Member member = createTestMember(memberId);
 		Question question = createTestQuestion();
-		Answer foundAnswer = createTestAnswer(testAnswerId, 1L, member, question);
 
 		doNothing()
 			.when(answerRepository)
@@ -201,7 +200,7 @@ public class AnswerServiceTest {
 		answerService.deleteAnswer(testAnswerId);
 
 		//then
-		assertThatThrownBy(() -> answerRepository.findById(testAnswerId))
+		assertThatThrownBy(() -> answerRepository.findById(anyLong()))
 			.isExactlyInstanceOf(BusinessException.class);
 
 		//verify

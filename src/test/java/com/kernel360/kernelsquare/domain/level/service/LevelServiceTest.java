@@ -2,48 +2,74 @@ package com.kernel360.kernelsquare.domain.level.service;
 
 import com.kernel360.kernelsquare.domain.level.dto.CreateLevelRequest;
 import com.kernel360.kernelsquare.domain.level.dto.CreateLevelResponse;
+import com.kernel360.kernelsquare.domain.level.dto.FindAllLevelResponse;
 import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.level.repository.LevelRepository;
 import com.kernel360.kernelsquare.global.common_response.error.code.LevelErrorCode;
 import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.transaction.annotation.Transactional;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.swing.plaf.ViewportUI;
+
+
+import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @DisplayName("등급 서비스 통합 테스트")
-@Transactional
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class LevelServiceTest {
-    @Autowired
+    @InjectMocks
     private LevelService levelService;
-    @Autowired
+    @Mock
     private LevelRepository levelRepository;
 
     @Test
     @DisplayName("등급 생성 테스트")
     void testCreateLevel() {
         // Given
-        Long name = 3L;
-        String imageUrl = "test22";
-        CreateLevelRequest createLevelRequest = new CreateLevelRequest(name, imageUrl);
+        CreateLevelRequest createLevelRequest = new CreateLevelRequest(3L, "testurl");
+
+        Level level = CreateLevelRequest.toEntity(createLevelRequest);
+
+        given(levelRepository.save(any(Level.class))).willReturn(level);
 
         // When
         CreateLevelResponse createLevelResponse = levelService.createLevel(createLevelRequest);
-        Level newLevel = levelRepository.findById(createLevelResponse.levelId())
-                .orElseThrow(() -> new BusinessException(LevelErrorCode.LEVEL_NOT_FOUND));
 
         // Then
-        assertThat(newLevel).isNotNull();
-        assertThat(newLevel.getName()).isEqualTo(name);
+        assertThat(createLevelResponse).isNotNull();
+        assertThat(createLevelResponse.levelId()).isEqualTo(level.getId());
     }
 
+    @Test
+    @DisplayName("등급 조회 테스트")
+    void testFindAllLevel() {
+        // given
+        List<Level> expectedLevels = Arrays.asList(
+                new Level(1L, "image1.jpg"),
+                new Level(2L, "image2.jpg")
+        );
+        given(levelRepository.findAll()).willReturn(expectedLevels);
+
+        // when
+        FindAllLevelResponse actualLevels = levelService.findAllLevel();
+
+        // then
+        assertThat(actualLevels.levels().get(0).id()).isEqualTo(expectedLevels.get(0).getId());
+        assertThat(actualLevels.levels().get(0).name()).isEqualTo(expectedLevels.get(0).getName());
+        assertThat(actualLevels.levels().get(1).imageUrl()).isEqualTo(expectedLevels.get(1).getImageUrl());
+
+        verify(levelRepository, times(1)).findAll();
+    }
 
 }

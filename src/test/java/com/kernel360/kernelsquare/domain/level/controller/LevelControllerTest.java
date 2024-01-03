@@ -3,6 +3,8 @@ package com.kernel360.kernelsquare.domain.level.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kernel360.kernelsquare.domain.level.dto.CreateLevelRequest;
 import com.kernel360.kernelsquare.domain.level.dto.CreateLevelResponse;
+import com.kernel360.kernelsquare.domain.level.dto.FindAllLevelResponse;
+import com.kernel360.kernelsquare.domain.level.dto.LevelDto;
 import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.level.service.LevelService;
 import org.junit.jupiter.api.DisplayName;
@@ -14,11 +16,15 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static com.kernel360.kernelsquare.global.common_response.response.code.LevelResponseCode.LEVEL_CREATED;
-import static org.junit.jupiter.api.Assertions.*;
+import static com.kernel360.kernelsquare.global.common_response.response.code.LevelResponseCode.LEVEL_FOUND;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -43,7 +49,7 @@ class LevelControllerTest {
 
         Level level = new Level(name, imageUrl);
         CreateLevelRequest createLevelRequest = new CreateLevelRequest(name, imageUrl);
-        CreateLevelResponse createLevelResponse = CreateLevelResponse.of(level);
+        CreateLevelResponse createLevelResponse = CreateLevelResponse.from(level);
 
         doReturn(createLevelResponse)
                 .when(levelService)
@@ -68,6 +74,39 @@ class LevelControllerTest {
         verify(levelService, times(1)).createLevel(any(CreateLevelRequest.class));
 
 
+    }
+
+
+    @Test
+    @DisplayName("모든 레벨 조회 성공시 200 OK와 레벨 목록을 반환한다")
+    void testFindAllLevel() throws Exception {
+        // given
+        List<Level> levelList = Arrays.asList(
+                Level.builder().name(1L).imageUrl("image1.jpg").build(),
+                Level.builder().name(2L).imageUrl("image2.jpg").build()
+        );
+        FindAllLevelResponse response = FindAllLevelResponse.from(levelList);
+
+        doReturn(response)
+                .when(levelService)
+                .findAllLevel();
+
+        // when & then
+        mockMvc.perform(get("/api/v1/levels")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8"))
+                .andExpect(status().is(LEVEL_FOUND.getStatus().value()))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.code").value(LEVEL_FOUND.getCode()))
+                .andExpect(jsonPath("$.msg").value(LEVEL_FOUND.getMsg()))
+                .andExpect(jsonPath("$.data.levels[0].id").value(levelList.get(0).getId()))
+                .andExpect(jsonPath("$.data.levels[0].name").value(levelList.get(0).getName()))
+                .andExpect(jsonPath("$.data.levels[0].image_url").value(levelList.get(0).getImageUrl()));
+
+        // verify
+        verify(levelService, times(1)).findAllLevel();
     }
 
 }

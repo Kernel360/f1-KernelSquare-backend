@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public record CreateLevelResponse(
         Long levelId
 ) {
-    public static CreateLevelResponse of(Level level) {
+    public static CreateLevelResponse from(Level level) {
         return new CreateLevelResponse(
                 level.getId()
         );

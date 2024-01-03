@@ -2,18 +2,17 @@ package com.kernel360.kernelsquare.domain.level.controller;
 
 import com.kernel360.kernelsquare.domain.level.dto.CreateLevelRequest;
 import com.kernel360.kernelsquare.domain.level.dto.CreateLevelResponse;
+import com.kernel360.kernelsquare.domain.level.dto.FindAllLevelResponse;
 import com.kernel360.kernelsquare.domain.level.service.LevelService;
 import com.kernel360.kernelsquare.global.common_response.ApiResponse;
 import com.kernel360.kernelsquare.global.common_response.ResponseEntityFactory;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static com.kernel360.kernelsquare.global.common_response.response.code.LevelResponseCode.LEVEL_CREATED;
+import static com.kernel360.kernelsquare.global.common_response.response.code.LevelResponseCode.LEVEL_FOUND;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -31,5 +30,14 @@ public class LevelController {
 
         return ResponseEntityFactory.toResponseEntity(LEVEL_CREATED, response);
     }
+
+    @GetMapping("/levels")
+    public ResponseEntity<ApiResponse<FindAllLevelResponse>> findAllLevel() {
+        FindAllLevelResponse response = levelService.findAllLevel();
+
+        return ResponseEntityFactory.toResponseEntity(LEVEL_FOUND,response);
+    }
+
+
 
 }

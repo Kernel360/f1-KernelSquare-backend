@@ -3,6 +3,7 @@ package com.kernel360.kernelsquare.domain.tech_stack.controller;
 import com.kernel360.kernelsquare.domain.tech_stack.dto.CreateTechStackRequest;
 import com.kernel360.kernelsquare.domain.tech_stack.dto.CreateTechStackResponse;
 import com.kernel360.kernelsquare.domain.tech_stack.dto.FindAllTechStacksResponse;
+import com.kernel360.kernelsquare.domain.tech_stack.dto.UpdateTechStackRequest;
 import com.kernel360.kernelsquare.domain.tech_stack.service.TechStackService;
 import com.kernel360.kernelsquare.global.common_response.ApiResponse;
 import com.kernel360.kernelsquare.global.common_response.ResponseEntityFactory;
@@ -35,5 +36,27 @@ public class TechStackController {
         FindAllTechStacksResponse findAllTechStacksResponse = techStackService.findAllTechStacks();
 
         return ResponseEntityFactory.toResponseEntity(TECH_STACK_ALL_FOUND, findAllTechStacksResponse);
+    }
+
+    @PutMapping("/techs/{techStackId}")
+    public ResponseEntity<ApiResponse> updateTechStacks(
+        @PathVariable
+        Long techStackId,
+        @RequestBody
+        UpdateTechStackRequest updateTechStackRequest
+    ) {
+        techStackService.updateTechStack(techStackId, updateTechStackRequest);
+
+        return ResponseEntityFactory.toResponseEntity(TECH_STACK_UPDATED);
+    }
+
+    @DeleteMapping("/techs/{techStackId}")
+    public ResponseEntity<ApiResponse> deleteTechStack(
+        @PathVariable
+        Long techStackId
+    ) {
+        techStackService.deleteTechStack(techStackId);
+
+        return ResponseEntityFactory.toResponseEntity(TECH_STACK_DELETED);
     }
 }

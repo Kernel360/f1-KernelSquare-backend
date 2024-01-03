@@ -3,6 +3,7 @@ package com.kernel360.kernelsquare.domain.tech_stack.service;
 import com.kernel360.kernelsquare.domain.tech_stack.dto.CreateTechStackRequest;
 import com.kernel360.kernelsquare.domain.tech_stack.dto.CreateTechStackResponse;
 import com.kernel360.kernelsquare.domain.tech_stack.dto.FindAllTechStacksResponse;
+import com.kernel360.kernelsquare.domain.tech_stack.dto.UpdateTechStackRequest;
 import com.kernel360.kernelsquare.domain.tech_stack.entity.TechStack;
 import com.kernel360.kernelsquare.domain.tech_stack.repository.TechStackRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -14,12 +15,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @DisplayName("기술 스택 서비스 통합 테스트")
 @ExtendWith(MockitoExtension.class)
@@ -65,9 +67,47 @@ class TechStackServiceTest {
 
         //then
         assertThat(findAllTechStacksResponse).isNotNull();
-        assertThat(findAllTechStacksResponse.skills()).isEqualTo(techStackList.stream().map(TechStack::getSkill).toList());
+        assertThat(findAllTechStacksResponse.skills()).isEqualTo(techStackList);
 
         //verify
         verify(techStackRepository,times(1)).findAll();
+    }
+
+    @Test
+    @DisplayName("기술 스택 수정 테스트")
+    void testUpdateTechStack() {
+        //given
+        TechStack techStack = new TechStack(1L, "Spring");
+
+        given(techStackRepository.findById(anyLong())).willReturn(Optional.of(techStack));
+
+        UpdateTechStackRequest updateTechStackRequest = new UpdateTechStackRequest("Django");
+
+        //when
+        techStackService.updateTechStack(1L, updateTechStackRequest);
+
+        //then
+        assertThat(techStack).isNotNull();
+        assertThat(techStack.getSkill()).isEqualTo(updateTechStackRequest.skill());
+
+        //verify
+        verify(techStackRepository, times(1)).findById(anyLong());
+    }
+
+    @Test
+    @DisplayName("기술 스택 삭제 테스트")
+    void testDeleteTechStack() {
+        //given
+        TechStack techStack = new TechStack(1L, "HTTP");
+
+        doNothing()
+            .when(techStackRepository)
+            .deleteById(anyLong());
+
+        //when
+        techStackService.deleteTechStack(techStack.getId());
+
+        //then
+        verify(techStackRepository, times(1)).deleteById(anyLong());
     }
 }

@@ -10,9 +10,7 @@ public enum LevelServiceStatus implements ServiceStatus {
 
     //success
     LEVEL_CREATED(1440),
-    LEVEL_FOUND(1441),
-    LEVEL_DELETED(1442),
-    LEVEL_UPDATED(1443);
+    LEVEL_FOUND(1441);
 
     private final Integer code;
 

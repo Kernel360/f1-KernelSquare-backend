@@ -1,7 +1,10 @@
 package com.kernel360.kernelsquare.domain.level.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kernel360.kernelsquare.domain.level.dto.*;
+import com.kernel360.kernelsquare.domain.level.dto.CreateLevelRequest;
+import com.kernel360.kernelsquare.domain.level.dto.CreateLevelResponse;
+import com.kernel360.kernelsquare.domain.level.dto.FindAllLevelResponse;
+import com.kernel360.kernelsquare.domain.level.dto.LevelDto;
 import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.level.service.LevelService;
 import org.junit.jupiter.api.DisplayName;
@@ -16,11 +19,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.kernel360.kernelsquare.global.common_response.response.code.LevelResponseCode.*;
+import static com.kernel360.kernelsquare.global.common_response.response.code.LevelResponseCode.LEVEL_CREATED;
+import static com.kernel360.kernelsquare.global.common_response.response.code.LevelResponseCode.LEVEL_FOUND;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayName("등급 컨트롤러 통합 테스트")
@@ -42,10 +47,7 @@ class LevelControllerTest {
         Long name = 3L;
         String imageUrl = "test22";
 
-        Level level = Level.builder()
-                .name(name)
-                .imageUrl(imageUrl)
-                .build();
+        Level level = new Level(name, imageUrl);
         CreateLevelRequest createLevelRequest = new CreateLevelRequest(name, imageUrl);
         CreateLevelResponse createLevelResponse = CreateLevelResponse.from(level);
 
@@ -105,69 +107,6 @@ class LevelControllerTest {
 
         // verify
         verify(levelService, times(1)).findAllLevel();
-    }
-
-    @Test
-    @DisplayName("레벨 삭제 성공 시 200 OK와 메시지를 반환한다")
-    void testDeleteLevel() throws Exception {
-        // Given
-        Level level = new Level(1L, 11L, "image9.jpg");
-
-        doNothing()
-                .when(levelService)
-                .deleteLevel(anyLong());
-
-        // When & Then
-        mockMvc.perform(delete("/api/v1/levels/" + level.getId())
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .characterEncoding("UTF-8"))
-                .andExpect(status().is(LEVEL_DELETED.getStatus().value()))
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.code").value(LEVEL_DELETED.getCode()))
-                .andExpect(jsonPath("$.msg").value(LEVEL_DELETED.getMsg()));
-
-        // Verify
-        verify(levelService, times(1)).deleteLevel(anyLong());
-    }
-
-    @Test
-    @DisplayName("레벨 수정 성공 시 200 OK와 메시지를 반환한다")
-    void testUpdateLevel() throws Exception {
-        // Given
-        Long id = 1L;
-        Long name = 3L;
-        String imageUrl = "image1.jpg";
-
-        Level level = Level.builder()
-                .id(id)
-                .name(name)
-                .imageUrl(imageUrl)
-                .build();
-        UpdateLevelRequest updateLevelRequest = new UpdateLevelRequest(id, name, imageUrl);
-        UpdateLevelResponse updateLevelResponse = UpdateLevelResponse.from(level);
-
-        doReturn(updateLevelResponse)
-                .when(levelService)
-                .updateLevel(anyLong(),any(UpdateLevelRequest.class));
-
-        String jsonRequest = objectMapper.writeValueAsString(updateLevelRequest);
-
-        // When & Then
-        mockMvc.perform(put("/api/v1/levels/" + level.getId())
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .characterEncoding("UTF-8")
-                        .content(jsonRequest))
-                .andExpect(status().is(LEVEL_UPDATED.getStatus().value()))
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.code").value(LEVEL_UPDATED.getCode()))
-                .andExpect(jsonPath("$.msg").value(LEVEL_UPDATED.getMsg()));
-
-        // Verify
-        verify(levelService, times(1)).updateLevel(anyLong(),any(UpdateLevelRequest.class));
     }
 
 }

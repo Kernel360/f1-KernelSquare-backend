@@ -49,7 +49,7 @@ public class Member extends BaseEntity {
 	@Column(name = "image_url", columnDefinition = "varchar(100)")
 	private String imageUrl;
 
-	@Column(name = "introduction", columnDefinition = "varchar(300)")
+	@Column(nullable = false, name = "introduction", columnDefinition = "varchar(300)")
 	private String introduction;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -73,8 +73,9 @@ public class Member extends BaseEntity {
 	}
 
 	@Builder
-	public Member(String nickname, String email, String password, Long experience, String imageUrl,
+	public Member(Long id, String nickname, String email, String password, Long experience, String imageUrl,
 		String introduction, Level level, List<MemberAuthority> authorities) {
+		this.id = id;
 		this.nickname = nickname;
 		this.email = email;
 		this.password = password;

@@ -27,7 +27,7 @@ public class MemberAnswerVote extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false, name = "status", columnDefinition = "tinyint")
+	@Column(nullable = false, name = "status", columnDefinition = "smallint")
 	private Integer status;
 
 	@ManyToOne(fetch = FetchType.LAZY)

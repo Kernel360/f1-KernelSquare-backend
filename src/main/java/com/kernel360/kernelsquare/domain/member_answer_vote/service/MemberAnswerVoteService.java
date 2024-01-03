@@ -24,15 +24,6 @@ public class MemberAnswerVoteService {
     private final MemberAnswerVoteRepository memberAnswerVoteRepository;
 
     @Transactional
-    public void updateVoteCount(Long diffVoteCount, Long answerId) {
-        if (diffVoteCount == 1) {
-            answerRepository.upVoteAnswer(answerId);
-            return;
-        }
-        answerRepository.downVoteAnswer(answerId);
-    }
-
-    @Transactional
     public void createVote(CreateMemberAnswerVoteRequest createMemberAnswerVoteRequest, Long answerId) {
         Member member = memberRepository.findById(createMemberAnswerVoteRequest.memberId())
                 .orElseThrow(() -> new BusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
@@ -44,7 +35,12 @@ public class MemberAnswerVoteService {
                 createMemberAnswerVoteRequest, member, answer
         );
         memberAnswerVoteRepository.save(memberAnswerVote);
-        updateVoteCount((long) createMemberAnswerVoteRequest.status(), answerId);
+
+        if ((long) createMemberAnswerVoteRequest.status() == 1) {
+            answerRepository.upVoteAnswer(answerId);
+            return;
+        }
+        answerRepository.downVoteAnswer(answerId);
     }
 
     @Transactional
@@ -53,8 +49,13 @@ public class MemberAnswerVoteService {
         MemberAnswerVote memberAnswerVote = memberAnswerVoteRepository.findByMemberIdAndAnswerId(memberId, answerId)
                 .orElseThrow(() -> new BusinessException(MemberAnswerVoteErrorCode.MEMBER_ANSWER_VOTE_NOT_FOUND));
 
-        int memberAnswerVoteStatus = memberAnswerVote.getStatus();
-        updateVoteCount((long) -memberAnswerVoteStatus, answerId);
         memberAnswerVoteRepository.deleteById(memberAnswerVote.getId());
+
+        int memberAnswerVoteStatus = - memberAnswerVote.getStatus();
+        if (memberAnswerVoteStatus == 1) {
+            answerRepository.upVoteAnswer(answerId);
+            return;
+        }
+        answerRepository.downVoteAnswer(answerId);
     }
 }

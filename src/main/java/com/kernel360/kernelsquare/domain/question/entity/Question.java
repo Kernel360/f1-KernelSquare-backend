@@ -43,6 +43,7 @@ public class Question extends BaseEntity {
 
 	@Builder
 	public Question(Long id, String title, String content, String imageUrl, Long viewCount, Boolean closedStatus, Member member, List<QuestionTechStack> techStackList) {
+		this.id = id;
 		this.title = title;
 		this.content = content;
 		this.imageUrl = imageUrl;

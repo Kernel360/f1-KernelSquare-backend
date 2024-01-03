@@ -1,6 +1,7 @@
 package com.kernel360.kernelsquare.domain.question.controller;
 
 import com.kernel360.kernelsquare.domain.question.dto.CreateQuestionRequest;
+import com.kernel360.kernelsquare.domain.question.dto.CreateQuestionResponse;
 import com.kernel360.kernelsquare.domain.question.dto.FindQuestionResponse;
 import com.kernel360.kernelsquare.domain.question.dto.UpdateQuestionRequest;
 import com.kernel360.kernelsquare.domain.question.service.QuestionService;
@@ -24,14 +25,14 @@ public class QuestionController {
     private final QuestionService questionService;
 
     @PostMapping("/questions")
-    public ResponseEntity<ApiResponse<Long>> createQuestion(
+    public ResponseEntity<ApiResponse<CreateQuestionResponse>> createQuestion(
         @Valid
         @RequestBody
         CreateQuestionRequest createQuestionRequest
     ) {
-        Long questionId = questionService.createQuestion(createQuestionRequest);
+        CreateQuestionResponse createQuestionResponse = questionService.createQuestion(createQuestionRequest);
 
-        return ResponseEntityFactory.toResponseEntity(QUESTION_CREATED, questionId);
+        return ResponseEntityFactory.toResponseEntity(QUESTION_CREATED, createQuestionResponse);
     }
 
     @GetMapping("/questions/{questionId}")

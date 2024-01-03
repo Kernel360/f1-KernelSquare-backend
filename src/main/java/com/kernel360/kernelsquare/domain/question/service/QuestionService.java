@@ -1,8 +1,11 @@
 package com.kernel360.kernelsquare.domain.question.service;
 
+import com.kernel360.kernelsquare.domain.answer.dto.FindAnswerResponse;
+import com.kernel360.kernelsquare.domain.answer.repository.AnswerRepository;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
 import com.kernel360.kernelsquare.domain.question.dto.CreateQuestionRequest;
+import com.kernel360.kernelsquare.domain.question.dto.CreateQuestionResponse;
 import com.kernel360.kernelsquare.domain.question.dto.FindQuestionResponse;
 import com.kernel360.kernelsquare.domain.question.dto.UpdateQuestionRequest;
 import com.kernel360.kernelsquare.domain.question.entity.Question;
@@ -17,7 +20,6 @@ import com.kernel360.kernelsquare.global.common_response.error.exception.Busines
 import com.kernel360.kernelsquare.global.dto.PageResponse;
 import com.kernel360.kernelsquare.global.dto.Pagination;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -33,22 +35,23 @@ public class QuestionService {
     private final MemberRepository memberRepository;
     private final TechStackRepository techStackRepository;
     private final QuestionTechStackRepository questionTechStackRepository;
+    private final AnswerRepository answerRepository;
 
     @Transactional
-    public Long createQuestion(CreateQuestionRequest createQuestionRequest) {
+    public CreateQuestionResponse createQuestion(CreateQuestionRequest createQuestionRequest) {
         Member member = memberRepository.findById(createQuestionRequest.memberId())
             .orElseThrow(() -> new BusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         Question question = CreateQuestionRequest.toEntity(createQuestionRequest, member);
 
-        questionRepository.save(question);
+        Question saveQuestion = questionRepository.save(question);
 
         List<String> skills = createQuestionRequest.skills();
         List<QuestionTechStack> techStackList = new ArrayList<>();
 
         saveTechStackList(question, skills, techStackList);
 
-        return question.getId();
+        return CreateQuestionResponse.from(saveQuestion);
     }
 
     @Transactional(readOnly = true)
@@ -78,11 +81,7 @@ public class QuestionService {
             throw new BusinessException(QuestionErrorCode.PAGE_NOT_FOUND);
         }
 
-        Pagination pagination = Pagination.builder()
-            .totalPage(totalPages)
-            .pageable(pages.getSize())
-            .isEnd(currentPage.equals(totalPages))
-            .build();
+        Pagination pagination = Pagination.toEntity(totalPages, pages.getSize(), currentPage.equals(totalPages));
 
         List<FindQuestionResponse> responsePages = pages.getContent().stream()
             .map(Question::getId)
@@ -107,7 +106,7 @@ public class QuestionService {
         saveTechStackList(question, skills, techStackList);
     }
 
-    public void saveTechStackList(Question question, List<String> skills, List<QuestionTechStack> techStackList) {
+    private void saveTechStackList(Question question, List<String> skills, List<QuestionTechStack> techStackList) {
         for (String skill : skills) {
             TechStack techStack = techStackRepository.findBySkill(skill).orElseThrow(() -> new RuntimeException());
 

@@ -8,4 +8,6 @@ import java.util.Optional;
 
 public interface TechStackRepository extends JpaRepository<TechStack, Long> {
     Optional<TechStack> findBySkill(String skill);
+
+    boolean existsBySkill(String skill);
 }

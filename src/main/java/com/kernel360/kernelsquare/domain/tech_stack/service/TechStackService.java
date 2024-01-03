@@ -40,15 +40,21 @@ public class TechStackService {
     }
 
     @Transactional
-    public void deleteTechStack(Long techStackId) {
-        techStackRepository.deleteById(techStackId);
-    }
-
-    @Transactional
     public void updateTechStack(Long techStackId, UpdateTechStackRequest updateTechStackRequest) {
         TechStack techStack = techStackRepository.findById(techStackId)
             .orElseThrow(() -> new BusinessException(TechStackErrorCode.TECH_STACK_NOT_FOUND));
 
+        boolean isSkillExists = techStackRepository.existsBySkill(updateTechStackRequest.skill());
+
+        if (isSkillExists) {
+            throw new BusinessException(TechStackErrorCode.TECH_STACK_ALREADY_EXISTED);
+        }
+
         techStack.update(updateTechStackRequest.skill());
+    }
+
+    @Transactional
+    public void deleteTechStack(Long techStackId) {
+        techStackRepository.deleteById(techStackId);
     }
 }

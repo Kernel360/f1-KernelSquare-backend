@@ -11,7 +11,7 @@ spring:
   security:
     jwt:
       header: Authorization
-      secret: Zm9yZ2V0LW1lLW5vdC1mb3JnZXQtbWUtbm90LWZvcmdldC1tZS1ub3QtZm9yZ2V0LW1lLW5vdC1mb3JnZXQtbWUtbm90LWZvcmdldC1tZS1ub3QtZm9yZ2V0LW1lLW5vdC1mb3JnZXQtbWUtbm90LWZvcmdldC1tZS1ub3QtZm9yZ2V0LW1lLW5vdC1mb3JnZXQtbWUtbm90
+      secret: ${JWT_SECRET_KEY}
       access-token-validity-in-seconds: 86_400     # 1일
       refresh-token-validity-in-seconds: 1_209_600  # 2주
 

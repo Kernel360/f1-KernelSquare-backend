@@ -59,14 +59,6 @@ public class AnswerService {
     }
 
     @Transactional
-    public void updateAnswerVote(UpdateAnswerRequest updateAnswerRequest, Long answerId) {
-        Answer answer = answerRepository.findById(answerId)
-                .orElseThrow(() -> new BusinessException(AnswerErrorCode.ANSWER_NOT_FOUND));
-
-        answer.update(updateAnswerRequest.content(), updateAnswerRequest.imageUrl());
-    }
-
-    @Transactional
     public void deleteAnswer(Long answerId) {
         answerRepository.deleteById(answerId);
     }

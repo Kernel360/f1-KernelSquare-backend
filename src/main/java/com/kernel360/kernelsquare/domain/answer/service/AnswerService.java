@@ -7,11 +7,8 @@ import com.kernel360.kernelsquare.domain.answer.entity.Answer;
 import com.kernel360.kernelsquare.domain.answer.repository.AnswerRepository;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
-import com.kernel360.kernelsquare.domain.member_answer_vote.dto.CreateMemberAnswerVoteRequest;
-import com.kernel360.kernelsquare.domain.question.dto.UpdateQuestionRequest;
 import com.kernel360.kernelsquare.domain.question.entity.Question;
 import com.kernel360.kernelsquare.domain.question.repository.QuestionRepository;
-import com.kernel360.kernelsquare.domain.question_tech_stack.entity.QuestionTechStack;
 import com.kernel360.kernelsquare.global.common_response.error.code.AnswerErrorCode;
 import com.kernel360.kernelsquare.global.common_response.error.code.MemberErrorCode;
 import com.kernel360.kernelsquare.global.common_response.error.code.QuestionErrorCode;
@@ -20,9 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

@@ -15,6 +15,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -26,8 +27,8 @@ public class MemberAnswerVote extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false, name = "status", columnDefinition = "tinyint")
-	private Boolean status;
+	@Column(nullable = false, name = "status", columnDefinition = "smallint")
+	private Integer status;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id", columnDefinition = "bigint", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
@@ -36,4 +37,12 @@ public class MemberAnswerVote extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "answer_id", columnDefinition = "bigint", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
 	private Answer answer;
+
+	@Builder
+	private MemberAnswerVote(Long id, int status, Member member, Answer answer) {
+		this.id = id;
+		this.status = status;
+		this.member = member;
+		this.answer = answer;
+	}
 }

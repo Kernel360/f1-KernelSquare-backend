@@ -126,15 +126,11 @@ public class AnswerControllerTest {
 
     @Test
     @WithMockUser
-    @DisplayName("답변 생성 성공시, 200 OK, 메시지, 답변정보를 반환한다.")
+    @DisplayName("답변 생성 성공시, 200 OK, 메시지를 반환한다.")
     void testCreateAnswer() throws Exception {
         //given
         objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
         String jsonRequest = objectMapper.writeValueAsString(createAnswerRequest);
-
-        doReturn(testAnswer.getId())
-                .when(answerService)
-                .createAnswer(any(CreateAnswerRequest.class), anyLong());
 
         //when & then
         mockMvc.perform(post("/api/v1/questions/" + testQuestionId + "/answers")

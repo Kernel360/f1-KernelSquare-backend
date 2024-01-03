@@ -18,6 +18,8 @@ import com.kernel360.kernelsquare.global.common_response.error.exception.Busines
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
@@ -36,7 +38,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @DisplayName("답변 서비스 통합 테스트")
 @Transactional
 @SpringBootTest
-@ActiveProfiles("test")
 public class AnswerServiceTest {
     @Autowired
     private AnswerService answerService;

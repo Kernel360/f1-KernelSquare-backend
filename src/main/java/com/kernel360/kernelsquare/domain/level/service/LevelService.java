@@ -32,7 +32,7 @@ public class LevelService {
 
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public FindAllLevelResponse findAllLevel() {
         List<Level> levelList = levelRepository.findAll();
         return FindAllLevelResponse.from(levelList);

@@ -17,7 +17,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.kernel360.kernelsquare.global.common_response.response.code.LevelResponseCode.*;
-import static com.kernel360.kernelsquare.global.common_response.response.code.TechStackResponseCode.TECH_STACK_DELETED;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -166,6 +165,9 @@ class LevelControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.code").value(LEVEL_UPDATED.getCode()))
                 .andExpect(jsonPath("$.msg").value(LEVEL_UPDATED.getMsg()));
+
+        // Verify
+        verify(levelService, times(1)).updateLevel(anyLong(),any(UpdateLevelRequest.class));
     }
 
 }

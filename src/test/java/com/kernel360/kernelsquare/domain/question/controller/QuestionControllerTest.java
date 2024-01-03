@@ -10,8 +10,6 @@ import com.kernel360.kernelsquare.domain.question.dto.FindQuestionResponse;
 import com.kernel360.kernelsquare.domain.question.dto.UpdateQuestionRequest;
 import com.kernel360.kernelsquare.domain.question.entity.Question;
 import com.kernel360.kernelsquare.domain.question.service.QuestionService;
-import com.kernel360.kernelsquare.domain.tech_stack.entity.TechStack;
-import com.kernel360.kernelsquare.domain.tech_stack.repository.TechStackRepository;
 import com.kernel360.kernelsquare.global.dto.PageResponse;
 import com.kernel360.kernelsquare.global.dto.Pagination;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,8 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -47,15 +43,10 @@ class QuestionControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private QuestionService questionService;
-    @MockBean
-    private TechStackRepository techStackRepository;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
     Member member;
-
-//    Question testQuestion;
-
     Level level;
 
     private Question createTestQuestion(Long id) {
@@ -84,12 +75,6 @@ class QuestionControllerTest {
             .build();
     }
 
-    private TechStack createTestTechStack(String skill) {
-        return TechStack.builder()
-            .skill(skill)
-            .build();
-    }
-
     private Level createTestLevel() {
         return Level.builder()
             .name(6L)
@@ -101,15 +86,7 @@ class QuestionControllerTest {
     void setUp() {
         level = createTestLevel();
 
-//        TechStack techStack = createTestTechStack("Java");
-//        techStackRepository.save(techStack);
-//
-//        techStack = createTestTechStack("Python");
-//        techStackRepository.save(techStack);
-
         member = createTestMember();
-
-//        testQuestion = createTestQuestion();
     }
 
     @Test
@@ -152,7 +129,7 @@ class QuestionControllerTest {
         //given
         Question question = createTestQuestion(1L);
 
-        FindQuestionResponse findQuestionResponse = FindQuestionResponse.of(member, question, level, List.of());
+        FindQuestionResponse findQuestionResponse = FindQuestionResponse.of(member, question, level);
 
         given(questionService.findQuestion(anyLong())).willReturn(findQuestionResponse);
 
@@ -194,8 +171,8 @@ class QuestionControllerTest {
             .isEnd(true)
             .build();
 
-        FindQuestionResponse findQuestionResponse1 = FindQuestionResponse.of(member, question1, level, List.of());
-        FindQuestionResponse findQuestionResponse2 = FindQuestionResponse.of(member, question2, level, List.of());
+        FindQuestionResponse findQuestionResponse1 = FindQuestionResponse.of(member, question1, level);
+        FindQuestionResponse findQuestionResponse2 = FindQuestionResponse.of(member, question2, level);
 
         List<FindQuestionResponse> responsePages = List.of(findQuestionResponse1, findQuestionResponse2);
 

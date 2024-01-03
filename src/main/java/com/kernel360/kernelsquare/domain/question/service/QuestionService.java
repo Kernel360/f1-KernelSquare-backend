@@ -63,16 +63,7 @@ public class QuestionService {
 
         Member member = question.getMember();
 
-        List<FindAnswerResponse> answerList = findAllAnswer(question.getId());
-
-        return FindQuestionResponse.of(member, question, member.getLevel(), answerList);
-    }
-
-    private List<FindAnswerResponse> findAllAnswer(Long questionId) {
-        return answerRepository.findAnswersByQuestionIdSortedByCreationDate(questionId)
-            .stream()
-            .map(FindAnswerResponse::from)
-            .toList();
+        return FindQuestionResponse.of(member, question, member.getLevel());
     }
 
     @Transactional(readOnly = true)

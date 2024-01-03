@@ -1,7 +1,5 @@
 package com.kernel360.kernelsquare.domain.question.service;
 
-import com.kernel360.kernelsquare.domain.answer.entity.Answer;
-import com.kernel360.kernelsquare.domain.answer.repository.AnswerRepository;
 import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
@@ -44,8 +42,6 @@ class QuestionServiceTest {
     @Mock
     private MemberRepository memberRepository;
     @Mock
-    private AnswerRepository answerRepository;
-    @Mock
     private QuestionTechStackRepository questionTechStackRepository;
 
     Member member;
@@ -83,17 +79,6 @@ class QuestionServiceTest {
         return Level.builder()
             .name(6L)
             .imageUrl("1.jpg")
-            .build();
-    }
-
-    private Answer createTestAnswer(Question question) {
-        return Answer.builder()
-            .id(1L)
-            .content("answer")
-            .voteCount(0L)
-            .imageUrl("1.jpg")
-            .member(member)
-            .question(question)
             .build();
     }
 
@@ -135,11 +120,7 @@ class QuestionServiceTest {
         //given
         Question question = createTestQuestion(1L);
 
-        Answer answer = createTestAnswer(question);
-
         given(questionRepository.findById(anyLong())).willReturn(Optional.ofNullable(question));
-
-        given(answerRepository.findAnswersByQuestionIdSortedByCreationDate(anyLong())).willReturn(List.of(answer));
 
         //when
         FindQuestionResponse findQuestionResponse = questionService.findQuestion(question.getId());

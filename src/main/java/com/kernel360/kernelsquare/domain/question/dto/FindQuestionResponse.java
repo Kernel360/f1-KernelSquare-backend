@@ -21,10 +21,9 @@ public record FindQuestionResponse(
     String levelImageUrl,
     List<String> skills,
     LocalDateTime createdDate,
-    LocalDateTime modifiedDate,
-    List<FindAnswerResponse> answerList
+    LocalDateTime modifiedDate
 ) {
-    public static FindQuestionResponse of (Member member, Question question, Level level, List<FindAnswerResponse> answerList) {
+    public static FindQuestionResponse of (Member member, Question question, Level level) {
         return new FindQuestionResponse(
             question.getId(),
             question.getTitle(),
@@ -38,8 +37,7 @@ public record FindQuestionResponse(
             level.getImageUrl(),
             question.getTechStackList().stream().map(x -> x.getTechStack().getSkill()).toList(),
             question.getCreatedDate(),
-            question.getModifiedDate(),
-            answerList
+            question.getModifiedDate()
         );
     }
 }

@@ -20,6 +20,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -182,19 +184,22 @@ class QuestionControllerTest {
     @DisplayName("모든 질문 조회 성공시 200 OK와 메시지를 반환한다")
     void testFindAllQuestions() throws Exception {
         //given
-        Pageable pageable = PageRequest.of(0, 5);
+        Question question1 = createTestQuestion(1L);
+        Question question2 = createTestQuestion(2L);
 
+        Pageable pageable = PageRequest.of(0, 2);
         Pagination pagination = Pagination.builder()
             .totalPage(1)
             .pageable(pageable.getPageSize())
             .isEnd(true)
             .build();
 
-        FindQuestionResponse question = FindQuestionResponse.of(testMember, testQuestion, testLevel, List.of());
+        FindQuestionResponse findQuestionResponse1 = FindQuestionResponse.of(member, question1, level, List.of());
+        FindQuestionResponse findQuestionResponse2 = FindQuestionResponse.of(member, question2, level, List.of());
 
-        List<FindQuestionResponse> testResponsePages = List.of(question);
+        List<FindQuestionResponse> responsePages = List.of(findQuestionResponse1, findQuestionResponse2);
 
-        PageResponse<FindQuestionResponse> response = PageResponse.of(pagination, testResponsePages);
+        PageResponse<FindQuestionResponse> response = PageResponse.of(pagination, responsePages);
 
         doReturn(response)
             .when(questionService)
@@ -209,69 +214,69 @@ class QuestionControllerTest {
             .andExpect(status().is(QUESTION_ALL_FOUND.getStatus().value()))
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.code").value(QUESTION_ALL_FOUND.getCode()))
-            .andExpect(jsonPath("$.msg").value(QUESTION_ALL_FOUND.getMsg()));
+            .andExpect(jsonPath("$.msg").value(QUESTION_ALL_FOUND.getMsg()))
+            .andExpect(jsonPath("$.data.pagination.total_page").value(1))
+            .andExpect(jsonPath("$.data.pagination.pageable").value(pageable.getPageSize()))
+            .andExpect(jsonPath("$.data.pagination.is_end").value(true));
 
         //verify
         verify(questionService, times(1)).findAllQuestions(any(Pageable.class));
     }
 
-//    @Test
-//    @DisplayName("질문 수정 성공시 200 OK와 메시지를 반환한다")
-//    void testUpdateQuestion() throws Exception {
-//        //given
-//        Long testQuestionId = 1L;
-//        String testTitle = "put test";
-//        String testContent = "success";
-//        String testImageUrl = "put.jpg";
-//        List<String> testSkills = List.of();
-//
-//        UpdateQuestionRequest request = new UpdateQuestionRequest(testTitle, testContent, testImageUrl, testSkills);
-//
-//        doNothing()
-//            .when(questionService)
-//            .updateQuestion(anyLong(), any(UpdateQuestionRequest.class));
-//
-//        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
-//        String jsonRequest = objectMapper.writeValueAsString(request);
-//
-//        //when & then
-//        mockMvc.perform(put("/api/v1/questions/" + testQuestionId)
-//                .with(csrf())
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .accept(MediaType.APPLICATION_JSON)
-//                .characterEncoding("UTF-8")
-//                .content(jsonRequest))
-//            .andExpect(status().is(QUESTION_UPDATED.getStatus().value()))
-//            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-//            .andExpect(jsonPath("$.code").value(QUESTION_UPDATED.getCode()))
-//            .andExpect(jsonPath("$.msg").value(QUESTION_UPDATED.getMsg()));
-//
-//        //verify
-//        verify(questionService, times(1)).updateQuestion(anyLong(), any(UpdateQuestionRequest.class));
-//    }
-//
-//    @Test
-//    @DisplayName("질문 삭제 성공시 200 OK와 메시지를 반환한다")
-//    void testDeleteQuestion() throws Exception {
-//        //given
-//        Long testQuestionId = 1L;
-//
-//        doNothing()
-//            .when(questionService)
-//            .deleteQuestion(anyLong());
-//
-//        //when & then
-//        mockMvc.perform(delete("/api/v1/questions/" + testQuestionId)
-//                .with(csrf())
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .accept(MediaType.APPLICATION_JSON)
-//                .characterEncoding("UTF-8"))
-//            .andExpect(status().is(QUESTION_DELETED.getStatus().value()))
-//            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-//            .andExpect(jsonPath("$.code").value(QUESTION_DELETED.getCode()))
-//            .andExpect(jsonPath("$.msg").value(QUESTION_DELETED.getMsg()));
-//
-//        //verify
-//        verify(questionService, times(1)).deleteQuestion(anyLong());
-//    }
+    @Test
+    @DisplayName("질문 수정 성공시 200 OK와 메시지를 반환한다")
+    void testUpdateQuestion() throws Exception {
+        //given
+        Question question = createTestQuestion(1L);
+
+        UpdateQuestionRequest updateQuestionRequest =
+            new UpdateQuestionRequest(question.getTitle(), question.getContent(), question.getImageUrl(), List.of());
+
+        doNothing()
+            .when(questionService)
+            .updateQuestion(anyLong(), any(UpdateQuestionRequest.class));
+
+        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+        String jsonRequest = objectMapper.writeValueAsString(updateQuestionRequest);
+
+        //when & then
+        mockMvc.perform(put("/api/v1/questions/" + question.getId())
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+                .content(jsonRequest))
+            .andExpect(status().is(QUESTION_UPDATED.getStatus().value()))
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.code").value(QUESTION_UPDATED.getCode()))
+            .andExpect(jsonPath("$.msg").value(QUESTION_UPDATED.getMsg()));
+
+        //verify
+        verify(questionService, times(1)).updateQuestion(anyLong(), any(UpdateQuestionRequest.class));
+    }
+
+    @Test
+    @DisplayName("질문 삭제 성공시 200 OK와 메시지를 반환한다")
+    void testDeleteQuestion() throws Exception {
+        //given
+        Question question = createTestQuestion(1L);
+
+        doNothing()
+            .when(questionService)
+            .deleteQuestion(anyLong());
+
+        //when & then
+        mockMvc.perform(delete("/api/v1/questions/" + question.getId())
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8"))
+            .andExpect(status().is(QUESTION_DELETED.getStatus().value()))
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.code").value(QUESTION_DELETED.getCode()))
+            .andExpect(jsonPath("$.msg").value(QUESTION_DELETED.getMsg()));
+
+        //verify
+        verify(questionService, times(1)).deleteQuestion(anyLong());
+    }
 }

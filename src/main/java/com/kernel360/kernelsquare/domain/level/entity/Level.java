@@ -29,7 +29,8 @@ public class Level extends BaseEntity {
 	private String imageUrl;
 
 	@Builder
-	public Level(Long name, String imageUrl) {
+	public Level(Long id, Long name, String imageUrl) {
+		this.id = id;
 		this.name = name;
 		this.imageUrl = imageUrl;
 	}

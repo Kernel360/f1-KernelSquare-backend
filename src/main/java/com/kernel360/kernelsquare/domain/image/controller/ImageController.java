@@ -1,5 +1,6 @@
 package com.kernel360.kernelsquare.domain.image.controller;
 
+import com.kernel360.kernelsquare.domain.image.dto.UploadImageResponse;
 import com.kernel360.kernelsquare.domain.image.service.ImageService;
 import com.kernel360.kernelsquare.global.common_response.ApiResponse;
 import com.kernel360.kernelsquare.global.common_response.ResponseEntityFactory;
@@ -18,15 +19,15 @@ public class ImageController {
     private final ImageService imageService;
 
     @PostMapping("/images")
-    public ResponseEntity<ApiResponse<String>> uploadImage(
+    public ResponseEntity<ApiResponse<UploadImageResponse>> uploadImage(
         @RequestParam
         String category,
         @RequestPart(value = "file")
         MultipartFile multipartFile
     ) {
-        String url = imageService.uploadImage(category, multipartFile);
+        UploadImageResponse uploadImageResponse = imageService.uploadImage(category, multipartFile);
 
-        return ResponseEntityFactory.toResponseEntity(IMAGE_UPLOAD_COMPLETED, url);
+        return ResponseEntityFactory.toResponseEntity(IMAGE_UPLOAD_COMPLETED, uploadImageResponse);
     }
 
     @DeleteMapping("/images")

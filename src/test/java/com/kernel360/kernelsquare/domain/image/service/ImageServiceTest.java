@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectResult;
+import com.kernel360.kernelsquare.domain.image.dto.UploadImageResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,10 +54,10 @@ class ImageServiceTest {
         given(amazonS3Client.getUrl(any(), anyString())).willReturn(mockUrl);
 
         // when
-        String imageUrl = imageService.uploadImage(category, file);
+        UploadImageResponse uploadImageResponse = imageService.uploadImage(category, file);
 
         // then
-        assertThat(imageUrl).isEqualTo(mockUrl.toString());
+        assertThat(uploadImageResponse.imageUrl()).isEqualTo(mockUrl.toString());
 
         //verify
         verify(amazonS3Client, times(1)).putObject(any(), anyString(), any(InputStream.class), any(ObjectMetadata.class));

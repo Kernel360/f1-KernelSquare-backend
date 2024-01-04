@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.kernel360.kernelsquare.domain.image.dto.CategoryDto;
+import com.kernel360.kernelsquare.domain.image.dto.UploadImageResponse;
 import com.kernel360.kernelsquare.domain.image.utils.ImageUtils;
 import com.kernel360.kernelsquare.global.common_response.error.code.CategoryErrorCode;
 import com.kernel360.kernelsquare.global.common_response.error.code.ImageErrorCode;
@@ -25,7 +26,7 @@ public class ImageService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public String uploadImage(String category, MultipartFile multipartFile) {
+    public UploadImageResponse uploadImage(String category, MultipartFile multipartFile) {
         validateCategory(category);
 
         validateFileExists(multipartFile);
@@ -39,7 +40,9 @@ public class ImageService {
         try {
             amazonS3Client.putObject(bucket, filePath, multipartFile.getInputStream(), metadata);
 
-            return amazonS3Client.getUrl(bucket, filePath).toString();
+            UploadImageResponse uploadImageResponse = UploadImageResponse.from(amazonS3Client.getUrl(bucket, filePath).toString());
+
+            return uploadImageResponse;
         } catch (IOException e) {
             throw new BusinessException(ImageErrorCode.IMAGE_UPLOAD_FAILED);
         }

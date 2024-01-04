@@ -1,5 +1,6 @@
 package com.kernel360.kernelsquare.domain.image.controller;
 
+import com.kernel360.kernelsquare.domain.image.dto.UploadImageResponse;
 import com.kernel360.kernelsquare.domain.image.service.ImageService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,7 +45,7 @@ class ImageControllerTest {
             "Hello, World!".getBytes()
         );
 
-        given(imageService.uploadImage(anyString(), any(MultipartFile.class))).willReturn("http://example.com/hello.png");
+        given(imageService.uploadImage(anyString(), any(MultipartFile.class))).willReturn(UploadImageResponse.from("http://example.com/hello.png"));
 
         //when & then
         mockMvc.perform(multipart("/api/v1/images")

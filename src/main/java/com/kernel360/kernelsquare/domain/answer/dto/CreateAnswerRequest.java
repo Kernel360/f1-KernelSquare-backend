@@ -4,15 +4,18 @@ import com.kernel360.kernelsquare.domain.answer.entity.Answer;
 import com.kernel360.kernelsquare.domain.image.utils.ImageUtils;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.question.entity.Question;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 
-public record CreateAnswerRequest (
-    @NotNull
-    Long memberId,
-    @NotBlank
-    String content,
-    String imageUrl
+@Builder
+public record CreateAnswerRequest(
+	@NotNull
+	Long memberId,
+	@NotBlank
+	String content,
+	String imageUrl
 ) {
     public static Answer toEntity(
             CreateAnswerRequest createAnswerRequest,

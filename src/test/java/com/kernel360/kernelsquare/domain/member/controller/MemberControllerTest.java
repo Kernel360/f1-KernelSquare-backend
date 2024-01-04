@@ -17,6 +17,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.member.dto.FindMemberResponse;
 import com.kernel360.kernelsquare.domain.member.dto.UpdateMemberRequest;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
@@ -33,6 +34,12 @@ public class MemberControllerTest {
 
 	private ObjectMapper objectMapper = new ObjectMapper();
 
+	private Level testLevel = Level.builder()
+		.id(1L)
+		.name(1L)
+		.imageUrl("s3:dq1234512")
+		.build();
+
 	private Member testMember = Member
 		.builder()
 		.nickname("hongjugwang")
@@ -41,6 +48,7 @@ public class MemberControllerTest {
 		.experience(10000L)
 		.introduction("hi, i'm hongjugwang.")
 		.imageUrl("s3:qwe12fasdawczx")
+		.level(testLevel)
 		.build();
 
 	private Long testMemberId = 1L;

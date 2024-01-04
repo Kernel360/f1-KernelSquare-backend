@@ -7,6 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.kernel360.kernelsquare.global.constants.SecurityConstants;
 import com.kernel360.kernelsquare.global.jwt.TokenProvider;
 
 import jakarta.servlet.FilterChain;
@@ -18,8 +19,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JWTTokenSettingFilter extends OncePerRequestFilter {
 	private final TokenProvider tokenProvider;
-	public final String AUTHORIZATION_HEADER = "Authorization";
-	public final String TOKEN_PREFIX = "Bearer";
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -35,9 +34,9 @@ public class JWTTokenSettingFilter extends OncePerRequestFilter {
 	}
 
 	private String resolveToken(HttpServletRequest request) {
-		String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-		if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(TOKEN_PREFIX)) {
-			return bearerToken.substring(TOKEN_PREFIX.length()).trim();
+		String bearerToken = request.getHeader(SecurityConstants.AUTHORIZATION_HEADER);
+		if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(SecurityConstants.TOKEN_PREFIX)) {
+			return bearerToken.substring(SecurityConstants.TOKEN_PREFIX.length()).trim();
 		}
 		return null;
 	}

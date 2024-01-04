@@ -36,7 +36,7 @@ public class SecurityConfig {
 		http.authorizeHttpRequests(authz -> authz
 			.requestMatchers("/api/v1/questions/**",
 				"/api/v1/auth/**").permitAll()
-			.requestMatchers("/api/v1/members/**").hasAnyRole("ADMIN", "MEMBER", "MENTOR")
+			.requestMatchers("/api/v1/members/**").hasAnyRole("ADMIN", "USER", "MENTOR")
 		);
 
 		http.exceptionHandling(exceptionHandlingConfigurer -> exceptionHandlingConfigurer

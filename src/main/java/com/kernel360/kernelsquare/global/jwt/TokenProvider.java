@@ -59,7 +59,7 @@ public class TokenProvider implements InitializingBean {
 	@Value("${spring.security.jwt.refresh-token-validity-in-seconds}")
 	private long refreshTokenValidityInSeconds;
 
-	private final RedisTemplate<Long, String> redisTemplate;
+	private final RedisTemplate<Long, RefreshToken> redisTemplate;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -103,11 +103,9 @@ public class TokenProvider implements InitializingBean {
 			.memberId(Long.parseLong(sub))
 			.build();
 
-		String refreshTokenJson = toJsonString(refreshToken);
-		if (redisTemplate.opsForValue().get(refreshToken.getMemberId()) != null) {
-			removeRedisRefreshToken(refreshToken.getMemberId());
-		}
-		redisTemplate.opsForValue().set(refreshToken.getMemberId(), refreshTokenJson);
+		// String refreshTokenJson = toJsonString(refreshToken);
+
+		redisTemplate.opsForValue().set(refreshToken.getMemberId(), refreshToken);
 
 		return uuid;
 	}
@@ -185,9 +183,9 @@ public class TokenProvider implements InitializingBean {
 	public TokenDto reissueToken(TokenDto tokenDto) {
 		Claims claims = parseClaims(tokenDto.accessToken());
 		String findIdByAccessToken = parseClaims(tokenDto.accessToken()).getSubject();
-		String refreshTokenToString = redisTemplate.opsForValue().get(Long.parseLong(findIdByAccessToken));
+		RefreshToken refreshToken = redisTemplate.opsForValue().get(Long.parseLong(findIdByAccessToken));
 
-		RefreshToken refreshToken = toRefreshToken(refreshTokenToString);
+		// RefreshToken refreshToken = toRefreshToken(refreshTokenToString);
 		validateReissueToken(refreshToken, findIdByAccessToken);
 
 		return TokenDto.builder()
@@ -202,7 +200,7 @@ public class TokenProvider implements InitializingBean {
 			removeRedisRefreshToken(refreshToken.getMemberId());
 			throw new BusinessException(EXPIRED_LOGIN_INFO);
 		}
-		if (!accessTokenId.equals(refreshToken.getMemberId()) || !accessTokenId.equals(refreshToken.getMemberId())) {
+		if (!accessTokenId.equals(refreshToken.getMemberId())) {
 			throw new BusinessException(INVALID_TOKEN);
 		}
 	}

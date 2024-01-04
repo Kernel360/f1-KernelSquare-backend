@@ -31,9 +31,7 @@ import com.kernel360.kernelsquare.global.domain.AuthorityType;
 import com.kernel360.kernelsquare.global.jwt.TokenProvider;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -45,6 +43,7 @@ public class AuthService {
 	private final LevelRepository levelRepository;
 	private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
+	@Transactional(readOnly = true)
 	public LoginResponse login(final LoginRequest loginRequest) {
 		Member findMember = memberRepository.findByEmail(loginRequest.email())
 			.orElseThrow(() -> new BusinessException(AuthErrorCode.INVALID_ACCOUNT));
@@ -55,13 +54,12 @@ public class AuthService {
 			.authenticate(authenticationToken);
 		TokenDto tokenDto = tokenProvider.createToken(authentication);
 
-		return LoginResponse.of(findMember.getNickname(), authentication.getAuthorities(), tokenDto);
+		return LoginResponse.of(findMember, authentication.getAuthorities(), tokenDto);
 	}
 
 	@Transactional
 	public SignUpResponse signUp(final SignUpRequest signUpRequest) {
-		// todo : 첫 레벨에 대한 아이디 필요..
-		Level level = levelRepository.findLevelByName(9L)
+		Level level = levelRepository.findLevelByName(1L)
 			.orElseThrow(() -> new BusinessException(LevelErrorCode.LEVEL_NOT_FOUND));
 		String encodedPassword = passwordEncoder.encode(signUpRequest.password());
 		Member savedMember = memberRepository.save(SignUpRequest.toEntity(signUpRequest, encodedPassword, level));
@@ -93,12 +91,14 @@ public class AuthService {
 		return tokenProvider.reissueToken(requestTokenDto);
 	}
 
+	@Transactional(readOnly = true)
 	public void isEmailUnique(final String email) {
 		if (memberRepository.existsByEmail(email)) {
 			throw new BusinessException(AuthErrorCode.ALREADY_SAVED_EMAIL);
 		}
 	}
 
+	@Transactional(readOnly = true)
 	public void isNicknameUnique(final String nickname) {
 		if (memberRepository.existsByNickname(nickname)) {
 			throw new BusinessException(AuthErrorCode.ALREADY_SAVED_NICKNAME);

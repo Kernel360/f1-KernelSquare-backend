@@ -10,7 +10,9 @@ public record FindMemberResponse(
 	String nickname,
 	Long experience,
 	String introduction,
-	String imageUrl
+	String imageUrl,
+
+	Long level
 ) {
 
 	public static FindMemberResponse from(Member member) {
@@ -21,6 +23,7 @@ public record FindMemberResponse(
 			.experience(member.getExperience())
 			.introduction(member.getIntroduction())
 			.imageUrl(member.getImageUrl())
+			.level(member.getLevel().getName())
 			.build();
 	}
 }

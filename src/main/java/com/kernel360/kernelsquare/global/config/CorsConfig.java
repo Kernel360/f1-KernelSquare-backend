@@ -5,6 +5,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import com.kernel360.kernelsquare.global.constants.SecurityConstants;
+
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
 
@@ -19,7 +21,7 @@ public class CorsConfig implements WebMvcConfigurer {
 					.allowCredentials(true)
 					.allowedHeaders("*")
 					.allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "PATCH")
-					.exposedHeaders("Authorization", "RefreshToken");
+					.exposedHeaders(SecurityConstants.AUTHORIZATION_HEADER, "RefreshToken");
 			}
 		};
 	}

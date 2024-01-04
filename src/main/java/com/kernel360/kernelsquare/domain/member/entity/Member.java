@@ -49,7 +49,7 @@ public class Member extends BaseEntity {
 	@Column(name = "image_url", columnDefinition = "varchar(100)")
 	private String imageUrl;
 
-	@Column(nullable = false, name = "introduction", columnDefinition = "varchar(300)")
+	@Column(name = "introduction", columnDefinition = "varchar(300)")
 	private String introduction;
 
 	@ManyToOne(fetch = FetchType.LAZY)

@@ -8,7 +8,6 @@ import com.kernel360.kernelsquare.global.common_response.service.code.TokenServi
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-
 public enum TokenErrorCode implements ErrorCode {
 	INVALID_TOKEN(HttpStatus.UNAUTHORIZED, TokenServiceStatus.INVALID_TOKEN, "유효하지 않은 토큰 입니다."),
 	EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, TokenServiceStatus.EXPIRED_TOKEN, "만료된 토큰 입니다."),

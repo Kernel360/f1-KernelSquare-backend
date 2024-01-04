@@ -143,7 +143,23 @@ public class MemberServiceTest {
 		//given
 		Long testMemberId = 1L;
 
-		Member member = createTestMember();
+		Level level = Level.builder()
+			.id(1L)
+			.name(1L)
+			.imageUrl("s3:adcqw")
+			.build();
+
+		Member member = Member
+			.builder()
+			.id(1L)
+			.nickname("hongjugwang")
+			.email("jugwang@naver.com")
+			.password("hashedPassword")
+			.experience(10000L)
+			.introduction("hi, i'm hongjugwang.")
+			.imageUrl("s3:qwe12fasdawczx")
+			.level(level)
+			.build();
 		Optional<Member> optionalMember = Optional.of(member);
 
 		doReturn(optionalMember)

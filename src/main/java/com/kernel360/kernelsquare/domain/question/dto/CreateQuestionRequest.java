@@ -1,5 +1,6 @@
 package com.kernel360.kernelsquare.domain.question.dto;
 
+import com.kernel360.kernelsquare.domain.image.utils.ImageUtils;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.question.entity.Question;
 import jakarta.validation.constraints.NotBlank;
@@ -22,7 +23,7 @@ public record CreateQuestionRequest(
         return Question.builder()
             .title(createQuestionRequest.title())
             .content(createQuestionRequest.content())
-            .imageUrl(createQuestionRequest.imageUrl())
+            .imageUrl(ImageUtils.parseFilePath(createQuestionRequest.imageUrl()))
             .viewCount(0L)
             .closedStatus(false)
             .member(member)

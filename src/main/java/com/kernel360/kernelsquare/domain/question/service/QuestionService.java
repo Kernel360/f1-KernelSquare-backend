@@ -1,7 +1,6 @@
 package com.kernel360.kernelsquare.domain.question.service;
 
-import com.kernel360.kernelsquare.domain.answer.dto.FindAnswerResponse;
-import com.kernel360.kernelsquare.domain.answer.repository.AnswerRepository;
+import com.kernel360.kernelsquare.domain.image.utils.ImageUtils;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
 import com.kernel360.kernelsquare.domain.question.dto.CreateQuestionRequest;
@@ -35,7 +34,6 @@ public class QuestionService {
     private final MemberRepository memberRepository;
     private final TechStackRepository techStackRepository;
     private final QuestionTechStackRepository questionTechStackRepository;
-    private final AnswerRepository answerRepository;
 
     @Transactional
     public CreateQuestionResponse createQuestion(CreateQuestionRequest createQuestionRequest) {
@@ -96,7 +94,7 @@ public class QuestionService {
         Question question = questionRepository.findById(questionId)
             .orElseThrow(() -> new BusinessException(QuestionErrorCode.QUESTION_NOT_FOUND));
 
-        question.update(updateQuestionRequest.title(), updateQuestionRequest.content(), updateQuestionRequest.imageUrl());
+        question.update(updateQuestionRequest.title(), updateQuestionRequest.content(), ImageUtils.parseFilePath(updateQuestionRequest.imageUrl()));
 
         List<String> skills = updateQuestionRequest.skills();
         List<QuestionTechStack> techStackList = new ArrayList<>();

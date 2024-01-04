@@ -1,6 +1,7 @@
 package com.kernel360.kernelsquare.domain.answer.dto;
 
 import com.kernel360.kernelsquare.domain.answer.entity.Answer;
+import com.kernel360.kernelsquare.domain.image.utils.ImageUtils;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.question.entity.Question;
 import jakarta.validation.constraints.NotBlank;
@@ -19,7 +20,7 @@ public record CreateAnswerRequest (
             Member member
     ) {
         return Answer.builder()
-                .imageUrl(createAnswerRequest.imageUrl())
+                .imageUrl(ImageUtils.parseFilePath(createAnswerRequest.imageUrl()))
                 .member(member)
                 .question(question)
                 .content(createAnswerRequest.content())

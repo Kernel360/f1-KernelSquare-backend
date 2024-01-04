@@ -45,6 +45,11 @@ cloud:
     stack.auto: false
     region.static: ${S3_REGION}
     credentials:
-      accessKey: ${S3_ACCESS_KEY}
-      secretKey: ${S3_SECRET_KEY}
+      accessKey: ${AWS_ACCESS_KEY}
+      secretKey: ${AWS_ACCESS_SECRET}
+
+custom:
+  domain:
+    image:
+      baseUrl: ${BASE_URL}
 

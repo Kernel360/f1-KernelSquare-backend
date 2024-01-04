@@ -11,9 +11,7 @@ public enum AnswerServiceStatus implements ServiceStatus{
     ANSWER_CREATED(2240),
     ANSWERS_ALL_FOUND(2241),
     ANSWER_UPDATED(2242),
-    ANSWER_DELETED(2243),
-    VOTE_CREATED(2244),
-    VOTE_DELETED(2245);
+    ANSWER_DELETED(2243);
 
     private final Integer code;
 

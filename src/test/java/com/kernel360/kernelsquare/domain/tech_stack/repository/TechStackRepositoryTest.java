@@ -35,4 +35,19 @@ class TechStackRepositoryTest {
         assertThat(findTechStack).isNotNull();
         assertThat(findTechStack).isEqualTo(saveTechStack);
     }
+
+    @Test
+    @DisplayName("기술 스택 existsBySkill 정상 작동 테스트")
+    void testExistsBySkill() {
+        //given
+        TechStack techStack = new TechStack(1L, "Python");
+
+        techStackRepository.save(techStack);
+
+        //when
+        boolean isSkillExists = techStackRepository.existsBySkill(techStack.getSkill());
+
+        //then
+        assertThat(isSkillExists).isTrue();
+    }
 }

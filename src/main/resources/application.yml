@@ -23,9 +23,16 @@ spring:
       mode: always
 
 
-#  redis:
-#    host: localhost
-#    port: 6379
+  redis:
+    serialization:
+      class-property-type-name: RefreshToken.class
+
+  security:
+    jwt:
+      header: Authorization
+      secret: ${JWT_SECRET_KEY}
+      access-token-validity-in-seconds: 600     # 10분
+      refresh-token-validity-in-seconds: 1_209_600  # 2주
 
 logging.level:
   org.hibernate.SQL: debug

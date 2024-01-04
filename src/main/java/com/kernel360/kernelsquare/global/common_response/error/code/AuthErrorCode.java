@@ -1,36 +1,38 @@
-// package com.kernel360.kernelsquare.global.common_response.error.code;
-//
-// import org.springframework.http.HttpStatus;
-//
-// import com.kernel360.kernelsquare.global.common_response.service.code.ServiceStatus;
-//
-// import lombok.RequiredArgsConstructor;
-//
-// @RequiredArgsConstructor
-// public enum AuthErrorCode implements ErrorCode {
-// 	INVALID_ACCOUNT(HttpStatus.UNAUTHORIZED, "계정정보가 일치하지 않습니다."),
-// 	INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다."),
-// 	ALREADY_SAVED_NICKNAME(HttpStatus.CONFLICT, "사용 중인 닉네임입니다."),
-// 	ALREADY_SAVED_EMAIL(HttpStatus.CONFLICT, "사용 중인 이메일입니다."),
-// 	ALREADY_SOCIAL_LOGIN(HttpStatus.CONFLICT, "소셜로 가입한 회원입니다. 소셜로 로그인 해주세요.");
-//
-// 	private final HttpStatus code;
-// 	private final ServiceStatus serviceStatus;
-// 	private final String msg;
-//
-// 	@Override
-// 	public HttpStatus getStatus() {
-// 		return code;
-// 	}
-//
-// 	@Override
-// 	public Integer getCode() {
-// 		return serviceStatus.getServiceStatus();
-// 	}
-//
-// 	@Override
-// 	public String getMsg() {
-// 		return msg;
-// 	}
-// }
-//
+package com.kernel360.kernelsquare.global.common_response.error.code;
+
+import org.springframework.http.HttpStatus;
+
+import com.kernel360.kernelsquare.global.common_response.service.code.AuthServiceStatus;
+import com.kernel360.kernelsquare.global.common_response.service.code.ServiceStatus;
+
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+public enum AuthErrorCode implements ErrorCode {
+	INVALID_ACCOUNT(HttpStatus.UNAUTHORIZED, AuthServiceStatus.INVALID_ACCOUNT, "계정정보가 일치하지 않습니다."),
+	INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, AuthServiceStatus.INVALID_PASSWORD, "비밀번호가 일치하지 않습니다."),
+	ALREADY_SAVED_NICKNAME(HttpStatus.CONFLICT, AuthServiceStatus.ALREADY_SAVED_NICKNAME, "사용 중인 닉네임입니다."),
+	ALREADY_SAVED_EMAIL(HttpStatus.CONFLICT, AuthServiceStatus.ALREADY_SAVED_EMAIL, "사용 중인 이메일입니다."),
+	UNAUTHORIZED_ACCESS(HttpStatus.NOT_FOUND, AuthServiceStatus.UNAUTHORIZED_ACCESS, "접근 권한이 없습니다."),
+	UNAUTHENTICATED(HttpStatus.UNAUTHORIZED, AuthServiceStatus.UNAUTHENTICATED, "해당 기능은 로그인이 필요합니다.");
+
+	private final HttpStatus httpStatus;
+	private final ServiceStatus serviceStatus;
+	private final String msg;
+
+	@Override
+	public HttpStatus getStatus() {
+		return httpStatus;
+	}
+
+	@Override
+	public Integer getCode() {
+		return serviceStatus.getServiceStatus();
+	}
+
+	@Override
+	public String getMsg() {
+		return msg;
+	}
+}
+

@@ -11,13 +11,13 @@ import lombok.RequiredArgsConstructor;
 public enum MemberErrorCode implements ErrorCode {
 	MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, MemberServiceStatus.MEMBER_NOT_FOUND, "존재하지 않는 회원입니다.");
 
-	private final HttpStatus code;
+	private final HttpStatus httpStatus;
 	private final ServiceStatus serviceStatus;
 	private final String msg;
 
 	@Override
 	public HttpStatus getStatus() {
-		return code;
+		return httpStatus;
 	}
 
 	@Override

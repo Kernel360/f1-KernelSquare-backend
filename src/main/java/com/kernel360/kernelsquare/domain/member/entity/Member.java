@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.SQLDelete;
 
 import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.member_authority.entity.MemberAuthority;
@@ -29,7 +28,6 @@ import lombok.NoArgsConstructor;
 @Entity(name = "member")
 @Getter
 @DynamicUpdate
-@SQLDelete(sql = "UPDATE member SET account_status = 0 WHERE id = ?")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseEntity {
 	@Id
@@ -51,7 +49,7 @@ public class Member extends BaseEntity {
 	@Column(name = "image_url", columnDefinition = "varchar(100)")
 	private String imageUrl;
 
-	@Column(nullable = false, name = "introduction", columnDefinition = "varchar(300)")
+	@Column(name = "introduction", columnDefinition = "varchar(300)")
 	private String introduction;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -70,9 +68,13 @@ public class Member extends BaseEntity {
 		this.password = password;
 	}
 
+	public void initAuthorities(List<MemberAuthority> authorities) {
+		this.authorities = authorities;
+	}
+
 	@Builder
 	public Member(Long id, String nickname, String email, String password, Long experience, String imageUrl,
-				  String introduction, Level level) {
+		String introduction, Level level, List<MemberAuthority> authorities) {
 		this.id = id;
 		this.nickname = nickname;
 		this.email = email;
@@ -81,5 +83,6 @@ public class Member extends BaseEntity {
 		this.imageUrl = imageUrl;
 		this.introduction = introduction;
 		this.level = level;
+		this.authorities = new ArrayList<>();
 	}
 }

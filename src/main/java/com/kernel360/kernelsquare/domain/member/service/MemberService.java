@@ -1,5 +1,6 @@
 package com.kernel360.kernelsquare.domain.member.service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MemberService {
 	private final MemberRepository memberRepository;
+	private final PasswordEncoder passwordEncoder;
 
 	@Transactional
 	public void updateMember(Long id, UpdateMemberRequest updateMemberRequest) {
@@ -32,13 +34,12 @@ public class MemberService {
 	@Transactional
 	public void updateMemberPassword(Long id, String password) {
 		Member member = getMemberById(id);
-		member.updatePassword(password);
+		member.updatePassword(passwordEncoder.encode(password));
 	}
 
 	@Transactional
 	public void deleteMember(Long id) {
-		Member member = getMemberById(id);
-		memberRepository.delete(member);
+		memberRepository.deleteById(id);
 	}
 
 	private Member getMemberById(Long id) {

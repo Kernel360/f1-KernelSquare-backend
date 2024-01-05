@@ -7,6 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.kernel360.kernelsquare.global.constants.FilterHttpMethodConstants;
 import com.kernel360.kernelsquare.global.constants.SecurityConstants;
 import com.kernel360.kernelsquare.global.jwt.TokenProvider;
 
@@ -43,10 +44,15 @@ public class JWTTokenSettingFilter extends OncePerRequestFilter {
 
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-		if (request.getServletPath().contains("/api/v1/auth")) {
+		String servletPath = request.getServletPath();
+		String httpMethod = request.getMethod();
+
+		if (servletPath.contains("/api/v1/auth") && !servletPath.equals("/api/v1/auth/logout") && !servletPath.equals(
+			"/api/v1/auth/reissue")) {
 			return true;
-		} else if (request.getServletPath().equals("/api/v1/auth/reissue") || request.getServletPath()
-			.equals("/api/v1/questions")) {
+		} else if (servletPath.equals("/api/v1/questions") && httpMethod.equals(FilterHttpMethodConstants.GET)) {
+			return true;
+		} else if (servletPath.equals("/api/v1/answers") && httpMethod.equals(FilterHttpMethodConstants.GET)) {
 			return true;
 		}
 		return false;

@@ -2,6 +2,7 @@ package com.kernel360.kernelsquare.global.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -10,9 +11,12 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
+import com.kernel360.kernelsquare.global.filter.JWTTokenSettingFilter;
 import com.kernel360.kernelsquare.global.jwt.JwtAccessDeniedHandler;
 import com.kernel360.kernelsquare.global.jwt.JwtAuthenticationEntryPoint;
+import com.kernel360.kernelsquare.global.jwt.TokenProvider;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,23 +25,80 @@ import lombok.RequiredArgsConstructor;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+	private final TokenProvider tokenProvider;
 	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 	private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+
+	private final String[] permitAllPatterns = new String[] {
+		"/api/v1/auth/check/email",
+		"/api/v1/auth/check/nickname",
+		"/api/v1/auth/signup",
+		"/api/v1/auth/login",
+	};
+
+	private final String[] hasAnyAuthorityPatterns = new String[] {
+		"/api/v1/images"
+	};
+
+	private final String[] hasRoleUserPatterns = new String[] {
+		"/api/v1/auth/reissue",
+		"/api/v1/auth/logout",
+		"/api/v1/questions/answers/{answerId}",
+		"/api/v1/questions/answers/{answerId}/vote"
+	};
+
+	private final String[] hasRoleAdminPatterns = new String[] {
+		"/api/v1/techs/{techStackId}",
+		"/api/v1/levels/"
+	};
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 
+	//todo : filter 설정 추가하기
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable());
 
 		http.authorizeHttpRequests(authz -> authz
-			.requestMatchers("/api/v1/questions/**",
-				"/api/v1/auth/**").permitAll()
-			.requestMatchers("/api/v1/members/**").hasAnyRole("ADMIN", "USER", "MENTOR")
+			// 모든 접근 허용
+			.requestMatchers(permitAllPatterns).permitAll()
+
+			.requestMatchers(HttpMethod.GET, "/api/v1/questions/{questionId}").permitAll()
+			.requestMatchers(HttpMethod.GET, "/api/v1/questions").permitAll()
+
+			.requestMatchers(HttpMethod.GET, "/api/v1/questions/{questiondId}/answers").permitAll()
+			.requestMatchers(HttpMethod.GET, "/api/v1/levels").permitAll()
+
+			// 모든 권한에 대한 접근 허용
+			.requestMatchers(hasAnyAuthorityPatterns).authenticated()
+
+			.requestMatchers(HttpMethod.GET, "/api/v1/members/{memberId}").authenticated()
+
+			.requestMatchers(HttpMethod.GET, "/api/v1/techs").authenticated()
+
+			// ROLE_USER 권한 필요
+			.requestMatchers(hasRoleUserPatterns).permitAll()
+
+			.requestMatchers(HttpMethod.DELETE, "/api/v1/members/{memberId}").hasRole("USER")
+			.requestMatchers(HttpMethod.PUT, "/api/v1/members/{memberId}").hasRole("USER")
+			.requestMatchers(HttpMethod.PUT, "/api/v1/members/{memberId}/password").hasRole("USER")
+
+			.requestMatchers(HttpMethod.POST, "/api/v1/questions/").hasRole("USER")
+			.requestMatchers(HttpMethod.PUT, "/api/v1/questions/{questionId}").hasRole("USER")
+			.requestMatchers(HttpMethod.DELETE, "/api/v1/questions/{questionId}").hasRole("USER")
+
+			// ROLE_ADMIN 권한 필요
+			.requestMatchers(hasRoleAdminPatterns).hasRole("ADMIN")
+
+			.requestMatchers(HttpMethod.POST, "/api/v1/levels").hasRole("ADMIN")
+
+			.requestMatchers(HttpMethod.POST, "/api/v1/techs").hasRole("ADMIN")
 		);
+
+		http.addFilterBefore(new JWTTokenSettingFilter(tokenProvider), BasicAuthenticationFilter.class);
 
 		http.exceptionHandling(exceptionHandlingConfigurer -> exceptionHandlingConfigurer
 			.authenticationEntryPoint(jwtAuthenticationEntryPoint)

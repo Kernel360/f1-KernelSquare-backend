@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum AuthorityServiceStatus implements ServiceStatus {
-	AUTHORITY_NOT_FOUND(1401);
+	AUTHORITY_NOT_FOUND(1500);
 
 	private final Integer code;
 

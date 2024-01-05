@@ -8,7 +8,10 @@ public enum TokenServiceStatus implements ServiceStatus {
 	EXPIRED_TOKEN(1301),
 	UNAUTHORIZED_TOKEN(1302),
 	WRONG_TOKEN(1303),
-	EXPIRED_LOGIN_INFO(1304);
+	EXPIRED_LOGIN_INFO(1304),
+
+	TOKEN_PROCESSING_ERROR(1305);
+
 	private final Integer code;
 
 	@Override

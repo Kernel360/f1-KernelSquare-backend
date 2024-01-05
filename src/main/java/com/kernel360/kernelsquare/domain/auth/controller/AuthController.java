@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kernel360.kernelsquare.domain.auth.dto.CheckDuplicateEmailRequest;
+import com.kernel360.kernelsquare.domain.auth.dto.CheckDuplicateNicknameRequest;
 import com.kernel360.kernelsquare.domain.auth.dto.LoginRequest;
 import com.kernel360.kernelsquare.domain.auth.dto.LoginResponse;
 import com.kernel360.kernelsquare.domain.auth.dto.SignUpRequest;
@@ -45,14 +47,16 @@ public class AuthController {
 	}
 
 	@PostMapping("/auth/check/email")
-	public ResponseEntity<ApiResponse> isEmailUnique(final @RequestBody SignUpRequest signUpRequest) {
-		authService.isEmailUnique(signUpRequest.email());
+	public ResponseEntity<ApiResponse> isEmailUnique(
+		final @Valid @RequestBody CheckDuplicateEmailRequest emailRequest) {
+		authService.isEmailUnique(emailRequest.email());
 		return ResponseEntityFactory.toResponseEntity(EMAIL_UNIQUE_VALIDATED);
 	}
 
 	@PostMapping("/auth/check/nickname")
-	public ResponseEntity<ApiResponse> isNicknameUnique(final @RequestBody SignUpRequest signUpRequest) {
-		authService.isNicknameUnique(signUpRequest.nickname());
+	public ResponseEntity<ApiResponse> isNicknameUnique(
+		final @Valid @RequestBody CheckDuplicateNicknameRequest nicknameRequest) {
+		authService.isNicknameUnique(nicknameRequest.nickname());
 		return ResponseEntityFactory.toResponseEntity(NICKNAME_UNIQUE_VALIDATED);
 	}
 

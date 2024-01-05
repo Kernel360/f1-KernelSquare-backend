@@ -103,25 +103,9 @@ public class TokenProvider implements InitializingBean {
 			.memberId(Long.parseLong(sub))
 			.build();
 
-		// String refreshTokenJson = toJsonString(refreshToken);
-
 		redisTemplate.opsForValue().set(refreshToken.getMemberId(), refreshToken);
 
 		return uuid;
-	}
-
-	private String toJsonString(RefreshToken refreshToken) {
-		try {
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.registerModule(new JavaTimeModule());
-			mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-			String refreshTokenJson = mapper.writeValueAsString(refreshToken);
-			return refreshTokenJson;
-		} catch (JsonProcessingException exception) {
-			exception.printStackTrace();
-			//todo : 예외 처리
-			throw new IllegalArgumentException("JsonProcessingException 발생");
-		}
 	}
 
 	public RefreshToken toRefreshToken(String refreshTokenToString) {
@@ -131,9 +115,7 @@ public class TokenProvider implements InitializingBean {
 			mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 			return mapper.readValue(refreshTokenToString, RefreshToken.class);
 		} catch (JsonProcessingException exception) {
-			exception.printStackTrace();
-			//todo : 예외 처리
-			throw new IllegalArgumentException("JsonProcessingException 발생");
+			throw new BusinessException(TOKEN_PROCESSING_ERROR);
 		}
 	}
 
@@ -159,7 +141,7 @@ public class TokenProvider implements InitializingBean {
 				.getBody();
 			return claims;
 		} catch (ExpiredJwtException ex) {
-			return ex.getClaims();
+			throw new BusinessException(EXPIRED_TOKEN);
 		}
 	}
 
@@ -185,7 +167,6 @@ public class TokenProvider implements InitializingBean {
 		String findIdByAccessToken = parseClaims(tokenDto.accessToken()).getSubject();
 		RefreshToken refreshToken = redisTemplate.opsForValue().get(Long.parseLong(findIdByAccessToken));
 
-		// RefreshToken refreshToken = toRefreshToken(refreshTokenToString);
 		validateReissueToken(refreshToken, findIdByAccessToken);
 
 		return TokenDto.builder()
@@ -194,7 +175,7 @@ public class TokenProvider implements InitializingBean {
 			.build();
 	}
 
-	/** Refresh Token 유효성 검증을 수행 **/
+	/** Reissued Token 유효성 검증을 수행 **/
 	private void validateReissueToken(RefreshToken refreshToken, String accessTokenId) {
 		if (!refreshToken.getExpirationDate().isAfter(LocalDateTime.now())) {
 			removeRedisRefreshToken(refreshToken.getMemberId());

@@ -7,11 +7,11 @@ import com.kernel360.kernelsquare.domain.member_answer_vote.entity.MemberAnswerV
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
 
-public record CreateMemberAnswerVoteRequest (
-    @NotNull
-    Long memberId,
-    @NotNull
-    int status
+public record CreateMemberAnswerVoteRequest(
+	@NotNull(message = "등록 되지 않은 회원입니다.")
+	Long memberId,
+	@NotNull(message = "유효 하지 않은 투표 상태입니다.")
+	int status
 ) {
 	@AssertTrue(message = "Status must be either 1 or -1")
 	private boolean isStatusValid() {

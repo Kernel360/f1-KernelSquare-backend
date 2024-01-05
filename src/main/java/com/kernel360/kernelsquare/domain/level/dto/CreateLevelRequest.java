@@ -6,8 +6,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record CreateLevelRequest(
-        Long name,
-        String imageUrl
+	@NotNull(message = "등급 이름는 필수 항목입니다.")
+	Long name,
+	@NotBlank(message = "등급 이미지는 필수 항목입니다.")
+	String imageUrl
 ) {
 
 	public static Level toEntity(

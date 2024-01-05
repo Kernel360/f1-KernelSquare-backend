@@ -9,15 +9,15 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record CreateQuestionRequest(
-    @NotNull
-    Long memberId,
-    @NotBlank
-    String title,
-    @NotBlank
-    String content,
-    String imageUrl,
-    @NotNull
-    List<String> skills
+	@NotNull(message = "멤버 Id는 필수 항목입니다.")
+	Long memberId,
+	@NotBlank(message = "빈 제목은 안됩니다.")
+	String title,
+	@NotBlank(message = "빈 내용은 안됩니다.")
+	String content,
+	String imageUrl,
+	@NotNull(message = "최소 빈 리스트로 들어와야 합니다.")
+	List<String> skills
 ) {
 	public static Question toEntity(CreateQuestionRequest createQuestionRequest, Member member) {
 		return Question.builder()

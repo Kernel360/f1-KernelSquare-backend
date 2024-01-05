@@ -5,6 +5,7 @@ services:
     container_name: elasticsearch
     environment:
       - discovery.type=single-node
+      - ELASTIC_PASSWORD=KernelSquare
     ports:
       - "9200:9200"
 

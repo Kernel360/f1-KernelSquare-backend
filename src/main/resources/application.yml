@@ -38,7 +38,7 @@ spring:
     rest:
       uris: http://localhost:9200
       username: elastic
-      password: elastic_password
+      password: KernelSquare
 
 
 logging.level:

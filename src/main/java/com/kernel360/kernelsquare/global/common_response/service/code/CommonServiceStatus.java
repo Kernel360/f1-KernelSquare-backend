@@ -4,12 +4,13 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum CommonServiceStatus implements ServiceStatus {
-    DUPLICATE_DATA_EXIST(9000);
+	DUPLICATE_DATA_EXIST(9000),
+	VALIDATION_CHECK_FAIL(9001);
 
-    private final Integer code;
+	private final Integer code;
 
-    @Override
-    public Integer getServiceStatus() {
-        return code;
-    }
+	@Override
+	public Integer getServiceStatus() {
+		return code;
+	}
 }

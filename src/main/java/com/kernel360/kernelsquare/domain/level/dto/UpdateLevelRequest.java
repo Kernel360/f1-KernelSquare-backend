@@ -1,26 +1,28 @@
 package com.kernel360.kernelsquare.domain.level.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.kernel360.kernelsquare.domain.level.entity.Level;
 
-import java.io.Serializable;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * DTO for {@link com.kernel360.kernelsquare.domain.level.entity.Level}
  */
 public record UpdateLevelRequest(
-        Long id,
-        Long name,
-        String imageUrl
+	@NotNull(message = "등급 아이디는 필수 입력사항입니다.")
+	Long id,
+	@NotNull(message = "등급은 필수 입력사항입니다.")
+	Long name,
+	@NotBlank(message = "등급 이미지 URL은 필수 입력사항입니다.")
+	String imageUrl
 ) {
 
-    public static Level toEntity(
-            UpdateLevelRequest updateLevelRequest) {
-        return Level.builder()
-                .id(updateLevelRequest.id())
-                .name(updateLevelRequest.name())
-                .imageUrl(updateLevelRequest.imageUrl())
-                .build();
-    }
+	public static Level toEntity(
+		UpdateLevelRequest updateLevelRequest) {
+		return Level.builder()
+			.id(updateLevelRequest.id())
+			.name(updateLevelRequest.name())
+			.imageUrl(updateLevelRequest.imageUrl())
+			.build();
+	}
 }

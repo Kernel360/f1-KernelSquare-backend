@@ -8,7 +8,6 @@ public record ApiResponse<T>(
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	T data
 ) {
-
 	public static <T> ApiResponse<T> of(
 		StatusCode statusCode,
 		T data) {

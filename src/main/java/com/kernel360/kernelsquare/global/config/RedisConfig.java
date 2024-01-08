@@ -41,16 +41,4 @@ public class RedisConfig {
 
 		return jsonRedisSerializer;
 	}
-	// @Bean
-	// public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
-	// 	PolymorphicTypeValidator typeValidator = BasicPolymorphicTypeValidator
-	// 		.builder()
-	// 		.allowIfSubType(Object.class)
-	// 		.build();
-	//
-	// 	ObjectMapper objectMapper = new ObjectMapper();
-	// 	objectMapper.registerModule(new JavaTimeModule());
-	// 	objectMapper.activateDefaultTyping(typeValidator, ObjectMapper.DefaultTyping.NON_FINAL);
-	// 	GenericJackson2JsonRedisSerializer redisSerializer = new GenericJackson2JsonRedisSerializer(objectMapper);
-	// }
 }

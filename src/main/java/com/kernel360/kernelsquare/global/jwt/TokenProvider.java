@@ -105,7 +105,19 @@ public class TokenProvider implements InitializingBean {
 
 		redisTemplate.opsForValue().set(refreshToken.getMemberId(), refreshToken);
 
-		return uuid;
+		return toJsonString(refreshToken);
+	}
+
+	private String toJsonString(RefreshToken refreshToken) {
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.registerModule(new JavaTimeModule());
+			mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+			String refreshTokenJson = mapper.writeValueAsString(refreshToken);
+			return refreshTokenJson;
+		} catch (JsonProcessingException exception) {
+			throw new BusinessException(TOKEN_PROCESSING_ERROR);
+		}
 	}
 
 	public RefreshToken toRefreshToken(String refreshTokenToString) {
@@ -113,7 +125,8 @@ public class TokenProvider implements InitializingBean {
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.registerModule(new JavaTimeModule());
 			mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-			return mapper.readValue(refreshTokenToString, RefreshToken.class);
+			RefreshToken refreshToken = mapper.readValue(refreshTokenToString, RefreshToken.class);
+			return refreshToken;
 		} catch (JsonProcessingException exception) {
 			throw new BusinessException(TOKEN_PROCESSING_ERROR);
 		}
@@ -161,7 +174,7 @@ public class TokenProvider implements InitializingBean {
 		}
 	}
 
-	/** Refresh Token 재발급 - RTR 적용**/
+	/** Refresh Token 재발급 **/
 	public TokenDto reissueToken(TokenDto tokenDto) {
 		Claims claims = parseClaims(tokenDto.accessToken());
 		String findIdByAccessToken = parseClaims(tokenDto.accessToken()).getSubject();

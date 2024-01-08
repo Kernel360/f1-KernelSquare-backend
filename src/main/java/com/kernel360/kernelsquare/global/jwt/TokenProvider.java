@@ -125,8 +125,7 @@ public class TokenProvider implements InitializingBean {
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.registerModule(new JavaTimeModule());
 			mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-			RefreshToken refreshToken = mapper.readValue(refreshTokenToString, RefreshToken.class);
-			return refreshToken;
+			return mapper.readValue(refreshTokenToString, RefreshToken.class);
 		} catch (JsonProcessingException exception) {
 			throw new BusinessException(TOKEN_PROCESSING_ERROR);
 		}

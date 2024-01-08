@@ -13,7 +13,7 @@ INSERT INTO tech_stack (created_date, modified_date, skill)
 VALUES ('2023-12-19', '2023-12-19', 'Python');
 
 INSERT INTO level (created_date, modified_date, image_url, name)
-VALUES ('2023-12-12', '2023-12-12', 'example.jpg', 1);
+VALUES ('2023-12-12', '2023-12-12', 'level/level1to2.png', 1);
 
 INSERT INTO authority (authority_type)
 VALUES ('ROLE_USER');

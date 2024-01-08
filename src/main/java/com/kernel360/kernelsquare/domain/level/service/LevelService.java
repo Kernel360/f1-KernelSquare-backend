@@ -46,6 +46,11 @@ public class LevelService {
         Level level = levelRepository.findById(levelId)
                 .orElseThrow(() -> new BusinessException(LevelErrorCode.LEVEL_NOT_FOUND));
 
+        levelRepository.findByNameAndIdNot(level.getName(), levelId)
+            .ifPresent(l -> {
+                throw new BusinessException(LevelErrorCode.LEVEL_ALREADY_EXISTED);
+            });
+
         level.update(updateLevelRequest.name(), updateLevelRequest.imageUrl());
 
         return UpdateLevelResponse.from(level);

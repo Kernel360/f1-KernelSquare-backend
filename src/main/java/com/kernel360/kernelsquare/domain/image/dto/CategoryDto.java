@@ -9,7 +9,9 @@ import java.util.List;
 public enum CategoryDto {
     MEMBER("member"),
     QUESTION("question"),
-    ANSWER("answer");
+    ANSWER("answer"),
+    LEVEL("level"),
+    RANK("rank");
 
     private final String category;
 

@@ -1,6 +1,6 @@
 package com.kernel360.kernelsquare.domain.question.dto;
 
-import com.kernel360.kernelsquare.domain.answer.dto.FindAnswerResponse;
+import com.kernel360.kernelsquare.domain.image.utils.ImageUtils;
 import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.question.entity.Question;
@@ -28,7 +28,7 @@ public record FindQuestionResponse(
             question.getId(),
             question.getTitle(),
             question.getContent(),
-            question.getImageUrl(),
+            ImageUtils.makeImageUrl(question.getImageUrl()),
             question.getViewCount(),
             question.getClosedStatus(),
             member.getNickname(),

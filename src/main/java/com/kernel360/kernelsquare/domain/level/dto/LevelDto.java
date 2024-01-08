@@ -1,5 +1,6 @@
 package com.kernel360.kernelsquare.domain.level.dto;
 
+import com.kernel360.kernelsquare.domain.image.utils.ImageUtils;
 import com.kernel360.kernelsquare.domain.level.entity.Level;
 
 public record LevelDto(
@@ -11,7 +12,7 @@ public record LevelDto(
         return new LevelDto(
                 level.getId(),
                 level.getName(),
-                level.getImageUrl()
+                ImageUtils.makeImageUrl(level.getImageUrl())
         );
     }
 

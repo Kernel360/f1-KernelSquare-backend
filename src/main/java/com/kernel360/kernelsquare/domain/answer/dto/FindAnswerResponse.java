@@ -1,7 +1,8 @@
 package com.kernel360.kernelsquare.domain.answer.dto;
 
 import com.kernel360.kernelsquare.domain.answer.entity.Answer;
-import lombok.Builder;
+import com.kernel360.kernelsquare.domain.image.utils.ImageUtils;
+
 import java.time.LocalDateTime;
 
 public record FindAnswerResponse(
@@ -24,7 +25,7 @@ public record FindAnswerResponse(
                 null,
                 answer.getMember().getImageUrl(),
                 answer.getMember().getNickname(),
-                answer.getImageUrl(),
+                ImageUtils.makeImageUrl(answer.getImageUrl()),
                 answer.getCreatedDate(),
                 answer.getModifiedDate(),
                 answer.getVoteCount()

@@ -66,7 +66,7 @@ class LevelServiceTest {
         // then
         assertThat(actualLevels.levels().get(0).id()).isEqualTo(expectedLevels.get(0).getId());
         assertThat(actualLevels.levels().get(0).name()).isEqualTo(expectedLevels.get(0).getName());
-        assertThat(actualLevels.levels().get(1).imageUrl()).isEqualTo(expectedLevels.get(1).getImageUrl());
+        assertThat(actualLevels.levels().get(1).imageUrl()).isEqualTo("null/" + expectedLevels.get(1).getImageUrl());
 
         verify(levelRepository, times(1)).findAll();
     }

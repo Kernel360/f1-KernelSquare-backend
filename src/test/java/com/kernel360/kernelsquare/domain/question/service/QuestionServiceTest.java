@@ -130,7 +130,7 @@ class QuestionServiceTest {
         assertThat(findQuestionResponse.id()).isEqualTo(question.getId());
         assertThat(findQuestionResponse.title()).isEqualTo(question.getTitle());
         assertThat(findQuestionResponse.content()).isEqualTo(question.getContent());
-        assertThat(findQuestionResponse.questionImageUrl()).isEqualTo(question.getImageUrl());
+        assertThat(findQuestionResponse.questionImageUrl()).isEqualTo("null/" + question.getImageUrl());
         assertThat(findQuestionResponse.nickname()).isEqualTo(member.getNickname());
         assertThat(findQuestionResponse.memberImageUrl()).isEqualTo(member.getImageUrl());
         assertThat(findQuestionResponse.level()).isEqualTo(member.getLevel().getName());

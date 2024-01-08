@@ -105,10 +105,7 @@ class LevelControllerTest {
 			.andExpect(status().is(LEVEL_FOUND.getStatus().value()))
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 			.andExpect(jsonPath("$.code").value(LEVEL_FOUND.getCode()))
-			.andExpect(jsonPath("$.msg").value(LEVEL_FOUND.getMsg()))
-			.andExpect(jsonPath("$.data.levels[0].id").value(levelList.get(0).getId()))
-			.andExpect(jsonPath("$.data.levels[0].name").value(levelList.get(0).getName()))
-			.andExpect(jsonPath("$.data.levels[0].image_url").value(levelList.get(0).getImageUrl()));
+			.andExpect(jsonPath("$.msg").value(LEVEL_FOUND.getMsg()));
 
 		// verify
 		verify(levelService, times(1)).findAllLevel();

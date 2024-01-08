@@ -18,7 +18,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class JWTTokenSettingFilter extends OncePerRequestFilter {
+public class JWTSettingFilter extends OncePerRequestFilter {
 	private final TokenProvider tokenProvider;
 
 	@Override

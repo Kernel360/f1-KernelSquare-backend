@@ -13,9 +13,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
-import com.kernel360.kernelsquare.global.filter.JWTTokenSettingFilter;
-import com.kernel360.kernelsquare.global.jwt.JwtAccessDeniedHandler;
-import com.kernel360.kernelsquare.global.jwt.JwtAuthenticationEntryPoint;
+import com.kernel360.kernelsquare.global.filter.JWTSettingFilter;
+import com.kernel360.kernelsquare.global.jwt.JWTAccessDeniedHandler;
+import com.kernel360.kernelsquare.global.jwt.JWTAuthenticationEntryPoint;
 import com.kernel360.kernelsquare.global.jwt.TokenProvider;
 
 import lombok.RequiredArgsConstructor;
@@ -26,8 +26,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 	private final TokenProvider tokenProvider;
-	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-	private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+	private final JWTAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+	private final JWTAccessDeniedHandler jwtAccessDeniedHandler;
 
 	private final String[] permitAllPatterns = new String[] {
 		"/api/v1/auth/check/email",
@@ -98,7 +98,7 @@ public class SecurityConfig {
 			.requestMatchers(HttpMethod.POST, "/api/v1/techs").hasRole("ADMIN")
 		);
 
-		http.addFilterBefore(new JWTTokenSettingFilter(tokenProvider), BasicAuthenticationFilter.class);
+		http.addFilterBefore(new JWTSettingFilter(tokenProvider), BasicAuthenticationFilter.class);
 
 		http.exceptionHandling(exceptionHandlingConfigurer -> exceptionHandlingConfigurer
 			.authenticationEntryPoint(jwtAuthenticationEntryPoint)

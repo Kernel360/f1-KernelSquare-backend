@@ -1,15 +1,11 @@
 package com.kernel360.kernelsquare.domain.answer.service;
 
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.kernel360.kernelsquare.domain.answer.dto.CreateAnswerRequest;
 import com.kernel360.kernelsquare.domain.answer.dto.FindAnswerResponse;
 import com.kernel360.kernelsquare.domain.answer.dto.UpdateAnswerRequest;
 import com.kernel360.kernelsquare.domain.answer.entity.Answer;
 import com.kernel360.kernelsquare.domain.answer.repository.AnswerRepository;
+import com.kernel360.kernelsquare.domain.image.utils.ImageUtils;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
 import com.kernel360.kernelsquare.domain.question.entity.Question;
@@ -18,11 +14,11 @@ import com.kernel360.kernelsquare.global.common_response.error.code.AnswerErrorC
 import com.kernel360.kernelsquare.global.common_response.error.code.MemberErrorCode;
 import com.kernel360.kernelsquare.global.common_response.error.code.QuestionErrorCode;
 import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-
 
 @Service
 @RequiredArgsConstructor
@@ -55,8 +51,8 @@ public class AnswerService {
 		Answer answer = answerRepository.findById(answerId)
 			.orElseThrow(() -> new BusinessException(AnswerErrorCode.ANSWER_NOT_FOUND));
 
-		answer.update(updateAnswerRequest.content(), updateAnswerRequest.imageUrl());
-	}
+        answer.update(updateAnswerRequest.content(), ImageUtils.parseFilePath(updateAnswerRequest.imageUrl()));
+    }
 
 	@Transactional
 	public void deleteAnswer(Long answerId) {

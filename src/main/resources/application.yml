@@ -22,6 +22,12 @@ spring:
     init:
       mode: always
 
+## file upload max size (파일 업로드 크기 설정)
+#  servlet:
+#    multipart:
+#      max-file-size: 20MB
+#      max-request-size: 20MB
+
 
   redis:
     serialization:
@@ -31,7 +37,7 @@ spring:
     jwt:
       header: Authorization
       secret: ${JWT_SECRET_KEY}
-      access-token-validity-in-seconds: 600     # 10분
+      access-token-validity-in-seconds: 3600     # 1시간
       refresh-token-validity-in-seconds: 1_209_600  # 2주
 
   elasticsearch:
@@ -45,3 +51,19 @@ logging.level:
   org.hibernate.SQL: debug
   #  org.hibernate.type: trace
   org.springframework.security: debug
+
+cloud:
+  aws:
+    s3:
+      bucket: ${S3_BUCKET_NAME}
+    stack.auto: false
+    region.static: ${S3_REGION}
+    credentials:
+      accessKey: ${AWS_ACCESS_KEY}
+      secretKey: ${AWS_ACCESS_SECRET}
+
+custom:
+  domain:
+    image:
+      baseUrl: ${BASE_URL}
+

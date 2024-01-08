@@ -1,5 +1,6 @@
 package com.kernel360.kernelsquare.domain.level.dto;
 
+import com.kernel360.kernelsquare.domain.image.utils.ImageUtils;
 import com.kernel360.kernelsquare.domain.level.entity.Level;
 
 import jakarta.validation.constraints.NotBlank;
@@ -22,7 +23,7 @@ public record UpdateLevelRequest(
 		return Level.builder()
 			.id(updateLevelRequest.id())
 			.name(updateLevelRequest.name())
-			.imageUrl(updateLevelRequest.imageUrl())
+			.imageUrl(ImageUtils.parseFilePath(updateLevelRequest.imageUrl()))
 			.build();
 	}
 }

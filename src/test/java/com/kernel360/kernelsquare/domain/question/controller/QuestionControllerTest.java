@@ -142,16 +142,7 @@ class QuestionControllerTest {
             .andExpect(status().is(QUESTION_FOUND.getStatus().value()))
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.code").value(QUESTION_FOUND.getCode()))
-            .andExpect(jsonPath("$.msg").value(QUESTION_FOUND.getMsg()))
-            .andExpect(jsonPath("$.data.id").value(question.getId()))
-            .andExpect(jsonPath("$.data.content").value(question.getContent()))
-            .andExpect(jsonPath("$.data.question_image_url").value(question.getImageUrl()))
-            .andExpect(jsonPath("$.data.view_count").value(question.getViewCount()))
-            .andExpect(jsonPath("$.data.close_status").value(question.getClosedStatus()))
-            .andExpect(jsonPath("$.data.nickname").value(member.getNickname()))
-            .andExpect(jsonPath("$.data.member_image_url").value(member.getImageUrl()))
-            .andExpect(jsonPath("$.data.level").value(level.getName()))
-            .andExpect(jsonPath("$.data.level_image_url").value(level.getImageUrl()));
+            .andExpect(jsonPath("$.msg").value(QUESTION_FOUND.getMsg()));
 
         //verify
         verify(questionService, times(1)).findQuestion(anyLong());

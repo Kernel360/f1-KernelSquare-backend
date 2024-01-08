@@ -120,7 +120,7 @@ class TechStackControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .characterEncoding("UTF-8")
                 .content(jsonRequest))
-            .andExpect(status().is(TECH_STACK_ALL_FOUND.getStatus().value()))
+            .andExpect(status().is(TECH_STACK_UPDATED.getStatus().value()))
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.code").value(TECH_STACK_UPDATED.getCode()))
             .andExpect(jsonPath("$.msg").value(TECH_STACK_UPDATED.getMsg()));
@@ -145,7 +145,7 @@ class TechStackControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .characterEncoding("UTF-8"))
-            .andExpect(status().is(TECH_STACK_ALL_FOUND.getStatus().value()))
+            .andExpect(status().is(TECH_STACK_DELETED.getStatus().value()))
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.code").value(TECH_STACK_DELETED.getCode()))
             .andExpect(jsonPath("$.msg").value(TECH_STACK_DELETED.getMsg()));

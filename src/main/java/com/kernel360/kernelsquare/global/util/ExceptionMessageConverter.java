@@ -6,7 +6,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 public class ExceptionMessageConverter {
-	public static String buildMethodARgumentNotValidExceptionMsg(MethodArgumentNotValidException e) {
+	public static String buildMethodArgumentNotValidExceptionMsg(MethodArgumentNotValidException e) {
 		StringBuilder stringBuilder = new StringBuilder();
 		List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
 

@@ -18,6 +18,6 @@ public class ResponseEntityFactory {
 	public static ResponseEntity<ApiResponse> toResponseEntity(MethodArgumentNotValidException e) {
 		return ResponseEntity.badRequest()
 			.body(new ApiResponse(CommonServiceStatus.VALIDATION_CHECK_FAIL.getServiceStatus(),
-				ExceptionMessageConverter.buildMethodARgumentNotValidExceptionMsg(e), null));
+				ExceptionMessageConverter.buildMethodArgumentNotValidExceptionMsg(e), null));
 	}
 }

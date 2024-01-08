@@ -13,7 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
-import com.kernel360.kernelsquare.global.filter.JWTCheckFilter;
 import com.kernel360.kernelsquare.global.filter.JWTSettingFilter;
 import com.kernel360.kernelsquare.global.jwt.JWTAccessDeniedHandler;
 import com.kernel360.kernelsquare.global.jwt.JWTAuthenticationEntryPoint;
@@ -99,8 +98,7 @@ public class SecurityConfig {
 			.requestMatchers(HttpMethod.POST, "/api/v1/techs").hasRole("ADMIN")
 		);
 
-		http.addFilterBefore(new JWTSettingFilter(tokenProvider), BasicAuthenticationFilter.class)
-			.addFilterAfter(new JWTCheckFilter(), BasicAuthenticationFilter.class);
+		http.addFilterBefore(new JWTSettingFilter(tokenProvider), BasicAuthenticationFilter.class);
 
 		http.exceptionHandling(exceptionHandlingConfigurer -> exceptionHandlingConfigurer
 			.authenticationEntryPoint(jwtAuthenticationEntryPoint)

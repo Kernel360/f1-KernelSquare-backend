@@ -86,7 +86,7 @@ public class SecurityConfig {
 			.requestMatchers(HttpMethod.PUT, "/api/v1/members/{memberId}").hasRole("USER")
 			.requestMatchers(HttpMethod.PUT, "/api/v1/members/{memberId}/password").hasRole("USER")
 
-			.requestMatchers(HttpMethod.POST, "/api/v1/questions/").hasRole("USER")
+			.requestMatchers(HttpMethod.POST, "/api/v1/questions").hasRole("USER")
 			.requestMatchers(HttpMethod.PUT, "/api/v1/questions/{questionId}").hasRole("USER")
 			.requestMatchers(HttpMethod.DELETE, "/api/v1/questions/{questionId}").hasRole("USER")
 

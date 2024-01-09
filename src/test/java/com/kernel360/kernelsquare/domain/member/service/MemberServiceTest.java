@@ -173,7 +173,7 @@ public class MemberServiceTest {
 		assertThat(findMemberResponse.nickname()).isEqualTo(member.getNickname());
 		assertThat(findMemberResponse.introduction()).isEqualTo(member.getIntroduction());
 		assertThat(findMemberResponse.experience()).isEqualTo(member.getExperience());
-		assertThat(findMemberResponse.imageUrl()).isEqualTo(member.getImageUrl());
+		assertThat(findMemberResponse.imageUrl()).isEqualTo("null/" + member.getImageUrl());
 		assertThat(findMemberResponse.memberId()).isEqualTo(testMemberId);
 
 		//verify

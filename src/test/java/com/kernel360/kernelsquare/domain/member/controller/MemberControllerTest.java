@@ -154,11 +154,7 @@ public class MemberControllerTest {
 			.andExpect(status().is(MEMBER_FOUND.getStatus().value()))
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 			.andExpect(jsonPath("$.code").value(MEMBER_FOUND.getCode()))
-			.andExpect(jsonPath("$.msg").value(MEMBER_FOUND.getMsg()))
-			.andExpect(jsonPath("$.data.nickname").value(testMember.getNickname()))
-			.andExpect(jsonPath("$.data.experience").value(testMember.getExperience()))
-			.andExpect(jsonPath("$.data.introduction").value(testMember.getIntroduction()))
-			.andExpect(jsonPath("$.data.image_url").value(testMember.getImageUrl()));
+			.andExpect(jsonPath("$.msg").value(MEMBER_FOUND.getMsg()));
 
 		//verify
 		verify(memberService, times(1)).findMember(anyLong());

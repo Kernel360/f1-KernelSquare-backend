@@ -34,9 +34,9 @@ public record FindQuestionResponse(
             question.getClosedStatus(),
             member.getId(),
             member.getNickname(),
-            member.getImageUrl(),
+            ImageUtils.makeImageUrl(member.getImageUrl()),
             level.getName(),
-            level.getImageUrl(),
+            ImageUtils.makeImageUrl(level.getImageUrl()),
             question.getTechStackList().stream().map(x -> x.getTechStack().getSkill()).toList(),
             question.getCreatedDate(),
             question.getModifiedDate()

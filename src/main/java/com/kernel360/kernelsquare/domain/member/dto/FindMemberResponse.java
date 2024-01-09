@@ -1,5 +1,6 @@
 package com.kernel360.kernelsquare.domain.member.dto;
 
+import com.kernel360.kernelsquare.domain.image.utils.ImageUtils;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 
 import lombok.Builder;
@@ -22,7 +23,7 @@ public record FindMemberResponse(
 			.nickname(member.getNickname())
 			.experience(member.getExperience())
 			.introduction(member.getIntroduction())
-			.imageUrl(member.getImageUrl())
+			.imageUrl(ImageUtils.makeImageUrl(member.getImageUrl()))
 			.level(member.getLevel().getName())
 			.build();
 	}

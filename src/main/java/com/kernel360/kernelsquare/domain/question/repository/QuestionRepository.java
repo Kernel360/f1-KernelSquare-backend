@@ -1,7 +1,8 @@
 package com.kernel360.kernelsquare.domain.question.repository;
 
 import com.kernel360.kernelsquare.domain.question.entity.Question;
+import com.kernel360.kernelsquare.domain.search.repository.CustomQuestionRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface QuestionRepository extends JpaRepository<Question, Long> {
+public interface QuestionRepository extends JpaRepository<Question, Long>, CustomQuestionRepository {
 }

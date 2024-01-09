@@ -1,11 +1,9 @@
 package com.kernel360.kernelsquare.domain.auth.dto;
 
-import java.util.Collection;
 import java.util.List;
 
-import org.springframework.security.core.GrantedAuthority;
-
 import com.kernel360.kernelsquare.domain.member.entity.Member;
+import com.kernel360.kernelsquare.domain.member_authority.entity.MemberAuthority;
 
 import lombok.Builder;
 
@@ -21,9 +19,9 @@ public record LoginResponse(
 	TokenDto tokenDto
 ) {
 
-	public static LoginResponse of(Member member, Collection<? extends GrantedAuthority> authorities,
-		TokenDto tokenDto) {
-		List<String> roles = authorities.stream()
+	public static LoginResponse of(Member member, TokenDto tokenDto) {
+		List<String> roles = member.getAuthorities().stream()
+			.map(MemberAuthority::getAuthority)
 			.map(String::valueOf)
 			.toList();
 

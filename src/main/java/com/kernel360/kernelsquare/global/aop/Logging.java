@@ -18,10 +18,10 @@ public class Logging {
             "execution(* com.kernel360.kernelsquare.domain.answer.service.AnswerService.*(..)) || " +
             "execution(* com.kernel360.kernelsquare.domain.member_answer_vote.service.MemberAnswerVoteService.*(..)) || " +
             "execution(* com.kernel360.kernelsquare.domain.image.service.ImageService.*(..))")
-    public void allController() {
+    public void allService() {
     }
 
-    @Around("allController()")
+    @Around("allService()")
     public Object aroundServiceMethod(ProceedingJoinPoint joinPoint) throws Throwable {
         Signature signature = joinPoint.getSignature();
         String fileFullName = signature.getDeclaringTypeName(); // 파일 전체 이름을 가져옵니다.

@@ -15,9 +15,12 @@ import com.kernel360.kernelsquare.domain.auth.dto.LoginResponse;
 import com.kernel360.kernelsquare.domain.auth.dto.SignUpRequest;
 import com.kernel360.kernelsquare.domain.auth.dto.SignUpResponse;
 import com.kernel360.kernelsquare.domain.auth.dto.TokenDto;
+import com.kernel360.kernelsquare.domain.auth.entity.RefreshToken;
 import com.kernel360.kernelsquare.domain.auth.service.AuthService;
+import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.global.common_response.ApiResponse;
 import com.kernel360.kernelsquare.global.common_response.ResponseEntityFactory;
+import com.kernel360.kernelsquare.global.jwt.TokenProvider;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,10 +30,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthController {
 	private final AuthService authService;
+	private final TokenProvider tokenProvider;
 
 	@PostMapping("/auth/login")
 	public ResponseEntity<ApiResponse<LoginResponse>> login(final @RequestBody @Valid LoginRequest loginRequest) {
-		LoginResponse loginResponse = authService.login(loginRequest);
+		Member member = authService.login(loginRequest);
+		TokenDto tokenDto = tokenProvider.createToken(member, loginRequest);
+		LoginResponse loginResponse = LoginResponse.of(member, tokenDto);
 		return ResponseEntityFactory.toResponseEntity(LOGIN_SUCCESS, loginResponse);
 	}
 
@@ -42,7 +48,7 @@ public class AuthController {
 
 	@PostMapping("/auth/reissue")
 	public ResponseEntity<ApiResponse<TokenDto>> reissueAccessToken(final @RequestBody TokenDto requestTokenDto) {
-		TokenDto tokenDto = authService.reissueAccessToken(requestTokenDto);
+		TokenDto tokenDto = tokenProvider.reissueToken(requestTokenDto);
 		return ResponseEntityFactory.toResponseEntity(ACCESS_TOKEN_REISSUED, tokenDto);
 	}
 
@@ -62,7 +68,8 @@ public class AuthController {
 
 	@PostMapping("/auth/logout")
 	public ResponseEntity<ApiResponse> logout(final @RequestBody TokenDto tokenDto) {
-		authService.logout(tokenDto);
+		RefreshToken refreshToken = tokenProvider.toRefreshToken(tokenDto.refreshToken());
+		tokenProvider.removeRedisRefreshToken(refreshToken.getMemberId());
 		return ResponseEntityFactory.toResponseEntity(LOGOUT_SUCCESS);
 	}
 }

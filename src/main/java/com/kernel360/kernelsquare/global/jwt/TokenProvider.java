@@ -16,6 +16,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -26,8 +27,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.kernel360.kernelsquare.domain.auth.dto.LoginRequest;
 import com.kernel360.kernelsquare.domain.auth.dto.TokenDto;
 import com.kernel360.kernelsquare.domain.auth.entity.RefreshToken;
+import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
 
 import io.jsonwebtoken.Claims;
@@ -60,6 +63,7 @@ public class TokenProvider implements InitializingBean {
 	private long refreshTokenValidityInSeconds;
 
 	private final RedisTemplate<Long, RefreshToken> redisTemplate;
+	private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -67,7 +71,11 @@ public class TokenProvider implements InitializingBean {
 		this.key = Keys.hmacShaKeyFor(keyBytes);
 	}
 
-	public TokenDto createToken(Authentication authentication) {
+	public TokenDto createToken(Member member, LoginRequest loginRequest) {
+		UsernamePasswordAuthenticationToken authenticationToken =
+			new UsernamePasswordAuthenticationToken(member.getId(), loginRequest.password());
+		Authentication authentication = authenticationManagerBuilder.getObject()
+			.authenticate(authenticationToken);
 		String authorities = authentication.getAuthorities().stream()
 			.map(GrantedAuthority::getAuthority)
 			.collect(Collectors.joining(","));

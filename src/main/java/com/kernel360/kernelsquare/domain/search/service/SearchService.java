@@ -2,7 +2,7 @@ package com.kernel360.kernelsquare.domain.search.service;
 
 import com.kernel360.kernelsquare.domain.question.dto.FindQuestionResponse;
 import com.kernel360.kernelsquare.domain.question.entity.Question;
-import com.kernel360.kernelsquare.domain.question.repository.QuestionRepository;
+import com.kernel360.kernelsquare.domain.search.repository.CustomQuestionRepository;
 import com.kernel360.kernelsquare.global.common_response.error.code.QuestionErrorCode;
 import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
 import com.kernel360.kernelsquare.global.dto.PageResponse;
@@ -17,13 +17,13 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class SearchService {
-    private final QuestionRepository questionRepository;
+    private final CustomQuestionRepository customQuestionRepository;
 
     public PageResponse<FindQuestionResponse> searchQuestions(Pageable pageable, String keyword) {
 
         Integer currentPage = pageable.getPageNumber()+1;
 
-        Page<Question> pages = questionRepository.searchByKeyword(pageable, keyword);
+        Page<Question> pages = customQuestionRepository.searchByKeyword(pageable, keyword);
 
         Integer totalPages = pages.getTotalPages();
 

@@ -5,7 +5,6 @@ import com.kernel360.kernelsquare.global.config.QueryDslConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
@@ -16,10 +15,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("검색 레포지토리 통합 테스트")
 @DataJpaTest
-@Import(QueryDslConfig.class)
+@Import({QueryDslConfig.class, CustomQuestionRepositoryImpl.class})
 class CustomQuestionRepositoryTest {
     @Autowired
-    @Qualifier("customQuestionRepositoryImpl")
     private CustomQuestionRepository customQuestionRepository;
 
     @Test

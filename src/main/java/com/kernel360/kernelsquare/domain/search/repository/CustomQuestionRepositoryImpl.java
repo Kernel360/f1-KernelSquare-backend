@@ -11,9 +11,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.data.support.PageableExecutionUtils;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public class CustomQuestionRepositoryImpl extends QuerydslRepositorySupport implements CustomQuestionRepository {
     @Autowired
     private final JPAQueryFactory queryFactory;

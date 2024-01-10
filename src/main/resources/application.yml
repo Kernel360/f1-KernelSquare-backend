@@ -50,7 +50,7 @@ spring:
 logging.level:
   org.hibernate.SQL: debug
   #  org.hibernate.type: trace
-  org.springframework.security: debug
+  org.springframework.security: warn
 
 cloud:
   aws:
@@ -67,3 +67,11 @@ custom:
     image:
       baseUrl: ${BASE_URL}
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus, health, info, metrics
+#  observations:
+#    key-values:
+#      application: KS_SingleModule  #태그

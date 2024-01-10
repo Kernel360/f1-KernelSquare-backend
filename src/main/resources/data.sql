@@ -19,4 +19,7 @@ INSERT INTO authority (authority_type)
 VALUES ('ROLE_USER');
 
 INSERT INTO member_authority (member_id, authority_id)
-VALUES (1, 1)
+VALUES (1, 1);
+
+INSERT INTO question_tech_stack (created_date, modified_date, question_id, tech_stack_id)
+VALUES ('2023-12-19T09:00:00', '2023-12-19T09:00:00', 1, 2);

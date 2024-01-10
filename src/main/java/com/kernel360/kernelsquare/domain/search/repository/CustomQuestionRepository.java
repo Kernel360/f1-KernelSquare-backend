@@ -1,9 +1,11 @@
 package com.kernel360.kernelsquare.domain.search.repository;
 
 import com.kernel360.kernelsquare.domain.question.entity.Question;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
+@Repository
 public interface CustomQuestionRepository {
-    List<Question> searchByKeyword(String keyword);
+    Page<Question> searchByKeyword(Pageable pageable, String keyword);
 }

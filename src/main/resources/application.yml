@@ -40,13 +40,6 @@ spring:
       access-token-validity-in-seconds: 3600     # 1시간
       refresh-token-validity-in-seconds: 1_209_600  # 2주
 
-  elasticsearch:
-    rest:
-      uris: http://localhost:9200
-      username: elastic
-      password: KernelSquare
-
-
 logging.level:
   org.hibernate.SQL: debug
   #  org.hibernate.type: trace

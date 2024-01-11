@@ -17,6 +17,7 @@ public record CreateReservationArticleRequest(
         String title,
         @NotBlank(message = "내용을 작성해주세요.")
         String content,
+        @NotNull(message = "빈 리스트라도 보내주세요")
         List<String> hashTags,
         @NotNull(message = "시간을 선택해주세요.")
         List<LocalDateTime> dateTimes

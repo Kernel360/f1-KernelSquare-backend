@@ -13,13 +13,13 @@ public enum QuestionResponseCode implements ResponseCode {
     QUESTION_UPDATED(HttpStatus.OK,QuestionServiceStatus.QUESTION_UPDATED , "질문 수정 성공"),
     QUESTION_DELETED(HttpStatus.OK,QuestionServiceStatus.QUESTION_DELETED , "질문 삭제 성공");
 
-    private final HttpStatus code;
+    private final HttpStatus httpStatus;
     private final ServiceStatus serviceStatus;
     private final String msg;
 
     @Override
     public HttpStatus getStatus() {
-        return code;
+        return httpStatus;
     }
 
     @Override

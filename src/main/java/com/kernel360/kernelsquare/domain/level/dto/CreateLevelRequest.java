@@ -10,7 +10,9 @@ public record CreateLevelRequest(
 	@NotNull(message = "등급 이름는 필수 항목입니다.")
 	Long name,
 	@NotBlank(message = "등급 이미지는 필수 항목입니다.")
-	String imageUrl
+	String imageUrl,
+	@NotNull(message = "등급 경험치 상한선은 필수 항목입니다.")
+	Long levelUpperLimit
 ) {
 
 	public static Level toEntity(
@@ -18,6 +20,7 @@ public record CreateLevelRequest(
 		return Level.builder()
 			.name(createLevelRequest.name())
 			.imageUrl(ImageUtils.parseFilePath(createLevelRequest.imageUrl()))
+			.levelUpperLimit(createLevelRequest.levelUpperLimit())
 			.build();
 	}
 }

@@ -52,7 +52,7 @@ public class SecurityConfig {
 
 	private final String[] hasRoleAdminPatterns = new String[] {
 		"/api/v1/techs/{techStackId}",
-		"/api/v1/levels/"
+		"/api/v1/levels/**"
 	};
 
 	@Bean

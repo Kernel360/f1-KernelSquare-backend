@@ -69,6 +69,7 @@ public class SecurityConfig {
 			.requestMatchers(permitAllPatterns).permitAll()
 			.requestMatchers(HttpMethod.GET, "/api/v1/questions/{questionId}").permitAll()
 			.requestMatchers(HttpMethod.GET, "/api/v1/questions").permitAll()
+			.requestMatchers(HttpMethod.GET, "/api/v1/search/questions").permitAll()
 			.requestMatchers(HttpMethod.GET, "/api/v1/questions/{questiondId}/answers").permitAll()
 			.requestMatchers(HttpMethod.GET, "/api/v1/levels").permitAll()
 
@@ -83,10 +84,15 @@ public class SecurityConfig {
 			.requestMatchers(HttpMethod.PUT, "/api/v1/members/{memberId}").hasRole("USER")
 			.requestMatchers(HttpMethod.PUT, "/api/v1/members/{memberId}/password").hasRole("USER")
 			.requestMatchers(HttpMethod.POST, "/api/v1/questions").hasRole("USER")
+			.requestMatchers(HttpMethod.POST, "/api/v1/questions/**").hasRole("USER")
 			.requestMatchers(HttpMethod.PUT, "/api/v1/questions/{questionId}").hasRole("USER")
 			.requestMatchers(HttpMethod.DELETE, "/api/v1/questions/{questionId}").hasRole("USER")
 			.requestMatchers(HttpMethod.POST, "/api/v1/questions/{questionId}/answers").hasRole("USER")
 
+
+			// ROLE_MENTOR 권한 필요
+			.requestMatchers(HttpMethod.POST, "/api/v1/coffeechat/posts").permitAll()
+			.requestMatchers(HttpMethod.POST, "/api/v1/coffeechat/posts").hasRole("MENTOR")
 
 			// ROLE_ADMIN 권한 필요
 			.requestMatchers(hasRoleAdminPatterns).hasRole("ADMIN")

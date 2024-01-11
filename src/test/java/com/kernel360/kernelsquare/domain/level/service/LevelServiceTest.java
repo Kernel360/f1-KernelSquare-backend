@@ -36,7 +36,7 @@ class LevelServiceTest {
     @DisplayName("등급 생성 테스트")
     void testCreateLevel() {
         // Given
-        CreateLevelRequest createLevelRequest = new CreateLevelRequest(3L, "testurl");
+        CreateLevelRequest createLevelRequest = new CreateLevelRequest(3L, "testurl", 2000L);
 
         Level level = CreateLevelRequest.toEntity(createLevelRequest);
 
@@ -75,7 +75,11 @@ class LevelServiceTest {
     @DisplayName("등급 삭제 테스트")
     void testDeleteLevel() {
         // Given
-        Level level = new Level(1L, 11L, "image1.jpg");
+        Level level = Level.builder()
+            .id(1L)
+            .name(11L)
+            .imageUrl("image9.jpg")
+            .build();
 
         doNothing().when(levelRepository).deleteById(level.getId());
         // When
@@ -89,8 +93,12 @@ class LevelServiceTest {
     @DisplayName("등급 수정 테스트")
     void testUpdateLevel() {
         // Given
-        Level level = new Level(1L, 1L, "image1.jpg");
-        UpdateLevelRequest updateLevelRequest = new UpdateLevelRequest(1L, 2L, "image2.jpg");
+        Level level = Level.builder()
+            .id(1L)
+            .name(1L)
+            .imageUrl("image1.jpg")
+            .build();
+        UpdateLevelRequest updateLevelRequest = new UpdateLevelRequest(2L, "image2.jpg",1100L);
         given(levelRepository.findById(anyLong())).willReturn(Optional.of(level));
 
         // When

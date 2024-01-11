@@ -51,7 +51,7 @@ public class LevelService {
                 throw new BusinessException(LevelErrorCode.LEVEL_ALREADY_EXISTED);
             });
 
-        level.update(updateLevelRequest.name(), updateLevelRequest.imageUrl());
+        level.update(updateLevelRequest.name(), updateLevelRequest.imageUrl(), updateLevelRequest.levelUpperLimit());
 
         return UpdateLevelResponse.from(level);
     }

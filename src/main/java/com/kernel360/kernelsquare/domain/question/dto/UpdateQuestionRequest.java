@@ -13,12 +13,4 @@ public record UpdateQuestionRequest(
 	String imageUrl,
 	@NotNull(message = "최소한 빈 리스트로 들어와야 합니다.")
 	List<String> skills
-) {
-//    public static Question toEntity(UpdateQuestionRequest updateQuestionRequest) {
-//        return Question.builder()
-//            .title(updateQuestionRequest.title())
-//            .content(updateQuestionRequest.content())
-//            .imageUrl(updateQuestionRequest.imageUrl()!=null? ImageUtils.parseFilePath(updateQuestionRequest.imageUrl()): null)
-//            .build();
-//    }
-}
+) {}

@@ -48,13 +48,16 @@ class LevelControllerTest {
 		// Given
 		Long name = 3L;
 		String imageUrl = "test22";
+		Long levelUpperLimit = 2000L;
 
 		Level level = Level.builder()
 			.id(1L)
 			.name(name)
 			.imageUrl(imageUrl)
+			.levelUpperLimit(levelUpperLimit)
 			.build();
-		CreateLevelRequest createLevelRequest = new CreateLevelRequest(name, imageUrl);
+
+		CreateLevelRequest createLevelRequest = new CreateLevelRequest(name, imageUrl, levelUpperLimit);
 		CreateLevelResponse createLevelResponse = CreateLevelResponse.from(level);
 
 		doReturn(createLevelResponse)
@@ -115,7 +118,11 @@ class LevelControllerTest {
 	@DisplayName("레벨 삭제 성공 시 200 OK와 메시지를 반환한다")
 	void testDeleteLevel() throws Exception {
 		// Given
-		Level level = new Level(1L, 11L, "image9.jpg");
+		Level level = Level.builder()
+			.id(1L)
+			.name(11L)
+			.imageUrl("image9.jpg")
+			.build();
 
 		doNothing()
 			.when(levelService)
@@ -140,16 +147,18 @@ class LevelControllerTest {
 	@DisplayName("레벨 수정 성공 시 200 OK와 메시지를 반환한다")
 	void testUpdateLevel() throws Exception {
 		// Given
-		Long id = 1L;
 		Long name = 3L;
 		String imageUrl = "image1.jpg";
+		Long levelUpperLimit = 2000L;
 
 		Level level = Level.builder()
-			.id(id)
+			.id(1L)
 			.name(name)
 			.imageUrl(imageUrl)
+			.levelUpperLimit(levelUpperLimit)
 			.build();
-		UpdateLevelRequest updateLevelRequest = new UpdateLevelRequest(id, name, imageUrl);
+
+		UpdateLevelRequest updateLevelRequest = new UpdateLevelRequest(name, imageUrl, levelUpperLimit);
 		UpdateLevelResponse updateLevelResponse = UpdateLevelResponse.from(level);
 
 		doReturn(updateLevelResponse)

@@ -30,15 +30,20 @@ public class Level extends BaseEntity {
 	@Column(nullable = false, name = "image_url", columnDefinition = "varchar(100)")
 	private String imageUrl;
 
+	@Column(nullable = false, name = "level_upper_limit", columnDefinition = "bigint")
+	private Long levelUpperLimit;
+
 	@Builder
-	public Level(Long id, Long name, String imageUrl) {
+	public Level(Long id, Long name, String imageUrl, Long levelUpperLimit) {
 		this.id = id;
 		this.name = name;
 		this.imageUrl = imageUrl;
+		this.levelUpperLimit = levelUpperLimit;
 	}
 
-	public void update(Long name, String imageUrl) {
+	public void update(Long name, String imageUrl, Long levelUpperLimit) {
 		this.name = name;
 		this.imageUrl = imageUrl;
+		this.levelUpperLimit = levelUpperLimit;
 	}
 }

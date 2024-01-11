@@ -28,8 +28,6 @@ public class ReservationArticleService {
     public CreateReservationArticleResponse createReservationArticle(CreateReservationArticleRequest createReservationArticleRequest) {
         Member member = memberRepository.findById(createReservationArticleRequest.memberId())
                 .orElseThrow(() -> new BusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
-        Authority authority = authorityRepository.findAuthorityByAuthorityType(AuthorityType.ROLE_MENTOR)
-                .orElseThrow(() -> new BusinessException(AuthorityErrorCode.AUTHORITY_NOT_FOUND));
 
         ReservationArticle reservationArticle = CreateReservationArticleRequest.toEntity(createReservationArticleRequest, member);
         ReservationArticle saveReservationArticle = reservationArticleRepository.save(reservationArticle);

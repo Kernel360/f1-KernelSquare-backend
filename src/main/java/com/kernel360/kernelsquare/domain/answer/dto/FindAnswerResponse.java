@@ -19,12 +19,12 @@ public record FindAnswerResponse(
         Long voteCount,
         Long voteStatus
 ) {
-    public static FindAnswerResponse from(Answer answer, String lankImageUrl, Long authorLevel, Long voteStatus) {
+    public static FindAnswerResponse from(Answer answer, String rankImageUrl, Long authorLevel, Long voteStatus) {
         return new FindAnswerResponse(
                 answer.getId(),
                 answer.getQuestion().getId(),
                 answer.getContent(),
-                lankImageUrl,
+                rankImageUrl,
                 answer.getMember().getImageUrl(),
                 answer.getMember().getNickname(),
                 authorLevel,

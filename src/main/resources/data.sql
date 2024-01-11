@@ -46,4 +46,4 @@ INSERT INTO level (created_date, modified_date, image_url, name, level_upper_lim
 VALUES ('2023-12-12T09:00:00', '2023-12-12T09:00:00', 'level/level9.png', 9, 100000);
 
 INSERT INTO level (created_date, modified_date, image_url, name, level_upper_limit)
-VALUES ('2023-12-12T09:00:00', '2023-12-12T09:00:00', 'level/level10.png', 10, 18446744073709551615);
+VALUES ('2023-12-12T09:00:00', '2023-12-12T09:00:00', 'level/level10.png', 10, 9223372036854775807);

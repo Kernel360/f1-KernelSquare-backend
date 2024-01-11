@@ -14,8 +14,8 @@ import com.kernel360.kernelsquare.domain.auth.dto.LoginRequest;
 import com.kernel360.kernelsquare.domain.auth.dto.LoginResponse;
 import com.kernel360.kernelsquare.domain.auth.dto.SignUpRequest;
 import com.kernel360.kernelsquare.domain.auth.dto.SignUpResponse;
-import com.kernel360.kernelsquare.domain.auth.dto.TokenDto;
-import com.kernel360.kernelsquare.domain.auth.entity.RefreshToken;
+import com.kernel360.kernelsquare.domain.auth.dto.TokenRequest;
+import com.kernel360.kernelsquare.domain.auth.dto.TokenResponse;
 import com.kernel360.kernelsquare.domain.auth.service.AuthService;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.global.common_response.ApiResponse;
@@ -35,8 +35,8 @@ public class AuthController {
 	@PostMapping("/auth/login")
 	public ResponseEntity<ApiResponse<LoginResponse>> login(final @RequestBody @Valid LoginRequest loginRequest) {
 		Member member = authService.login(loginRequest);
-		TokenDto tokenDto = tokenProvider.createToken(member, loginRequest);
-		LoginResponse loginResponse = LoginResponse.of(member, tokenDto);
+		TokenResponse tokenResponse = tokenProvider.createToken(member, loginRequest);
+		LoginResponse loginResponse = LoginResponse.of(member, tokenResponse);
 		return ResponseEntityFactory.toResponseEntity(LOGIN_SUCCESS, loginResponse);
 	}
 
@@ -47,9 +47,10 @@ public class AuthController {
 	}
 
 	@PostMapping("/auth/reissue")
-	public ResponseEntity<ApiResponse<TokenDto>> reissueAccessToken(final @RequestBody TokenDto requestTokenDto) {
-		TokenDto tokenDto = tokenProvider.reissueToken(requestTokenDto);
-		return ResponseEntityFactory.toResponseEntity(ACCESS_TOKEN_REISSUED, tokenDto);
+	public ResponseEntity<ApiResponse<TokenResponse>> reissueAccessToken(
+		final @RequestBody TokenRequest requestTokenRequest) {
+		TokenResponse tokenResponse = tokenProvider.reissueToken(requestTokenRequest);
+		return ResponseEntityFactory.toResponseEntity(ACCESS_TOKEN_REISSUED, tokenResponse);
 	}
 
 	@PostMapping("/auth/check/email")
@@ -67,9 +68,8 @@ public class AuthController {
 	}
 
 	@PostMapping("/auth/logout")
-	public ResponseEntity<ApiResponse> logout(final @RequestBody TokenDto tokenDto) {
-		RefreshToken refreshToken = tokenProvider.toRefreshToken(tokenDto.refreshToken());
-		tokenProvider.removeRedisRefreshToken(refreshToken.getMemberId());
+	public ResponseEntity<ApiResponse> logout(final @RequestBody TokenRequest tokenRequest) {
+		tokenProvider.logout(tokenRequest);
 		return ResponseEntityFactory.toResponseEntity(LOGOUT_SUCCESS);
 	}
 }

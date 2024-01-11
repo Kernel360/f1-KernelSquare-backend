@@ -16,10 +16,11 @@ public record LoginResponse(
 	String imageUrl,
 	Long level,
 	List<String> roles,
-	TokenDto tokenDto
+	TokenResponse tokenDto
+
 ) {
 
-	public static LoginResponse of(Member member, TokenDto tokenDto) {
+	public static LoginResponse of(Member member, TokenResponse tokenResponse) {
 		List<String> roles = member.getAuthorities().stream()
 			.map(MemberAuthority::getAuthority)
 			.map(String::valueOf)
@@ -33,7 +34,7 @@ public record LoginResponse(
 			.imageUrl(member.getImageUrl())
 			.level(member.getLevel().getName())
 			.roles(roles)
-			.tokenDto(tokenDto)
+			.tokenDto(tokenResponse)
 			.build();
 	}
 }

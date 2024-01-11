@@ -2,11 +2,13 @@ package com.kernel360.kernelsquare.global.jwt;
 
 import static com.kernel360.kernelsquare.global.common_response.error.code.TokenErrorCode.*;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -28,7 +30,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.kernel360.kernelsquare.domain.auth.dto.LoginRequest;
-import com.kernel360.kernelsquare.domain.auth.dto.TokenDto;
+import com.kernel360.kernelsquare.domain.auth.dto.TokenRequest;
+import com.kernel360.kernelsquare.domain.auth.dto.TokenResponse;
 import com.kernel360.kernelsquare.domain.auth.entity.RefreshToken;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
@@ -41,6 +44,7 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -71,7 +75,13 @@ public class TokenProvider implements InitializingBean {
 		this.key = Keys.hmacShaKeyFor(keyBytes);
 	}
 
-	public TokenDto createToken(Member member, LoginRequest loginRequest) {
+	public void logout(TokenRequest tokenRequest) {
+		RefreshToken refreshToken = toRefreshToken(
+			new String(Base64.getDecoder().decode(tokenRequest.refreshToken()), StandardCharsets.UTF_8));
+		redisTemplate.opsForValue().getOperations().delete(refreshToken.getMemberId());
+	}
+
+	public TokenResponse createToken(Member member, LoginRequest loginRequest) {
 		UsernamePasswordAuthenticationToken authenticationToken =
 			new UsernamePasswordAuthenticationToken(member.getId(), loginRequest.password());
 		Authentication authentication = authenticationManagerBuilder.getObject()
@@ -79,12 +89,12 @@ public class TokenProvider implements InitializingBean {
 		String authorities = authentication.getAuthorities().stream()
 			.map(GrantedAuthority::getAuthority)
 			.collect(Collectors.joining(","));
-		return TokenDto.of(
+		return TokenResponse.of(
 			createAccessToken(authentication.getName(), authorities),
 			createRefreshToken(authentication.getName()));
 	}
 
-	public String createAccessToken(String sub, String roles) {
+	private String createAccessToken(String sub, String roles) {
 		LocalDateTime localDateTime = LocalDateTime.now()
 			.plusSeconds(accessTokenValidityInSeconds);
 		Instant instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
@@ -98,7 +108,7 @@ public class TokenProvider implements InitializingBean {
 			.compact();
 	}
 
-	public String createRefreshToken(String sub) {
+	private String createRefreshToken(String sub) {
 		LocalDateTime expirationDate = LocalDateTime.now()
 			.plusSeconds(refreshTokenValidityInSeconds);
 
@@ -113,7 +123,7 @@ public class TokenProvider implements InitializingBean {
 
 		redisTemplate.opsForValue().set(refreshToken.getMemberId(), refreshToken);
 
-		return toJsonString(refreshToken);
+		return Encoders.BASE64.encode(toJsonString(refreshToken).getBytes());
 	}
 
 	private String toJsonString(RefreshToken refreshToken) {
@@ -152,7 +162,7 @@ public class TokenProvider implements InitializingBean {
 		return new UsernamePasswordAuthenticationToken(principal, token, authorities);
 	}
 
-	public Claims parseClaims(String token) {
+	private Claims parseClaims(String token) {
 		try {
 			Claims claims = Jwts.parserBuilder()
 				.setSigningKey(key)
@@ -182,14 +192,14 @@ public class TokenProvider implements InitializingBean {
 	}
 
 	/** Refresh Token 재발급 **/
-	public TokenDto reissueToken(TokenDto tokenDto) {
-		Claims claims = parseClaims(tokenDto.accessToken());
-		String findIdByAccessToken = parseClaims(tokenDto.accessToken()).getSubject();
+	public TokenResponse reissueToken(TokenRequest tokenRequest) {
+		Claims claims = parseClaims(tokenRequest.accessToken());
+		String findIdByAccessToken = parseClaims(tokenRequest.accessToken()).getSubject();
 		RefreshToken refreshToken = redisTemplate.opsForValue().get(Long.parseLong(findIdByAccessToken));
 
 		validateReissueToken(refreshToken, findIdByAccessToken);
 
-		return TokenDto.builder()
+		return TokenResponse.builder()
 			.accessToken(createAccessToken(String.valueOf(refreshToken.getMemberId()), claims.get("auth").toString()))
 			.refreshToken(createRefreshToken(String.valueOf(refreshToken.getMemberId())))
 			.build();
@@ -198,16 +208,12 @@ public class TokenProvider implements InitializingBean {
 	/** Reissued Token 유효성 검증을 수행 **/
 	private void validateReissueToken(RefreshToken refreshToken, String accessTokenId) {
 		if (!refreshToken.getExpirationDate().isAfter(LocalDateTime.now())) {
-			removeRedisRefreshToken(refreshToken.getMemberId());
+			redisTemplate.opsForValue().getOperations().delete(refreshToken.getMemberId());
 			throw new BusinessException(EXPIRED_LOGIN_INFO);
 		}
-		if (!accessTokenId.equals(refreshToken.getMemberId())) {
+		if (!accessTokenId.equals(String.valueOf(refreshToken.getMemberId()))) {
 			throw new BusinessException(INVALID_TOKEN);
 		}
-	}
-
-	public void removeRedisRefreshToken(Long id) {
-		redisTemplate.opsForValue().getOperations().delete(id);
 	}
 }
 

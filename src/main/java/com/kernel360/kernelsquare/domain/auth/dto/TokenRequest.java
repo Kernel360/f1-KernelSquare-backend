@@ -3,15 +3,15 @@ package com.kernel360.kernelsquare.domain.auth.dto;
 import lombok.Builder;
 
 @Builder
-public record TokenDto(
+public record TokenRequest(
 	String accessToken,
 	String refreshToken) {
 
-	public static TokenDto of(
+	public static TokenRequest of(
 		String accessToken,
 		String refreshToken
 	) {
-		return TokenDto
+		return TokenRequest
 			.builder()
 			.accessToken(accessToken)
 			.refreshToken(refreshToken)

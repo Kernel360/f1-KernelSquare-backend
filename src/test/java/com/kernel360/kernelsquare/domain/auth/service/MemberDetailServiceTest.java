@@ -87,6 +87,6 @@ public class MemberDetailServiceTest {
 
 		//verify
 		verify(memberRepository, only()).findById(anyLong());
-		verify(memberRepository, atMostOnce()).findById(anyLong());
+		verify(memberRepository, times(1)).findById(anyLong());
 	}
 }

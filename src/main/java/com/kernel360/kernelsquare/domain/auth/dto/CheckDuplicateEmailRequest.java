@@ -3,7 +3,9 @@ package com.kernel360.kernelsquare.domain.auth.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 
+@Builder
 public record CheckDuplicateEmailRequest(
 
 	@NotBlank(message = "이메일은 필수 입력 항목입니다.")

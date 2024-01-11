@@ -15,21 +15,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("검색 레포지토리 통합 테스트")
 @DataJpaTest
-@Import({QueryDslConfig.class, CustomQuestionRepositoryImpl.class})
-class CustomQuestionRepositoryTest {
+@Import({QueryDslConfig.class, SearchRepositoryImpl.class})
+class SearchRepositoryTest {
     @Autowired
-    private CustomQuestionRepository customQuestionRepository;
+    private SearchRepository searchRepository;
 
     @Test
-    @DisplayName("검색 searchByKeyword 정상 작동 테스트")
-    void testSearchByKeyword() {
+    @DisplayName("검색 searchQuestionsByKeyword 정상 작동 테스트")
+    void testSearchQuestionsByKeyword() {
         //given
         Pageable pageable = PageRequest.of(0, 5);
 
         String keyword = "Java";
 
         //when
-        Page<Question> page = customQuestionRepository.searchByKeyword(pageable, keyword);
+        Page<Question> page = searchRepository.searchQuestionsByKeyword(pageable, keyword);
 
         //then
         assertThat(page).isNotNull();

@@ -16,16 +16,16 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class CustomQuestionRepositoryImpl extends QuerydslRepositorySupport implements CustomQuestionRepository {
+public class SearchRepositoryImpl extends QuerydslRepositorySupport implements SearchRepository {
     @Autowired
     private final JPAQueryFactory queryFactory;
 
-    public CustomQuestionRepositoryImpl(JPAQueryFactory queryFactory) {
+    public SearchRepositoryImpl(JPAQueryFactory queryFactory) {
         super(Question.class);
         this.queryFactory = queryFactory;
     }
     @Override
-    public Page<Question> searchByKeyword(Pageable pageable, String keyword) {
+    public Page<Question> searchQuestionsByKeyword(Pageable pageable, String keyword) {
         QQuestion question = QQuestion.question;
         QQuestionTechStack questionTechStack = QQuestionTechStack.questionTechStack;
 

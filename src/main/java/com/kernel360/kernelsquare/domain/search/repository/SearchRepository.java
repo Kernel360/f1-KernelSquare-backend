@@ -6,6 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CustomQuestionRepository {
-    Page<Question> searchByKeyword(Pageable pageable, String keyword);
+public interface SearchRepository {
+    Page<Question> searchQuestionsByKeyword(Pageable pageable, String keyword);
 }

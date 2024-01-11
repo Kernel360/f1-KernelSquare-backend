@@ -36,8 +36,8 @@ class SearchControllerTest {
     @MockBean
     private SearchService searchService;
 
-    Member member;
-    Level level;
+    private Member member;
+    private Level level;
 
     private Member createTestMember() {
         return Member.builder()

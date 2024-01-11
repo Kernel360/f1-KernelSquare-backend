@@ -4,7 +4,7 @@ import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.question.dto.FindQuestionResponse;
 import com.kernel360.kernelsquare.domain.question.entity.Question;
-import com.kernel360.kernelsquare.domain.search.repository.CustomQuestionRepository;
+import com.kernel360.kernelsquare.domain.search.repository.SearchRepository;
 import com.kernel360.kernelsquare.global.dto.PageResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -33,11 +33,11 @@ class SearchServiceTest {
     @InjectMocks
     private SearchService searchService;
     @Mock
-    private CustomQuestionRepository customQuestionRepository;
+    private SearchRepository searchRepository;
 
-    Member member;
+    private Member member;
 
-    Level level;
+    private Level level;
 
     private Question createTestQuestion(Long id) {
         return Question.builder()
@@ -93,7 +93,7 @@ class SearchServiceTest {
 
         String keyword = "테스트";
 
-        given(customQuestionRepository.searchByKeyword(pageable, keyword)).willReturn(pages);
+        given(searchRepository.searchQuestionsByKeyword(pageable, keyword)).willReturn(pages);
 
         Integer currentPage = pageable.getPageNumber() + 1;
 
@@ -112,7 +112,7 @@ class SearchServiceTest {
         assertThat(pageResponse.list()).isNotNull();
 
         //verify
-        verify(customQuestionRepository, times(1)).searchByKeyword(any(Pageable.class), anyString());
+        verify(searchRepository, times(1)).searchQuestionsByKeyword(any(Pageable.class), anyString());
     }
 
 }

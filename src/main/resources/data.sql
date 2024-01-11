@@ -6,8 +6,14 @@ VALUES ('2023-12-19T09:00:00', 0, 1, '2023-12-19T09:00:00', 'duck@example.com', 
 INSERT INTO authority (authority_type)
 VALUES ('ROLE_USER');
 
+INSERT INTO authority (authority_type)
+VALUES ('ROLE_ADMIN');
+
 INSERT INTO member_authority (member_id, authority_id)
 VALUES (1, 1);
+
+INSERT INTO member_authority (member_id, authority_id)
+VALUES (1, 2);
 
 INSERT INTO question (closed_status, created_date, id, member_id, modified_date, view_count, content, image_url, title)
 VALUES (1, '2023-12-19T09:00:00', 1, 1, '2023-12-21T09:00:00', 20, 'No content', 'question/d1c27379-2d08-4a6a-9d97-368124a50900thumb.jpg', '시간복잡도 사진');

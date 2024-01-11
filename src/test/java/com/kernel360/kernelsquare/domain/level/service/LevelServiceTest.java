@@ -36,7 +36,7 @@ class LevelServiceTest {
     @DisplayName("등급 생성 테스트")
     void testCreateLevel() {
         // Given
-        CreateLevelRequest createLevelRequest = new CreateLevelRequest(3L, "testurl");
+        CreateLevelRequest createLevelRequest = new CreateLevelRequest(3L, "testurl", 2000L);
 
         Level level = CreateLevelRequest.toEntity(createLevelRequest);
 
@@ -98,7 +98,7 @@ class LevelServiceTest {
             .name(1L)
             .imageUrl("image1.jpg")
             .build();
-        UpdateLevelRequest updateLevelRequest = new UpdateLevelRequest(1L, 2L, "image2.jpg");
+        UpdateLevelRequest updateLevelRequest = new UpdateLevelRequest(2L, "image2.jpg",1100L);
         given(levelRepository.findById(anyLong())).willReturn(Optional.of(level));
 
         // When

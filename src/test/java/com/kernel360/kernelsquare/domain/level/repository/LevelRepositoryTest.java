@@ -1,25 +1,26 @@
 package com.kernel360.kernelsquare.domain.level.repository;
 
-import com.kernel360.kernelsquare.domain.level.entity.Level;
-import com.kernel360.kernelsquare.global.common_response.error.code.LevelErrorCode;
-import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
-import com.kernel360.kernelsquare.global.config.JpaAuditingConfig;
+import static org.assertj.core.api.Assertions.*;
+
+import java.util.Optional;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import com.kernel360.kernelsquare.domain.level.entity.Level;
+import com.kernel360.kernelsquare.global.common_response.error.code.LevelErrorCode;
+import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
+import com.kernel360.kernelsquare.global.config.JpaAuditingConfig;
 
 @DisplayName("레벨 레포지토리 통합 테스트")
 @DataJpaTest
 @Import(JpaAuditingConfig.class)
 class LevelRepositoryTest {
-    @Autowired
-    private LevelRepository levelRepository;
+	@Autowired
+	private LevelRepository levelRepository;
 
     @Test
     @DisplayName("레벨 findLevelByName 정상 작동 테스트")
@@ -34,9 +35,9 @@ class LevelRepositoryTest {
 
         levelRepository.save(level);
 
-        //when
-        Level findLevel = levelRepository.findLevelByName(level.getName())
-            .orElseThrow(() -> new BusinessException(LevelErrorCode.LEVEL_NOT_FOUND));
+		//when
+		Level findLevel = levelRepository.findByName(level.getName())
+			.orElseThrow(() -> new BusinessException(LevelErrorCode.LEVEL_NOT_FOUND));
 
         //then
         assertThat(findLevel.getId()).isEqualTo(level.getId());

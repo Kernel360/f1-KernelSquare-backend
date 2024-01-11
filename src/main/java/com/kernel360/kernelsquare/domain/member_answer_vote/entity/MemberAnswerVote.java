@@ -45,4 +45,7 @@ public class MemberAnswerVote extends BaseEntity {
 		this.member = member;
 		this.answer = answer;
 	}
+	public Long getAnswerId() {
+		return answer != null ? answer.getId() : null;
+	}
 }

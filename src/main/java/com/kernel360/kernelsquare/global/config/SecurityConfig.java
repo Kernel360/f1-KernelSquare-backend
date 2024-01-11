@@ -35,8 +35,7 @@ public class SecurityConfig {
 		"/api/v1/auth/signup",
 		"/api/v1/auth/login",
 		"/actuator",
-		"/actuator/**"
-
+		"/actuator/**",
 	};
 
 	private final String[] hasAnyAuthorityPatterns = new String[] {
@@ -47,6 +46,7 @@ public class SecurityConfig {
 		"/api/v1/auth/reissue",
 		"/api/v1/auth/logout",
 		"/api/v1/questions/answers/{answerId}",
+		"/api/v1/questions/{questionId}/answers",
 		"/api/v1/questions/answers/{answerId}/vote"
 	};
 
@@ -92,6 +92,9 @@ public class SecurityConfig {
 			.requestMatchers(HttpMethod.POST, "/api/v1/questions").hasRole("USER")
 			.requestMatchers(HttpMethod.PUT, "/api/v1/questions/{questionId}").hasRole("USER")
 			.requestMatchers(HttpMethod.DELETE, "/api/v1/questions/{questionId}").hasRole("USER")
+
+			.requestMatchers(HttpMethod.POST, "/api/v1/questions/{questionId}/answers").hasRole("USER")
+
 
 			// ROLE_ADMIN 권한 필요
 			.requestMatchers(hasRoleAdminPatterns).hasRole("ADMIN")

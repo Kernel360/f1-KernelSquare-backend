@@ -12,23 +12,27 @@ public record FindAnswerResponse(
         String rankImageUrl,
         String memberImageUrl,
         String createdBy,
+        Long authorLevel,
         String answerImageUrl,
         LocalDateTime createdDate,
         LocalDateTime modifiedDate,
-        Long voteCount
+        Long voteCount,
+        Long voteStatus
 ) {
-    public static FindAnswerResponse from(Answer answer) {
+    public static FindAnswerResponse from(Answer answer, String lankImageUrl, Long authorLevel, Long voteStatus) {
         return new FindAnswerResponse(
                 answer.getId(),
                 answer.getQuestion().getId(),
                 answer.getContent(),
-                null,
+                lankImageUrl,
                 answer.getMember().getImageUrl(),
                 answer.getMember().getNickname(),
+                authorLevel,
                 ImageUtils.makeImageUrl(answer.getImageUrl()),
                 answer.getCreatedDate(),
                 answer.getModifiedDate(),
-                answer.getVoteCount()
+                answer.getVoteCount(),
+                voteStatus
         );
     }
 }

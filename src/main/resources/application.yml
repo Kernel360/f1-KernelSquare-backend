@@ -6,21 +6,22 @@ spring:
     password: ${LOCAL_DB_PASSWORD}
 
   jpa:
+
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
 
     properties:
       hibernate:
-        #        show-sql: true
         format_sql: true
-    defer-datasource-initialization: true
+
+    database: mysql
+
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+
+#    show-sql: true
 
   jackson:
     property-naming-strategy: SNAKE_CASE
-
-  sql:
-    init:
-      mode: always
 
 ## file upload max size (파일 업로드 크기 설정)
 #  servlet:
@@ -39,6 +40,10 @@ spring:
       secret: ${JWT_SECRET_KEY}
       access-token-validity-in-seconds: 3600     # 1시간
       refresh-token-validity-in-seconds: 1_209_600  # 2주
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
 
 logging.level:
   org.hibernate.SQL: debug

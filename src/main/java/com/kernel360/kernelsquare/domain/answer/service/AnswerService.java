@@ -8,6 +8,8 @@ import com.kernel360.kernelsquare.domain.answer.repository.AnswerRepository;
 import com.kernel360.kernelsquare.domain.image.utils.ImageUtils;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
+import com.kernel360.kernelsquare.domain.member_answer_vote.entity.MemberAnswerVote;
+import com.kernel360.kernelsquare.domain.member_answer_vote.repository.MemberAnswerVoteRepository;
 import com.kernel360.kernelsquare.domain.question.entity.Question;
 import com.kernel360.kernelsquare.domain.question.repository.QuestionRepository;
 import com.kernel360.kernelsquare.global.common_response.error.code.AnswerErrorCode;
@@ -15,10 +17,14 @@ import com.kernel360.kernelsquare.global.common_response.error.code.MemberErrorC
 import com.kernel360.kernelsquare.global.common_response.error.code.QuestionErrorCode;
 import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,13 +32,34 @@ public class AnswerService {
 	private final AnswerRepository answerRepository;
 	private final MemberRepository memberRepository;
 	private final QuestionRepository questionRepository;
+	private final MemberAnswerVoteRepository memberAnswerVoteRepository;
 
 	@Transactional(readOnly = true)
 	public List<FindAnswerResponse> findAllAnswer(Long questionId) {
-		return answerRepository.findAnswersByQuestionIdSortedByCreationDate(questionId)
-			.stream()
-			.map(FindAnswerResponse::from)
-			.toList();
+		List<FindAnswerResponse> result = new ArrayList<>();
+		if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() != "anonymousUser") {
+			Long memberId = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
+			List<MemberAnswerVote> voteList = memberAnswerVoteRepository.findAllByMemberId(memberId);
+			Map<Long, Integer> voteStatusMap = voteList.stream()
+					.collect(Collectors.toMap(MemberAnswerVote::getAnswerId, MemberAnswerVote::getStatus));
+			List<Answer> answerList = answerRepository.findAnswersByQuestionIdSortedByCreationDate(questionId);
+			for (Answer answer: answerList) {
+				if (voteStatusMap.containsKey(answer.getId())) {
+					result.add(FindAnswerResponse.from(answer, null, answer.getMember().getLevel().getName(),
+							Long.valueOf(voteStatusMap.get(answer.getId()))));
+				} else {
+					result.add(FindAnswerResponse.from(answer, null, answer.getMember().getLevel().getName(),
+							Long.valueOf("0")));
+				}
+			}
+			return result;
+		}
+		List<Answer> answerList = answerRepository.findAnswersByQuestionIdSortedByCreationDate(questionId);
+		for (Answer answer: answerList) {
+			result.add(FindAnswerResponse.from(answer, null, answer.getMember().getLevel().getName(),
+					Long.valueOf("0")));
+		}
+		return result;
 	}
 
 	@Transactional

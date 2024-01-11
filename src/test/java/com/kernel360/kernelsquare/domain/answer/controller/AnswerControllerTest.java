@@ -7,7 +7,9 @@ import com.kernel360.kernelsquare.domain.answer.dto.FindAnswerResponse;
 import com.kernel360.kernelsquare.domain.answer.dto.UpdateAnswerRequest;
 import com.kernel360.kernelsquare.domain.answer.entity.Answer;
 import com.kernel360.kernelsquare.domain.answer.service.AnswerService;
+import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
+import com.kernel360.kernelsquare.domain.member_answer_vote.entity.MemberAnswerVote;
 import com.kernel360.kernelsquare.domain.question.entity.Question;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -57,6 +59,11 @@ public class AnswerControllerTest {
             .password("hashedPassword")
             .experience(10000L)
             .introduction("hi, i'm hongjugwang.")
+            .level(Level.builder()
+                    .name(1L)
+                    .imageUrl("s3:testLevelImage")
+                    .levelUpperLimit(500L)
+                    .build())
             .imageUrl("s3:qwe12fasdawczx")
             .build();
 
@@ -69,6 +76,12 @@ public class AnswerControllerTest {
             .question(testQuestion)
             .build();
 
+    private final MemberAnswerVote testMemberAnswerVote = MemberAnswerVote
+            .builder()
+            .status(-1)
+            .member(testMember)
+            .answer(testAnswer)
+            .build();
     private final FindAnswerResponse findAnswerResponse = new FindAnswerResponse(
             testAnswer.getId(),
             testQuestion.getId(),
@@ -76,10 +89,12 @@ public class AnswerControllerTest {
             "s3:RankURL",
             testMember.getImageUrl(),
             testMember.getNickname(),
+            testMember.getLevel().getName(),
             testAnswer.getImageUrl(),
             LocalDateTime.now(),
             null,
-            testAnswer.getVoteCount()
+            testAnswer.getVoteCount(),
+            Long.valueOf(testMemberAnswerVote.getStatus())
     );
 
     private final CreateAnswerRequest createAnswerRequest = new CreateAnswerRequest(
@@ -118,7 +133,8 @@ public class AnswerControllerTest {
                 .andExpect(jsonPath("$.msg").value(ANSWERS_ALL_FOUND.getMsg()))
                 .andExpect(jsonPath("$.data[0].content").value(testAnswer.getContent()))
                 .andExpect(jsonPath("$.data[0].answer_image_url").value(testAnswer.getImageUrl()))
-                .andExpect(jsonPath("$.data[0].vote_count").value(testAnswer.getVoteCount()));
+                .andExpect(jsonPath("$.data[0].vote_count").value(testAnswer.getVoteCount()))
+                .andExpect(jsonPath("$.data[0].vote_status").value(testMemberAnswerVote.getStatus()));
 
         //verify
         verify(answerService, times(1)).findAllAnswer(testQuestionId);

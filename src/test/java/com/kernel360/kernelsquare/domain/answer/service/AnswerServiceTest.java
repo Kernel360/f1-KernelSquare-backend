@@ -1,17 +1,23 @@
 package com.kernel360.kernelsquare.domain.answer.service;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import com.kernel360.kernelsquare.domain.level.entity.Level;
+import com.kernel360.kernelsquare.domain.member_answer_vote.entity.MemberAnswerVote;
+import com.kernel360.kernelsquare.domain.member_answer_vote.repository.MemberAnswerVoteRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.kernel360.kernelsquare.domain.answer.dto.CreateAnswerRequest;
@@ -25,6 +31,12 @@ import com.kernel360.kernelsquare.domain.question.entity.Question;
 import com.kernel360.kernelsquare.domain.question.repository.QuestionRepository;
 import com.kernel360.kernelsquare.global.common_response.error.code.AnswerErrorCode;
 import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithMockUser;
 
 @DisplayName("답변 서비스 통합 테스트")
 @ExtendWith(MockitoExtension.class)
@@ -37,22 +49,40 @@ public class AnswerServiceTest {
 	private MemberRepository memberRepository;
 	@Mock
 	private QuestionRepository questionRepository;
+	@Mock
+	private MemberAnswerVoteRepository memberAnswerVoteRepository;
 
 	@Test
 	@DisplayName("질문에 대한 답변 조회")
 	void findAllAnswer() throws Exception {
 		//given
-		Long testQuestionId = 1L;
+		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+		SecurityContextHolder.setContext(securityContext);
+		Authentication authentication = new UsernamePasswordAuthenticationToken(
+				"0", null, Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
 
+		given(securityContext.getAuthentication()).willReturn(authentication);
+
+		Long testQuestionId = 1L;
 		List<Answer> testAnswers = new ArrayList<>();
-		for (long i = 0; i < 4; i++) {
-			Member member = createTestMember(i);
-			Question question = createTestQuestion();
-			testAnswers.add(createTestAnswer(i, i, member, question));
-		}
+		List<MemberAnswerVote> testVotes = new ArrayList<>();
+
+		Level level = createTestLevel(0L, 1L);
+		Question question = createTestQuestion();
+		Member member = createTestMemberWithLevel(0L, level);
+		Answer answer = createTestAnswer(0L, 0L, member, question);
+		testAnswers.add(answer);
+
+		MemberAnswerVote memberAnswerVote = createTestVote(0L, 1, member, answer);
+		testVotes.add(memberAnswerVote);
+
 		doReturn(testAnswers)
-			.when(answerRepository)
-			.findAnswersByQuestionIdSortedByCreationDate(anyLong());
+				.when(answerRepository)
+				.findAnswersByQuestionIdSortedByCreationDate(anyLong());
+
+		doReturn(testVotes)
+				.when(memberAnswerVoteRepository)
+				.findAllByMemberId(anyLong());
 
 		//when
 		List<FindAnswerResponse> newAnswerList = answerService.findAllAnswer(testQuestionId);
@@ -63,7 +93,9 @@ public class AnswerServiceTest {
 		//verify
 		verify(answerRepository, times(1)).findAnswersByQuestionIdSortedByCreationDate(anyLong());
 		verify(answerRepository, only()).findAnswersByQuestionIdSortedByCreationDate(anyLong());
+		verify(memberAnswerVoteRepository, only()).findAllByMemberId(anyLong());
 	}
+
 
 	@Test
 	@DisplayName("질문에 대한 답변 생성")
@@ -210,36 +242,70 @@ public class AnswerServiceTest {
 
 	private Question createTestQuestion() {
 		return Question
-			.builder()
-			.title("Test Question")
-			.content("Test Content")
-			.imageUrl("S3:TestImage")
-			.closedStatus(false)
-			.build();
+				.builder()
+				.title("Test Question")
+				.content("Test Content")
+				.imageUrl("S3:TestImage")
+				.closedStatus(false)
+				.build();
+	}
+
+	private Member createTestMemberWithLevel(Long memberId, Level level) {
+		return Member
+				.builder()
+				.id(memberId)
+				.nickname("hongjugwang" + memberId)
+				.email("jugwang" + memberId + "@naver.com")
+				.password("hashedPassword")
+				.experience(10000L)
+				.introduction("hi, i'm hongjugwang.")
+				.level(level)
+				.imageUrl("s3:qwe12fasdawczx")
+				.build();
 	}
 
 	private Member createTestMember(Long memberId) {
 		return Member
-			.builder()
-			.id(memberId)
-			.nickname("hongjugwang" + memberId)
-			.email("jugwang" + memberId + "@naver.com")
-			.password("hashedPassword")
-			.experience(10000L)
-			.introduction("hi, i'm hongjugwang.")
-			.imageUrl("s3:qwe12fasdawczx")
-			.build();
+				.builder()
+				.id(memberId)
+				.nickname("hongjugwang" + memberId)
+				.email("jugwang" + memberId + "@naver.com")
+				.password("hashedPassword")
+				.experience(10000L)
+				.introduction("hi, i'm hongjugwang.")
+				.imageUrl("s3:qwe12fasdawczx")
+				.build();
 	}
 
 	private Answer createTestAnswer(Long answerId, Long index, Member member, Question question) {
 		return Answer
-			.builder()
-			.id(answerId)
-			.content("Test Answer" + index)
-			.voteCount(index)
-			.imageUrl("S3:TestAnswer" + index)
-			.member(member)
-			.question(question)
-			.build();
+				.builder()
+				.id(answerId)
+				.content("Test Answer" + index)
+				.voteCount(index)
+				.imageUrl("S3:TestAnswer" + index)
+				.member(member)
+				.question(question)
+				.build();
+	}
+
+	private MemberAnswerVote createTestVote(Long voteId, int status, Member member, Answer answer) {
+		return MemberAnswerVote
+				.builder()
+				.id(voteId)
+				.status(status)
+				.member(member)
+				.answer(answer)
+				.build();
+	}
+
+	private Level createTestLevel(Long levelId, Long levelName) {
+		return Level
+				.builder()
+				.id(levelId)
+				.name(levelName)
+				.imageUrl("S3:TestLevelImage")
+				.levelUpperLimit(500L)
+				.build();
 	}
 }

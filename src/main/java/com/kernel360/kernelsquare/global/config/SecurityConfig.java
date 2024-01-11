@@ -35,8 +35,7 @@ public class SecurityConfig {
 		"/api/v1/auth/signup",
 		"/api/v1/auth/login",
 		"/actuator",
-		"/actuator/**"
-
+		"/actuator/**",
 	};
 
 	private final String[] hasAnyAuthorityPatterns = new String[] {
@@ -47,6 +46,7 @@ public class SecurityConfig {
 		"/api/v1/auth/reissue",
 		"/api/v1/auth/logout",
 		"/api/v1/questions/answers/{answerId}",
+		"/api/v1/questions/{questionId}/answers",
 		"/api/v1/questions/answers/{answerId}/vote"
 	};
 
@@ -64,36 +64,30 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable());
-
 		http.authorizeHttpRequests(authz -> authz
 			// 모든 접근 허용
 			.requestMatchers(permitAllPatterns).permitAll()
-
 			.requestMatchers(HttpMethod.GET, "/api/v1/questions/{questionId}").permitAll()
 			.requestMatchers(HttpMethod.GET, "/api/v1/questions").permitAll()
-
 			.requestMatchers(HttpMethod.GET, "/api/v1/search/questions").permitAll()
-
 			.requestMatchers(HttpMethod.GET, "/api/v1/questions/{questiondId}/answers").permitAll()
 			.requestMatchers(HttpMethod.GET, "/api/v1/levels").permitAll()
 
 			// 모든 권한에 대한 접근 허용
 			.requestMatchers(hasAnyAuthorityPatterns).authenticated()
-
 			.requestMatchers(HttpMethod.GET, "/api/v1/members/{memberId}").authenticated()
-
 			.requestMatchers(HttpMethod.GET, "/api/v1/techs").authenticated()
 
 			// ROLE_USER 권한 필요
 			.requestMatchers(hasRoleUserPatterns).permitAll()
-
 			.requestMatchers(HttpMethod.DELETE, "/api/v1/members/{memberId}").hasRole("USER")
 			.requestMatchers(HttpMethod.PUT, "/api/v1/members/{memberId}").hasRole("USER")
 			.requestMatchers(HttpMethod.PUT, "/api/v1/members/{memberId}/password").hasRole("USER")
-
 			.requestMatchers(HttpMethod.POST, "/api/v1/questions/**").hasRole("USER")
 			.requestMatchers(HttpMethod.PUT, "/api/v1/questions/{questionId}").hasRole("USER")
 			.requestMatchers(HttpMethod.DELETE, "/api/v1/questions/{questionId}").hasRole("USER")
+			.requestMatchers(HttpMethod.POST, "/api/v1/questions/{questionId}/answers").hasRole("USER")
+
 
 			// ROLE_MENTOR 권한 필요
 			.requestMatchers(HttpMethod.POST, "/api/v1/coffeechat/posts").permitAll()
@@ -101,9 +95,7 @@ public class SecurityConfig {
 
 			// ROLE_ADMIN 권한 필요
 			.requestMatchers(hasRoleAdminPatterns).hasRole("ADMIN")
-
 			.requestMatchers(HttpMethod.POST, "/api/v1/levels").hasRole("ADMIN")
-
 			.requestMatchers(HttpMethod.POST, "/api/v1/techs").hasRole("ADMIN")
 		);
 

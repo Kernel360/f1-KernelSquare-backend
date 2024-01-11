@@ -6,13 +6,15 @@ import com.kernel360.kernelsquare.domain.level.entity.Level;
 public record LevelDto(
         Long id,
         Long name,
-        String imageUrl
+        String imageUrl,
+        Long leveUpperLimit
 ) {
     public static LevelDto from(Level level) {
         return new LevelDto(
                 level.getId(),
                 level.getName(),
-                ImageUtils.makeImageUrl(level.getImageUrl())
+                ImageUtils.makeImageUrl(level.getImageUrl()),
+                level.getLevelUpperLimit()
         );
     }
 

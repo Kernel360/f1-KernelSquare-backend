@@ -29,6 +29,7 @@ class LevelRepositoryTest {
             .id(1L)
             .name(1L)
             .imageUrl("level/level1.png")
+            .levelUpperLimit(200L)
             .build();
 
         levelRepository.save(level);
@@ -41,6 +42,7 @@ class LevelRepositoryTest {
         assertThat(findLevel.getId()).isEqualTo(level.getId());
         assertThat(findLevel.getName()).isEqualTo(level.getName());
         assertThat(findLevel.getImageUrl()).isEqualTo(level.getImageUrl());
+        assertThat(findLevel.getLevelUpperLimit()).isEqualTo(level.getLevelUpperLimit());
     }
 
     @Test
@@ -51,6 +53,7 @@ class LevelRepositoryTest {
             .id(1L)
             .name(1L)
             .imageUrl("level/level1.png")
+            .levelUpperLimit(200L)
             .build();
 
         levelRepository.save(level);

@@ -96,7 +96,6 @@ class ReservationArticleServiceTest {
                         reservationArticle.getHashTagList().stream().map(HashTag::getContent).toList(), List.of(LocalDateTime.now(),LocalDateTime.now().plusDays(2)));
 
         given(memberRepository.findById(anyLong())).willReturn(Optional.ofNullable(member));
-        given(authorityRepository.findAuthorityByAuthorityType(any(AuthorityType.class))).willReturn(Optional.ofNullable(authority));
         given(reservationArticleRepository.save(any(ReservationArticle.class))).willReturn(reservationArticle);
 
         // When

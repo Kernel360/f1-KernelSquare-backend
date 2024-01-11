@@ -44,8 +44,13 @@ public class AnswerService {
 					.collect(Collectors.toMap(MemberAnswerVote::getAnswerId, MemberAnswerVote::getStatus));
 			List<Answer> answerList = answerRepository.findAnswersByQuestionIdSortedByCreationDate(questionId);
 			for (Answer answer: answerList) {
-				result.add(FindAnswerResponse.from(answer, null, answer.getMember().getLevel().getName(),
-						Long.valueOf(voteStatusMap.get(answer.getId()))));
+				if (voteStatusMap.containsKey(answer.getId())) {
+					result.add(FindAnswerResponse.from(answer, null, answer.getMember().getLevel().getName(),
+							Long.valueOf(voteStatusMap.get(answer.getId()))));
+				} else {
+					result.add(FindAnswerResponse.from(answer, null, answer.getMember().getLevel().getName(),
+							Long.valueOf("0")));
+				}
 			}
 			return result;
 		}

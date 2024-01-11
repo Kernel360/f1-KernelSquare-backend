@@ -31,11 +31,6 @@ public class ReservationArticleService {
         Authority authority = authorityRepository.findAuthorityByAuthorityType(AuthorityType.ROLE_MENTOR)
                 .orElseThrow(() -> new BusinessException(AuthorityErrorCode.AUTHORITY_NOT_FOUND));
 
-        if (!authority.getAuthorityType().equals(AuthorityType.ROLE_MENTOR)) {
-            throw new BusinessException(AuthorityErrorCode.AUTHORITY_NOT_FOUND);
-        }
-
-
         ReservationArticle reservationArticle = CreateReservationArticleRequest.toEntity(createReservationArticleRequest, member);
         ReservationArticle saveReservationArticle = reservationArticleRepository.save(reservationArticle);
 

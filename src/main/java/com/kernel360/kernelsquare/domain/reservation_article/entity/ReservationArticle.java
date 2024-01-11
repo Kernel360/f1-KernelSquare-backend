@@ -2,6 +2,7 @@ package com.kernel360.kernelsquare.domain.reservation_article.entity;
 
 import com.kernel360.kernelsquare.domain.hashtag.entity.HashTag;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
+import com.kernel360.kernelsquare.domain.reservation.entity.Reservation;
 import com.kernel360.kernelsquare.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -31,6 +32,8 @@ public class ReservationArticle extends BaseEntity {
 
     @OneToMany(mappedBy = "reservationArticle")
     private List<HashTag> hashTagList = new ArrayList<>();
+
+
 
 
 

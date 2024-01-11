@@ -18,7 +18,7 @@ import static com.kernel360.kernelsquare.global.common_response.response.code.Re
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
-public class ReservationArticle {
+public class ReservationArticleController {
 
     private final ReservationArticleService reservationArticleService;
     @PostMapping("/coffeechat/posts")

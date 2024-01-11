@@ -29,4 +29,5 @@ public class HashTag extends BaseEntity {
         this.content = content;
         this.reservationArticle = reservationArticle;
     }
+
 }

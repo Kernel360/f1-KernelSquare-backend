@@ -93,6 +93,10 @@ public class SecurityConfig {
 			.requestMatchers(HttpMethod.PUT, "/api/v1/questions/{questionId}").hasRole("USER")
 			.requestMatchers(HttpMethod.DELETE, "/api/v1/questions/{questionId}").hasRole("USER")
 
+			// ROLE_MENTOR 권한 필요
+			.requestMatchers(HttpMethod.POST, "/api/v1/coffeechat/posts").permitAll()
+			.requestMatchers(HttpMethod.POST, "/api/v1/coffeechat/posts").hasRole("MENTOR")
+
 			// ROLE_ADMIN 권한 필요
 			.requestMatchers(hasRoleAdminPatterns).hasRole("ADMIN")
 

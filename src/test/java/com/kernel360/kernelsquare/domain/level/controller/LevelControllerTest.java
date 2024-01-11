@@ -115,7 +115,11 @@ class LevelControllerTest {
 	@DisplayName("레벨 삭제 성공 시 200 OK와 메시지를 반환한다")
 	void testDeleteLevel() throws Exception {
 		// Given
-		Level level = new Level(1L, 11L, "image9.jpg");
+		Level level = Level.builder()
+			.id(1L)
+			.name(11L)
+			.imageUrl("image9.jpg")
+			.build();
 
 		doNothing()
 			.when(levelService)

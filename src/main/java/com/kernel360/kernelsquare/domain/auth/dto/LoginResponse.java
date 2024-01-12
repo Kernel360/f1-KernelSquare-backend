@@ -2,6 +2,7 @@ package com.kernel360.kernelsquare.domain.auth.dto;
 
 import java.util.List;
 
+import com.kernel360.kernelsquare.domain.authority.entity.Authority;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.member_authority.entity.MemberAuthority;
 
@@ -23,6 +24,7 @@ public record LoginResponse(
 	public static LoginResponse of(Member member, TokenResponse tokenResponse) {
 		List<String> roles = member.getAuthorities().stream()
 			.map(MemberAuthority::getAuthority)
+			.map(Authority::getAuthorityType)
 			.map(String::valueOf)
 			.toList();
 

@@ -7,6 +7,7 @@ import com.kernel360.kernelsquare.domain.image.utils.ImageUtils;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.member_authority.entity.MemberAuthority;
 
+import com.kernel360.kernelsquare.global.domain.AuthorityType;
 import lombok.Builder;
 
 @Builder
@@ -26,7 +27,7 @@ public record LoginResponse(
 		List<String> roles = member.getAuthorities().stream()
 			.map(MemberAuthority::getAuthority)
 			.map(Authority::getAuthorityType)
-			.map(String::valueOf)
+			.map(AuthorityType::getDescription)
 			.toList();
 
 		return LoginResponse.builder()

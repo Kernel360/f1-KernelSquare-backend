@@ -3,6 +3,7 @@ package com.kernel360.kernelsquare.domain.auth.dto;
 import java.util.List;
 
 import com.kernel360.kernelsquare.domain.authority.entity.Authority;
+import com.kernel360.kernelsquare.domain.image.utils.ImageUtils;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.member_authority.entity.MemberAuthority;
 
@@ -33,7 +34,7 @@ public record LoginResponse(
 			.nickname(member.getNickname())
 			.experience(member.getExperience())
 			.introduction(member.getIntroduction())
-			.imageUrl(member.getImageUrl())
+			.imageUrl(ImageUtils.makeImageUrl(member.getImageUrl()))
 			.level(member.getLevel().getName())
 			.roles(roles)
 			.tokenDto(tokenResponse)

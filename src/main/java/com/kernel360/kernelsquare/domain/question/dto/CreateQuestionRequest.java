@@ -5,17 +5,20 @@ import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.question.entity.Question;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
+
 import java.util.List;
 
+@Builder
 public record CreateQuestionRequest(
-	@NotNull(message = "멤버 Id는 필수 항목입니다.")
+	@NotNull(message = "회원 ID를 입력해 주세요.")
 	Long memberId,
-	@NotBlank(message = "빈 제목은 안됩니다.")
+	@NotBlank(message = "질문 제목을 입력해 주세요.")
 	String title,
-	@NotBlank(message = "빈 내용은 안됩니다.")
+	@NotBlank(message = "질문 내용을 입력해 주세요.")
 	String content,
 	String imageUrl,
-	@NotNull(message = "최소 빈 리스트로 들어와야 합니다.")
+	@NotNull(message = "최소 빈 리스트로 입력해 주세요.")
 	List<String> skills
 ) {
     public static Question toEntity(CreateQuestionRequest createQuestionRequest, Member member) {

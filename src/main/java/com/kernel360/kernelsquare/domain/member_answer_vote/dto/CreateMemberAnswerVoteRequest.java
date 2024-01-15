@@ -6,14 +6,16 @@ import com.kernel360.kernelsquare.domain.member_answer_vote.entity.MemberAnswerV
 
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 
+@Builder
 public record CreateMemberAnswerVoteRequest(
-	@NotNull(message = "등록 되지 않은 회원입니다.")
+	@NotNull(message = "회원 ID를 입력해 주세요.")
 	Long memberId,
-	@NotNull(message = "유효 하지 않은 투표 상태입니다.")
+	@NotNull(message = "투표 상태를 입력해 주세요.")
 	int status
 ) {
-	@AssertTrue(message = "Status must be either 1 or -1")
+	@AssertTrue(message = "Status는 1 또는 -1 이어야 합니다.")
 	private boolean isStatusValid() {
 		return status == 1 || status == -1;
 	}

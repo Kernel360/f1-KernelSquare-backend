@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @RequiredArgsConstructor
-public enum ImageCategoryDto {
+public enum ImageCategory {
     MEMBER("member"),
     QUESTION("question"),
     ANSWER("answer"),
@@ -20,6 +20,6 @@ public enum ImageCategoryDto {
     }
 
     public static List<String> getCategoryList() {
-        return Arrays.stream(ImageCategoryDto.values()).map(ImageCategoryDto::getCategory).toList();
+        return Arrays.stream(ImageCategory.values()).map(ImageCategory::getCategory).toList();
     }
 }

@@ -3,7 +3,7 @@ package com.kernel360.kernelsquare.domain.image.service;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.kernel360.kernelsquare.domain.image.dto.ImageCategoryDto;
+import com.kernel360.kernelsquare.domain.image.dto.ImageCategory;
 import com.kernel360.kernelsquare.domain.image.dto.UploadImageResponse;
 import com.kernel360.kernelsquare.domain.image.utils.ImageUtils;
 import com.kernel360.kernelsquare.global.common_response.error.code.CategoryErrorCode;
@@ -21,7 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ImageService {
     private final AmazonS3Client amazonS3Client;
-    private static final List<String> CATEGORYLIST = ImageCategoryDto.getCategoryList();
+    private static final List<String> CATEGORYLIST = ImageCategory.getCategoryList();
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;

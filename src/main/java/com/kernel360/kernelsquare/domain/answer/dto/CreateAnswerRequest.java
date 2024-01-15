@@ -11,9 +11,9 @@ import lombok.Builder;
 
 @Builder
 public record CreateAnswerRequest(
-	@NotNull(message = "등록 되지 않은 회원입니다.")
+	@NotNull(message = "회원 ID를 입력해 주세요.")
 	Long memberId,
-	@NotBlank(message = "답변 내용은 필수 입력값입니다.")
+	@NotBlank(message = "답변 내용을 입력해 주세요.")
 	String content,
 	String imageUrl
 ) {

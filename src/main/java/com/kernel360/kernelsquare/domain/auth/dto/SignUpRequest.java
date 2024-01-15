@@ -10,17 +10,17 @@ import lombok.Builder;
 
 @Builder
 public record SignUpRequest(
-	@NotBlank(message = "이메일은 필수 입력 항목입니다.")
-	@Email(message = "이메일 형식을 확인해 주세요")
-	@Size(min = 5, max = 40, message = "이메일 길이를 확인해 주세요")
+	@NotBlank(message = "이메일을 입력해 주세요.")
+	@Email(message = "이메일 형식으로 입력해 주세요.")
+	@Size(min = 5, max = 40, message = "이메일 길이를 확인해 주세요.")
 	String email,
 
-	@NotBlank(message = "닉네임은 필수 입력 항목입니다.")
-	@Size(min = 2, max = 8, message = "닉네임 길이를 확인해 주세요")
+	@NotBlank(message = "닉네임을 입력해 주세요.")
+	@Size(min = 2, max = 8, message = "닉네임 길이를 확인해 주세요.")
 	String nickname,
 
-	@NotBlank(message = "비밀번호는 필수 입력 항목입니다.")
-	@Size(min = 8, max = 16, message = "비밀번호 길이를 확인해 주세요")
+	@NotBlank(message = "비밀번호를 입력해 주세요.")
+	@Size(min = 8, max = 16, message = "비밀번호 길이를 확인해 주세요.")
 	String password
 ) {
 

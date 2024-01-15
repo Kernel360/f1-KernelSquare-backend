@@ -60,6 +60,12 @@ dependencies {
     //flyway
     implementation 'org.flywaydb:flyway-mysql'
 
+    //crawling
+    implementation 'org.jsoup:jsoup:1.15.3'
+
+    //jdbc mysql
+    implementation 'mysql:mysql-connector-java:8.0.23'
+
     //Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'

@@ -24,12 +24,6 @@ VALUES (1, 3);
 INSERT INTO question (closed_status, created_date, id, member_id, modified_date, view_count, content, image_url, title)
 VALUES (1, '2023-12-19T09:00:00', 1, 1, '2023-12-21T09:00:00', 20, 'No content', 'question/d1c27379-2d08-4a6a-9d97-368124a50900thumb.jpg', '시간복잡도 사진');
 
-INSERT INTO tech_stack (created_date, modified_date, skill)
-VALUES ('2023-12-19T09:00:00', '2023-12-19T09:00:00', 'JavaScript');
-
-INSERT INTO tech_stack (created_date, modified_date, skill)
-VALUES ('2023-12-19T09:00:00', '2023-12-19T09:00:00', 'Python');
-
 INSERT INTO question_tech_stack (created_date, modified_date, question_id, tech_stack_id)
 VALUES ('2023-12-19T09:00:00', '2023-12-19T09:00:00', 1, 2);
 

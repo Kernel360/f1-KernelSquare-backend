@@ -106,7 +106,7 @@ CREATE TABLE `tech_stack` (
     `created_date` datetime NOT NULL,
     `id` bigint NOT NULL AUTO_INCREMENT,
     `modified_date` datetime DEFAULT NULL,
-    `skill` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `skill` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE KEY `UK_mt0upcxutmofqca4kbkswqxq` (`skill`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

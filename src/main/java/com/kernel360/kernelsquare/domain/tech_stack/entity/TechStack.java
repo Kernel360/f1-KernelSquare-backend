@@ -20,7 +20,7 @@ public class TechStack extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false, unique = true, name = "skill", columnDefinition = "varchar(20)")
+	@Column(nullable = false, unique = true, name = "skill", columnDefinition = "varchar(50)")
 	private String skill;
 
 	@Builder

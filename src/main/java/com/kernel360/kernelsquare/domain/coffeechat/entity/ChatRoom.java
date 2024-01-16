@@ -13,14 +13,18 @@ import lombok.NoArgsConstructor;
 public class ChatRoom extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
+
+    @Column(nullable = false, name = "room_key", columnDefinition = "varchar(50)")
+    private String roomKey;
 
     @Column(nullable = false, name = "room_name", columnDefinition = "varchar(20)")
     private String roomName;
 
     @Builder
-    public ChatRoom(String id, String roomName) {
+    public ChatRoom(Long id, String roomKey, String roomName) {
         this.id = id;
+        this.roomKey = roomKey;
         this.roomName = roomName;
     }
 }

@@ -6,13 +6,13 @@ import lombok.Builder;
 import java.util.UUID;
 
 @Builder
-public record CreateRoomRequest(
+public record CreateCoffeeChatRoomRequest(
     String roomName
 ) {
-    public static ChatRoom toEntity(CreateRoomRequest createRoomRequest) {
+    public static ChatRoom toEntity(CreateCoffeeChatRoomRequest createCoffeeChatRoomRequest) {
         return ChatRoom.builder()
-            .id(UUID.randomUUID().toString())
-            .roomName(createRoomRequest.roomName())
+            .roomKey(UUID.randomUUID().toString())
+            .roomName(createCoffeeChatRoomRequest.roomName())
             .build();
     }
 }

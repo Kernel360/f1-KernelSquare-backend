@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum CoffeeChatServiceStatus implements ServiceStatus {
-    COFFEE_CHAT_CREATED(3240);
+    COFFEE_CHAT_ROOM_CREATED(3240);
 
     private final Integer code;
 

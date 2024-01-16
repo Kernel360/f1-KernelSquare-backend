@@ -9,7 +9,9 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum ReservationArticleErrorCode implements ErrorCode {
 
-    RESERVATION_ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND, ReservationArticleServiceStatus.RESERVATION_ARTICLE_NOT_FOUND, "존재하지 않는 예약창");
+    RESERVATION_ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND, ReservationArticleServiceStatus.RESERVATION_ARTICLE_NOT_FOUND, "존재하지 않는 예약창"),
+    PAGE_NOT_FOUND(HttpStatus.NOT_FOUND, ReservationArticleServiceStatus.RESERVATION_ARTICLE_NOT_FOUND, "존재하지 않는 페이지");
+
 
     private final HttpStatus httpStatus;
     private final ServiceStatus serviceStatus;

@@ -1,19 +1,23 @@
 package com.kernel360.kernelsquare.domain.reservation_article.service;
 
-import com.kernel360.kernelsquare.domain.authority.repository.AuthorityRepository;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
 import com.kernel360.kernelsquare.domain.reservation.dto.ReservationDto;
 import com.kernel360.kernelsquare.domain.reservation.repository.ReservationRepository;
 import com.kernel360.kernelsquare.domain.reservation_article.dto.CreateReservationArticleRequest;
 import com.kernel360.kernelsquare.domain.reservation_article.dto.CreateReservationArticleResponse;
+import com.kernel360.kernelsquare.domain.reservation_article.dto.FindAllReservationArticleResponse;
 import com.kernel360.kernelsquare.domain.reservation_article.dto.FindReservationArticleResponse;
 import com.kernel360.kernelsquare.domain.reservation_article.entity.ReservationArticle;
 import com.kernel360.kernelsquare.domain.reservation_article.repository.ReservationArticleRepository;
 import com.kernel360.kernelsquare.global.common_response.error.code.MemberErrorCode;
 import com.kernel360.kernelsquare.global.common_response.error.code.ReservationArticleErrorCode;
 import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
+import com.kernel360.kernelsquare.global.dto.PageResponse;
+import com.kernel360.kernelsquare.global.dto.Pagination;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,9 +42,35 @@ public class ReservationArticleService {
         return CreateReservationArticleResponse.from(saveReservationArticle);
     }
 
-    // TODO 질문 목록 조회
+    @Transactional(readOnly = true)
+    public PageResponse<FindAllReservationArticleResponse> findAllReservationArticle(Pageable pagealbe) {
 
-    // TODO 질문 단건 조회
+        Integer currentPage = pagealbe.getPageNumber()+1;
+        Page<ReservationArticle> pages = reservationArticleRepository.findAll(pagealbe);
+        Integer totalPages = pages.getTotalPages();
+
+        if (totalPages == 0) totalPages += 1;
+
+        if (currentPage > totalPages) {
+            throw new BusinessException(ReservationArticleErrorCode.PAGE_NOT_FOUND);
+        }
+
+        Pagination pagination = Pagination.toEntity(totalPages, pages.getSize(), currentPage.equals(totalPages));
+
+        List<FindAllReservationArticleResponse> responsePages = pages.getContent().stream()
+                .map(article -> {
+                    Long fullCheck = reservationRepository.countByIdAndMemberIdIsNull(article.getId());
+                    return FindAllReservationArticleResponse.of(
+                            article.getMember(),
+                            article,
+                            fullCheck
+                    );
+                })
+                .toList();
+
+        return PageResponse.of(pagination, responsePages);
+    }
+
     @Transactional(readOnly = true)
     public FindReservationArticleResponse findReservationArticle(
             Long postId

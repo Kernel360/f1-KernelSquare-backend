@@ -10,7 +10,9 @@ public enum ReservationArticleResponseCode implements ResponseCode {
     RESERVATION_ARTICLE_CREATED(HttpStatus.OK,
             ReservationArticleServiceStatus.RESERVATION_ARTICLE_CREATED, "예약창이 생성되었습니다."),
     RESERVATION_ARTICLE_FOUND(HttpStatus.OK,
-            ReservationArticleServiceStatus.RESERVATION_ARTICLE_FOUND, "예약창을 조회했습니다.");
+            ReservationArticleServiceStatus.RESERVATION_ARTICLE_FOUND, "예약창을 조회했습니다."),
+    RESERVATION_ARTICLE_ALL_FOUND(HttpStatus.OK,
+            ReservationArticleServiceStatus.RESERVATION_ARTICLE_ALL_FOUND, "모든 예약창을 조회했습니다.");
 
     private final HttpStatus httpStatus;
     private final ServiceStatus serviceStatus;

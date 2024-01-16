@@ -2,6 +2,7 @@ package com.kernel360.kernelsquare.global.entity;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -14,7 +15,7 @@ import lombok.Getter;
 @Getter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public class BaseEntity {
+public abstract class BaseEntity {
 	@CreatedDate
 	@Column(nullable = false, name = "created_date", columnDefinition = "datetime", updatable = false)
 	private LocalDateTime createdDate;
@@ -22,4 +23,7 @@ public class BaseEntity {
 	@LastModifiedDate
 	@Column(name = "modified_date", columnDefinition = "datetime")
 	private LocalDateTime modifiedDate;
+	public void setCreatedDate() {
+		this.createdDate = LocalDateTime.now();
+	}
 }

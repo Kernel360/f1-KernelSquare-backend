@@ -3,23 +3,13 @@ package com.kernel360.kernelsquare.domain.member.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.*;
 import org.hibernate.annotations.DynamicUpdate;
 
 import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.member_authority.entity.MemberAuthority;
 import com.kernel360.kernelsquare.global.entity.BaseEntity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.ConstraintMode;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.ForeignKey;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -67,6 +57,8 @@ public class Member extends BaseEntity {
 	public void updatePassword(String password) {
 		this.password = password;
 	}
+
+	public void updateLevel(Level level) { this.level = level; }
 
 	public void initAuthorities(List<MemberAuthority> authorities) {
 		this.authorities = authorities;

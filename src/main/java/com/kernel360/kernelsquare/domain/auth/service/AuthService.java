@@ -2,6 +2,8 @@ package com.kernel360.kernelsquare.domain.auth.service;
 
 import java.util.List;
 
+import com.kernel360.kernelsquare.domain.member.service.MemberService;
+import com.kernel360.kernelsquare.global.util.experience.ExperiencePolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,14 +35,16 @@ public class AuthService {
 	private final MemberAuthorityRepository memberAuthorityRepository;
 	private final AuthorityRepository authorityRepository;
 	private final LevelRepository levelRepository;
+	private final MemberService memberService;
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public Member login(final LoginRequest loginRequest) {
 		Member findMember = memberRepository.findByEmail(loginRequest.email())
 			.orElseThrow(() -> new BusinessException(AuthErrorCode.INVALID_ACCOUNT));
 		if (!passwordEncoder.matches(loginRequest.password(), findMember.getPassword())) {
 			throw new BusinessException(AuthErrorCode.INVALID_PASSWORD);
 		}
+		memberService.updateMemberExperienceByAction(findMember, ExperiencePolicy.MEMBER_DAILY_ATTENDED.getReward());
 		return findMember;
 	}
 

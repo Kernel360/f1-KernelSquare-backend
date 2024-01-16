@@ -3,6 +3,7 @@ package com.kernel360.kernelsquare.domain.question.service;
 import com.kernel360.kernelsquare.domain.image.utils.ImageUtils;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
+import com.kernel360.kernelsquare.domain.member.service.MemberService;
 import com.kernel360.kernelsquare.domain.question.dto.CreateQuestionRequest;
 import com.kernel360.kernelsquare.domain.question.dto.CreateQuestionResponse;
 import com.kernel360.kernelsquare.domain.question.dto.FindQuestionResponse;
@@ -18,6 +19,7 @@ import com.kernel360.kernelsquare.global.common_response.error.code.QuestionErro
 import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
 import com.kernel360.kernelsquare.global.dto.PageResponse;
 import com.kernel360.kernelsquare.global.dto.Pagination;
+import com.kernel360.kernelsquare.global.util.experience.ExperiencePolicy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +36,7 @@ public class QuestionService {
     private final MemberRepository memberRepository;
     private final TechStackRepository techStackRepository;
     private final QuestionTechStackRepository questionTechStackRepository;
+    private final MemberService memberService;
 
     @Transactional
     public CreateQuestionResponse createQuestion(CreateQuestionRequest createQuestionRequest) {
@@ -48,6 +51,7 @@ public class QuestionService {
         List<QuestionTechStack> techStackList = new ArrayList<>();
 
         saveTechStackList(question, skills, techStackList);
+        memberService.updateMemberExperienceByAction(member, ExperiencePolicy.QUESTION_CREATED.getReward());
 
         return CreateQuestionResponse.from(saveQuestion);
     }

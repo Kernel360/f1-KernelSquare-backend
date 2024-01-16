@@ -8,6 +8,7 @@ import com.kernel360.kernelsquare.domain.answer.repository.AnswerRepository;
 import com.kernel360.kernelsquare.domain.image.utils.ImageUtils;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
+import com.kernel360.kernelsquare.domain.member.service.MemberService;
 import com.kernel360.kernelsquare.domain.member_answer_vote.entity.MemberAnswerVote;
 import com.kernel360.kernelsquare.domain.member_answer_vote.repository.MemberAnswerVoteRepository;
 import com.kernel360.kernelsquare.domain.question.entity.Question;
@@ -16,6 +17,7 @@ import com.kernel360.kernelsquare.global.common_response.error.code.AnswerErrorC
 import com.kernel360.kernelsquare.global.common_response.error.code.MemberErrorCode;
 import com.kernel360.kernelsquare.global.common_response.error.code.QuestionErrorCode;
 import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
+import com.kernel360.kernelsquare.global.util.experience.ExperiencePolicy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,7 @@ public class AnswerService {
 	private final MemberRepository memberRepository;
 	private final QuestionRepository questionRepository;
 	private final MemberAnswerVoteRepository memberAnswerVoteRepository;
+	private final MemberService memberService;
 
 	@Transactional(readOnly = true)
 	public List<FindAnswerResponse> findAllAnswer(Long questionId) {
@@ -70,6 +73,7 @@ public class AnswerService {
 			.orElseThrow(() -> new BusinessException(QuestionErrorCode.QUESTION_NOT_FOUND));
 		Answer answer = CreateAnswerRequest.toEntity(createAnswerRequest, question, member);
 		answerRepository.save(answer);
+		memberService.updateMemberExperienceByAction(member, ExperiencePolicy.ANSWER_CREATED.getReward());
 		return answer.getId();
 	}
 

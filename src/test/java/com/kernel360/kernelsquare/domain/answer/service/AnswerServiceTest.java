@@ -10,8 +10,10 @@ import java.util.List;
 import java.util.Optional;
 
 import com.kernel360.kernelsquare.domain.level.entity.Level;
+import com.kernel360.kernelsquare.domain.member.service.MemberService;
 import com.kernel360.kernelsquare.domain.member_answer_vote.entity.MemberAnswerVote;
 import com.kernel360.kernelsquare.domain.member_answer_vote.repository.MemberAnswerVoteRepository;
+import com.kernel360.kernelsquare.global.util.experience.ExperiencePolicy;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,6 +45,8 @@ import org.springframework.security.test.context.support.WithMockUser;
 public class AnswerServiceTest {
 	@InjectMocks
 	private AnswerService answerService;
+	@Mock
+	private MemberService memberService;
 	@Mock
 	private AnswerRepository answerRepository;
 	@Mock
@@ -141,6 +145,10 @@ public class AnswerServiceTest {
 		doReturn(Optional.of(foundAnswer))
 			.when(answerRepository)
 			.findById(anyLong());
+
+		doNothing()
+				.when(memberService)
+				.updateMemberExperienceByAction(any(Member.class), anyLong());
 
 		//when
 		Long newCreatedAnswerId = answerService.createAnswer(createAnswerRequest, foundQuestionId);

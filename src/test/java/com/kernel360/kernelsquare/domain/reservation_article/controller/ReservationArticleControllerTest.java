@@ -12,7 +12,6 @@ import com.kernel360.kernelsquare.domain.reservation_article.dto.CreateReservati
 import com.kernel360.kernelsquare.domain.reservation_article.dto.FindAllReservationArticleResponse;
 import com.kernel360.kernelsquare.domain.reservation_article.dto.FindReservationArticleResponse;
 import com.kernel360.kernelsquare.domain.reservation_article.entity.ReservationArticle;
-import com.kernel360.kernelsquare.domain.reservation_article.repository.ReservationArticleRepository;
 import com.kernel360.kernelsquare.domain.reservation_article.service.ReservationArticleService;
 import com.kernel360.kernelsquare.global.dto.PageResponse;
 import com.kernel360.kernelsquare.global.dto.Pagination;
@@ -171,7 +170,7 @@ class ReservationArticleControllerTest {
         // Given
         level = createTestLevel();
         member = createTestMember();
-        ReservationArticle reservationArticle1 = createTestReservationArticle(1L);
+        ReservationArticle reservationArticle = createTestReservationArticle(1L);
 
         ReservationDto reservationDto1 = ReservationDto.builder()
                 .finished(true)
@@ -189,12 +188,12 @@ class ReservationArticleControllerTest {
 
         List<ReservationDto> reservationDtoList = List.of(reservationDto1, reservationDto2);
 
-        FindReservationArticleResponse findReservationArticleResponse = FindReservationArticleResponse.of(member, reservationArticle1, reservationDtoList, level);
+        FindReservationArticleResponse findReservationArticleResponse = FindReservationArticleResponse.of(member, reservationArticle, reservationDtoList, level);
 
         given(reservationArticleService.findReservationArticle(anyLong())).willReturn(findReservationArticleResponse);
 
         // When & Then
-        mockMvc.perform(get("/api/v1/coffeechat/posts/" + reservationArticle1.getId())
+        mockMvc.perform(get("/api/v1/coffeechat/posts/" + reservationArticle.getId())
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)

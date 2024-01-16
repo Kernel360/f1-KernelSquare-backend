@@ -30,7 +30,7 @@ public class ReservationArticle extends BaseEntity {
     private String content;
 
     @OneToMany(mappedBy = "reservationArticle")
-    private List<HashTag> hashTagList = new ArrayList<>();
+    private List<HashTag> hashTagList;
 
     @Builder
     public ReservationArticle(Long id, Member member, String title, String content, List<HashTag> hashTagList) {

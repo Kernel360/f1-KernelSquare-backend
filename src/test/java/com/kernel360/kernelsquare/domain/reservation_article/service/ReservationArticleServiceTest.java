@@ -9,15 +9,21 @@ import com.kernel360.kernelsquare.domain.member_authority.entity.MemberAuthority
 import com.kernel360.kernelsquare.domain.member_authority.repository.MemberAuthorityRepository;
 import com.kernel360.kernelsquare.domain.reservation_article.dto.CreateReservationArticleRequest;
 import com.kernel360.kernelsquare.domain.reservation_article.dto.CreateReservationArticleResponse;
+import com.kernel360.kernelsquare.domain.reservation_article.dto.FindAllReservationArticleResponse;
 import com.kernel360.kernelsquare.domain.reservation_article.entity.ReservationArticle;
 import com.kernel360.kernelsquare.domain.reservation_article.repository.ReservationArticleRepository;
 import com.kernel360.kernelsquare.global.domain.AuthorityType;
+import com.kernel360.kernelsquare.global.dto.PageResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -115,4 +121,41 @@ class ReservationArticleServiceTest {
                 .authorityType(AuthorityType.ROLE_MENTOR)
                 .build();
     }
+
+    @Test
+    @DisplayName("모든 예약창 조회 테스트")
+    void testFindAllReservationArticle() {
+        // Given
+        member = createTestMember();
+        ReservationArticle reservationArticle1 = createTestReservationArticle(1L);
+        ReservationArticle reservationArticle2 = createTestReservationArticle(2L);
+        List<ReservationArticle> articles = List.of(reservationArticle1, reservationArticle2);
+
+        Pageable pageable = PageRequest.of(0,2);
+        Page<ReservationArticle> pages = new PageImpl<>(articles, pageable, articles.size());
+
+        given(reservationArticleRepository.findById(reservationArticle1.getId())).willReturn(Optional.of(reservationArticle1));
+        given(reservationArticleRepository.findById(reservationArticle2.getId())).willReturn(Optional.of(reservationArticle2));
+        given(reservationArticleRepository.findAll(any(PageRequest.class))).willReturn(pages);
+
+        Integer currentPage = pageable.getPageNumber() + 1;
+
+        Integer totalPages = pages.getTotalPages();
+
+        if (totalPages == 0) totalPages+=1;
+
+        // When
+        PageResponse<FindAllReservationArticleResponse> pageResponse = reservationArticleService.findAllReservationArticle(pageable);
+
+        // Then
+        assertThat(pageResponse).isNotNull();
+        assertThat(pageResponse.pagination().totalPage()).isEqualTo(totalPages);
+        assertThat(pageResponse.pagination().pageable()).isEqualTo(pages.getSize());
+        assertThat(pageResponse.pagination().isEnd()).isEqualTo(currentPage.equals(totalPages));
+        assertThat(pageResponse.list()).isNotNull();
+
+        // Verify
+        verify(reservationArticleRepository, times(1)).findAll(any(PageRequest.class));
+    }
+
 }

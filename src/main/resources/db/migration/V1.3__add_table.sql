@@ -6,5 +6,6 @@ CREATE TABLE `chat_room` (
     `room_key` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
     `modified_date` datetime DEFAULT NULL,
     `room_name` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `active` tinyint DEFAULT 0,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

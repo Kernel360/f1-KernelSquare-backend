@@ -1,4 +1,5 @@
-package com.kernel360.kernelsquare.global.common_response.response.code;
+package com.kernel360.kernelsquare.global.common_response.error.code;
+
 
 import com.kernel360.kernelsquare.global.common_response.service.code.ReservationArticleServiceStatus;
 import com.kernel360.kernelsquare.global.common_response.service.code.ServiceStatus;
@@ -6,13 +7,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @RequiredArgsConstructor
-public enum ReservationArticleResponseCode implements ResponseCode {
-    RESERVATION_ARTICLE_CREATED(HttpStatus.OK,
-            ReservationArticleServiceStatus.RESERVATION_ARTICLE_CREATED, "예약창이 생성되었습니다."),
-    RESERVATION_ARTICLE_FOUND(HttpStatus.OK,
-            ReservationArticleServiceStatus.RESERVATION_ARTICLE_FOUND, "예약창을 조회했습니다."),
-    RESERVATION_ARTICLE_ALL_FOUND(HttpStatus.OK,
-            ReservationArticleServiceStatus.RESERVATION_ARTICLE_ALL_FOUND, "모든 예약창을 조회했습니다.");
+public enum ReservationArticleErrorCode implements ErrorCode {
+
+    RESERVATION_ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND, ReservationArticleServiceStatus.RESERVATION_ARTICLE_NOT_FOUND, "존재하지 않는 예약창"),
+    PAGE_NOT_FOUND(HttpStatus.NOT_FOUND, ReservationArticleServiceStatus.PAGE_NOT_FOUND, "존재하지 않는 페이지");
+
 
     private final HttpStatus httpStatus;
     private final ServiceStatus serviceStatus;

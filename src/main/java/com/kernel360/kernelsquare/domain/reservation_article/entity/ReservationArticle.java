@@ -8,7 +8,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity(name = "reservation_article")
@@ -30,7 +29,7 @@ public class ReservationArticle extends BaseEntity {
     private String content;
 
     @OneToMany(mappedBy = "reservationArticle")
-    private List<HashTag> hashTagList = new ArrayList<>();
+    private List<HashTag> hashTagList;
 
     @Builder
     public ReservationArticle(Long id, Member member, String title, String content, List<HashTag> hashTagList) {

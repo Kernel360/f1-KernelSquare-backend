@@ -5,6 +5,7 @@ import com.kernel360.kernelsquare.domain.coffeechat.dto.CreateCoffeeChatRoomResp
 import com.kernel360.kernelsquare.domain.coffeechat.service.CoffeeChatService;
 import com.kernel360.kernelsquare.global.common_response.ApiResponse;
 import com.kernel360.kernelsquare.global.common_response.ResponseEntityFactory;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,7 @@ public class CoffeeChatController {
 
     @PostMapping("/coffeechat/rooms")
     public ResponseEntity<ApiResponse<CreateCoffeeChatRoomResponse>> createCoffeeChatRoom(
+        @Valid
         @RequestBody
         CreateCoffeeChatRoomRequest createCoffeeChatRoomRequest
     ) {

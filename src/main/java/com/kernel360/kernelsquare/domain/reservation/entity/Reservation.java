@@ -9,15 +9,22 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
-@Entity
+@Entity(name = "Reservation")
+@Table(name = "reservation")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Reservation extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false, name = "start_time", columnDefinition = "datetime")
     private LocalDateTime startTime;
+
+    @Column(nullable = false, name = "end_time", columnDefinition = "datetime")
     private LocalDateTime endTime;
+
+    @Column(nullable = false, name = "finished", columnDefinition = "tinyint")
     private Boolean finished;
 
     @ManyToOne

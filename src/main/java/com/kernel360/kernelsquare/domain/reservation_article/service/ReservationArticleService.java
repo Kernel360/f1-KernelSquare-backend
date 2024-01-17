@@ -59,7 +59,7 @@ public class ReservationArticleService {
 
         List<FindAllReservationArticleResponse> responsePages = pages.getContent().stream()
                 .map(article -> {
-                    Long fullCheck = reservationRepository.countByIdAndMemberIdIsNull(article.getId());
+                    Long fullCheck = reservationRepository.countByReservationArticleIdAndMemberIdIsNull(article.getId());
                     return FindAllReservationArticleResponse.of(
                             article.getMember(),
                             article,

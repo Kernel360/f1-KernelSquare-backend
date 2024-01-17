@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 public enum ReservationArticleServiceStatus implements ServiceStatus {
     //error
     RESERVATION_ARTICLE_NOT_FOUND(3100),
+    PAGE_NOT_FOUND(3101),
 
     //success
     RESERVATION_ARTICLE_CREATED(3140),

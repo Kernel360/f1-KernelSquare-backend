@@ -50,7 +50,7 @@ class CoffeeChatServiceTest {
         
         //then
         assertThat(response).isNotNull();
-        assertThat(response.chatRoomId()).isEqualTo(saveChatRoom.getId());
+        assertThat(response.roomKey()).isEqualTo(saveChatRoom.getRoomKey());
 
         //verify
         verify(coffeeChatRepository, times(1)).save(any(ChatRoom.class));

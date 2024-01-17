@@ -43,10 +43,10 @@ public class ReservationArticleService {
     }
 
     @Transactional(readOnly = true)
-    public PageResponse<FindAllReservationArticleResponse> findAllReservationArticle(Pageable pagealbe) {
+    public PageResponse<FindAllReservationArticleResponse> findAllReservationArticle(Pageable pageable) {
 
-        Integer currentPage = pagealbe.getPageNumber()+1;
-        Page<ReservationArticle> pages = reservationArticleRepository.findAll(pagealbe);
+        Integer currentPage = pageable.getPageNumber()+1;
+        Page<ReservationArticle> pages = reservationArticleRepository.findAll(pageable);
         Integer totalPages = pages.getTotalPages();
 
         if (totalPages == 0) totalPages += 1;
@@ -78,9 +78,9 @@ public class ReservationArticleService {
         ReservationArticle reservationArticle = reservationArticleRepository.findById(postId)
                 .orElseThrow(() -> new BusinessException(ReservationArticleErrorCode.RESERVATION_ARTICLE_NOT_FOUND));
         Member member = reservationArticle.getMember();
-        List<ReservationDto> reservationDTOS = reservationRepository.findAllByReservationArticleId(postId);
+        List<ReservationDto> reservationDTOs = reservationRepository.findAllByReservationArticleId(postId);
 
-        return FindReservationArticleResponse.of(member, reservationArticle, reservationDTOS, member.getLevel());
+        return FindReservationArticleResponse.of(member, reservationArticle, reservationDTOs, member.getLevel());
     }
 
 }

@@ -90,8 +90,8 @@ public class SecurityConfig {
 
 
 			// ROLE_MENTOR 권한 필요
-			.requestMatchers(HttpMethod.POST, "/api/v1/coffeechat/posts").permitAll()
 			.requestMatchers(HttpMethod.POST, "/api/v1/coffeechat/posts").hasRole("MENTOR")
+			.requestMatchers(HttpMethod.POST, "/api/v1/coffeechat/rooms").hasRole("MENTOR")
 
 			// ROLE_ADMIN 권한 필요
 			.requestMatchers(hasRoleAdminPatterns).hasRole("ADMIN")

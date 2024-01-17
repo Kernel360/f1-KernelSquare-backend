@@ -23,13 +23,13 @@ public class ChatRoom extends BaseEntity {
     private String roomName;
 
     @Column(nullable = false, name = "active", columnDefinition = "tinyint")
-    private Long active;
+    private Boolean active;
 
     @Builder
     public ChatRoom(Long id, String roomKey, String roomName) {
         this.id = id;
         this.roomKey = roomKey;
         this.roomName = roomName;
-        this.active = 0L;
+        this.active = false;
     }
 }

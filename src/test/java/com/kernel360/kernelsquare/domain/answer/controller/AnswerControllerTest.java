@@ -3,6 +3,7 @@ package com.kernel360.kernelsquare.domain.answer.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.kernel360.kernelsquare.domain.answer.dto.CreateAnswerRequest;
+import com.kernel360.kernelsquare.domain.answer.dto.FindAllAnswerResponse;
 import com.kernel360.kernelsquare.domain.answer.dto.FindAnswerResponse;
 import com.kernel360.kernelsquare.domain.answer.dto.UpdateAnswerRequest;
 import com.kernel360.kernelsquare.domain.answer.entity.Answer;
@@ -109,6 +110,7 @@ public class AnswerControllerTest {
     );
 
     private List<FindAnswerResponse> answerResponseList = new ArrayList<>();
+    private FindAllAnswerResponse answerResponseListDto;
 
     @Test
     @WithMockUser
@@ -116,8 +118,9 @@ public class AnswerControllerTest {
     void testFindAllAnswers() throws Exception {
         //given
         answerResponseList.add(findAnswerResponse);
+        answerResponseListDto = FindAllAnswerResponse.from(answerResponseList);
 
-        doReturn(answerResponseList)
+        doReturn(answerResponseListDto)
                 .when(answerService)
                 .findAllAnswer(anyLong());
 
@@ -131,10 +134,10 @@ public class AnswerControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.code").value(ANSWERS_ALL_FOUND.getCode()))
                 .andExpect(jsonPath("$.msg").value(ANSWERS_ALL_FOUND.getMsg()))
-                .andExpect(jsonPath("$.data[0].content").value(testAnswer.getContent()))
-                .andExpect(jsonPath("$.data[0].answer_image_url").value(testAnswer.getImageUrl()))
-                .andExpect(jsonPath("$.data[0].vote_count").value(testAnswer.getVoteCount()))
-                .andExpect(jsonPath("$.data[0].vote_status").value(testMemberAnswerVote.getStatus()));
+                .andExpect(jsonPath("$.data.answer_responses[0].content").value(testAnswer.getContent()))
+                .andExpect(jsonPath("$.data.answer_responses[0].answer_image_url").value(testAnswer.getImageUrl()))
+                .andExpect(jsonPath("$.data.answer_responses[0].vote_count").value(testAnswer.getVoteCount()))
+                .andExpect(jsonPath("$.data.answer_responses[0].vote_status").value(testMemberAnswerVote.getStatus()));
 
         //verify
         verify(answerService, times(1)).findAllAnswer(testQuestionId);

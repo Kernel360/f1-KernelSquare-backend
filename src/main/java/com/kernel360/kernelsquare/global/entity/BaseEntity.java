@@ -23,7 +23,4 @@ public abstract class BaseEntity {
 	@LastModifiedDate
 	@Column(name = "modified_date", columnDefinition = "datetime")
 	private LocalDateTime modifiedDate;
-	public void setCreatedDate() {
-		this.createdDate = LocalDateTime.now();
-	}
 }

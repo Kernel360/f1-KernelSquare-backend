@@ -3,7 +3,6 @@ package com.kernel360.kernelsquare.domain.member.service;
 import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.level.repository.LevelRepository;
 import com.kernel360.kernelsquare.global.common_response.error.code.LevelErrorCode;
-import jakarta.persistence.EntityManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class MemberService {
-	private final EntityManager entityManager;
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final LevelRepository levelRepository;
@@ -51,21 +49,5 @@ public class MemberService {
 	private Member getMemberById(Long id) {
 		return memberRepository.findById(id)
 			.orElseThrow(() -> new BusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
-	}
-
-	public void updateMemberExperienceByAction(Member member, Long diffExp) {
-		memberRepository.updateExperienceByDifference(member.getId(), diffExp);
-		Long upperLimit = member.getLevel().getLevelUpperLimit();
-		entityManager.flush();
-		entityManager.refresh(member);
-		Long memberExperience = member.getExperience();
-		if (memberExperience >= upperLimit) {
-			Level currentLevel = member.getLevel();
-			Level nextLevel = levelRepository.findByName(currentLevel.getName() + 1)
-					.orElseThrow(() -> new BusinessException(LevelErrorCode.LEVEL_NOT_FOUND));
-			member.updateLevel(nextLevel);
-			memberRepository.save(member);
-			memberRepository.updateExperienceByValue(member.getId(), memberExperience - upperLimit);
-		}
 	}
 }

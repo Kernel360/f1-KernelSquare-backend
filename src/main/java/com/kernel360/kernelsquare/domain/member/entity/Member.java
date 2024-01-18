@@ -3,6 +3,8 @@ package com.kernel360.kernelsquare.domain.member.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.kernel360.kernelsquare.global.common_response.error.code.LevelErrorCode;
+import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
 import jakarta.persistence.*;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -59,6 +61,15 @@ public class Member extends BaseEntity {
 	}
 
 	public void updateLevel(Level level) { this.level = level; }
+	public Long getExperience() { return this.experience; }
+	public void updateExperience(Long experience) { this.experience = experience; }
+	public void addExperience(Long experience) {this.experience += experience; }
+	public boolean isExperienceExceed(Long experience) {
+		if (experience >= this.level.getLevelUpperLimit()) {
+			return true;
+		}
+		return false;
+	}
 
 	public void initAuthorities(List<MemberAuthority> authorities) {
 		this.authorities = authorities;

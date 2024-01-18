@@ -6,6 +6,8 @@ import com.kernel360.kernelsquare.domain.answer.dto.UpdateAnswerRequest;
 import com.kernel360.kernelsquare.domain.answer.entity.Answer;
 import com.kernel360.kernelsquare.domain.answer.repository.AnswerRepository;
 import com.kernel360.kernelsquare.domain.image.utils.ImageUtils;
+import com.kernel360.kernelsquare.domain.level.entity.Level;
+import com.kernel360.kernelsquare.domain.level.repository.LevelRepository;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
 import com.kernel360.kernelsquare.domain.member.service.MemberService;
@@ -14,6 +16,7 @@ import com.kernel360.kernelsquare.domain.member_answer_vote.repository.MemberAns
 import com.kernel360.kernelsquare.domain.question.entity.Question;
 import com.kernel360.kernelsquare.domain.question.repository.QuestionRepository;
 import com.kernel360.kernelsquare.global.common_response.error.code.AnswerErrorCode;
+import com.kernel360.kernelsquare.global.common_response.error.code.LevelErrorCode;
 import com.kernel360.kernelsquare.global.common_response.error.code.MemberErrorCode;
 import com.kernel360.kernelsquare.global.common_response.error.code.QuestionErrorCode;
 import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
@@ -35,7 +38,7 @@ public class AnswerService {
 	private final MemberRepository memberRepository;
 	private final QuestionRepository questionRepository;
 	private final MemberAnswerVoteRepository memberAnswerVoteRepository;
-	private final MemberService memberService;
+	private final LevelRepository levelRepository;
 
 	@Transactional(readOnly = true)
 	public List<FindAnswerResponse> findAllAnswer(Long questionId) {
@@ -73,7 +76,13 @@ public class AnswerService {
 			.orElseThrow(() -> new BusinessException(QuestionErrorCode.QUESTION_NOT_FOUND));
 		Answer answer = CreateAnswerRequest.toEntity(createAnswerRequest, question, member);
 		answerRepository.save(answer);
-		memberService.updateMemberExperienceByAction(member, ExperiencePolicy.ANSWER_CREATED.getReward());
+		member.addExperience(ExperiencePolicy.MEMBER_DAILY_ATTENDED.getReward());
+		if (member.isExperienceExceed(member.getExperience())) {
+			member.updateExperience(member.getExperience() - member.getLevel().getLevelUpperLimit());
+			Level nextLevel = levelRepository.findByName(member.getLevel().getName() + 1)
+					.orElseThrow(() -> new BusinessException(LevelErrorCode.LEVEL_NOT_FOUND));
+			member.updateLevel(nextLevel);
+		}
 		return answer.getId();
 	}
 

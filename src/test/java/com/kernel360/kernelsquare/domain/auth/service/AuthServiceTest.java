@@ -63,25 +63,34 @@ public class AuthServiceTest {
 			.password(testPassword)
 			.build();
 
+		Level level = Level.builder()
+				.id(1L)
+				.name(1L)
+				.imageUrl("s3:whatever")
+				.levelUpperLimit(500L)
+				.build();
+
 		Member member = Member.builder()
-			.id(1L)
-			.email(testEmail)
-			.introduction("idontwannnaknow")
-			.nickname("notnow")
-			.password(passwordEncoder.encode(testPassword))
-			.experience(1000L)
-			.imageUrl("s3:myface")
-			.build();
+				.id(1L)
+				.email(testEmail)
+				.introduction("idontwannnaknow")
+				.nickname("notnow")
+				.password(passwordEncoder.encode(testPassword))
+				.experience(1000L)
+				.level(level)
+				.imageUrl("s3:myface")
+				.build();
 
 		Optional<Member> optionalMember = Optional.of(member);
+		Optional<Level> optionalLevel = Optional.of(level);
 
 		doReturn(optionalMember)
 			.when(memberRepository)
 			.findByEmail(anyString());
 
-		doNothing()
-				.when(memberService)
-				.updateMemberExperienceByAction(any(Member.class), anyLong());
+		doReturn(optionalLevel)
+				.when(levelRepository)
+				.findByName(anyLong());
 
 		//when
 		Member loginMember = authService.login(loginRequest);
@@ -113,6 +122,7 @@ public class AuthServiceTest {
 			.id(1L)
 			.name(1L)
 			.imageUrl("s3:whatever")
+			.levelUpperLimit(500L)
 			.build();
 
 		Optional<Level> optionalLevel = Optional.of(level);

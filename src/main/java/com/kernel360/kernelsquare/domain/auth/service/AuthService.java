@@ -35,7 +35,6 @@ public class AuthService {
 	private final MemberAuthorityRepository memberAuthorityRepository;
 	private final AuthorityRepository authorityRepository;
 	private final LevelRepository levelRepository;
-	private final MemberService memberService;
 
 	@Transactional
 	public Member login(final LoginRequest loginRequest) {
@@ -44,7 +43,13 @@ public class AuthService {
 		if (!passwordEncoder.matches(loginRequest.password(), findMember.getPassword())) {
 			throw new BusinessException(AuthErrorCode.INVALID_PASSWORD);
 		}
-		memberService.updateMemberExperienceByAction(findMember, ExperiencePolicy.MEMBER_DAILY_ATTENDED.getReward());
+		findMember.addExperience(ExperiencePolicy.MEMBER_DAILY_ATTENDED.getReward());
+		if (findMember.isExperienceExceed(findMember.getExperience())) {
+			findMember.updateExperience(findMember.getExperience() - findMember.getLevel().getLevelUpperLimit());
+			Level nextLevel = levelRepository.findByName(findMember.getLevel().getName() + 1)
+					.orElseThrow(() -> new BusinessException(LevelErrorCode.LEVEL_NOT_FOUND));
+			findMember.updateLevel(nextLevel);
+		}
 		return findMember;
 	}
 
@@ -78,5 +83,22 @@ public class AuthService {
 		if (memberRepository.existsByNickname(nickname)) {
 			throw new BusinessException(AuthErrorCode.ALREADY_SAVED_NICKNAME);
 		}
+	}
+
+	private void updateMemberExperienceByAction(Member member, Long diffExp) {
+		Long memberExperience = member.getExperience() + diffExp;
+		Long upperLimit = member.getLevel().getLevelUpperLimit();
+
+		if (memberExperience >= upperLimit) {
+			Level currentLevel = member.getLevel();
+			Level nextLevel = levelRepository.findByName(currentLevel.getName() + 1)
+					.orElseThrow(() -> new BusinessException(LevelErrorCode.LEVEL_NOT_FOUND));
+			member.updateLevel(nextLevel);
+			member.updateExperience(memberExperience - upperLimit);
+			memberRepository.save(member);
+			return;
+		}
+		member.updateExperience(memberExperience);
+		memberRepository.save(member);
 	}
 }

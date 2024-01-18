@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import com.kernel360.kernelsquare.domain.answer.dto.FindAllAnswerResponse;
 import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.level.repository.LevelRepository;
 import com.kernel360.kernelsquare.domain.member_answer_vote.entity.MemberAnswerVote;
@@ -87,10 +88,10 @@ public class AnswerServiceTest {
 				.findAllByMemberId(anyLong());
 
 		//when
-		List<FindAnswerResponse> newAnswerList = answerService.findAllAnswer(testQuestionId);
+		FindAllAnswerResponse newAnswerList = answerService.findAllAnswer(testQuestionId);
 
 		//then
-		assertThat(testAnswers.size()).isEqualTo(newAnswerList.size());
+		assertThat(testAnswers.size()).isEqualTo(newAnswerList.answerResponses().size());
 
 		//verify
 		verify(answerRepository, times(1)).findAnswersByQuestionIdSortedByCreationDate(anyLong());

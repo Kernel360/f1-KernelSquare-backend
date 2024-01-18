@@ -1,6 +1,7 @@
 package com.kernel360.kernelsquare.domain.answer.service;
 
 import com.kernel360.kernelsquare.domain.answer.dto.CreateAnswerRequest;
+import com.kernel360.kernelsquare.domain.answer.dto.FindAllAnswerResponse;
 import com.kernel360.kernelsquare.domain.answer.dto.FindAnswerResponse;
 import com.kernel360.kernelsquare.domain.answer.dto.UpdateAnswerRequest;
 import com.kernel360.kernelsquare.domain.answer.entity.Answer;
@@ -40,7 +41,7 @@ public class AnswerService {
 	private final LevelRepository levelRepository;
 
 	@Transactional(readOnly = true)
-	public List<FindAnswerResponse> findAllAnswer(Long questionId) {
+	public FindAllAnswerResponse findAllAnswer(Long questionId) {
 		List<FindAnswerResponse> result = new ArrayList<>();
 		if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() != "anonymousUser") {
 			Long memberId = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
@@ -57,14 +58,14 @@ public class AnswerService {
 							Long.valueOf("0")));
 				}
 			}
-			return result;
+			return FindAllAnswerResponse.from(result);
 		}
 		List<Answer> answerList = answerRepository.findAnswersByQuestionIdSortedByCreationDate(questionId);
 		for (Answer answer: answerList) {
 			result.add(FindAnswerResponse.from(answer, null, answer.getMember().getLevel().getName(),
 					Long.valueOf("0")));
 		}
-		return result;
+		return FindAllAnswerResponse.from(result);
 	}
 
 	@Transactional

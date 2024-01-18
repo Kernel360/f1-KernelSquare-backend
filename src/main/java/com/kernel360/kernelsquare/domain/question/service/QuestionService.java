@@ -1,6 +1,8 @@
 package com.kernel360.kernelsquare.domain.question.service;
 
 import com.kernel360.kernelsquare.domain.image.utils.ImageUtils;
+import com.kernel360.kernelsquare.domain.level.entity.Level;
+import com.kernel360.kernelsquare.domain.level.repository.LevelRepository;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
 import com.kernel360.kernelsquare.domain.question.dto.CreateQuestionRequest;
@@ -13,11 +15,13 @@ import com.kernel360.kernelsquare.domain.question_tech_stack.entity.QuestionTech
 import com.kernel360.kernelsquare.domain.question_tech_stack.repository.QuestionTechStackRepository;
 import com.kernel360.kernelsquare.domain.tech_stack.entity.TechStack;
 import com.kernel360.kernelsquare.domain.tech_stack.repository.TechStackRepository;
+import com.kernel360.kernelsquare.global.common_response.error.code.LevelErrorCode;
 import com.kernel360.kernelsquare.global.common_response.error.code.MemberErrorCode;
 import com.kernel360.kernelsquare.global.common_response.error.code.QuestionErrorCode;
 import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
 import com.kernel360.kernelsquare.global.dto.PageResponse;
 import com.kernel360.kernelsquare.global.dto.Pagination;
+import com.kernel360.kernelsquare.global.util.experience.ExperiencePolicy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +38,7 @@ public class QuestionService {
     private final MemberRepository memberRepository;
     private final TechStackRepository techStackRepository;
     private final QuestionTechStackRepository questionTechStackRepository;
+    private final LevelRepository levelRepository;
 
     @Transactional
     public CreateQuestionResponse createQuestion(CreateQuestionRequest createQuestionRequest) {
@@ -41,7 +46,6 @@ public class QuestionService {
             .orElseThrow(() -> new BusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         Question question = CreateQuestionRequest.toEntity(createQuestionRequest, member);
-
         Question saveQuestion = questionRepository.save(question);
 
         List<String> skills = createQuestionRequest.skills();
@@ -49,6 +53,13 @@ public class QuestionService {
 
         saveTechStackList(question, skills, techStackList);
 
+        member.addExperience(ExperiencePolicy.QUESTION_CREATED.getReward());
+        if (member.isExperienceExceed(member.getExperience())) {
+            member.updateExperience(member.getExperience() - member.getLevel().getLevelUpperLimit());
+            Level nextLevel = levelRepository.findByName(member.getLevel().getName() + 1)
+                    .orElseThrow(() -> new BusinessException(LevelErrorCode.LEVEL_NOT_FOUND));
+            member.updateLevel(nextLevel);
+        }
         return CreateQuestionResponse.from(saveQuestion);
     }
 

@@ -39,13 +39,6 @@ VALUES ('2023-12-12T09:00:00', '2023-12-12T09:00:00', 'level/level1to2.png', 1, 
 INSERT INTO level (created_date, modified_date, image_url, name, level_upper_limit)
 VALUES ('2023-12-12T09:00:00', '2023-12-12T09:00:00', 'level/level1to2.png', 2, 500);
 
-
-INSERT INTO authority (authority_type)
-VALUES ('ROLE_MENTOR');
-
-INSERT INTO member_authority (member_id, authority_id)
-VALUES (1, 1);
-
 INSERT INTO level (created_date, modified_date, image_url, name, level_upper_limit)
 VALUES ('2023-12-12T09:00:00', '2023-12-12T09:00:00', 'level/level3to4.png', 3, 1800);
 

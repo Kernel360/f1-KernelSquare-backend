@@ -44,9 +44,8 @@ class QuestionServiceTest {
     @Mock
     private QuestionTechStackRepository questionTechStackRepository;
 
-    Member member;
-
-    Level level;
+    private Member member;
+    private Level level;
 
     private Question createTestQuestion(Long id) {
         return Question.builder()
@@ -68,7 +67,7 @@ class QuestionServiceTest {
             .nickname("hongjugwang")
             .email("jugwang@naver.com")
             .password("hashedPassword")
-            .experience(10000L)
+            .experience(0L)
             .introduction("hi, i'm hongjugwang.")
             .imageUrl("s3:qwe12fasdawczx")
             .level(level)
@@ -79,13 +78,13 @@ class QuestionServiceTest {
         return Level.builder()
             .name(6L)
             .imageUrl("1.jpg")
+            .levelUpperLimit(500L)
             .build();
     }
 
     @BeforeEach
     void setUp() {
         level = createTestLevel();
-
         member = createTestMember();
     }
 
@@ -100,7 +99,6 @@ class QuestionServiceTest {
                 question.getTechStackList().stream().map(x -> x.getTechStack().getSkill()).toList());
 
         given(memberRepository.findById(anyLong())).willReturn(Optional.ofNullable(member));
-
         given(questionRepository.save(any(Question.class))).willReturn(question);
 
         //when

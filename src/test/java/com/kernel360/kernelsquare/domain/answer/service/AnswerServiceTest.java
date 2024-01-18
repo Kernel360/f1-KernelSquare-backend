@@ -9,7 +9,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import com.kernel360.kernelsquare.domain.answer.dto.FindAllAnswerResponse;
 import com.kernel360.kernelsquare.domain.level.entity.Level;
+import com.kernel360.kernelsquare.domain.level.repository.LevelRepository;
 import com.kernel360.kernelsquare.domain.member_answer_vote.entity.MemberAnswerVote;
 import com.kernel360.kernelsquare.domain.member_answer_vote.repository.MemberAnswerVoteRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -36,13 +38,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.test.context.support.WithMockUser;
 
 @DisplayName("답변 서비스 통합 테스트")
 @ExtendWith(MockitoExtension.class)
 public class AnswerServiceTest {
 	@InjectMocks
 	private AnswerService answerService;
+	@Mock
+	private LevelRepository levelRepository;
 	@Mock
 	private AnswerRepository answerRepository;
 	@Mock
@@ -85,10 +88,10 @@ public class AnswerServiceTest {
 				.findAllByMemberId(anyLong());
 
 		//when
-		List<FindAnswerResponse> newAnswerList = answerService.findAllAnswer(testQuestionId);
+		FindAllAnswerResponse newAnswerList = answerService.findAllAnswer(testQuestionId);
 
 		//then
-		assertThat(testAnswers.size()).isEqualTo(newAnswerList.size());
+		assertThat(testAnswers.size()).isEqualTo(newAnswerList.answerResponses().size());
 
 		//verify
 		verify(answerRepository, times(1)).findAnswersByQuestionIdSortedByCreationDate(anyLong());
@@ -107,11 +110,15 @@ public class AnswerServiceTest {
 
 		Long foundTestAnswerId = 1L;
 
-		Member foundMember = createTestMember(foundMemberId);
-		Optional<Member> optionalFoundMember = Optional.of(foundMember);
-
 		Question foundQuestion = createTestQuestion();
 		Optional<Question> optionalFoundQuestion = Optional.of(foundQuestion);
+
+		Level foundLevel = createTestLevel(0L, 1L);
+		Optional<Level> optionalFoundLevel = Optional.of(foundLevel);
+
+		Member foundMember = createTestMember(foundMemberId);
+		foundMember.updateLevel(foundLevel);
+		Optional<Member> optionalFoundMember = Optional.of(foundMember);
 
 		Answer foundAnswer = createTestAnswer(foundTestAnswerId, 1L, foundMember, foundQuestion);
 		Optional<Answer> optionalFoundAnswer = Optional.of(foundAnswer);
@@ -130,17 +137,21 @@ public class AnswerServiceTest {
 			.when(answerRepository)
 			.save(any(Answer.class));
 
-		doReturn(Optional.of(foundMember))
+		doReturn(optionalFoundMember)
 			.when(memberRepository)
 			.findById(anyLong());
 
-		doReturn(Optional.of(foundQuestion))
+		doReturn(optionalFoundQuestion)
 			.when(questionRepository)
 			.findById(anyLong());
 
-		doReturn(Optional.of(foundAnswer))
+		doReturn(optionalFoundAnswer)
 			.when(answerRepository)
 			.findById(anyLong());
+
+		doReturn(optionalFoundLevel)
+				.when(levelRepository)
+				.findByName(anyLong());
 
 		//when
 		Long newCreatedAnswerId = answerService.createAnswer(createAnswerRequest, foundQuestionId);
@@ -158,6 +169,7 @@ public class AnswerServiceTest {
 		verify(questionRepository, times(1)).findById(anyLong());
 		verify(questionRepository, only()).findById(anyLong());
 		verify(answerRepository, times(1)).findById(anyLong());
+		verify(levelRepository, times(1)).findByName(anyLong());
 	}
 
 	@Test

@@ -59,9 +59,13 @@ public class Member extends BaseEntity {
 	}
 
 	public void updateLevel(Level level) { this.level = level; }
+
 	public Long getExperience() { return this.experience; }
+
 	public void updateExperience(Long experience) { this.experience = experience; }
+
 	public void addExperience(Long experience) {this.experience += experience; }
+
 	public boolean isExperienceExceed(Long experience) {
 		if (experience >= this.level.getLevelUpperLimit()) {
 			return true;

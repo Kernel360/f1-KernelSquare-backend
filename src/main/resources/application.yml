@@ -6,7 +6,6 @@ spring:
     password: ${LOCAL_DB_PASSWORD}
 
   jpa:
-
     hibernate:
       ddl-auto: none
 

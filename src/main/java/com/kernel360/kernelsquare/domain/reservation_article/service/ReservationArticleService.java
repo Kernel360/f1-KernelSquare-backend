@@ -1,8 +1,14 @@
 package com.kernel360.kernelsquare.domain.reservation_article.service;
 
+import com.kernel360.kernelsquare.domain.coffeechat.entity.ChatRoom;
+import com.kernel360.kernelsquare.domain.coffeechat.repository.CoffeeChatRepository;
+import com.kernel360.kernelsquare.domain.hashtag.entity.HashTag;
+import com.kernel360.kernelsquare.domain.hashtag.repository.HashTagRepository;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
+import com.kernel360.kernelsquare.domain.question_tech_stack.entity.QuestionTechStack;
 import com.kernel360.kernelsquare.domain.reservation.dto.ReservationDto;
+import com.kernel360.kernelsquare.domain.reservation.entity.Reservation;
 import com.kernel360.kernelsquare.domain.reservation.repository.ReservationRepository;
 import com.kernel360.kernelsquare.domain.reservation_article.dto.CreateReservationArticleRequest;
 import com.kernel360.kernelsquare.domain.reservation_article.dto.CreateReservationArticleResponse;
@@ -21,7 +27,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 
 @Service
@@ -30,6 +38,8 @@ public class ReservationArticleService {
     private final MemberRepository memberRepository;
     private final ReservationArticleRepository reservationArticleRepository;
     private final ReservationRepository reservationRepository;
+    private final CoffeeChatRepository coffeeChatRepository;
+    private final HashTagRepository hashTagRepository;
 
     @Transactional
     public CreateReservationArticleResponse createReservationArticle(CreateReservationArticleRequest createReservationArticleRequest) {
@@ -38,6 +48,35 @@ public class ReservationArticleService {
 
         ReservationArticle reservationArticle = CreateReservationArticleRequest.toEntity(createReservationArticleRequest, member);
         ReservationArticle saveReservationArticle = reservationArticleRepository.save(reservationArticle);
+
+        // HashTag 저장
+        for (String hashTags : createReservationArticleRequest.hashTags()) {
+            HashTag hashTag = HashTag.builder()
+                    .content(hashTags)
+                    .reservationArticle(saveReservationArticle)
+                    .build();
+
+            hashTagRepository.save(hashTag);
+        }
+
+        for (LocalDateTime dateTime : createReservationArticleRequest.dateTimes()) {
+            // 새로운 Chatroom 생성
+            ChatRoom chatroom = ChatRoom.builder()
+                    .roomKey(UUID.randomUUID().toString())
+                    .build();
+
+            coffeeChatRepository.save(chatroom);
+
+            // Reservation 생성 및 설정
+            Reservation reservation = Reservation.builder()
+                    .startTime(dateTime)
+                    .endTime(dateTime.plusMinutes(30))
+                    .reservationArticle(saveReservationArticle)
+                    .chatRoom(chatroom)
+                    .build();
+
+            reservationRepository.save(reservation);
+        }
 
         return CreateReservationArticleResponse.from(saveReservationArticle);
     }

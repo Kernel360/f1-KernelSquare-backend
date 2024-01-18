@@ -32,7 +32,7 @@ public class CoffeeChatService {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication.getAuthorities().contains("MENTOR")) {
+        if (authentication.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_MENTOR"))) {
             if (Long.valueOf(authentication.getName()).equals(enterCoffeeChatRoomRequest.memberId())) {
 
                 chatRoom.enterUpdate(enterCoffeeChatRoomRequest.articleTitle());
@@ -41,7 +41,7 @@ public class CoffeeChatService {
             } else {
                 throw new BusinessException(CoffeeChatErrorCode.MENTOR_MISMATCH);
             }
-        } else if (authentication.getAuthorities().contains("USER")) {
+        } else if (authentication.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_USER"))) {
             if (Boolean.FALSE.equals(chatRoom.getActive())) {
                 throw new BusinessException(CoffeeChatErrorCode.COFFEE_CHAT_ROOM_NOT_ACTIVE);
 

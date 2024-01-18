@@ -44,8 +44,8 @@ class QuestionServiceTest {
     @Mock
     private QuestionTechStackRepository questionTechStackRepository;
 
-    Member member;
-    Level level;
+    private Member member;
+    private Level level;
 
     private Question createTestQuestion(Long id) {
         return Question.builder()

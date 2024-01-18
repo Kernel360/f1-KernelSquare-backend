@@ -33,7 +33,8 @@ public class ChatRoom extends BaseEntity {
         this.active = false;
     }
 
-    public void update(String roomName) {
+    public void enterUpdate(String roomName) {
         this.roomName = roomName;
+        this.active = true;
     }
 }

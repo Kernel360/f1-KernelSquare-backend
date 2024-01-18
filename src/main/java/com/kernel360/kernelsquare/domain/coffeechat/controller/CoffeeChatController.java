@@ -39,6 +39,7 @@ public class CoffeeChatController {
 
     @PostMapping("/coffeechat/rooms/enter")
     public ResponseEntity<ApiResponse<EnterCoffeeChatRoomResponse>> enterCoffeeChatRoom(
+        @Valid
         @RequestBody
         EnterCoffeeChatRoomRequest enterCoffeeChatRoomRequest
     ) {

@@ -36,6 +36,13 @@ public class SecurityConfig {
 		"/api/v1/auth/login",
 		"/actuator",
 		"/actuator/**",
+
+		// 소켓 통신의 임시 화면을 사용하기 위해 관련 경로는 permitAll
+		"/screen/**",
+		"/kernel-square/**",
+		"/topic/chat/room",
+		"/app/chat/message",
+		"/webjars/**",
 	};
 
 	private final String[] hasAnyAuthorityPatterns = new String[] {
@@ -94,6 +101,7 @@ public class SecurityConfig {
 			// ROLE_MENTOR 권한 필요
 			.requestMatchers(HttpMethod.POST, "/api/v1/coffeechat/posts").hasRole("MENTOR")
 			.requestMatchers(HttpMethod.POST, "/api/v1/coffeechat/rooms").hasRole("MENTOR")
+			.requestMatchers(HttpMethod.POST, "/api/v1/coffeechat/rooms/enter").hasAnyRole("MENTOR", "USER")
 
 			// ROLE_ADMIN 권한 필요
 			.requestMatchers(hasRoleAdminPatterns).hasRole("ADMIN")

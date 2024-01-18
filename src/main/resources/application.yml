@@ -23,7 +23,12 @@ spring:
   jackson:
     property-naming-strategy: SNAKE_CASE
 
-## file upload max size (파일 업로드 크기 설정)
+# ====> 소켓 통신의 임시 화면을 위함, 정식 화면이 생기면 삭제 할 것 !!
+    serialization:
+      fail-on-empty-beans: false
+# <====
+
+  ## file upload max size (파일 업로드 크기 설정)
 #  servlet:
 #    multipart:
 #      max-file-size: 20MB
@@ -44,6 +49,16 @@ spring:
   flyway:
     enabled: true
     baseline-on-migrate: true
+
+# ====> 소켓 통신의 임시 화면을 위함, 정식 화면이 생기면 삭제 할 것 !!
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: false
+  freemarker:
+    cache: false
+# <====
 
 logging.level:
   org.hibernate.SQL: debug

@@ -6,7 +6,6 @@ import com.kernel360.kernelsquare.domain.hashtag.entity.HashTag;
 import com.kernel360.kernelsquare.domain.hashtag.repository.HashTagRepository;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
-import com.kernel360.kernelsquare.domain.question_tech_stack.entity.QuestionTechStack;
 import com.kernel360.kernelsquare.domain.reservation.dto.ReservationDto;
 import com.kernel360.kernelsquare.domain.reservation.entity.Reservation;
 import com.kernel360.kernelsquare.domain.reservation.repository.ReservationRepository;

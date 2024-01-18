@@ -40,7 +40,6 @@ class CoffeeChatServiceTest {
         ChatRoom saveChatRoom = ChatRoom.builder()
             .id(1L)
             .roomKey(chatRoom.getRoomKey())
-            .roomName(roomName)
             .build();
 
         given(coffeeChatRepository.save(any(ChatRoom.class))).willReturn(saveChatRoom);

@@ -84,21 +84,4 @@ public class AuthService {
 			throw new BusinessException(AuthErrorCode.ALREADY_SAVED_NICKNAME);
 		}
 	}
-
-	private void updateMemberExperienceByAction(Member member, Long diffExp) {
-		Long memberExperience = member.getExperience() + diffExp;
-		Long upperLimit = member.getLevel().getLevelUpperLimit();
-
-		if (memberExperience >= upperLimit) {
-			Level currentLevel = member.getLevel();
-			Level nextLevel = levelRepository.findByName(currentLevel.getName() + 1)
-					.orElseThrow(() -> new BusinessException(LevelErrorCode.LEVEL_NOT_FOUND));
-			member.updateLevel(nextLevel);
-			member.updateExperience(memberExperience - upperLimit);
-			memberRepository.save(member);
-			return;
-		}
-		member.updateExperience(memberExperience);
-		memberRepository.save(member);
-	}
 }

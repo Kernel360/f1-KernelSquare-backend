@@ -3,8 +3,6 @@ package com.kernel360.kernelsquare.domain.member.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.kernel360.kernelsquare.global.common_response.error.code.LevelErrorCode;
-import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
 import jakarta.persistence.*;
 import org.hibernate.annotations.DynamicUpdate;
 

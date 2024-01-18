@@ -61,7 +61,6 @@ public class QuestionService {
                     .orElseThrow(() -> new BusinessException(LevelErrorCode.LEVEL_NOT_FOUND));
             member.updateLevel(nextLevel);
         }
-        // memberService.updateMemberExperienceByAction(member, ExperiencePolicy.QUESTION_CREATED.getReward());
         return CreateQuestionResponse.from(saveQuestion);
     }
 

@@ -1,8 +1,6 @@
 package com.kernel360.kernelsquare.domain.member.service;
 
-import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.level.repository.LevelRepository;
-import com.kernel360.kernelsquare.global.common_response.error.code.LevelErrorCode;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

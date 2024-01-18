@@ -4,8 +4,6 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Optional;
-
-import com.kernel360.kernelsquare.domain.level.repository.LevelRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,8 +29,6 @@ public class MemberServiceTest {
 	private MemberRepository memberRepository;
 	@Mock
 	private PasswordEncoder passwordEncoder;
-	@Mock
-	private LevelRepository levelRepository;
 
 	@Test
 	@DisplayName("회원 정보 수정 테스트")

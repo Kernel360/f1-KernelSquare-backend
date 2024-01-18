@@ -11,10 +11,8 @@ import java.util.Optional;
 
 import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.level.repository.LevelRepository;
-import com.kernel360.kernelsquare.domain.member.service.MemberService;
 import com.kernel360.kernelsquare.domain.member_answer_vote.entity.MemberAnswerVote;
 import com.kernel360.kernelsquare.domain.member_answer_vote.repository.MemberAnswerVoteRepository;
-import com.kernel360.kernelsquare.global.util.experience.ExperiencePolicy;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,15 +37,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.test.context.support.WithMockUser;
 
 @DisplayName("답변 서비스 통합 테스트")
 @ExtendWith(MockitoExtension.class)
 public class AnswerServiceTest {
 	@InjectMocks
 	private AnswerService answerService;
-	@Mock
-	private MemberService memberService;
 	@Mock
 	private LevelRepository levelRepository;
 	@Mock

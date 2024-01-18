@@ -2,8 +2,6 @@ package com.kernel360.kernelsquare.domain.auth.controller;
 
 import static com.kernel360.kernelsquare.global.common_response.response.code.AuthResponseCode.*;
 
-import com.kernel360.kernelsquare.domain.member.service.MemberService;
-import com.kernel360.kernelsquare.global.util.experience.ExperiencePolicy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

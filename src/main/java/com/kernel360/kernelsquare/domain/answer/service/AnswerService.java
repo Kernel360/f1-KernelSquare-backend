@@ -10,7 +10,6 @@ import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.level.repository.LevelRepository;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
-import com.kernel360.kernelsquare.domain.member.service.MemberService;
 import com.kernel360.kernelsquare.domain.member_answer_vote.entity.MemberAnswerVote;
 import com.kernel360.kernelsquare.domain.member_answer_vote.repository.MemberAnswerVoteRepository;
 import com.kernel360.kernelsquare.domain.question.entity.Question;

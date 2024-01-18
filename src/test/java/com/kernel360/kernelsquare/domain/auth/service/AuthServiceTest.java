@@ -5,7 +5,6 @@ import static org.mockito.Mockito.*;
 
 import java.util.Optional;
 
-import com.kernel360.kernelsquare.domain.member.service.MemberService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,8 +44,6 @@ public class AuthServiceTest {
 	private AuthorityRepository authorityRepository;
 	@Mock
 	private MemberAuthorityRepository memberAuthorityRepository;
-	@Mock
-	private MemberService memberService;
 
 	@Spy
 	private PasswordEncoder passwordEncoder = Mockito.spy(BCryptPasswordEncoder.class);

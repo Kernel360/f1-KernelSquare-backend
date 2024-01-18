@@ -2,7 +2,6 @@ package com.kernel360.kernelsquare.domain.auth.service;
 
 import java.util.List;
 
-import com.kernel360.kernelsquare.domain.member.service.MemberService;
 import com.kernel360.kernelsquare.global.util.experience.ExperiencePolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

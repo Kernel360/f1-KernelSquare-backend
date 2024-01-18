@@ -2,6 +2,7 @@ package com.kernel360.kernelsquare.domain.auth.service;
 
 import java.util.List;
 
+import com.kernel360.kernelsquare.global.util.experience.ExperiencePolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,12 +35,19 @@ public class AuthService {
 	private final AuthorityRepository authorityRepository;
 	private final LevelRepository levelRepository;
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public Member login(final LoginRequest loginRequest) {
 		Member findMember = memberRepository.findByEmail(loginRequest.email())
 			.orElseThrow(() -> new BusinessException(AuthErrorCode.INVALID_ACCOUNT));
 		if (!passwordEncoder.matches(loginRequest.password(), findMember.getPassword())) {
 			throw new BusinessException(AuthErrorCode.INVALID_PASSWORD);
+		}
+		findMember.addExperience(ExperiencePolicy.MEMBER_DAILY_ATTENDED.getReward());
+		if (findMember.isExperienceExceed(findMember.getExperience())) {
+			findMember.updateExperience(findMember.getExperience() - findMember.getLevel().getLevelUpperLimit());
+			Level nextLevel = levelRepository.findByName(findMember.getLevel().getName() + 1)
+					.orElseThrow(() -> new BusinessException(LevelErrorCode.LEVEL_NOT_FOUND));
+			findMember.updateLevel(nextLevel);
 		}
 		return findMember;
 	}

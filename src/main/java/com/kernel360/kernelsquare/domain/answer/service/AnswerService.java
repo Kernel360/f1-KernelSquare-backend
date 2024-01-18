@@ -1,11 +1,14 @@
 package com.kernel360.kernelsquare.domain.answer.service;
 
 import com.kernel360.kernelsquare.domain.answer.dto.CreateAnswerRequest;
+import com.kernel360.kernelsquare.domain.answer.dto.FindAllAnswerResponse;
 import com.kernel360.kernelsquare.domain.answer.dto.FindAnswerResponse;
 import com.kernel360.kernelsquare.domain.answer.dto.UpdateAnswerRequest;
 import com.kernel360.kernelsquare.domain.answer.entity.Answer;
 import com.kernel360.kernelsquare.domain.answer.repository.AnswerRepository;
 import com.kernel360.kernelsquare.domain.image.utils.ImageUtils;
+import com.kernel360.kernelsquare.domain.level.entity.Level;
+import com.kernel360.kernelsquare.domain.level.repository.LevelRepository;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
 import com.kernel360.kernelsquare.domain.member_answer_vote.entity.MemberAnswerVote;
@@ -13,9 +16,11 @@ import com.kernel360.kernelsquare.domain.member_answer_vote.repository.MemberAns
 import com.kernel360.kernelsquare.domain.question.entity.Question;
 import com.kernel360.kernelsquare.domain.question.repository.QuestionRepository;
 import com.kernel360.kernelsquare.global.common_response.error.code.AnswerErrorCode;
+import com.kernel360.kernelsquare.global.common_response.error.code.LevelErrorCode;
 import com.kernel360.kernelsquare.global.common_response.error.code.MemberErrorCode;
 import com.kernel360.kernelsquare.global.common_response.error.code.QuestionErrorCode;
 import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
+import com.kernel360.kernelsquare.global.util.experience.ExperiencePolicy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -33,9 +38,10 @@ public class AnswerService {
 	private final MemberRepository memberRepository;
 	private final QuestionRepository questionRepository;
 	private final MemberAnswerVoteRepository memberAnswerVoteRepository;
+	private final LevelRepository levelRepository;
 
 	@Transactional(readOnly = true)
-	public List<FindAnswerResponse> findAllAnswer(Long questionId) {
+	public FindAllAnswerResponse findAllAnswer(Long questionId) {
 		List<FindAnswerResponse> result = new ArrayList<>();
 		if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() != "anonymousUser") {
 			Long memberId = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
@@ -52,14 +58,14 @@ public class AnswerService {
 							Long.valueOf("0")));
 				}
 			}
-			return result;
+			return FindAllAnswerResponse.from(result);
 		}
 		List<Answer> answerList = answerRepository.findAnswersByQuestionIdSortedByCreationDate(questionId);
 		for (Answer answer: answerList) {
 			result.add(FindAnswerResponse.from(answer, null, answer.getMember().getLevel().getName(),
 					Long.valueOf("0")));
 		}
-		return result;
+		return FindAllAnswerResponse.from(result);
 	}
 
 	@Transactional
@@ -70,6 +76,13 @@ public class AnswerService {
 			.orElseThrow(() -> new BusinessException(QuestionErrorCode.QUESTION_NOT_FOUND));
 		Answer answer = CreateAnswerRequest.toEntity(createAnswerRequest, question, member);
 		answerRepository.save(answer);
+		member.addExperience(ExperiencePolicy.MEMBER_DAILY_ATTENDED.getReward());
+		if (member.isExperienceExceed(member.getExperience())) {
+			member.updateExperience(member.getExperience() - member.getLevel().getLevelUpperLimit());
+			Level nextLevel = levelRepository.findByName(member.getLevel().getName() + 1)
+					.orElseThrow(() -> new BusinessException(LevelErrorCode.LEVEL_NOT_FOUND));
+			member.updateLevel(nextLevel);
+		}
 		return answer.getId();
 	}
 

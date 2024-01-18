@@ -1,6 +1,5 @@
 package com.kernel360.kernelsquare.domain.member.service;
 
-import com.kernel360.kernelsquare.domain.level.repository.LevelRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 public class MemberService {
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
-	private final LevelRepository levelRepository;
 
 	@Transactional
 	public void updateMember(Long id, UpdateMemberRequest updateMemberRequest) {

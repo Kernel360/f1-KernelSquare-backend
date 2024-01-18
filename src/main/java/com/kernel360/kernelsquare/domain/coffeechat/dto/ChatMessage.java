@@ -3,6 +3,7 @@ package com.kernel360.kernelsquare.domain.coffeechat.dto;
 import lombok.*;
 
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatMessage {

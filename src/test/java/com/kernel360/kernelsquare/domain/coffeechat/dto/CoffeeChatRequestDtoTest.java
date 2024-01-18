@@ -30,4 +30,18 @@ class CoffeeChatRequestDtoTest {
         //then
         assertThat(msgList).isEqualTo(Set.of("방 이름을 입력해 주세요."));
     }
+
+    @Test
+    @DisplayName("채팅방 입장 요청 검증 테스트")
+    void validateEnterCoffeeChatRoomRequest() {
+        EnterCoffeeChatRoomRequest enterCoffeeChatRoomRequest = EnterCoffeeChatRoomRequest.builder()
+            .articleTitle("")
+            .build();
+
+        Set<ConstraintViolation<EnterCoffeeChatRoomRequest>> violations = validator.validate(enterCoffeeChatRoomRequest);
+        Set<String> msgList = violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toSet());
+
+        //then
+        assertThat(msgList).isEqualTo(Set.of("회원 ID를 입력해 주세요.", "방 ID를 입력해 주세요.", "예약창 제목을 입력해 주세요."));
+    }
 }

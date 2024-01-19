@@ -1,8 +1,6 @@
 package com.kernel360.kernelsquare.domain.reservation_article.service;
 
 import com.kernel360.kernelsquare.domain.authority.entity.Authority;
-import com.kernel360.kernelsquare.domain.authority.repository.AuthorityRepository;
-import com.kernel360.kernelsquare.domain.coffeechat.entity.ChatRoom;
 import com.kernel360.kernelsquare.domain.coffeechat.repository.CoffeeChatRepository;
 import com.kernel360.kernelsquare.domain.hashtag.entity.HashTag;
 import com.kernel360.kernelsquare.domain.hashtag.repository.HashTagRepository;
@@ -10,8 +8,6 @@ import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
 import com.kernel360.kernelsquare.domain.member_authority.entity.MemberAuthority;
-import com.kernel360.kernelsquare.domain.member_authority.repository.MemberAuthorityRepository;
-import com.kernel360.kernelsquare.domain.reservation.entity.Reservation;
 import com.kernel360.kernelsquare.domain.reservation.repository.ReservationRepository;
 import com.kernel360.kernelsquare.domain.reservation_article.dto.CreateReservationArticleRequest;
 import com.kernel360.kernelsquare.domain.reservation_article.dto.CreateReservationArticleResponse;
@@ -35,15 +31,12 @@ import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @DisplayName("커피챗 예약게시글 서비스 단위 테스트")
 @ExtendWith(MockitoExtension.class)
@@ -205,6 +198,39 @@ class ReservationArticleServiceTest {
 
         // Verify
         verify(reservationArticleRepository, times(1)).findById(anyLong());
+    }
+
+    @Test
+    @DisplayName("예약창 삭제 테스트")
+    void testDeleteReservationArticle() {
+        // Given
+        level = createTestLevel();
+        member = createTestMember();
+        ReservationArticle reservationArticle = createTestReservationArticle(1L);
+
+        given(reservationArticleRepository.findById(anyLong())).willReturn(Optional.ofNullable(reservationArticle));
+
+        doNothing()
+                .when(reservationArticleRepository)
+                .deleteById(anyLong());
+
+        doNothing()
+                .when(coffeeChatRepository)
+                .deleteChatRoom(anyLong());
+
+        doNothing()
+                .when(reservationRepository)
+                .deleteAllByReservationArticleId(anyLong());
+
+        doNothing()
+                .when(hashTagRepository)
+                .deleteAllByReservationArticleId(anyLong());
+
+        // When
+        reservationArticleService.deleteReservationArticle(reservationArticle.getId());
+
+        // Then
+        verify(reservationArticleRepository, times(1)).deleteById(anyLong());
     }
 
 }

@@ -8,8 +8,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity(name = "hashtag")
+@Entity(name = "Hashtag")
 @Getter
+@Table(name = "hashtag")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class HashTag extends BaseEntity {
     @Id

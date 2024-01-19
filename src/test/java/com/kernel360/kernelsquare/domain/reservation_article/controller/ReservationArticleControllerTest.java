@@ -37,11 +37,10 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@DisplayName("커피챗 예약게시글 컨트롤러 단위 테스트")
+@DisplayName("커피챗 예약창 컨트롤러 단위 테스트")
 @WebMvcTest(ReservationArticleController.class)
 class ReservationArticleControllerTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -84,7 +83,7 @@ class ReservationArticleControllerTest {
 
     @Test
     @WithMockUser
-    @DisplayName("예약게시글 생성 성공시 200 OK 와 응답 메시지를 반환한다.")
+    @DisplayName("예약창 생성 성공시 200 OK 와 응답 메시지를 반환한다.")
     void testCreateReservationArticle() throws Exception {
         // Given
 
@@ -118,7 +117,7 @@ class ReservationArticleControllerTest {
     }
     @Test
     @WithMockUser
-    @DisplayName("모든 예약게시글 조회 성공시 200 OK 와 응답 메시지를 반환한다.")
+    @DisplayName("모든 예약창 조회 성공시 200 OK 와 응답 메시지를 반환한다.")
     void testFindAllReservationArticle() throws Exception {
         // Given
         level = createTestLevel();
@@ -165,7 +164,7 @@ class ReservationArticleControllerTest {
 
     @Test
     @WithMockUser
-    @DisplayName("예약게시글 조회 성공시 200 OK 와 응답 메시지를 반환한다.")
+    @DisplayName("예약창 조회 성공시 200 OK 와 응답 메시지를 반환한다.")
     void testFindReservationArticle() throws Exception {
         // Given
         level = createTestLevel();
@@ -206,6 +205,34 @@ class ReservationArticleControllerTest {
         // Verify
         verify(reservationArticleService, times(1)).findReservationArticle(anyLong());
 
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("예약창 삭제 성공시 200 OK 와 응답 메시지를 반환한다.")
+    void testDeleteReservationArticle() throws Exception {
+        // Given
+        level = createTestLevel();
+        member = createTestMember();
+        ReservationArticle reservationArticle = createTestReservationArticle(1L);
+
+        doNothing()
+                .when(reservationArticleService)
+                .deleteReservationArticle(anyLong());
+
+        // When & Then
+        mockMvc.perform(delete("/api/v1/coffeechat/posts/" + reservationArticle.getId())
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8"))
+                .andExpect(status().is(RESERVATION_ARTICLE_DELETED.getStatus().value()))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.code").value(RESERVATION_ARTICLE_DELETED.getCode()))
+                .andExpect(jsonPath("$.msg").value(RESERVATION_ARTICLE_DELETED.getMsg()));
+
+        // Verify
+        verify(reservationArticleService, times(1)).deleteReservationArticle(anyLong());
     }
 
 

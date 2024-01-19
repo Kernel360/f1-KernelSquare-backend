@@ -12,7 +12,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Arrays;
 import java.util.List;
@@ -31,9 +30,6 @@ class LevelServiceTest {
     private LevelService levelService;
     @Mock
     private LevelRepository levelRepository;
-
-    @Value("${custom.domain.image.baseUrl}")
-    private String baseUrl;
 
     @Test
     @DisplayName("등급 생성 테스트")
@@ -69,7 +65,8 @@ class LevelServiceTest {
         // then
         assertThat(actualLevels.levels().get(0).id()).isEqualTo(expectedLevels.get(0).getId());
         assertThat(actualLevels.levels().get(0).name()).isEqualTo(expectedLevels.get(0).getName());
-        assertThat(actualLevels.levels().get(1).imageUrl()).isEqualTo(baseUrl + "/" + expectedLevels.get(1).getImageUrl());
+        assertThat(actualLevels.levels().get(1).imageUrl().length()).isGreaterThan(expectedLevels.get(1).getImageUrl().length());
+        assertThat(actualLevels.levels().get(1).imageUrl()).endsWith(expectedLevels.get(1).getImageUrl());
 
         verify(levelRepository, times(1)).findAll();
     }

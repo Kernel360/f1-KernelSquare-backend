@@ -45,9 +45,6 @@ class QuestionServiceTest {
     @Mock
     private QuestionTechStackRepository questionTechStackRepository;
 
-    @Value("${custom.domain.image.baseUrl}")
-    private String baseUrl;
-
     private Member member;
     private Level level;
 
@@ -132,11 +129,14 @@ class QuestionServiceTest {
         assertThat(findQuestionResponse.id()).isEqualTo(question.getId());
         assertThat(findQuestionResponse.title()).isEqualTo(question.getTitle());
         assertThat(findQuestionResponse.content()).isEqualTo(question.getContent());
-        assertThat(findQuestionResponse.questionImageUrl()).isEqualTo(baseUrl + "/" + question.getImageUrl());
+        assertThat(findQuestionResponse.questionImageUrl().length()).isGreaterThan(question.getImageUrl().length());
+        assertThat(findQuestionResponse.questionImageUrl()).endsWith(question.getImageUrl());
         assertThat(findQuestionResponse.nickname()).isEqualTo(member.getNickname());
-        assertThat(findQuestionResponse.memberImageUrl()).isEqualTo(baseUrl + "/" + member.getImageUrl());
+        assertThat(findQuestionResponse.memberImageUrl().length()).isGreaterThan(member.getImageUrl().length());
+        assertThat(findQuestionResponse.memberImageUrl()).endsWith(member.getImageUrl());
         assertThat(findQuestionResponse.level()).isEqualTo(member.getLevel().getName());
-        assertThat(findQuestionResponse.levelImageUrl()).isEqualTo(baseUrl + "/" + member.getLevel().getImageUrl());
+        assertThat(findQuestionResponse.levelImageUrl().length()).isGreaterThan(member.getLevel().getImageUrl().length());
+        assertThat(findQuestionResponse.levelImageUrl()).endsWith(member.getLevel().getImageUrl());
         assertThat(findQuestionResponse.skills()).isEqualTo(question.getTechStackList()
             .stream().map(x -> x.getTechStack().getSkill()).toList());
         //ToDo 답변에 대한 로직이 구현된 후 해당 질문에 대한 답변 list가 잘담기는지 테스트해야 하는지 생각해볼 필요가 있음

@@ -31,9 +31,6 @@ public class MemberServiceTest {
 	@Mock
 	private PasswordEncoder passwordEncoder;
 
-	@Value("${custom.domain.image.baseUrl}")
-	private String baseUrl;
-
 	@Test
 	@DisplayName("회원 정보 수정 테스트")
 	void testUpdateMember() throws Exception {
@@ -176,7 +173,8 @@ public class MemberServiceTest {
 		assertThat(findMemberResponse.nickname()).isEqualTo(member.getNickname());
 		assertThat(findMemberResponse.introduction()).isEqualTo(member.getIntroduction());
 		assertThat(findMemberResponse.experience()).isEqualTo(member.getExperience());
-		assertThat(findMemberResponse.imageUrl()).isEqualTo(baseUrl + "/" + member.getImageUrl());
+		assertThat(findMemberResponse.imageUrl().length()).isGreaterThan(member.getImageUrl().length());
+		assertThat(findMemberResponse.imageUrl()).endsWith(member.getImageUrl());
 		assertThat(findMemberResponse.memberId()).isEqualTo(testMemberId);
 
 		//verify

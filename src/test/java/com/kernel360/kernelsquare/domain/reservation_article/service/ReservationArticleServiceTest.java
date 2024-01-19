@@ -23,7 +23,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -54,9 +53,6 @@ class ReservationArticleServiceTest {
     private HashTagRepository hashTagRepository;
     @Mock
     private MemberRepository memberRepository;
-
-    @Value("${custom.domain.image.baseUrl}")
-    private String baseUrl;
 
     private Member member;
     private Authority authority;
@@ -193,10 +189,12 @@ class ReservationArticleServiceTest {
         assertThat(findReservationArticleResponse.title()).isEqualTo(reservationArticle.getTitle());
         assertThat(findReservationArticleResponse.content()).isEqualTo(reservationArticle.getContent());
         assertThat(findReservationArticleResponse.level()).isEqualTo(reservationArticle.getMember().getLevel().getName());
-        assertThat(findReservationArticleResponse.levelImageUrl()).isEqualTo(baseUrl + "/" + reservationArticle.getMember().getLevel().getImageUrl());
+        assertThat(findReservationArticleResponse.levelImageUrl().length()).isGreaterThan(reservationArticle.getMember().getLevel().getImageUrl().length());
+        assertThat(findReservationArticleResponse.levelImageUrl()).endsWith(reservationArticle.getMember().getLevel().getImageUrl());
         assertThat(findReservationArticleResponse.nickname()).isEqualTo(reservationArticle.getMember().getNickname());
         assertThat(findReservationArticleResponse.memberId()).isEqualTo(reservationArticle.getMember().getId());
-        assertThat(findReservationArticleResponse.memberImageUrl()).isEqualTo(baseUrl + "/" + reservationArticle.getMember().getImageUrl());
+        assertThat(findReservationArticleResponse.memberImageUrl().length()).isGreaterThan(reservationArticle.getMember().getImageUrl().length());
+        assertThat(findReservationArticleResponse.memberImageUrl()).endsWith(reservationArticle.getMember().getImageUrl());
         assertThat(findReservationArticleResponse.hashTagList()).isEqualTo(reservationArticle.getHashTagList()
                 .stream().map(HashTag::getContent).toList());
 

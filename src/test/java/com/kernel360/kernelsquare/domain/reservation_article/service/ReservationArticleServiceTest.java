@@ -2,12 +2,16 @@ package com.kernel360.kernelsquare.domain.reservation_article.service;
 
 import com.kernel360.kernelsquare.domain.authority.entity.Authority;
 import com.kernel360.kernelsquare.domain.authority.repository.AuthorityRepository;
+import com.kernel360.kernelsquare.domain.coffeechat.entity.ChatRoom;
+import com.kernel360.kernelsquare.domain.coffeechat.repository.CoffeeChatRepository;
 import com.kernel360.kernelsquare.domain.hashtag.entity.HashTag;
+import com.kernel360.kernelsquare.domain.hashtag.repository.HashTagRepository;
 import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
 import com.kernel360.kernelsquare.domain.member_authority.entity.MemberAuthority;
 import com.kernel360.kernelsquare.domain.member_authority.repository.MemberAuthorityRepository;
+import com.kernel360.kernelsquare.domain.reservation.entity.Reservation;
 import com.kernel360.kernelsquare.domain.reservation.repository.ReservationRepository;
 import com.kernel360.kernelsquare.domain.reservation_article.dto.CreateReservationArticleRequest;
 import com.kernel360.kernelsquare.domain.reservation_article.dto.CreateReservationArticleResponse;
@@ -50,6 +54,10 @@ class ReservationArticleServiceTest {
     private ReservationArticleRepository reservationArticleRepository;
     @Mock
     private ReservationRepository reservationRepository;
+    @Mock
+    private CoffeeChatRepository coffeeChatRepository;
+    @Mock
+    private HashTagRepository hashTagRepository;
     @Mock
     private MemberRepository memberRepository;
 

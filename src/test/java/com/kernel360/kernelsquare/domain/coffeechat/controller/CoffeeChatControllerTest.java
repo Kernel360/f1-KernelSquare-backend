@@ -48,7 +48,6 @@ class CoffeeChatControllerTest {
         ChatRoom saveChatRoom = ChatRoom.builder()
             .id(1L)
             .roomKey(chatRoom.getRoomKey())
-            .roomName(roomName)
             .build();
 
         CreateCoffeeChatRoomResponse createCoffeeChatRoomResponse = CreateCoffeeChatRoomResponse.from(saveChatRoom);

@@ -1,16 +1,16 @@
 name: Java CI with Gradle
 
-env:
+#env:
   # PROJECT_NAME: kernelsquare
   # BUCKET_NAME: kernel-square-bucket
   # CODE_DEPLOY_APP_NAME: KernelSquare
   # DEPLOYMENT_GROUP_NAME: KernelSquareDeployGroup
-  JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-  BASE_URL: ${{ secrets.BASE_URL }}
-  S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
-  S3_REGION: ${{ secrets.S3_REGION }}
-  AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-  AWS_ACCESS_SECRET: ${{ secrets.AWS_ACCESS_SECRET }}
+#  JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+#  BASE_URL: ${{ secrets.BASE_URL }}
+#  S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+#  S3_REGION: ${{ secrets.S3_REGION }}
+#  AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+#  AWS_ACCESS_SECRET: ${{ secrets.AWS_ACCESS_SECRET }}
 
 on:
   push:
@@ -24,6 +24,15 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    env:
+      JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+      BASE_URL: ${{ secrets.BASE_URL }}
+      S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+      S3_REGION: ${{ secrets.S3_REGION }}
+      AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+      AWS_ACCESS_SECRET: ${{ secrets.AWS_ACCESS_SECRET }}
+
 
     services:
       redis:

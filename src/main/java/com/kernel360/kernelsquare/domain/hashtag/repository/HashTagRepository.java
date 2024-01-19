@@ -9,5 +9,5 @@ import org.springframework.data.repository.query.Param;
 public interface HashTagRepository extends JpaRepository<HashTag, Long> {
     @Modifying
     @Query("DELETE FROM Hashtag a WHERE a.reservationArticle.id = :postId")
-    void deleteAllByReservationArticleIdInBatch(@Param("postId") Long postId);
+    void deleteAllByReservationArticleId(@Param("postId") Long postId);
 }

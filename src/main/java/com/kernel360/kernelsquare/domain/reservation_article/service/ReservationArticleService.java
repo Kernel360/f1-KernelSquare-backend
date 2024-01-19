@@ -127,9 +127,9 @@ public class ReservationArticleService {
 
         coffeeChatRepository.deleteChatRoom(postId);
 
-        reservationRepository.deleteAllByReservationArticleIdInBatch(postId);
+        reservationRepository.deleteAllByReservationArticleId(postId);
 
-        hashTagRepository.deleteAllByReservationArticleIdInBatch(postId);
+        hashTagRepository.deleteAllByReservationArticleId(postId);
     }
 
 }

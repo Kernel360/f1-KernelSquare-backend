@@ -17,5 +17,5 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     @Modifying
     @Query("DELETE FROM Reservation a WHERE a.reservationArticle.id = :postId")
-    void deleteAllByReservationArticleIdInBatch(@Param("postId") Long postId);
+    void deleteAllByReservationArticleId(@Param("postId") Long postId);
 }

@@ -43,6 +43,8 @@ jobs:
         run: |
           echo JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
           echo S3_REGION=${{ secrets.S3_REGION }}
+          echo $JWT_SECRET_KEY
+          echo $S3_REGION
       
 
       # - name: Set test yml

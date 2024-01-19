@@ -38,7 +38,13 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-        
+
+      - name: Check Environment Variables
+        run: |
+          echo JWT_SECRET_KEY=$JWT_SECRET_KEY
+          echo S3_REGION=$S3_REGION
+      
+
       # - name: Set test yml
       #   uses: microsoft/variable-substitution@v1
       #   with:

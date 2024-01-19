@@ -56,7 +56,7 @@ class ReservationArticleServiceTest {
     @Mock
     private MemberRepository memberRepository;
 
-    @Value("${my.test.property}")
+    @Value("${custom.domain.image.baseUrl}")
     private String baseUrl;
 
     private Member member;

@@ -45,7 +45,7 @@ class QuestionServiceTest {
     @Mock
     private QuestionTechStackRepository questionTechStackRepository;
 
-    @Value("${my.test.property}")
+    @Value("${custom.domain.image.baseUrl}")
     private String baseUrl;
 
     private Member member;

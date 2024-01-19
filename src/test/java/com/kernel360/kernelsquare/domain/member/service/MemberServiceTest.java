@@ -31,7 +31,7 @@ public class MemberServiceTest {
 	@Mock
 	private PasswordEncoder passwordEncoder;
 
-	@Value("${my.test.property}")
+	@Value("${custom.domain.image.baseUrl}")
 	private String baseUrl;
 
 	@Test

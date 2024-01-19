@@ -54,4 +54,14 @@ public class ReservationArticleController {
         return ResponseEntityFactory.toResponseEntity(RESERVATION_ARTICLE_FOUND, findReservationArticleResponse);
     }
 
+    @DeleteMapping("coffeechat/posts/{postId}")
+    public ResponseEntity<ApiResponse> deleteReservationArticle(
+            @PathVariable
+            Long postId
+    ) {
+        reservationArticleService.deleteReservationArticle(postId);
+
+        return ResponseEntityFactory.toResponseEntity(RESERVATION_ARTICLE_DELETED);
+    }
+
 }

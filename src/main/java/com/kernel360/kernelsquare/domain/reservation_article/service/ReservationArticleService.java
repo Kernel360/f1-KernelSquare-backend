@@ -110,15 +110,26 @@ public class ReservationArticleService {
     }
 
     @Transactional(readOnly = true)
-    public FindReservationArticleResponse findReservationArticle(
-            Long postId
-    ) {
+    public FindReservationArticleResponse findReservationArticle(Long postId) {
         ReservationArticle reservationArticle = reservationArticleRepository.findById(postId)
                 .orElseThrow(() -> new BusinessException(ReservationArticleErrorCode.RESERVATION_ARTICLE_NOT_FOUND));
         Member member = reservationArticle.getMember();
         List<ReservationDto> reservationDTOs = reservationRepository.findAllByReservationArticleId(postId);
 
         return FindReservationArticleResponse.of(member, reservationArticle, reservationDTOs, member.getLevel());
+    }
+
+    @Transactional
+    public void deleteReservationArticle(Long postId) {
+        reservationArticleRepository.findById(postId).orElseThrow(() -> new BusinessException(ReservationArticleErrorCode.RESERVATION_ARTICLE_NOT_FOUND));
+
+        reservationArticleRepository.deleteById(postId);
+
+        coffeeChatRepository.deleteChatRoom(postId);
+
+        reservationRepository.deleteAllByReservationArticleIdInBatch(postId);
+
+        hashTagRepository.deleteAllByReservationArticleIdInBatch(postId);
     }
 
 }

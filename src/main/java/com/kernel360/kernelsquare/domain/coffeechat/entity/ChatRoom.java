@@ -19,17 +19,17 @@ public class ChatRoom extends BaseEntity {
     @Column(nullable = false, name = "room_key", columnDefinition = "varchar(50)")
     private String roomKey;
 
-    @Column(nullable = false, name = "room_name", columnDefinition = "varchar(20)")
+    @Column(name = "room_name", columnDefinition = "varchar(20)")
     private String roomName;
 
     @Column(nullable = false, name = "active", columnDefinition = "tinyint")
     private Boolean active;
 
     @Builder
-    public ChatRoom(Long id, String roomKey, String roomName) {
+    public ChatRoom(Long id, String roomKey) {
         this.id = id;
         this.roomKey = roomKey;
-        this.roomName = roomName;
+        this.roomName = null;
         this.active = false;
     }
 

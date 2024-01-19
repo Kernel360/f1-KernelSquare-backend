@@ -14,7 +14,6 @@ public record CreateCoffeeChatRoomRequest(
     public static ChatRoom toEntity(CreateCoffeeChatRoomRequest createCoffeeChatRoomRequest) {
         return ChatRoom.builder()
             .roomKey(UUID.randomUUID().toString())
-            .roomName(createCoffeeChatRoomRequest.roomName())
             .build();
     }
 }

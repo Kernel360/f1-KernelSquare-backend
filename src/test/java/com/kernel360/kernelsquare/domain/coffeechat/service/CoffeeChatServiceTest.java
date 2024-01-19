@@ -52,7 +52,6 @@ class CoffeeChatServiceTest {
         ChatRoom saveChatRoom = ChatRoom.builder()
             .id(1L)
             .roomKey(chatRoom.getRoomKey())
-            .roomName(roomName)
             .build();
 
         given(coffeeChatRepository.save(any(ChatRoom.class))).willReturn(saveChatRoom);
@@ -82,7 +81,6 @@ class CoffeeChatServiceTest {
         ChatRoom chatRoom = ChatRoom.builder()
             .id(Long.valueOf(authentication.getName()))
             .roomKey("asd")
-            .roomName("?")
             .build();
 
         EnterCoffeeChatRoomRequest enterCoffeeChatRoomRequest = EnterCoffeeChatRoomRequest.builder()

@@ -1,7 +1,9 @@
 package com.kernel360.kernelsquare.domain.reservation_article.service;
 
 import com.kernel360.kernelsquare.domain.authority.entity.Authority;
+import com.kernel360.kernelsquare.domain.coffeechat.repository.CoffeeChatRepository;
 import com.kernel360.kernelsquare.domain.hashtag.entity.HashTag;
+import com.kernel360.kernelsquare.domain.hashtag.repository.HashTagRepository;
 import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
@@ -47,6 +49,10 @@ class ReservationArticleServiceTest {
     private ReservationArticleRepository reservationArticleRepository;
     @Mock
     private ReservationRepository reservationRepository;
+    @Mock
+    private CoffeeChatRepository coffeeChatRepository;
+    @Mock
+    private HashTagRepository hashTagRepository;
     @Mock
     private MemberRepository memberRepository;
 

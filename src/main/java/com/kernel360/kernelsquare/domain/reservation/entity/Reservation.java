@@ -1,12 +1,15 @@
 package com.kernel360.kernelsquare.domain.reservation.entity;
 
+import com.kernel360.kernelsquare.domain.coffeechat.entity.ChatRoom;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.reservation_article.entity.ReservationArticle;
 import com.kernel360.kernelsquare.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 
 @Entity(name = "Reservation")
@@ -35,4 +38,21 @@ public class Reservation extends BaseEntity {
     @JoinColumn(name = "reservation_article_id", columnDefinition = "bigint", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private ReservationArticle reservationArticle;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "chat_room_id", columnDefinition = "bigint", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
+    private ChatRoom chatRoom;
+
+    @Builder
+    public Reservation(
+            LocalDateTime startTime,
+            LocalDateTime endTime,
+            ReservationArticle reservationArticle,
+            ChatRoom chatRoom) {
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.finished = false;
+        this.member = null;
+        this.reservationArticle = reservationArticle;
+        this.chatRoom = chatRoom;
+    }
 }

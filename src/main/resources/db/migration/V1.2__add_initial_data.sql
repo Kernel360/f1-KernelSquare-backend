@@ -10,7 +10,7 @@ CREATE TABLE `reservation`
     `chat_room_id`           BIGINT   NOT NULL,
     `start_time`             datetime NOT NULL,
     `end_time`               datetime NOT NULL,
-    `finished`               BOOLEAN DEFAULT FALSE,
+    `finished`               tinyint DEFAULT FALSE,
     `created_date` datetime NOT NULL,
     `modified_date` datetime DEFAULT NULL,
     PRIMARY KEY (`id`)

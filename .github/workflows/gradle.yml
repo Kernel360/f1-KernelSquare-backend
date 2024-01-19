@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+      JWT_SECRET_KEY: a2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbQ==
       BASE_URL: ${{ secrets.BASE_URL }}
       S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
       S3_REGION: ${{ secrets.S3_REGION }}
@@ -50,10 +50,10 @@ jobs:
 
       - name: Check Environment Variables
         run: |
-          echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}"
-          echo "S3_REGION=${{ secrets.S3_REGION }}"
-          echo "$JWT_SECRET_KEY"
-          echo "$S3_REGION"
+          echo JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
+          echo S3_REGION=${{ secrets.S3_REGION }}
+          echo $JWT_SECRET_KEY
+          echo $S3_REGION
       
 
       # - name: Set test yml

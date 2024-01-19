@@ -1,13 +1,11 @@
 package com.kernel360.kernelsquare.domain.reservation_article.service;
 
 import com.kernel360.kernelsquare.domain.authority.entity.Authority;
-import com.kernel360.kernelsquare.domain.authority.repository.AuthorityRepository;
 import com.kernel360.kernelsquare.domain.hashtag.entity.HashTag;
 import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
 import com.kernel360.kernelsquare.domain.member_authority.entity.MemberAuthority;
-import com.kernel360.kernelsquare.domain.member_authority.repository.MemberAuthorityRepository;
 import com.kernel360.kernelsquare.domain.reservation.repository.ReservationRepository;
 import com.kernel360.kernelsquare.domain.reservation_article.dto.CreateReservationArticleRequest;
 import com.kernel360.kernelsquare.domain.reservation_article.dto.CreateReservationArticleResponse;
@@ -23,6 +21,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -31,10 +30,8 @@ import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -52,6 +49,9 @@ class ReservationArticleServiceTest {
     private ReservationRepository reservationRepository;
     @Mock
     private MemberRepository memberRepository;
+
+    @Value("${my.test.property}")
+    private String baseUrl;
 
     private Member member;
     private Authority authority;
@@ -188,10 +188,10 @@ class ReservationArticleServiceTest {
         assertThat(findReservationArticleResponse.title()).isEqualTo(reservationArticle.getTitle());
         assertThat(findReservationArticleResponse.content()).isEqualTo(reservationArticle.getContent());
         assertThat(findReservationArticleResponse.level()).isEqualTo(reservationArticle.getMember().getLevel().getName());
-        assertThat(findReservationArticleResponse.levelImageUrl()).isEqualTo("null/" + reservationArticle.getMember().getLevel().getImageUrl());
+        assertThat(findReservationArticleResponse.levelImageUrl()).isEqualTo(baseUrl + "/" + reservationArticle.getMember().getLevel().getImageUrl());
         assertThat(findReservationArticleResponse.nickname()).isEqualTo(reservationArticle.getMember().getNickname());
         assertThat(findReservationArticleResponse.memberId()).isEqualTo(reservationArticle.getMember().getId());
-        assertThat(findReservationArticleResponse.memberImageUrl()).isEqualTo("null/" + reservationArticle.getMember().getImageUrl());
+        assertThat(findReservationArticleResponse.memberImageUrl()).isEqualTo(baseUrl + "/" + reservationArticle.getMember().getImageUrl());
         assertThat(findReservationArticleResponse.hashTagList()).isEqualTo(reservationArticle.getHashTagList()
                 .stream().map(HashTag::getContent).toList());
 

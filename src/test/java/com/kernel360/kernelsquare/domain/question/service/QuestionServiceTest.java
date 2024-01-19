@@ -18,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -43,6 +44,9 @@ class QuestionServiceTest {
     private MemberRepository memberRepository;
     @Mock
     private QuestionTechStackRepository questionTechStackRepository;
+
+    @Value("${my.test.property}")
+    private String baseUrl;
 
     private Member member;
     private Level level;
@@ -128,11 +132,11 @@ class QuestionServiceTest {
         assertThat(findQuestionResponse.id()).isEqualTo(question.getId());
         assertThat(findQuestionResponse.title()).isEqualTo(question.getTitle());
         assertThat(findQuestionResponse.content()).isEqualTo(question.getContent());
-        assertThat(findQuestionResponse.questionImageUrl()).isEqualTo("null/" + question.getImageUrl());
+        assertThat(findQuestionResponse.questionImageUrl()).isEqualTo(baseUrl + "/" + question.getImageUrl());
         assertThat(findQuestionResponse.nickname()).isEqualTo(member.getNickname());
-        assertThat(findQuestionResponse.memberImageUrl()).isEqualTo("null/" + member.getImageUrl());
+        assertThat(findQuestionResponse.memberImageUrl()).isEqualTo(baseUrl + "/" + member.getImageUrl());
         assertThat(findQuestionResponse.level()).isEqualTo(member.getLevel().getName());
-        assertThat(findQuestionResponse.levelImageUrl()).isEqualTo("null/" + member.getLevel().getImageUrl());
+        assertThat(findQuestionResponse.levelImageUrl()).isEqualTo(baseUrl + "/" + member.getLevel().getImageUrl());
         assertThat(findQuestionResponse.skills()).isEqualTo(question.getTechStackList()
             .stream().map(x -> x.getTechStack().getSkill()).toList());
         //ToDo 답변에 대한 로직이 구현된 후 해당 질문에 대한 답변 list가 잘담기는지 테스트해야 하는지 생각해볼 필요가 있음

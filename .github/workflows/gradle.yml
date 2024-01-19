@@ -27,9 +27,9 @@ jobs:
 
     env:
       JWT_SECRET_KEY: a2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbQ==
-      BASE_URL: ${{ secrets.BASE_URL }}
-      S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
-      S3_REGION: ${{ secrets.S3_REGION }}
+      BASE_URL: https://kernel-square-bucket.s3.ap-northeast-2.amazonaws.com
+      S3_BUCKET_NAME: kernel-square-bucket
+      S3_REGION: ap-northeast-2
       AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
       AWS_ACCESS_SECRET: ${{ secrets.AWS_ACCESS_SECRET }}
 

@@ -13,8 +13,8 @@ name: Java CI with Gradle
 #  AWS_ACCESS_SECRET: ${{ secrets.AWS_ACCESS_SECRET }}
 
 on:
-  push:
-    branches: [ "main" ]
+#  push:
+#    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 

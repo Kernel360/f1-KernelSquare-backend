@@ -8,11 +8,9 @@ env:
 
 on:
   push:
-    branches-ignore:
-      - main
-#  pull_request:
-#    branches-ignore:
-#      - main
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 permissions:
   contents: read
@@ -39,7 +37,7 @@ jobs:
         with:
           files: ./src/test/resources/application.yml
         env:
-#          spring.security.jwt.secret: ${{ secrets.JWT_SECRET_KEY }}
+          spring.security.jwt.secret: ${{ secrets.JWT_SECRET_KEY }}
           custom.domain.image.baseUrl: ${{ secrets.BASE_URL }}
           cloud.aws.s3.bucket: ${{ secrets.S3_BUCKET_NAME }}
           cloud.aws.region.static: ${{ secrets.S3_REGION }}

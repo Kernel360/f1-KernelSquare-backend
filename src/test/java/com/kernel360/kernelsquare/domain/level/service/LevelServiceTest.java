@@ -32,7 +32,7 @@ class LevelServiceTest {
     @Mock
     private LevelRepository levelRepository;
 
-    @Value("${my.test.property}")
+    @Value("${custom.domain.image.baseUrl}")
     private String baseUrl;
 
     @Test

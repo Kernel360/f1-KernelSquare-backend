@@ -30,7 +30,6 @@ import java.util.concurrent.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("STOMP 소켓 통신 테스트")
-@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class StompSocketTest {
 

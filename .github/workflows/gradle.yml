@@ -7,10 +7,10 @@ env:
   DEPLOYMENT_GROUP_NAME: KernelSquareDeployGroup
 
 on:
-  push:
-    branches: [ "main" ]
-#  pull_request:
+#  push:
 #    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 permissions:
   contents: read

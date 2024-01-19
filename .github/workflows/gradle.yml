@@ -7,8 +7,9 @@ env:
   DEPLOYMENT_GROUP_NAME: KernelSquareDeployGroup
 
 on:
-#  push:
-#    branches: [ "main" ]
+  push:
+    branches-ignore:
+      - main
   pull_request:
     branches-ignore:
       - main

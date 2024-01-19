@@ -37,8 +37,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @DisplayName("커피챗 예약게시글 서비스 단위 테스트")
 @ExtendWith(MockitoExtension.class)
@@ -203,6 +202,39 @@ class ReservationArticleServiceTest {
 
         // Verify
         verify(reservationArticleRepository, times(1)).findById(anyLong());
+    }
+
+    @Test
+    @DisplayName("예약창 삭제 테스트")
+    void testDeleteReservationArticle() {
+        // Given
+        level = createTestLevel();
+        member = createTestMember();
+        ReservationArticle reservationArticle = createTestReservationArticle(1L);
+
+        given(reservationArticleRepository.findById(anyLong())).willReturn(Optional.ofNullable(reservationArticle));
+
+        doNothing()
+                .when(reservationArticleRepository)
+                .deleteById(anyLong());
+
+        doNothing()
+                .when(coffeeChatRepository)
+                .deleteChatRoom(anyLong());
+
+        doNothing()
+                .when(reservationRepository)
+                .deleteAllByReservationArticleId(anyLong());
+
+        doNothing()
+                .when(hashTagRepository)
+                .deleteAllByReservationArticleId(anyLong());
+
+        // When
+        reservationArticleService.deleteReservationArticle(reservationArticle.getId());
+
+        // Then
+        verify(reservationArticleRepository, times(1)).deleteById(anyLong());
     }
 
 }

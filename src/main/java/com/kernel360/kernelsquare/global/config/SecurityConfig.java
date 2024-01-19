@@ -1,5 +1,10 @@
 package com.kernel360.kernelsquare.global.config;
 
+import com.kernel360.kernelsquare.global.filter.JWTSettingFilter;
+import com.kernel360.kernelsquare.global.jwt.JWTAccessDeniedHandler;
+import com.kernel360.kernelsquare.global.jwt.JWTAuthenticationEntryPoint;
+import com.kernel360.kernelsquare.global.jwt.TokenProvider;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -13,29 +18,22 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
-import com.kernel360.kernelsquare.global.filter.JWTSettingFilter;
-import com.kernel360.kernelsquare.global.jwt.JWTAccessDeniedHandler;
-import com.kernel360.kernelsquare.global.jwt.JWTAuthenticationEntryPoint;
-import com.kernel360.kernelsquare.global.jwt.TokenProvider;
-
-import lombok.RequiredArgsConstructor;
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-	private final TokenProvider tokenProvider;
-	private final JWTAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-	private final JWTAccessDeniedHandler jwtAccessDeniedHandler;
+    private final TokenProvider tokenProvider;
+    private final JWTAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JWTAccessDeniedHandler jwtAccessDeniedHandler;
 
-	private final String[] permitAllPatterns = new String[] {
-		"/api/v1/auth/check/email",
-		"/api/v1/auth/check/nickname",
-		"/api/v1/auth/signup",
-		"/api/v1/auth/login",
-		"/actuator",
-		"/actuator/**",
+    private final String[] permitAllPatterns = new String[]{
+        "/api/v1/auth/check/email",
+        "/api/v1/auth/check/nickname",
+        "/api/v1/auth/signup",
+        "/api/v1/auth/login",
+        "/actuator",
+        "/actuator/**",
 
 		// 소켓 통신의 임시 화면을 사용하기 위해 관련 경로는 permitAll
 		"/screen/**",
@@ -97,11 +95,11 @@ public class SecurityConfig {
 			.requestMatchers(HttpMethod.DELETE, "/api/v1/questions/{questionId}").hasRole("USER")
 			.requestMatchers(HttpMethod.POST, "/api/v1/questions/{questionId}/answers").hasRole("USER")
 
-
 			// ROLE_MENTOR 권한 필요
 			.requestMatchers(HttpMethod.POST, "/api/v1/coffeechat/posts").hasRole("MENTOR")
 			.requestMatchers(HttpMethod.POST, "/api/v1/coffeechat/rooms").hasRole("MENTOR")
 			.requestMatchers(HttpMethod.POST, "/api/v1/coffeechat/rooms/enter").hasAnyRole("MENTOR", "USER")
+            .requestMatchers(HttpMethod.DELETE, "/api/v1/coffeechat/posts/{postId}").hasRole("MENTOR")
 
 			// ROLE_ADMIN 권한 필요
 			.requestMatchers(hasRoleAdminPatterns).hasRole("ADMIN")

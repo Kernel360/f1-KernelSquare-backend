@@ -33,4 +33,8 @@ public class ChatRoom extends BaseEntity {
         this.roomName = null;
         this.active = false;
     }
+
+    public void leaveUpdate() {
+        this.active = false;
+    }
 }

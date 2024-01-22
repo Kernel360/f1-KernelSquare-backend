@@ -1,4 +1,4 @@
-package com.kernel360.kernelsquare.global.common_response.response.code;
+package com.kernel360.kernelsquare.global.common_response.error.code;
 
 import com.kernel360.kernelsquare.global.common_response.service.code.CoffeeChatServiceStatus;
 import com.kernel360.kernelsquare.global.common_response.service.code.ServiceStatus;
@@ -6,9 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @RequiredArgsConstructor
-public enum CoffeeChatResponseCode implements ResponseCode {
-    COFFEE_CHAT_ROOM_CREATED(HttpStatus.OK, CoffeeChatServiceStatus.COFFEE_CHAT_ROOM_CREATED, "채팅방 생성 성공"),
-    COFFEE_CHAT_ROOM_LEAVE(HttpStatus.OK, CoffeeChatServiceStatus.COFFEE_CHAT_ROOM_LEAVE, "채탱방 퇴장 성공");
+public enum CoffeeChatErrorCode implements ErrorCode {
+    COFFEE_CHAT_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, CoffeeChatServiceStatus.COFFEE_CHAT_ROOM_NOT_FOUND, "존재하지 않는 채팅방");
 
     private final HttpStatus httpStatus;
     private final ServiceStatus serviceStatus;

@@ -16,13 +16,16 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static com.kernel360.kernelsquare.global.common_response.response.code.CoffeeChatResponseCode.COFFEE_CHAT_ROOM_CREATED;
+import static com.kernel360.kernelsquare.global.common_response.response.code.CoffeeChatResponseCode.COFFEE_CHAT_ROOM_LEAVE;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@DisplayName("채팅 컨트롤러 통합 테스트")
+@DisplayName("커피챗 컨트롤러 통합 테스트")
 @WithMockUser
 @WebMvcTest(CoffeeChatController.class)
 class CoffeeChatControllerTest {
@@ -68,5 +71,33 @@ class CoffeeChatControllerTest {
         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.code").value(COFFEE_CHAT_ROOM_CREATED.getCode()))
         .andExpect(jsonPath("$.msg").value(COFFEE_CHAT_ROOM_CREATED.getMsg()));
+
+        //verify
+        verify(coffeeChatService, times(1)).createCoffeeChatRoom(any(CreateCoffeeChatRoomRequest.class));
+    }
+
+    @Test
+    @DisplayName("채팅방 나가기 성공시 200 OK와 메시지를 반환한다")
+    void testLeaveCoffeeChatRoom() throws Exception {
+        //given
+        String roomKey = "asdf";
+
+        doNothing()
+            .when(coffeeChatService)
+            .leaveCoffeeChatRoom(anyString());
+
+        //when & then
+        mockMvc.perform(post("/api/v1/coffeechat/rooms/" + roomKey)
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8"))
+            .andExpect(status().is(COFFEE_CHAT_ROOM_LEAVE.getStatus().value()))
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.code").value(COFFEE_CHAT_ROOM_LEAVE.getCode()))
+            .andExpect(jsonPath("$.msg").value(COFFEE_CHAT_ROOM_LEAVE.getMsg()));
+
+        //verify
+        verify(coffeeChatService, times(1)).leaveCoffeeChatRoom(anyString());
     }
 }

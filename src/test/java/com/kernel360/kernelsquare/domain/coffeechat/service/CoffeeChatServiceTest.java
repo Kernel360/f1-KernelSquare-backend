@@ -9,15 +9,25 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.util.Collections;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@DisplayName("채팅 서비스 통합 테스트")
+@DisplayName("커피챗 서비스 통합 테스트")
 @ExtendWith(MockitoExtension.class)
 class CoffeeChatServiceTest {
     @InjectMocks
@@ -53,5 +63,42 @@ class CoffeeChatServiceTest {
 
         //verify
         verify(coffeeChatRepository, times(1)).save(any(ChatRoom.class));
+    }
+
+    @Test
+    @DisplayName("채팅방 나가기 테스트")
+    void testLeaveCoffeeChatRoom() {
+        //given
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+            "1", null, Collections.singletonList(new SimpleGrantedAuthority("ROLE_MENTOR")));
+
+        given(securityContext.getAuthentication()).willReturn(authentication);
+
+        String roomKey = "asdf";
+
+        ChatRoom chatRoom = ChatRoom.builder()
+            .id(1L)
+            .roomKey(roomKey)
+            .build();
+
+        String articleTitle = "홍박사님의 명강";
+
+        chatRoom.enterUpdate(articleTitle);
+
+        given(coffeeChatRepository.findByRoomKey(anyString())).willReturn(Optional.of(chatRoom));
+
+        //when
+        coffeeChatService.leaveCoffeeChatRoom(roomKey);
+
+        //then
+        assertThat(chatRoom).isNotNull();
+        assertThat(chatRoom.getRoomName()).isEqualTo(articleTitle);
+        assertThat(chatRoom.getRoomKey()).isEqualTo(roomKey);
+        assertThat(chatRoom.getActive()).isFalse();
+
+        //verify
+        verify(coffeeChatRepository, times(1)).findByRoomKey(anyString());
     }
 }

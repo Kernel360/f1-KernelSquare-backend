@@ -7,10 +7,12 @@ env:
   DEPLOYMENT_GROUP_NAME: KernelSquareDeployGroup
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+#  push:
+#    branches: [ "main" ]
+#  pull_request:
+#    branches: [ "main" ]
+  pull_request_target:
+    types: [CI]
 
 permissions:
   contents: read

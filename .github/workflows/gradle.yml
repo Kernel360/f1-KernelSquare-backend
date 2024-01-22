@@ -1,22 +1,18 @@
 name: Java CI with Gradle
 
 env:
-  # PROJECT_NAME: kernelsquare
-  # BUCKET_NAME: kernel-square-bucket
-  # CODE_DEPLOY_APP_NAME: KernelSquare
-  # DEPLOYMENT_GROUP_NAME: KernelSquareDeployGroup
-  JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-  BASE_URL: ${{ secrets.BASE_URL }}
-  S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
-  S3_REGION: ${{ secrets.S3_REGION }}
-  AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-  AWS_ACCESS_SECRET: ${{ secrets.AWS_ACCESS_SECRET }}
+  PROJECT_NAME: kernelsquare
+  BUCKET_NAME: kernel-square-bucket
+  CODE_DEPLOY_APP_NAME: KernelSquare
+  DEPLOYMENT_GROUP_NAME: KernelSquareDeployGroup
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+#  push:
+#    branches: [ "main" ]
+#  pull_request:
+#    branches: [ "main" ]
+  pull_request_target:
+    types: [labeled]
 
 permissions:
   contents: read
@@ -24,6 +20,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: contains(github.event.pull_request.labels.*.name, 'CI')
 
     services:
       redis:
@@ -38,24 +35,23 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-        
-      # - name: Set test yml
-      #   uses: microsoft/variable-substitution@v1
-      #   with:
-      #     files: ./src/test/resources/application.yml
-      #   env:
-      #     spring.security.jwt.secret: ${{ secrets.JWT_SECRET_KEY }}
-      #     custom.domain.image.baseUrl: ${{ secrets.BASE_URL }}
-      #     cloud.aws.s3.bucket: ${{ secrets.S3_BUCKET_NAME }}
-      #     cloud.aws.region.static: ${{ secrets.S3_REGION }}
-      #     cloud.aws.credentials.accessKey: ${{ secrets.AWS_ACCESS_KEY }}
-      #     cloud.aws.credentials.secretKey: ${{ secrets.AWS_ACCESS_SECRET }}
-      # - name: Set main yml
-      #   uses: microsoft/variable-substitution@v1
-      #   with:
-      #     files: ./src/main/resources/application.yml
-      #   env:
-      #     spring.security.jwt.secret: ${{ secrets.JWT_SECRET_KEY }}
+      - name: Set test yml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./src/test/resources/application.yml
+        env:
+          spring.security.jwt.secret: ${{ secrets.JWT_SECRET_KEY }}
+          custom.domain.image.baseUrl: ${{ secrets.BASE_URL }}
+          cloud.aws.s3.bucket: ${{ secrets.S3_BUCKET_NAME }}
+          cloud.aws.region.static: ${{ secrets.S3_REGION }}
+          cloud.aws.credentials.accessKey: ${{ secrets.AWS_ACCESS_KEY }}
+          cloud.aws.credentials.secretKey: ${{ secrets.AWS_ACCESS_SECRET }}
+      - name: Set main yml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./src/main/resources/application.yml
+        env:
+          spring.security.jwt.secret: ${{ secrets.JWT_SECRET_KEY }}
       - name: Run chmod to make gradlew executable
         run: chmod +x ./gradlew
 

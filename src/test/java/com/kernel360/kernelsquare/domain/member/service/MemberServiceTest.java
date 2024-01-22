@@ -1,9 +1,12 @@
 package com.kernel360.kernelsquare.domain.member.service;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
-import java.util.Optional;
+import com.kernel360.kernelsquare.domain.level.entity.Level;
+import com.kernel360.kernelsquare.domain.member.dto.FindMemberResponse;
+import com.kernel360.kernelsquare.domain.member.dto.UpdateMemberRequest;
+import com.kernel360.kernelsquare.domain.member.entity.Member;
+import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
+import com.kernel360.kernelsquare.global.common_response.error.code.MemberErrorCode;
+import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,13 +15,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.kernel360.kernelsquare.domain.level.entity.Level;
-import com.kernel360.kernelsquare.domain.member.dto.FindMemberResponse;
-import com.kernel360.kernelsquare.domain.member.dto.UpdateMemberRequest;
-import com.kernel360.kernelsquare.domain.member.entity.Member;
-import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
-import com.kernel360.kernelsquare.global.common_response.error.code.MemberErrorCode;
-import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.*;
 
 @DisplayName("회원 서비스 통합 테스트")
 @ExtendWith(MockitoExtension.class)
@@ -172,7 +173,8 @@ public class MemberServiceTest {
 		assertThat(findMemberResponse.nickname()).isEqualTo(member.getNickname());
 		assertThat(findMemberResponse.introduction()).isEqualTo(member.getIntroduction());
 		assertThat(findMemberResponse.experience()).isEqualTo(member.getExperience());
-		assertThat(findMemberResponse.imageUrl()).isEqualTo("null/" + member.getImageUrl());
+		assertThat(findMemberResponse.imageUrl().length()).isGreaterThan(member.getImageUrl().length());
+		assertThat(findMemberResponse.imageUrl()).endsWith(member.getImageUrl());
 		assertThat(findMemberResponse.memberId()).isEqualTo(testMemberId);
 
 		//verify

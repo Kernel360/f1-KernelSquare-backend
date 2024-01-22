@@ -2,6 +2,8 @@ package com.kernel360.kernelsquare.domain.coffeechat.controller;
 
 import com.kernel360.kernelsquare.domain.coffeechat.dto.CreateCoffeeChatRoomRequest;
 import com.kernel360.kernelsquare.domain.coffeechat.dto.CreateCoffeeChatRoomResponse;
+import com.kernel360.kernelsquare.domain.coffeechat.dto.EnterCoffeeChatRoomRequest;
+import com.kernel360.kernelsquare.domain.coffeechat.dto.EnterCoffeeChatRoomResponse;
 import com.kernel360.kernelsquare.domain.coffeechat.service.CoffeeChatService;
 import com.kernel360.kernelsquare.global.common_response.ApiResponse;
 import com.kernel360.kernelsquare.global.common_response.ResponseEntityFactory;
@@ -11,8 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static com.kernel360.kernelsquare.global.common_response.response.code.CoffeeChatResponseCode.COFFEE_CHAT_ROOM_CREATED;
-import static com.kernel360.kernelsquare.global.common_response.response.code.CoffeeChatResponseCode.COFFEE_CHAT_ROOM_LEAVE;
+import static com.kernel360.kernelsquare.global.common_response.response.code.CoffeeChatResponseCode.*;
 
 @Slf4j
 @RestController
@@ -30,6 +31,17 @@ public class CoffeeChatController {
         CreateCoffeeChatRoomResponse response = coffeeChatService.createCoffeeChatRoom(createCoffeeChatRoomRequest);
 
         return ResponseEntityFactory.toResponseEntity(COFFEE_CHAT_ROOM_CREATED, response);
+    }
+
+    @PostMapping("/coffeechat/rooms/enter")
+    public ResponseEntity<ApiResponse<EnterCoffeeChatRoomResponse>> enterCoffeeChatRoom(
+        @Valid
+        @RequestBody
+        EnterCoffeeChatRoomRequest enterCoffeeChatRoomRequest
+    ) {
+        EnterCoffeeChatRoomResponse response = coffeeChatService.enterCoffeeChatRoom(enterCoffeeChatRoomRequest);
+
+        return ResponseEntityFactory.toResponseEntity(ROOM_ENTRY_SUCCESSFUL, response);
     }
 
     @PostMapping("/coffeechat/rooms/{roomKey}")

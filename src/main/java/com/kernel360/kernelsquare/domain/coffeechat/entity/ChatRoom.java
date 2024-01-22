@@ -1,6 +1,5 @@
 package com.kernel360.kernelsquare.domain.coffeechat.entity;
 
-import com.kernel360.kernelsquare.domain.reservation_article.entity.ReservationArticle;
 import com.kernel360.kernelsquare.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

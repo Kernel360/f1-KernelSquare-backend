@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum CoffeeChatResponseCode implements ResponseCode {
     COFFEE_CHAT_ROOM_CREATED(HttpStatus.OK, CoffeeChatServiceStatus.COFFEE_CHAT_ROOM_CREATED, "채팅방 생성 성공"),
+    ROOM_ENTRY_SUCCESSFUL(HttpStatus.OK, CoffeeChatServiceStatus.ROOM_ENTRY_SUCCESSFUL, "채팅방 입장 성공"),
     COFFEE_CHAT_ROOM_LEAVE(HttpStatus.OK, CoffeeChatServiceStatus.COFFEE_CHAT_ROOM_LEAVE, "채탱방 퇴장 성공");
 
     private final HttpStatus httpStatus;

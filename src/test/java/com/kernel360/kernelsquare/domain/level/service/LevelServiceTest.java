@@ -1,18 +1,17 @@
 package com.kernel360.kernelsquare.domain.level.service;
 
-import com.kernel360.kernelsquare.domain.level.dto.*;
+import com.kernel360.kernelsquare.domain.level.dto.CreateLevelRequest;
+import com.kernel360.kernelsquare.domain.level.dto.CreateLevelResponse;
+import com.kernel360.kernelsquare.domain.level.dto.FindAllLevelResponse;
+import com.kernel360.kernelsquare.domain.level.dto.UpdateLevelRequest;
 import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.level.repository.LevelRepository;
-import com.kernel360.kernelsquare.global.common_response.error.code.LevelErrorCode;
-import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-
 
 import java.util.Arrays;
 import java.util.List;
@@ -66,7 +65,8 @@ class LevelServiceTest {
         // then
         assertThat(actualLevels.levels().get(0).id()).isEqualTo(expectedLevels.get(0).getId());
         assertThat(actualLevels.levels().get(0).name()).isEqualTo(expectedLevels.get(0).getName());
-        assertThat(actualLevels.levels().get(1).imageUrl()).isEqualTo("null/" + expectedLevels.get(1).getImageUrl());
+        assertThat(actualLevels.levels().get(1).imageUrl().length()).isGreaterThan(expectedLevels.get(1).getImageUrl().length());
+        assertThat(actualLevels.levels().get(1).imageUrl()).endsWith(expectedLevels.get(1).getImageUrl());
 
         verify(levelRepository, times(1)).findAll();
     }

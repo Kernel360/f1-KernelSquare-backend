@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Websocket ChatRoom</title>
     <!-- Required meta tags -->
@@ -17,7 +17,7 @@
 <body>
 <div class="container" id="app" v-cloak>
     <div>
-        <h2>{{roomId}}</h2>
+        <h2 th:text="${roomId}"></h2>
     </div>
     <div class="input-group">
         <div class="input-group-prepend">
@@ -43,8 +43,8 @@
 <script src="/webjars/stomp-websocket/2.3.3-1/stomp.min.js"></script>
 <script th:inline="javascript">
     /*<![CDATA[*/
-    var roomId = [[${roomId}]];
-    var sender = [[${sender}]];
+    var roomId = /*[[${roomId}]]*/ '';
+    var sender = /*[[${sender}]]*/ '';
     /*]]>*/
     //alert(document.title);
     var sock = new SockJS("/kernel-square");

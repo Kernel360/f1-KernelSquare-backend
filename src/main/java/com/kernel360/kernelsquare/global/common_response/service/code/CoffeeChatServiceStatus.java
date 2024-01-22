@@ -9,7 +9,7 @@ public enum CoffeeChatServiceStatus implements ServiceStatus {
 
     //success
     COFFEE_CHAT_ROOM_CREATED(3240),
-    COFFEE_CHAT_ROOM_LEAVE(3241);
+    COFFEE_CHAT_ROOM_LEAVE(3242);
 
     private final Integer code;
 

@@ -1,6 +1,5 @@
 package com.kernel360.kernelsquare.domain.coffeechat.entity;
 
-import com.kernel360.kernelsquare.domain.reservation_article.entity.ReservationArticle;
 import com.kernel360.kernelsquare.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -32,5 +31,10 @@ public class ChatRoom extends BaseEntity {
         this.roomKey = roomKey;
         this.roomName = null;
         this.active = false;
+    }
+
+    public void enterUpdate(String roomName) {
+        this.roomName = roomName;
+        this.active = true;
     }
 }

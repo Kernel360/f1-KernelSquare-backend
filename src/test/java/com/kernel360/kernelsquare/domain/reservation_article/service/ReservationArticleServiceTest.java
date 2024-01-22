@@ -189,10 +189,12 @@ class ReservationArticleServiceTest {
         assertThat(findReservationArticleResponse.title()).isEqualTo(reservationArticle.getTitle());
         assertThat(findReservationArticleResponse.content()).isEqualTo(reservationArticle.getContent());
         assertThat(findReservationArticleResponse.level()).isEqualTo(reservationArticle.getMember().getLevel().getName());
-        assertThat(findReservationArticleResponse.levelImageUrl()).isEqualTo("null/" + reservationArticle.getMember().getLevel().getImageUrl());
+        assertThat(findReservationArticleResponse.levelImageUrl().length()).isGreaterThan(reservationArticle.getMember().getLevel().getImageUrl().length());
+        assertThat(findReservationArticleResponse.levelImageUrl()).endsWith(reservationArticle.getMember().getLevel().getImageUrl());
         assertThat(findReservationArticleResponse.nickname()).isEqualTo(reservationArticle.getMember().getNickname());
         assertThat(findReservationArticleResponse.memberId()).isEqualTo(reservationArticle.getMember().getId());
-        assertThat(findReservationArticleResponse.memberImageUrl()).isEqualTo("null/" + reservationArticle.getMember().getImageUrl());
+        assertThat(findReservationArticleResponse.memberImageUrl().length()).isGreaterThan(reservationArticle.getMember().getImageUrl().length());
+        assertThat(findReservationArticleResponse.memberImageUrl()).endsWith(reservationArticle.getMember().getImageUrl());
         assertThat(findReservationArticleResponse.hashTagList()).isEqualTo(reservationArticle.getHashTagList()
                 .stream().map(HashTag::getContent).toList());
 

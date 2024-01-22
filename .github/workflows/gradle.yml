@@ -12,7 +12,7 @@ on:
 #  pull_request:
 #    branches: [ "main" ]
   pull_request_target:
-    types: [labeled]
+    types: [opened, reopened, synchronize, labeled]
 
 permissions:
   contents: read
@@ -20,7 +20,9 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: contains(github.event.pull_request.labels.*.name, 'CI')
+    if: |
+      (github.event.action == 'opened' || github.event.action == 'reopened' || github.event.action == 'synchronize') &&
+      contains(github.event.pull_request.labels.*.name, 'CI')
 
     services:
       redis:

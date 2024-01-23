@@ -69,9 +69,7 @@ public class CoffeeChatService {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_MENTOR"))) {
-            chatRoom.deactivateRoom();
-        }
+        //TODO 특정 채팅방의 유저 리스트가 필요하다면?
     }
 
     @Transactional

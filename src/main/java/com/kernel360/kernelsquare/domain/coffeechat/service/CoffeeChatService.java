@@ -38,7 +38,7 @@ public class CoffeeChatService {
         if (authentication.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_MENTOR"))) {
             if (Long.valueOf(authentication.getName()).equals(enterCoffeeChatRoomRequest.memberId())) {
 
-                chatRoom.enterUpdate(enterCoffeeChatRoomRequest.articleTitle());
+                chatRoom.activateRoom(enterCoffeeChatRoomRequest.articleTitle());
 
                 return EnterCoffeeChatRoomResponse.of(enterCoffeeChatRoomRequest.articleTitle(), chatRoom);
             } else {
@@ -68,7 +68,7 @@ public class CoffeeChatService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_MENTOR"))) {
-            chatRoom.leaveUpdate();
+            chatRoom.deactivateRoom();
         }
     }
 }

@@ -125,7 +125,7 @@ class CoffeeChatServiceTest {
 
         String articleTitle = "홍박사님의 명강";
 
-        chatRoom.enterUpdate(articleTitle);
+        chatRoom.activateRoom(articleTitle);
 
         given(coffeeChatRepository.findByRoomKey(anyString())).willReturn(Optional.of(chatRoom));
 

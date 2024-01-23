@@ -17,6 +17,6 @@ public class ScreenController {
         String sender) {
         model.addAttribute("roomId", roomId);
         model.addAttribute("sender", sender);
-        return "/chat/screen";
+        return "chat/screen";
     }
 }

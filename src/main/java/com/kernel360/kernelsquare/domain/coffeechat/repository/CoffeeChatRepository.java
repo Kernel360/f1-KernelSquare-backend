@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface CoffeeChatRepository extends JpaRepository<ChatRoom, Long> {
@@ -15,4 +16,6 @@ public interface CoffeeChatRepository extends JpaRepository<ChatRoom, Long> {
     void deleteChatRoom(@Param("postId") Long postId);
 
     Optional<ChatRoom> findByRoomKey(String roomKey);
+
+    List<ChatRoom> findAllByActive(Boolean active);
 }

@@ -9,10 +9,13 @@ import com.kernel360.kernelsquare.domain.coffeechat.repository.CoffeeChatReposit
 import com.kernel360.kernelsquare.global.common_response.error.code.CoffeeChatErrorCode;
 import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -70,5 +73,12 @@ public class CoffeeChatService {
         if (authentication.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_MENTOR"))) {
             chatRoom.deactivateRoom();
         }
+    }
+
+    @Transactional
+    @Scheduled(cron = "0 0/30 * * * *")
+    public void disableRoom() {
+        List<ChatRoom> chatRooms = coffeeChatRepository.findAllByActive(true);
+        chatRooms.forEach(ChatRoom::deactivateRoom);
     }
 }

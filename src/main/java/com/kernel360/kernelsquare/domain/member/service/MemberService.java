@@ -1,5 +1,6 @@
 package com.kernel360.kernelsquare.domain.member.service;
 
+import com.kernel360.kernelsquare.domain.image.utils.ImageUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +23,7 @@ public class MemberService {
 	@Transactional
 	public void updateMember(Long id, UpdateMemberRequest updateMemberRequest) {
 		Member member = getMemberById(id);
-		member.updateImageUrl(updateMemberRequest.imageUrl(), updateMemberRequest.introduction());
+		member.updateImageUrl(ImageUtils.parseFilePath(updateMemberRequest.imageUrl()), updateMemberRequest.introduction());
 	}
 
 	@Transactional(readOnly = true)

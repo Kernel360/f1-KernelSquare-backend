@@ -2,10 +2,9 @@ package com.kernel360.kernelsquare.domain.search.service;
 
 import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
-import com.kernel360.kernelsquare.domain.question.dto.FindQuestionResponse;
 import com.kernel360.kernelsquare.domain.question.entity.Question;
+import com.kernel360.kernelsquare.domain.search.dto.SearchQuestionResponse;
 import com.kernel360.kernelsquare.domain.search.repository.SearchRepository;
-import com.kernel360.kernelsquare.global.dto.PageResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -102,14 +101,14 @@ class SearchServiceTest {
         if (totalPages == 0) totalPages+=1;
 
         //when
-        PageResponse<FindQuestionResponse> pageResponse = searchService.searchQuestions(pageable, keyword);
+        SearchQuestionResponse searchResults = searchService.searchQuestions(pageable, keyword);
 
         //then
-        assertThat(pageResponse).isNotNull();
-        assertThat(pageResponse.pagination().totalPage()).isEqualTo(totalPages);
-        assertThat(pageResponse.pagination().pageable()).isEqualTo(pages.getSize());
-        assertThat(pageResponse.pagination().isEnd()).isEqualTo(currentPage.equals(totalPages));
-        assertThat(pageResponse.list()).isNotNull();
+        assertThat(searchResults).isNotNull();
+        assertThat(searchResults.pagination().totalPage()).isEqualTo(totalPages);
+        assertThat(searchResults.pagination().pageable()).isEqualTo(pages.getSize());
+        assertThat(searchResults.pagination().isEnd()).isEqualTo(currentPage.equals(totalPages));
+        assertThat(searchResults.questionList()).isNotNull();
 
         //verify
         verify(searchRepository, times(1)).searchQuestionsByKeyword(any(Pageable.class), anyString());

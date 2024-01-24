@@ -3,7 +3,7 @@ package com.kernel360.kernelsquare.domain.reservation_article.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.kernel360.kernelsquare.domain.hashtag.entity.HashTag;
+import com.kernel360.kernelsquare.domain.hashtag.entity.Hashtag;
 import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.reservation.dto.ReservationDto;
@@ -57,7 +57,7 @@ class ReservationArticleControllerTest {
                 .id(id)
                 .title("testplz")
                 .content("ahahahahahhhh")
-                .hashTagList(List.of())
+                .hashtagList(List.of())
                 .build();
     }
 
@@ -92,7 +92,7 @@ class ReservationArticleControllerTest {
 
         CreateReservationArticleRequest createReservationArticleRequest =
                 new CreateReservationArticleRequest(member.getId(), reservationArticle.getTitle(), reservationArticle.getContent(),
-                reservationArticle.getHashTagList().stream().map(HashTag::getContent).toList(), List.of(LocalDateTime.now(),LocalDateTime.now().plusDays(2)));
+                reservationArticle.getHashtagList().stream().map(Hashtag::getContent).toList(), List.of(LocalDateTime.now(),LocalDateTime.now().plusDays(2)));
 
         objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
         objectMapper.registerModule(new JavaTimeModule());

@@ -2,8 +2,8 @@ package com.kernel360.kernelsquare.domain.reservation_article.service;
 
 import com.kernel360.kernelsquare.domain.authority.entity.Authority;
 import com.kernel360.kernelsquare.domain.coffeechat.repository.CoffeeChatRepository;
-import com.kernel360.kernelsquare.domain.hashtag.entity.HashTag;
-import com.kernel360.kernelsquare.domain.hashtag.repository.HashTagRepository;
+import com.kernel360.kernelsquare.domain.hashtag.entity.Hashtag;
+import com.kernel360.kernelsquare.domain.hashtag.repository.HashtagRepository;
 import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
@@ -50,7 +50,7 @@ class ReservationArticleServiceTest {
     @Mock
     private CoffeeChatRepository coffeeChatRepository;
     @Mock
-    private HashTagRepository hashTagRepository;
+    private HashtagRepository hashTagRepository;
     @Mock
     private MemberRepository memberRepository;
 
@@ -65,7 +65,7 @@ class ReservationArticleServiceTest {
                 .member(member)
                 .title("testplz")
                 .content("ahahahahahhhh")
-                .hashTagList(List.of())
+                .hashtagList(List.of())
                 .build();
     }
 
@@ -118,7 +118,7 @@ class ReservationArticleServiceTest {
 
         CreateReservationArticleRequest createReservationArticleRequest =
                 new CreateReservationArticleRequest(member.getId(), reservationArticle.getTitle(), reservationArticle.getContent(),
-                        reservationArticle.getHashTagList().stream().map(HashTag::getContent).toList(), List.of(LocalDateTime.now(),LocalDateTime.now().plusDays(2)));
+                        reservationArticle.getHashtagList().stream().map(Hashtag::getContent).toList(), List.of(LocalDateTime.now(),LocalDateTime.now().plusDays(2)));
 
         given(memberRepository.findById(anyLong())).willReturn(Optional.ofNullable(member));
         given(reservationArticleRepository.save(any(ReservationArticle.class))).willReturn(reservationArticle);
@@ -195,8 +195,8 @@ class ReservationArticleServiceTest {
         assertThat(findReservationArticleResponse.memberId()).isEqualTo(reservationArticle.getMember().getId());
         assertThat(findReservationArticleResponse.memberImageUrl().length()).isGreaterThan(reservationArticle.getMember().getImageUrl().length());
         assertThat(findReservationArticleResponse.memberImageUrl()).endsWith(reservationArticle.getMember().getImageUrl());
-        assertThat(findReservationArticleResponse.hashTagList()).isEqualTo(reservationArticle.getHashTagList()
-                .stream().map(HashTag::getContent).toList());
+        assertThat(findReservationArticleResponse.hashTagList()).isEqualTo(reservationArticle.getHashtagList()
+                .stream().map(Hashtag::getContent).toList());
 
         // Verify
         verify(reservationArticleRepository, times(1)).findById(anyLong());

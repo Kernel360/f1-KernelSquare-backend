@@ -15,8 +15,8 @@ services:
       KAFKA_ADVERTISED_HOST_NAME: localhost
       KAFKA_CREATE_TOPICS: "chat:1:1"
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-#      KAFKA_LOG_RETENTION_MS: 86400000 # 1일
-#      KAFKA_LOG_RETENTION_BYTES: 1073741824 # 1 GB
+      KAFKA_LOG_RETENTION_MS: 86400000 # 1일
+      KAFKA_LOG_RETENTION_BYTES: 1073741824 # 1 GB
     volumes:
       - /var/run/docker.sock
     depends_on:

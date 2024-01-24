@@ -1,10 +1,9 @@
     package com.kernel360.kernelsquare.domain.search.controller;
 
-    import com.kernel360.kernelsquare.domain.question.dto.FindQuestionResponse;
+    import com.kernel360.kernelsquare.domain.search.dto.SearchQuestionResponse;
     import com.kernel360.kernelsquare.domain.search.service.SearchService;
     import com.kernel360.kernelsquare.global.common_response.ApiResponse;
     import com.kernel360.kernelsquare.global.common_response.ResponseEntityFactory;
-    import com.kernel360.kernelsquare.global.dto.PageResponse;
     import lombok.RequiredArgsConstructor;
     import org.springframework.data.domain.Pageable;
     import org.springframework.data.web.PageableDefault;
@@ -23,13 +22,13 @@
         private final SearchService searchService;
 
         @GetMapping("/search/questions")
-        public ResponseEntity<ApiResponse<PageResponse<FindQuestionResponse>>> searchQuestions(
+        public ResponseEntity<ApiResponse<SearchQuestionResponse>> searchQuestions(
             @PageableDefault(page = 0, size = 5)
             Pageable pageable,
             @RequestParam
             String keyword
         ) {
-            PageResponse<FindQuestionResponse> searchResults = searchService.searchQuestions(pageable, keyword);
+            SearchQuestionResponse searchResults = searchService.searchQuestions(pageable, keyword);
             return ResponseEntityFactory.toResponseEntity(SEARCH_QUESTION_COMPLETED, searchResults);
         }
     }

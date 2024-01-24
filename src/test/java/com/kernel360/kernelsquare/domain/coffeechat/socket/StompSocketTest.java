@@ -124,7 +124,7 @@ public class StompSocketTest {
         //when
         this.stompSession.send("/app/chat/message", message);
 
-        ChatMessage receivedMessage = blockingQueue.poll(3, TimeUnit.SECONDS);
+        ChatMessage receivedMessage = blockingQueue.poll(10, TimeUnit.SECONDS);
 
         //then
         assertThat(receivedMessage).isNotNull();

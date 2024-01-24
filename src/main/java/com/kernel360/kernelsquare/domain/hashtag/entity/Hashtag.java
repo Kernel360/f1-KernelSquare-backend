@@ -21,7 +21,6 @@ public class Hashtag extends BaseEntity {
     @Column(nullable = false ,name = "content", columnDefinition = "varchar(30)")
     private String content;
 
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reservation_article_id", columnDefinition = "bigint", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private ReservationArticle reservationArticle;

@@ -40,10 +40,10 @@ class HashtagServiceTest {
         FindAllHashtagResponse actualHashtags = hashtagService.findAllHashtag();
 
         // Then
-        assertThat(actualHashtags.hashtags().get(0).getId()).isEqualTo(expectedHashtags.get(0).getId());
-        assertThat(actualHashtags.hashtags().get(1).getId()).isEqualTo(expectedHashtags.get(1).getId());
-        assertThat(actualHashtags.hashtags().get(0).getContent()).isEqualTo(expectedHashtags.get(0).getContent());
-        assertThat(actualHashtags.hashtags().get(1).getContent()).isEqualTo(expectedHashtags.get(1).getContent());
+        assertThat(actualHashtags.hashtags().get(0).id()).isEqualTo(expectedHashtags.get(0).getId());
+        assertThat(actualHashtags.hashtags().get(1).id()).isEqualTo(expectedHashtags.get(1).getId());
+        assertThat(actualHashtags.hashtags().get(0).content()).isEqualTo(expectedHashtags.get(0).getContent());
+        assertThat(actualHashtags.hashtags().get(1).content()).isEqualTo(expectedHashtags.get(1).getContent());
 
         verify(hashtagRepository, times(1)).findAll();
     }

@@ -1,8 +1,10 @@
 package com.kernel360.kernelsquare.domain.hashtag.controller;
 
 import com.kernel360.kernelsquare.domain.hashtag.dto.FindAllHashtagResponse;
+import com.kernel360.kernelsquare.domain.hashtag.dto.FindHashtagResponse;
 import com.kernel360.kernelsquare.domain.hashtag.entity.Hashtag;
 import com.kernel360.kernelsquare.domain.hashtag.service.HashtagService;
+import org.hibernate.annotations.processing.Find;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,13 +38,12 @@ class HashtagControllerTest {
     @DisplayName("모든 해시태그 조회 성공시 200 OK와 응답 메시지를 반환한다.")
     void testFindAllHashtag() throws Exception {
         // Given
-        List<Hashtag> hashtagList = Arrays.asList(
-                Hashtag.builder().content("#김밥천국").build(),
-                Hashtag.builder().content("#라멘").build()
-        );
-        FindAllHashtagResponse response = FindAllHashtagResponse.from(hashtagList);
+        FindHashtagResponse response1 = new FindHashtagResponse(1L, "#testtag");
+        FindHashtagResponse response2 = new FindHashtagResponse(2L, "#mentoring");
 
-        doReturn(response)
+        FindAllHashtagResponse allHashtagResponse = FindAllHashtagResponse.from(List.of(response1, response2));
+
+        doReturn(allHashtagResponse)
                 .when(hashtagService)
                 .findAllHashtag();
 

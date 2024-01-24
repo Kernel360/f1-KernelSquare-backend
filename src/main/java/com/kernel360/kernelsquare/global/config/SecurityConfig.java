@@ -80,7 +80,6 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/v1/coffeechat/posts").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/coffeechat/posts/{postId}").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/hashtags").permitAll()
-                .requestMatchers(HttpMethod.DELETE, "/api/v1/hashtags/{hashtagId}").permitAll()
 
                 // 모든 권한에 대한 접근 허용
                 .requestMatchers(hasAnyAuthorityPatterns).authenticated()
@@ -107,6 +106,7 @@ public class SecurityConfig {
                 .requestMatchers(hasRoleAdminPatterns).hasRole("ADMIN")
                 .requestMatchers(HttpMethod.POST, "/api/v1/levels").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.POST, "/api/v1/techs").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/hashtags/{hashtagId}").hasRole("ADMIN")
         );
 
         http.addFilterBefore(new JWTSettingFilter(tokenProvider), BasicAuthenticationFilter.class);

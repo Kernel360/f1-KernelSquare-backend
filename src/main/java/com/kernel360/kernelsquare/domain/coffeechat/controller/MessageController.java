@@ -4,14 +4,14 @@ import com.kernel360.kernelsquare.domain.coffeechat.dto.ChatMessage;
 import com.kernel360.kernelsquare.global.common_response.error.code.CoffeeChatErrorCode;
 import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
 public class MessageController {
-    private final SimpMessageSendingOperations sendingOperations;
+    private final KafkaTemplate<String, ChatMessage> kafkaTemplate;
 
     @MessageMapping("/chat/message")
     public void messageHandler(ChatMessage message) {
@@ -21,6 +21,6 @@ public class MessageController {
             case TALK -> {}
             default -> throw new BusinessException(CoffeeChatErrorCode.MESSAGE_TYPE_NOT_VALID);
         }
-        sendingOperations.convertAndSend("/topic/chat/room/"+message.getRoomKey(),message);
+        kafkaTemplate.send("chat_" + message.getRoomKey(), message);
     }
 }

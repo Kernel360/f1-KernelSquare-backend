@@ -2,8 +2,8 @@ package com.kernel360.kernelsquare.domain.reservation_article.service;
 
 import com.kernel360.kernelsquare.domain.coffeechat.entity.ChatRoom;
 import com.kernel360.kernelsquare.domain.coffeechat.repository.CoffeeChatRepository;
-import com.kernel360.kernelsquare.domain.hashtag.entity.HashTag;
-import com.kernel360.kernelsquare.domain.hashtag.repository.HashTagRepository;
+import com.kernel360.kernelsquare.domain.hashtag.entity.Hashtag;
+import com.kernel360.kernelsquare.domain.hashtag.repository.HashtagRepository;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
 import com.kernel360.kernelsquare.domain.reservation.dto.ReservationDto;
@@ -38,7 +38,7 @@ public class ReservationArticleService {
     private final ReservationArticleRepository reservationArticleRepository;
     private final ReservationRepository reservationRepository;
     private final CoffeeChatRepository coffeeChatRepository;
-    private final HashTagRepository hashTagRepository;
+    private final HashtagRepository hashTagRepository;
 
     @Transactional
     public CreateReservationArticleResponse createReservationArticle(CreateReservationArticleRequest createReservationArticleRequest) {
@@ -50,7 +50,7 @@ public class ReservationArticleService {
 
         // HashTag 저장
         for (String hashTags : createReservationArticleRequest.hashTags()) {
-            HashTag hashTag = HashTag.builder()
+            Hashtag hashTag = Hashtag.builder()
                     .content(hashTags)
                     .reservationArticle(saveReservationArticle)
                     .build();

@@ -1,14 +1,14 @@
 package com.kernel360.kernelsquare.global.common_response.response.code;
 
-import com.kernel360.kernelsquare.global.common_response.service.code.CoffeeChatServiceStatus;
+import com.kernel360.kernelsquare.global.common_response.service.code.HashTagServiceStatus;
 import com.kernel360.kernelsquare.global.common_response.service.code.ServiceStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @RequiredArgsConstructor
-public enum CoffeeChatResponseCode implements ResponseCode {
-    COFFEE_CHAT_ROOM_CREATED(HttpStatus.OK, CoffeeChatServiceStatus.COFFEE_CHAT_ROOM_CREATED, "채팅방 생성 성공"),
-    ROOM_ENTRY_SUCCESSFUL(HttpStatus.OK, CoffeeChatServiceStatus.ROOM_ENTRY_SUCCESSFUL, "채팅방 입장 성공");
+public enum HashTagResponseCode implements ResponseCode{
+    HASHTAG_ALL_FOUND(HttpStatus.OK, HashTagServiceStatus.HASHTAG_ALL_FOUND, "모든 해시태그를 조회했습니다."),
+    HASHTAG_DELETED(HttpStatus.OK, HashTagServiceStatus.HASHTAG_DELETED, "해시태그를 삭제했습니다.");
 
     private final HttpStatus httpStatus;
     private final ServiceStatus serviceStatus;

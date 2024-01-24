@@ -39,12 +39,31 @@ spring:
   jackson:
     property-naming-strategy: SNAKE_CASE
 
-  data:
-    redis:
-      host: localhost
-      port: 6380
+ #  data:
+#    redis:
+#      host: localhost
+#      port: 6380
+
+  redis:
+    serialization:
+      class-property-type-name: RefreshToken.class
 
 logging.level:
   org.hibernate.SQL: debug
   #  org.hibernate.type: trace
   org.springframework.security: debug
+
+custom:
+  domain:
+    image:
+      baseUrl: ${BASE_URL}
+
+cloud:
+  aws:
+    s3:
+      bucket: ${S3_BUCKET_NAME}
+    stack.auto: false
+    region.static: ${S3_REGION}
+    credentials:
+      accessKey: ${AWS_ACCESS_KEY}
+      secretKey: ${AWS_ACCESS_SECRET}

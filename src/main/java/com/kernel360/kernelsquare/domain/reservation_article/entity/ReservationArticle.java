@@ -1,6 +1,6 @@
 package com.kernel360.kernelsquare.domain.reservation_article.entity;
 
-import com.kernel360.kernelsquare.domain.hashtag.entity.HashTag;
+import com.kernel360.kernelsquare.domain.hashtag.entity.Hashtag;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.global.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -29,20 +29,20 @@ public class ReservationArticle extends BaseEntity {
     private String content;
 
     @OneToMany(mappedBy = "reservationArticle")
-    private List<HashTag> hashTagList;
+    private List<Hashtag> hashtagList;
 
     @Builder
-    public ReservationArticle(Long id, Member member, String title, String content, List<HashTag> hashTagList) {
+    public ReservationArticle(Long id, Member member, String title, String content, List<Hashtag> hashtagList) {
         this.id = id;
         this.member = member;
         this.title = title;
         this.content = content;
-        this.hashTagList = hashTagList;
+        this.hashtagList = hashtagList;
     }
 
-    public void update(String title, String content, List<HashTag> hashTagList) {
+    public void update(String title, String content, List<Hashtag> hashtagList) {
         this.title = title;
         this.content = content;
-        this.hashTagList = hashTagList;
+        this.hashtagList = hashtagList;
     }
 }

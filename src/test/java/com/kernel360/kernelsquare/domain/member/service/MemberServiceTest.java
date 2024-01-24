@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.kernel360.kernelsquare.domain.level.entity.Level;
@@ -172,7 +173,8 @@ public class MemberServiceTest {
 		assertThat(findMemberResponse.nickname()).isEqualTo(member.getNickname());
 		assertThat(findMemberResponse.introduction()).isEqualTo(member.getIntroduction());
 		assertThat(findMemberResponse.experience()).isEqualTo(member.getExperience());
-		assertThat(findMemberResponse.imageUrl()).isEqualTo("null/" + member.getImageUrl());
+		assertThat(findMemberResponse.imageUrl().length()).isGreaterThan(member.getImageUrl().length());
+		assertThat(findMemberResponse.imageUrl()).endsWith(member.getImageUrl());
 		assertThat(findMemberResponse.memberId()).isEqualTo(testMemberId);
 
 		//verify

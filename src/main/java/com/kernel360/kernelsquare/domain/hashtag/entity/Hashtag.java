@@ -1,5 +1,6 @@
 package com.kernel360.kernelsquare.domain.hashtag.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kernel360.kernelsquare.domain.reservation_article.entity.ReservationArticle;
 import com.kernel360.kernelsquare.global.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -12,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Table(name = "hashtag")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class HashTag extends BaseEntity {
+public class Hashtag extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,7 +26,7 @@ public class HashTag extends BaseEntity {
     private ReservationArticle reservationArticle;
 
     @Builder
-    public HashTag(Long id, String content, ReservationArticle reservationArticle) {
+    public Hashtag(Long id, String content, ReservationArticle reservationArticle) {
         this.id = id;
         this.content = content;
         this.reservationArticle = reservationArticle;

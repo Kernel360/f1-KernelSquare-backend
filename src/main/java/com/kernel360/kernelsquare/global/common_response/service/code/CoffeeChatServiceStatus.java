@@ -11,6 +11,7 @@ public enum CoffeeChatServiceStatus implements ServiceStatus {
     MENTOR_MISMATCH(3203),
     MEMBER_MISMATCH(3204),
     AUTHORITY_NOT_VALID(3205),
+    MESSAGE_DELIVERY_FAILED(3206),
 
     //success
     COFFEE_CHAT_ROOM_CREATED(3240),

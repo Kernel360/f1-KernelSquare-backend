@@ -30,6 +30,11 @@ jobs:
         ports:
           - 6379:6379
 
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK 21

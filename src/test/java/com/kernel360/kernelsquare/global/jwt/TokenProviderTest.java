@@ -1,7 +1,6 @@
 package com.kernel360.kernelsquare.global.jwt;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 import java.time.LocalDateTime;
@@ -57,6 +56,7 @@ public class TokenProviderTest {
 	public void setUp() {
 		byte[] keyBytes = Decoders.BASE64.decode(secret);
 		ReflectionTestUtils.setField(tokenProvider, "key", Keys.hmacShaKeyFor(keyBytes));
+		ReflectionTestUtils.setField(tokenProvider, "secret", secret);
 
 		objectMapper.registerModule(new JavaTimeModule());
 		objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
@@ -205,22 +205,18 @@ public class TokenProviderTest {
 
 		ValueOperations<Long, RefreshToken> longRefreshTokenValueOperations = mock(ValueOperations.class);
 
-		given(redisTemplate.opsForValue()).willReturn(longRefreshTokenValueOperations);
-
-		given(longRefreshTokenValueOperations.get(anyLong())).willReturn(refreshToken);
-
 //		doReturn(longRefreshTokenValueOperations)
 //			.when(redisTemplate)
 //			.opsForValue();
 
-//		doReturn(refreshToken)
-//			.when(longRefreshTokenValueOperations)
-//			.get(anyLong());
-//
-//		doReturn(longRefreshTokenValueOperations)
-//			.doReturn(longRefreshTokenValueOperations)
-//			.when(redisTemplate)
-//			.opsForValue();
+		doReturn(refreshToken)
+			.when(longRefreshTokenValueOperations)
+			.get(anyLong());
+
+		doReturn(longRefreshTokenValueOperations)
+			.doReturn(longRefreshTokenValueOperations)
+			.when(redisTemplate)
+			.opsForValue();
 
 		//when
 		TokenResponse tokenResponse = tokenProvider.reissueToken(tokenRequest);

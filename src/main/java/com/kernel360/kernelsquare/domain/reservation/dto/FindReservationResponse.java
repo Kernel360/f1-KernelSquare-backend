@@ -10,6 +10,7 @@ import java.util.Optional;
 @Builder
 public record FindReservationResponse(
         Long reservationId,
+        Long roomId,
         LocalDateTime startTime,
         String mentiNickname,
         String mentiImageUrl
@@ -26,6 +27,7 @@ public record FindReservationResponse(
 
         return new FindReservationResponse(
                 reservation.getId(),
+                reservation.getChatRoom().getId(),
                 reservation.getStartTime(),
                 nickname,
                 imageUrl

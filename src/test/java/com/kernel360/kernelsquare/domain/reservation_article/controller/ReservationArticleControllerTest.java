@@ -3,6 +3,7 @@ package com.kernel360.kernelsquare.domain.reservation_article.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.kernel360.kernelsquare.domain.hashtag.dto.FindHashtagResponse;
 import com.kernel360.kernelsquare.domain.hashtag.entity.Hashtag;
 import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
@@ -183,9 +184,20 @@ class ReservationArticleControllerTest {
                 .mentiImageUrl("url")
                 .build();
 
-        List<FindReservationResponse> findReservationResponseList = List.of(findReservationResponse1, findReservationResponse2);
+        FindHashtagResponse findHashtagResponse1 = FindHashtagResponse.builder()
+                .hashtagId(1L)
+                .content("#JYP")
+                .build();
 
-        FindReservationArticleResponse findReservationArticleResponse = FindReservationArticleResponse.of(member, reservationArticle, findReservationResponseList, level);
+        FindHashtagResponse findHashtagResponse2 = FindHashtagResponse.builder()
+                .hashtagId(2L)
+                .content("#YG")
+                .build();
+
+        List<FindReservationResponse> findReservationResponseList = List.of(findReservationResponse1, findReservationResponse2);
+        List<FindHashtagResponse> findHashtagResponseList = List.of(findHashtagResponse1, findHashtagResponse2);
+
+        FindReservationArticleResponse findReservationArticleResponse = FindReservationArticleResponse.of(member, reservationArticle, findHashtagResponseList,findReservationResponseList, level);
 
         given(reservationArticleService.findReservationArticle(anyLong())).willReturn(findReservationArticleResponse);
 

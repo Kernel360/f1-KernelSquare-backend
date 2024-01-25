@@ -122,12 +122,10 @@ public class ReservationArticleService {
                 .map(FindHashtagResponse::from)
                 .toList();
 
-
         List<Reservation> reservations = reservationRepository.findAllByReservationArticleId(postId);
         List<FindReservationResponse> findReservationResponses = reservations.stream()
                 .map(FindReservationResponse::from)
                 .toList();
-
 
         return FindReservationArticleResponse.of(member, reservationArticle, findHashtagResponses,findReservationResponses, member.getLevel());
     }

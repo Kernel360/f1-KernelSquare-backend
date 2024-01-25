@@ -1,6 +1,7 @@
 package com.kernel360.kernelsquare.domain.reservation_article.service;
 
 import com.kernel360.kernelsquare.domain.authority.entity.Authority;
+import com.kernel360.kernelsquare.domain.coffeechat.entity.ChatRoom;
 import com.kernel360.kernelsquare.domain.coffeechat.repository.CoffeeChatRepository;
 import com.kernel360.kernelsquare.domain.hashtag.entity.Hashtag;
 import com.kernel360.kernelsquare.domain.hashtag.repository.HashtagRepository;
@@ -8,6 +9,7 @@ import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
 import com.kernel360.kernelsquare.domain.member_authority.entity.MemberAuthority;
+import com.kernel360.kernelsquare.domain.reservation.entity.Reservation;
 import com.kernel360.kernelsquare.domain.reservation.repository.ReservationRepository;
 import com.kernel360.kernelsquare.domain.reservation_article.dto.CreateReservationArticleRequest;
 import com.kernel360.kernelsquare.domain.reservation_article.dto.CreateReservationArticleResponse;
@@ -58,6 +60,8 @@ class ReservationArticleServiceTest {
     private Authority authority;
     private MemberAuthority memberRole;
     private Level level;
+    private Hashtag hashtag;
+    private ChatRoom chatRoom;
 
     private ReservationArticle createTestReservationArticle(Long id) {
         return ReservationArticle.builder()
@@ -65,7 +69,27 @@ class ReservationArticleServiceTest {
                 .member(member)
                 .title("testplz")
                 .content("ahahahahahhhh")
-                .hashtagList(List.of())
+                .build();
+    }
+
+    private Hashtag createTestHashtag() {
+        return Hashtag.builder()
+                .content("#tester333")
+                .build();
+    }
+
+    private ChatRoom createChatRoom() {
+        return ChatRoom
+                .builder()
+                .id(1L)
+                .roomKey("testRoomKey")
+                .build();
+    }
+
+    private Reservation createTestReservation(ChatRoom chatRoom) {
+        return Reservation.builder()
+                .chatRoom(chatRoom)
+                .startTime(LocalDateTime.now())
                 .build();
     }
 
@@ -109,6 +133,7 @@ class ReservationArticleServiceTest {
         member = createTestMember();
         authority = createTestAuthority();
         memberRole = createTestRole(member, authority);
+        hashtag = createTestHashtag();
 
         List<MemberAuthority> memberAuthorityList = List.of(memberRole);
 
@@ -176,9 +201,22 @@ class ReservationArticleServiceTest {
         // Given
         level = createTestLevel();
         member = createTestMember();
+        hashtag = createTestHashtag();
+        chatRoom = createChatRoom();
+        // reservation = createTestReservation(chatRoom);
+
         ReservationArticle reservationArticle = createTestReservationArticle(1L);
+        Hashtag testHashtag = createTestHashtag();
+//        List<String> expectedHashtags = List.of(testHashtag).stream()
+//                .map(Hashtag::getContent).toList();
+        Reservation testReservation = createTestReservation(chatRoom);
+//        List<LocalDateTime> expectedDateTimes = List.of(testReservation).stream()
+//                .map(Reservation::getStartTime).toList();
 
         given(reservationArticleRepository.findById(anyLong())).willReturn(Optional.ofNullable(reservationArticle));
+        // given(reservation.getChatRoom().getId()).willReturn(anyLong());
+        given(hashTagRepository.findAllByReservationArticleId(anyLong())).willReturn(List.of(testHashtag));
+        given(reservationRepository.findAllByReservationArticleId(anyLong())).willReturn(List.of(testReservation));
 
         // When
         FindReservationArticleResponse findReservationArticleResponse = reservationArticleService.findReservationArticle(reservationArticle.getId());
@@ -195,11 +233,14 @@ class ReservationArticleServiceTest {
         assertThat(findReservationArticleResponse.memberId()).isEqualTo(reservationArticle.getMember().getId());
         assertThat(findReservationArticleResponse.memberImageUrl().length()).isGreaterThan(reservationArticle.getMember().getImageUrl().length());
         assertThat(findReservationArticleResponse.memberImageUrl()).endsWith(reservationArticle.getMember().getImageUrl());
-        assertThat(findReservationArticleResponse.hashTagList()).isEqualTo(reservationArticle.getHashtagList()
-                .stream().map(Hashtag::getContent).toList());
+        assertThat(findReservationArticleResponse.hashtags().get(0).content()).isEqualTo(testHashtag.getContent());
+        assertThat(findReservationArticleResponse.dateTimes().get(0).reservationId()).isEqualTo(testReservation.getId());
+        // TODO 출처가 어디인지 response 에서 확인 필요, 모두 다 reservationArticle 에서 가져와서 비교하는게 아닌 Service 가 하는 일을 보고 맞게 스터빙해서 비교해야함. hashtag, reservation
 
         // Verify
         verify(reservationArticleRepository, times(1)).findById(anyLong());
+        verify(hashTagRepository, times(1)).findAllByReservationArticleId(anyLong());
+        verify(reservationRepository, times(1)).findAllByReservationArticleId(anyLong());
     }
 
     @Test

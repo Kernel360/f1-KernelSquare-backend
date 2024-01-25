@@ -6,8 +6,12 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface HashtagRepository extends JpaRepository<Hashtag, Long> {
     @Modifying
     @Query("DELETE FROM Hashtag a WHERE a.reservationArticle.id = :postId")
     void deleteAllByReservationArticleId(@Param("postId") Long postId);
+
+    List<Hashtag> findAllByReservationArticleId(Long articleId);
 }

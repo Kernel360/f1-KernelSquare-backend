@@ -54,6 +54,17 @@ public class ReservationArticleController {
         return ResponseEntityFactory.toResponseEntity(RESERVATION_ARTICLE_FOUND, findReservationArticleResponse);
     }
 
+    // TODO 수정하기 로직 여기서 작업
+    @PutMapping("/coffeechat/posts/{postId}")
+    public ResponseEntity<ApiResponse> updateReservationArticle(
+            @PathVariable
+            Long postId
+    ) {
+        reservationArticleService.updateReservationArticle(postId);
+
+        return ResponseEntityFactory.toResponseEntity();
+    }
+
     @DeleteMapping("coffeechat/posts/{postId}")
     public ResponseEntity<ApiResponse> deleteReservationArticle(
             @PathVariable

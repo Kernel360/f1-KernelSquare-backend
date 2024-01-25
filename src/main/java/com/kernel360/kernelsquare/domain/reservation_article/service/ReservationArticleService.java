@@ -2,11 +2,12 @@ package com.kernel360.kernelsquare.domain.reservation_article.service;
 
 import com.kernel360.kernelsquare.domain.coffeechat.entity.ChatRoom;
 import com.kernel360.kernelsquare.domain.coffeechat.repository.CoffeeChatRepository;
+import com.kernel360.kernelsquare.domain.hashtag.dto.FindHashtagResponse;
 import com.kernel360.kernelsquare.domain.hashtag.entity.Hashtag;
 import com.kernel360.kernelsquare.domain.hashtag.repository.HashtagRepository;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
-import com.kernel360.kernelsquare.domain.reservation.dto.ReservationDto;
+import com.kernel360.kernelsquare.domain.reservation.dto.FindReservationResponse;
 import com.kernel360.kernelsquare.domain.reservation.entity.Reservation;
 import com.kernel360.kernelsquare.domain.reservation.repository.ReservationRepository;
 import com.kernel360.kernelsquare.domain.reservation_article.dto.CreateReservationArticleRequest;
@@ -29,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -114,10 +116,28 @@ public class ReservationArticleService {
         ReservationArticle reservationArticle = reservationArticleRepository.findById(postId)
                 .orElseThrow(() -> new BusinessException(ReservationArticleErrorCode.RESERVATION_ARTICLE_NOT_FOUND));
         Member member = reservationArticle.getMember();
-        List<ReservationDto> reservationDTOs = reservationRepository.findAllByReservationArticleId(postId);
 
-        return FindReservationArticleResponse.of(member, reservationArticle, reservationDTOs, member.getLevel());
+        List<Hashtag> hashtags = hashTagRepository.findAllByReservationArticleId(postId);
+        List<FindHashtagResponse> findHashtagResponses = hashtags.stream()
+                .map(FindHashtagResponse::from)
+                .toList();
+
+
+        List<Reservation> reservations = reservationRepository.findAllByReservationArticleId(postId);
+        List<FindReservationResponse> findReservationResponses = reservations.stream()
+                .map(FindReservationResponse::from)
+                .toList();
+
+
+        return FindReservationArticleResponse.of(member, reservationArticle, findHashtagResponses,findReservationResponses, member.getLevel());
     }
+
+    // TODO 수정하기 로직 여기서 작업
+    @Transactional
+    public void updateReservationArticle(Long postId) {
+
+    }
+
 
     @Transactional
     public void deleteReservationArticle(Long postId) {

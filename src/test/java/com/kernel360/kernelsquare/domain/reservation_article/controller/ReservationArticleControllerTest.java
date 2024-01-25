@@ -6,7 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.kernel360.kernelsquare.domain.hashtag.entity.Hashtag;
 import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
-import com.kernel360.kernelsquare.domain.reservation.dto.ReservationDto;
+import com.kernel360.kernelsquare.domain.reservation.dto.FindReservationResponse;
 import com.kernel360.kernelsquare.domain.reservation_article.dto.CreateReservationArticleRequest;
 import com.kernel360.kernelsquare.domain.reservation_article.dto.CreateReservationArticleResponse;
 import com.kernel360.kernelsquare.domain.reservation_article.dto.FindAllReservationArticleResponse;
@@ -171,23 +171,21 @@ class ReservationArticleControllerTest {
         member = createTestMember();
         ReservationArticle reservationArticle = createTestReservationArticle(1L);
 
-        ReservationDto reservationDto1 = ReservationDto.builder()
-                .finished(true)
+        FindReservationResponse findReservationResponse1 = FindReservationResponse.builder()
                 .startTime(LocalDateTime.now())
-                .memberNickname("tester22")
-                .memberImageUrl("url")
+                .mentiNickname("tester22")
+                .mentiImageUrl("url")
                 .build();
 
-        ReservationDto reservationDto2 = ReservationDto.builder()
-                .finished(true)
+        FindReservationResponse findReservationResponse2 = FindReservationResponse.builder()
                 .startTime(LocalDateTime.now())
-                .memberNickname("tester23")
-                .memberImageUrl("url")
+                .mentiNickname("tester23")
+                .mentiImageUrl("url")
                 .build();
 
-        List<ReservationDto> reservationDtoList = List.of(reservationDto1, reservationDto2);
+        List<FindReservationResponse> findReservationResponseList = List.of(findReservationResponse1, findReservationResponse2);
 
-        FindReservationArticleResponse findReservationArticleResponse = FindReservationArticleResponse.of(member, reservationArticle, reservationDtoList, level);
+        FindReservationArticleResponse findReservationArticleResponse = FindReservationArticleResponse.of(member, reservationArticle, findReservationResponseList, level);
 
         given(reservationArticleService.findReservationArticle(anyLong())).willReturn(findReservationArticleResponse);
 

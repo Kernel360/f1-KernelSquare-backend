@@ -61,7 +61,7 @@ spring:
 
   data:
     mongodb:
-      uri: ${MONGO_URL}
+      uri: ${MONGO_URI}
 
 logging.level:
   org.hibernate.SQL: debug

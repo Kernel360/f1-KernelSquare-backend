@@ -192,7 +192,7 @@ public class TokenProviderTest {
 		//given
 		String accessToken = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTkwMDAwMDAwMH0.eHSaEoaFl9Rb7R6YxwyKiACOObHN0XjiNO7T7i1KpkiqVbgz9hQr5EPq5DuRliA_UlsBeIvfU8UHPG7xhwdcRg";
 
-		String refreshTokenString = "eyJtZW1iZXJJZCI6MiwicmVmcmVzaFRva2VuIjoiMjYzOGUxYjQ3MmI2NDRkNTk4YzY1NGNlZWFlN2FhOTAiLCJjcmVhdGVkRGF0ZSI6IjIwMjQtMDEtMTBUMjE6MDA6MzIuNDYxOCIsImV4cGlyYXRpb25EYXRlIjoiMjAyNC0wMS0yNFQyMTowMDozMi40NjE3NiJ9";
+		String refreshTokenString = "eyJtZW1iZXJJZCI6MiwicmVmcmVzaFRva2VuIjoiMjYzOGUxYjQ3MmI2NDRkNTk4YzY1NGNlZWFlN2FhOTAiLCJjcmVhdGVkRGF0ZSI6IjIwMjQtMDEtMTBUMjE6MDA6MzIuNDYxOCIsImV4cGlyYXRpb25EYXRlIjoiMjEyNC0xMi0yNFQyMTowMDozMi40NjE3NiJ9";
 
 		TokenRequest tokenRequest = TokenRequest
 			.builder()
@@ -208,6 +208,11 @@ public class TokenProviderTest {
 //		doReturn(longRefreshTokenValueOperations)
 //			.when(redisTemplate)
 //			.opsForValue();
+//		RedisOperations<Long, RefreshToken> operations = mock(RedisOperations.class);
+
+//		doReturn(operations)
+//			.when(longRefreshTokenValueOperations)
+//				.getOperations();
 
 		doReturn(refreshToken)
 			.when(longRefreshTokenValueOperations)

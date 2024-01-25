@@ -204,13 +204,18 @@ public class TokenProviderTest {
 
 		ValueOperations<Long, RefreshToken> longRefreshTokenValueOperations = mock(ValueOperations.class);
 
-		doReturn(longRefreshTokenValueOperations)
-			.when(redisTemplate)
-			.opsForValue();
+//		doReturn(longRefreshTokenValueOperations)
+//			.when(redisTemplate)
+//			.opsForValue();
 
 		doReturn(refreshToken)
 			.when(longRefreshTokenValueOperations)
 			.get(anyLong());
+
+		doReturn(longRefreshTokenValueOperations)
+			.doReturn(longRefreshTokenValueOperations)
+			.when(redisTemplate)
+			.opsForValue();
 
 		//when
 		TokenResponse tokenResponse = tokenProvider.reissueToken(tokenRequest);

@@ -48,6 +48,7 @@ jobs:
           files: ./src/test/resources/application.yml
         env:
           spring.security.jwt.secret: ${{ secrets.JWT_SECRET_KEY }}
+          spring.data.mongodb.uri: ${{ secrets.MONGO_TEST_URI }}
           custom.domain.image.baseUrl: ${{ secrets.BASE_URL }}
           cloud.aws.s3.bucket: ${{ secrets.S3_BUCKET_NAME }}
           cloud.aws.region.static: ${{ secrets.S3_REGION }}

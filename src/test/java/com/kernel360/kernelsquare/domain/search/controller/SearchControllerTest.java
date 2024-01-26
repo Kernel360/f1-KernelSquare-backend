@@ -4,6 +4,7 @@ import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.question.dto.FindQuestionResponse;
 import com.kernel360.kernelsquare.domain.question.entity.Question;
+import com.kernel360.kernelsquare.domain.search.dto.SearchQuestionResponse;
 import com.kernel360.kernelsquare.domain.search.service.SearchService;
 import com.kernel360.kernelsquare.global.dto.PageResponse;
 import com.kernel360.kernelsquare.global.dto.Pagination;
@@ -98,7 +99,9 @@ class SearchControllerTest {
 
         List<FindQuestionResponse> responsePages = List.of(findQuestionResponse1, findQuestionResponse2);
 
-        PageResponse<FindQuestionResponse> response = PageResponse.of(pagination, responsePages);
+        PageResponse<FindQuestionResponse> pageQuestionList = PageResponse.of(pagination, responsePages);
+
+        SearchQuestionResponse response = SearchQuestionResponse.of(2L, pageQuestionList);
 
         doReturn(response)
             .when(searchService)

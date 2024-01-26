@@ -65,20 +65,21 @@ public class SecurityConfig {
 		return new BCryptPasswordEncoder();
 	}
 
-	//todo : filter 설정 추가하기
-	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable());
-		http.authorizeHttpRequests(authz -> authz
-			// 모든 접근 허용
-			.requestMatchers(permitAllPatterns).permitAll()
-			.requestMatchers(HttpMethod.GET, "/api/v1/questions/{questionId}").permitAll()
-			.requestMatchers(HttpMethod.GET, "/api/v1/questions").permitAll()
-			.requestMatchers(HttpMethod.GET, "/api/v1/search/questions").permitAll()
-			.requestMatchers(HttpMethod.GET, "/api/v1/questions/{questiondId}/answers").permitAll()
-			.requestMatchers(HttpMethod.GET, "/api/v1/levels").permitAll()
-			.requestMatchers(HttpMethod.GET, "/api/v1/coffeechat/posts").permitAll()
-			.requestMatchers(HttpMethod.GET, "/api/v1/coffeechat/posts/{postId}").permitAll()
+    //todo : filter 설정 추가하기
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable());
+        http.authorizeHttpRequests(authz -> authz
+            // 모든 접근 허용
+            .requestMatchers(permitAllPatterns).permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/v1/questions/{questionId}").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/v1/questions").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/v1/search/questions").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/v1/questions/{questiondId}/answers").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/v1/levels").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/v1/coffeechat/posts").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/v1/coffeechat/posts/{postId}").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/v1/hashtags").permitAll()
 
 			// 모든 권한에 대한 접근 허용
 			.requestMatchers(hasAnyAuthorityPatterns).authenticated()
@@ -102,11 +103,12 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.DELETE, "/api/v1/coffeechat/posts/{postId}").hasRole("MENTOR")
             .requestMatchers(HttpMethod.POST, "/api/v1/coffeechat/rooms/{roomKey}").hasAnyRole("MENTOR", "USER")
 
-			// ROLE_ADMIN 권한 필요
-			.requestMatchers(hasRoleAdminPatterns).hasRole("ADMIN")
-			.requestMatchers(HttpMethod.POST, "/api/v1/levels").hasRole("ADMIN")
-			.requestMatchers(HttpMethod.POST, "/api/v1/techs").hasRole("ADMIN")
-		);
+            // ROLE_ADMIN 권한 필요
+            .requestMatchers(hasRoleAdminPatterns).hasRole("ADMIN")
+            .requestMatchers(HttpMethod.POST, "/api/v1/levels").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.POST, "/api/v1/techs").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.DELETE, "/api/v1/hashtags/{hashtagId}").hasRole("ADMIN")
+        );
 
 		http.addFilterBefore(new JWTSettingFilter(tokenProvider), BasicAuthenticationFilter.class);
 

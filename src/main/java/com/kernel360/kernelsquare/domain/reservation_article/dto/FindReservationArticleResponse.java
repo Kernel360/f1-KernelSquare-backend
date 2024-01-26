@@ -1,6 +1,6 @@
 package com.kernel360.kernelsquare.domain.reservation_article.dto;
 
-import com.kernel360.kernelsquare.domain.hashtag.entity.HashTag;
+import com.kernel360.kernelsquare.domain.hashtag.entity.Hashtag;
 import com.kernel360.kernelsquare.domain.image.utils.ImageUtils;
 import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
@@ -38,7 +38,7 @@ public record FindReservationArticleResponse(
                 ImageUtils.makeImageUrl(level.getImageUrl()),
                 article.getTitle(),
                 article.getContent(),
-                article.getHashTagList().stream().map(HashTag::getContent).toList(),
+                article.getHashtagList().stream().map(Hashtag::getContent).toList(),
                 reservationDtos,
                 article.getCreatedDate(),
                 article.getModifiedDate()

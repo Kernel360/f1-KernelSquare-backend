@@ -3,6 +3,7 @@ package com.kernel360.kernelsquare.domain.member.controller;
 import static com.kernel360.kernelsquare.global.common_response.response.code.MemberResponseCode.*;
 
 import com.kernel360.kernelsquare.domain.member.dto.UpdateMemberIntroductionRequest;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,7 +36,7 @@ public class MemberController {
 
 	@PutMapping("/members/{memberId}/introduction")
 	public ResponseEntity<ApiResponse> updateMemberIntroduction(@PathVariable Long memberId,
-		@RequestBody UpdateMemberIntroductionRequest updateMemberIntroductionRequest) {
+		@Valid @RequestBody UpdateMemberIntroductionRequest updateMemberIntroductionRequest) {
 		memberService.updateMemberIntroduction(memberId, updateMemberIntroductionRequest);
 		return ResponseEntityFactory.toResponseEntity(MEMBER_INTRODUCTION_UPDATED);
 	}

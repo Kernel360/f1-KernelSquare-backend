@@ -13,9 +13,6 @@ import java.time.LocalDateTime;
 @Getter
 @Document(collection = "chatting")
 public class MongoChatMessage {
-    public enum MessageType {
-        ENTER, TALK, LEAVE, EXPIRE
-    }
 
     @Id
     private String id;
@@ -23,7 +20,7 @@ public class MongoChatMessage {
     @Indexed
     private String roomKey;
 
-    private ChatMessage.MessageType type;
+    private MongoMessageType type;
 
     private String sender;
 
@@ -34,7 +31,7 @@ public class MongoChatMessage {
     public static MongoChatMessage from(ChatMessage message) {
         return MongoChatMessage.builder()
             .roomKey(message.getRoomKey())
-            .type(message.getType())
+            .type(MongoMessageType.valueOf(String.valueOf(message.getType())))
             .sender(message.getSender())
             .message(message.getMessage())
             .sendTime(LocalDateTime.now())

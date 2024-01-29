@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum CommonServiceStatus implements ServiceStatus {
+	//error
 	DUPLICATE_DATA_EXIST(9000),
 	VALIDATION_CHECK_FAIL(9001);
 

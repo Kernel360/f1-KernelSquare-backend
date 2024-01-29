@@ -1,6 +1,8 @@
 package com.kernel360.kernelsquare.domain.coffeechat.controller;
 
 import com.kernel360.kernelsquare.domain.coffeechat.dto.ChatMessage;
+import com.kernel360.kernelsquare.domain.coffeechat.entity.MongoChatMessage;
+import com.kernel360.kernelsquare.domain.coffeechat.repository.MongoChatMessageRepository;
 import com.kernel360.kernelsquare.global.common_response.error.code.CoffeeChatErrorCode;
 import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class MessageController {
     private final SimpMessageSendingOperations sendingOperations;
+    private final MongoChatMessageRepository mongoChatMessageRepository;
 
     @MessageMapping("/chat/message")
     public void messageHandler(ChatMessage message) {
@@ -21,6 +24,11 @@ public class MessageController {
             case TALK -> {}
             default -> throw new BusinessException(CoffeeChatErrorCode.MESSAGE_TYPE_NOT_VALID);
         }
+
+        MongoChatMessage recordMessage = MongoChatMessage.from(message);
+
+        mongoChatMessageRepository.save(recordMessage);
+
         sendingOperations.convertAndSend("/topic/chat/room/"+message.getRoomKey(),message);
     }
 }

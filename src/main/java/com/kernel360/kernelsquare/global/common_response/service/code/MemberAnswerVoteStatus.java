@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum MemberAnswerVoteStatus implements ServiceStatus{
+    //error
     MEMBER_ANSWER_VOTE_NOT_FOUND(2202),
     MEMBER_ANSWER_VOTE_CREATED(2244),
     MEMBER_ANSWER_VOTE_DELETED(2245);

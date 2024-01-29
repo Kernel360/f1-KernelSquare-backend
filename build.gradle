@@ -77,6 +77,9 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.0'
     // <====
 
+    //mongodb
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
     //Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'

@@ -56,6 +56,9 @@ public class TokenProviderTest {
 	public void setUp() {
 		byte[] keyBytes = Decoders.BASE64.decode(secret);
 		ReflectionTestUtils.setField(tokenProvider, "key", Keys.hmacShaKeyFor(keyBytes));
+		ReflectionTestUtils.setField(tokenProvider, "secret", secret);
+		ReflectionTestUtils.setField(tokenProvider, "accessTokenValidityInSeconds", 3600);
+		ReflectionTestUtils.setField(tokenProvider, "refreshTokenValidityInSeconds", 1_209_600);
 
 		objectMapper.registerModule(new JavaTimeModule());
 		objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);

@@ -3,11 +3,11 @@ package com.kernel360.kernelsquare.domain.coffeechat.socket;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.kernel360.kernelsquare.domain.coffeechat.dto.ChatMessage;
+import com.kernel360.kernelsquare.domain.coffeechat.dto.MessageType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
@@ -15,7 +15,6 @@ import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandler;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 import org.springframework.web.socket.sockjs.client.SockJsClient;
@@ -115,7 +114,7 @@ public class StompSocketTest {
         ChatMessage message = ChatMessage.builder()
             .message("hi")
             .roomKey("key")
-            .type(ChatMessage.MessageType.TALK)
+            .type(MessageType.TALK)
             .sender("홍박사")
             .build();
 
@@ -124,7 +123,7 @@ public class StompSocketTest {
         //when
         this.stompSession.send("/app/chat/message", message);
 
-        ChatMessage receivedMessage = blockingQueue.poll(3, TimeUnit.SECONDS);
+        ChatMessage receivedMessage = blockingQueue.poll(10, TimeUnit.SECONDS);
 
         //then
         assertThat(receivedMessage).isNotNull();

@@ -29,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -241,8 +240,8 @@ public class ReservationArticleService {
             }
 
 
-        // 두 체크로직을 통과했다면 add 는 더하고 remove 는 제거 (repository 로 반영)
-        removeReservations.forEach((reservationId, startTime) -> reservationRepository.deleteById(reservationId));
+            // 두 체크로직을 통과했다면 add 는 더하고 remove 는 제거 (repository 로 반영)
+            removeReservations.forEach((reservationId, startTime) -> reservationRepository.deleteById(reservationId));
             for (LocalDateTime dateTime : addReservations) {
                 // 새로운 Chatroom 생성
                 ChatRoom chatroom = ChatRoom.builder()

@@ -2,6 +2,8 @@ package com.kernel360.kernelsquare.domain.member.controller;
 
 import static com.kernel360.kernelsquare.global.common_response.response.code.MemberResponseCode.*;
 
+import com.kernel360.kernelsquare.domain.member.dto.UpdateMemberIntroductionRequest;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kernel360.kernelsquare.domain.member.dto.FindMemberResponse;
-import com.kernel360.kernelsquare.domain.member.dto.UpdateMemberRequest;
+import com.kernel360.kernelsquare.domain.member.dto.UpdateMemberProfileRequest;
 import com.kernel360.kernelsquare.domain.member.service.MemberService;
 import com.kernel360.kernelsquare.global.common_response.ApiResponse;
 import com.kernel360.kernelsquare.global.common_response.ResponseEntityFactory;
@@ -25,12 +27,20 @@ import lombok.RequiredArgsConstructor;
 public class MemberController {
 	private final MemberService memberService;
 
-	@PutMapping("/members/{memberId}")
-	public ResponseEntity<ApiResponse> updateMember(@PathVariable Long memberId,
-		@RequestBody UpdateMemberRequest updateMemberRequest) {
-		memberService.updateMember(memberId, updateMemberRequest);
-		return ResponseEntityFactory.toResponseEntity(MEMBER_INFO_UPDATED);
+	@PutMapping("/members/{memberId}/profile")
+	public ResponseEntity<ApiResponse> updateMemberProfile(@PathVariable Long memberId,
+		@RequestBody UpdateMemberProfileRequest updateMemberProfileRequest) {
+		memberService.updateMemberProfile(memberId, updateMemberProfileRequest);
+		return ResponseEntityFactory.toResponseEntity(MEMBER_PROFILE_UPDATED);
 	}
+
+	@PutMapping("/members/{memberId}/introduction")
+	public ResponseEntity<ApiResponse> updateMemberIntroduction(@PathVariable Long memberId,
+		@Valid @RequestBody UpdateMemberIntroductionRequest updateMemberIntroductionRequest) {
+		memberService.updateMemberIntroduction(memberId, updateMemberIntroductionRequest);
+		return ResponseEntityFactory.toResponseEntity(MEMBER_INTRODUCTION_UPDATED);
+	}
+
 
 	@PutMapping("/members/{memberId}/password")
 	public ResponseEntity<ApiResponse> updateMemberPassword(@PathVariable Long memberId,

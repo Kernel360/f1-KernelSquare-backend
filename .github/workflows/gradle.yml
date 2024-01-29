@@ -33,17 +33,17 @@ jobs:
           MONGO_INITDB_ROOT_USERNAME: root
           MONGO_INITDB_ROOT_PASSWORD: 1231
 
-      zookeeper:
-        image: confluentinc/cp-zookeeper:latest
-        ports:
-          - 2181:2181
+      # zookeeper:
+      #   image: confluentinc/cp-zookeeper:latest
+      #   ports:
+      #     - 2181:2181
 
-      kafka:
-        image: confluentinc/cp-kafka:latest
-        ports:
-          - 9092:9092
-        depends_on:
-          - zookeeper
+      # kafka:
+      #   image: confluentinc/cp-kafka:latest
+      #   ports:
+      #     - 9092:9092
+      #   depends_on:
+      #     - zookeeper
 
 
     steps:

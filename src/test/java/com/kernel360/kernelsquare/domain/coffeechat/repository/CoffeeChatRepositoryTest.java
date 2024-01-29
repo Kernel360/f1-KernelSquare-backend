@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Import;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("커피챗 레포지토리 통합 테스트")
+@DisplayName("커피챗 레포지토리 단위 테스트")
 @DataJpaTest
 @Import(JpaAuditingConfig.class)
 class CoffeeChatRepositoryTest {

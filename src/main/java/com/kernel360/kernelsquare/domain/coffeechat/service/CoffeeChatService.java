@@ -80,7 +80,7 @@ public class CoffeeChatService {
             chatRoom.deactivateRoom();
 
             ChatMessage message = ChatMessage.builder()
-                .type(ChatMessage.MessageType.EXPIRE)
+                .type(MessageType.EXPIRE)
                 .roomKey(chatRoom.getRoomKey())
                 .sender("system")
                 .message("채팅방 사용 시간이 만료되었습니다.")

@@ -30,7 +30,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@DisplayName("커피챗 서비스 통합 테스트")
+@DisplayName("커피챗 서비스 단위 테스트")
 @ExtendWith(MockitoExtension.class)
 class CoffeeChatServiceTest {
     @InjectMocks
@@ -136,7 +136,7 @@ class CoffeeChatServiceTest {
         assertThat(chatRoom).isNotNull();
         assertThat(chatRoom.getRoomName()).isEqualTo(articleTitle);
         assertThat(chatRoom.getRoomKey()).isEqualTo(roomKey);
-        assertThat(chatRoom.getActive()).isFalse();
+        assertThat(chatRoom.getActive()).isTrue();
 
         //verify
         verify(coffeeChatRepository, times(1)).findByRoomKey(anyString());

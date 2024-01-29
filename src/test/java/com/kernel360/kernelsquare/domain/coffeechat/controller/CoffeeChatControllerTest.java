@@ -28,7 +28,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@DisplayName("커피챗 컨트롤러 통합 테스트")
+@DisplayName("커피챗 컨트롤러 단위 테스트")
 @WithMockUser
 @WebMvcTest(CoffeeChatController.class)
 class CoffeeChatControllerTest {

@@ -1,12 +1,11 @@
 package com.kernel360.kernelsquare.domain.member.service;
 
-import com.kernel360.kernelsquare.domain.level.entity.Level;
-import com.kernel360.kernelsquare.domain.member.dto.FindMemberResponse;
-import com.kernel360.kernelsquare.domain.member.dto.UpdateMemberRequest;
-import com.kernel360.kernelsquare.domain.member.entity.Member;
-import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
-import com.kernel360.kernelsquare.global.common_response.error.code.MemberErrorCode;
-import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import java.util.Optional;
+
+import com.kernel360.kernelsquare.domain.member.dto.UpdateMemberIntroductionRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,11 +14,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.*;
+import com.kernel360.kernelsquare.domain.level.entity.Level;
+import com.kernel360.kernelsquare.domain.member.dto.FindMemberResponse;
+import com.kernel360.kernelsquare.domain.member.dto.UpdateMemberProfileRequest;
+import com.kernel360.kernelsquare.domain.member.entity.Member;
+import com.kernel360.kernelsquare.domain.member.repository.MemberRepository;
+import com.kernel360.kernelsquare.global.common_response.error.code.MemberErrorCode;
+import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
 
 @DisplayName("회원 서비스 통합 테스트")
 @ExtendWith(MockitoExtension.class)
@@ -32,18 +33,16 @@ public class MemberServiceTest {
 	private PasswordEncoder passwordEncoder;
 
 	@Test
-	@DisplayName("회원 정보 수정 테스트")
-	void testUpdateMember() throws Exception {
+	@DisplayName("회원 프로필 수정 테스트")
+	void testUpdateMemberProfile() throws Exception {
 		//given
 		Long testMemberId = 1L;
 
 		String newImageUrl = "s3:dagwafd4323d1";
-		String newIntroduction = "bye, i'm hongjugwang.";
 
-		UpdateMemberRequest updateMemberRequest = UpdateMemberRequest
+		UpdateMemberProfileRequest updateMemberProfileRequest = UpdateMemberProfileRequest
 			.builder()
 			.imageUrl(newImageUrl)
-			.introduction(newIntroduction)
 			.build();
 
 		Level level = Level.builder()
@@ -56,7 +55,6 @@ public class MemberServiceTest {
 		Member updatedMember = Member.builder()
 			.nickname(member.getNickname())
 			.imageUrl(newImageUrl)
-			.introduction(newIntroduction)
 			.level(level)
 			.email(member.getEmail())
 			.authorities(member.getAuthorities())
@@ -69,7 +67,7 @@ public class MemberServiceTest {
 			.findById(anyLong());
 
 		//when
-		memberService.updateMember(testMemberId, updateMemberRequest);
+		memberService.updateMemberProfile(testMemberId, updateMemberProfileRequest);
 
 		doReturn(optionalUpdatedMember)
 			.when(memberRepository)
@@ -79,6 +77,55 @@ public class MemberServiceTest {
 
 		//then
 		assertThat(optionalFoundMember.get().getImageUrl()).isEqualTo(newImageUrl);
+
+		//verify
+		verify(memberRepository, times(2)).findById(anyLong());
+	}
+
+	@Test
+	@DisplayName("회원 소개 수정 테스트")
+	void testUpdateMemberIntroduction() throws Exception {
+		//given
+		Long testMemberId = 1L;
+
+		String newIntroduction = "bye, i'm hongjugwang.";
+
+		UpdateMemberIntroductionRequest updateMemberIntroductionRequest = UpdateMemberIntroductionRequest
+				.builder()
+				.introduction(newIntroduction)
+				.build();
+
+		Level level = Level.builder()
+				.imageUrl("level 1")
+				.name(1L)
+				.build();
+
+		Member member = createTestMember();
+		Optional<Member> optionalMember = Optional.of(member);
+		Member updatedMember = Member.builder()
+				.nickname(member.getNickname())
+				.introduction(newIntroduction)
+				.level(level)
+				.email(member.getEmail())
+				.authorities(member.getAuthorities())
+				.password(member.getPassword())
+				.build();
+		Optional<Member> optionalUpdatedMember = Optional.of(updatedMember);
+
+		doReturn(optionalMember)
+				.when(memberRepository)
+				.findById(anyLong());
+
+		//when
+		memberService.updateMemberIntroduction(testMemberId, updateMemberIntroductionRequest);
+
+		doReturn(optionalUpdatedMember)
+				.when(memberRepository)
+				.findById(anyLong());
+
+		Optional<Member> optionalFoundMember = memberRepository.findById(testMemberId);
+
+		//then
 		assertThat(optionalFoundMember.get().getIntroduction()).isEqualTo(newIntroduction);
 
 		//verify

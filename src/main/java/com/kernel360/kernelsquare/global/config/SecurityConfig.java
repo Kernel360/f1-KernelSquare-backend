@@ -47,13 +47,13 @@ public class SecurityConfig {
 		"/api/v1/images"
 	};
 
-	private final String[] hasRoleUserPatterns = new String[] {
-		"/api/v1/auth/reissue",
-		"/api/v1/auth/logout",
-		"/api/v1/questions/answers/{answerId}",
-		"/api/v1/questions/{questionId}/answers",
-		"/api/v1/questions/answers/{answerId}/vote"
-	};
+    private final String[] hasRoleUserPatterns = new String[]{
+            "/api/v1/auth/reissue",
+            "/api/v1/auth/logout",
+            "/api/v1/questions/answers/{answerId}",
+            "/api/v1/questions/{questionId}/answers",
+            "/api/v1/questions/answers/{answerId}/vote",
+    };
 
 	private final String[] hasRoleAdminPatterns = new String[] {
 		"/api/v1/techs/{techStackId}",
@@ -86,15 +86,16 @@ public class SecurityConfig {
 			.requestMatchers(HttpMethod.GET, "/api/v1/members/{memberId}").authenticated()
 			.requestMatchers(HttpMethod.GET, "/api/v1/techs").authenticated()
 
-			// ROLE_USER 권한 필요
-			.requestMatchers(hasRoleUserPatterns).permitAll()
-			.requestMatchers(HttpMethod.DELETE, "/api/v1/members/{memberId}").hasRole("USER")
-			.requestMatchers(HttpMethod.PUT, "/api/v1/members/{memberId}").hasRole("USER")
-			.requestMatchers(HttpMethod.PUT, "/api/v1/members/{memberId}/password").hasRole("USER")
-			.requestMatchers(HttpMethod.POST, "/api/v1/questions/**").hasRole("USER")
-			.requestMatchers(HttpMethod.PUT, "/api/v1/questions/{questionId}").hasRole("USER")
-			.requestMatchers(HttpMethod.DELETE, "/api/v1/questions/{questionId}").hasRole("USER")
-			.requestMatchers(HttpMethod.POST, "/api/v1/questions/{questionId}/answers").hasRole("USER")
+                // ROLE_USER 권한 필요
+            .requestMatchers(hasRoleUserPatterns).permitAll()
+            .requestMatchers(HttpMethod.DELETE, "/api/v1/members/{memberId}").hasRole("USER")
+            .requestMatchers(HttpMethod.PUT, "/api/v1/members/{memberId}/profile").hasRole("USER")
+            .requestMatchers(HttpMethod.PUT, "/api/v1/members/{memberId}/password").hasRole("USER")
+            .requestMatchers(HttpMethod.PUT, "/api/v1/members/{memberId}/introduction").hasRole("USER")
+            .requestMatchers(HttpMethod.POST, "/api/v1/questions/**").hasRole("USER")
+            .requestMatchers(HttpMethod.PUT, "/api/v1/questions/{questionId}").hasRole("USER")
+            .requestMatchers(HttpMethod.DELETE, "/api/v1/questions/{questionId}").hasRole("USER")
+            .requestMatchers(HttpMethod.POST, "/api/v1/questions/{questionId}/answers").hasRole("USER")
 
 			// ROLE_MENTOR 권한 필요
 			.requestMatchers(HttpMethod.POST, "/api/v1/coffeechat/posts").hasRole("MENTOR")

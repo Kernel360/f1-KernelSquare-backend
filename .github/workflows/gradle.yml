@@ -34,6 +34,10 @@ jobs:
         image: mongo:latest
         ports:
           - 27017:27017
+        env:
+          MONGO_INITDB_DATABASE: test
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: 1231
 
     steps:
       - uses: actions/checkout@v3

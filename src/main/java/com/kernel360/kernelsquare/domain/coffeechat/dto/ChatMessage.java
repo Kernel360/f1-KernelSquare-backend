@@ -7,9 +7,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatMessage {
-    public enum MessageType {
-        ENTER, TALK, LEAVE
-    }
 
     private MessageType type;
 

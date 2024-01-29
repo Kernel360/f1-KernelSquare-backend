@@ -59,6 +59,10 @@ spring:
     cache: false
 # <====
 
+  data:
+    mongodb:
+      uri: ${MONGO_URI}
+
 logging.level:
   org.hibernate.SQL: debug
   #  org.hibernate.type: trace

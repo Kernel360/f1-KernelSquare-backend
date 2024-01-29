@@ -80,6 +80,9 @@ dependencies {
     //mongodb
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 
+    //kafka
+    implementation 'org.springframework.kafka:spring-kafka'
+
     //Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'

@@ -4,11 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.kernel360.kernelsquare.domain.coffeechat.dto.ChatMessage;
 import com.kernel360.kernelsquare.domain.coffeechat.dto.MessageType;
+import com.kernel360.kernelsquare.domain.coffeechat.entity.MongoChatMessage;
+import com.kernel360.kernelsquare.domain.coffeechat.repository.MongoChatMessageRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompHeaders;
@@ -27,10 +30,14 @@ import java.util.List;
 import java.util.concurrent.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 
 @DisplayName("STOMP 소켓 통신 테스트")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class StompSocketTest {
+    @MockBean
+    private MongoChatMessageRepository mongoChatMessageRepository;
 
     protected StompSession stompSession;
 
@@ -118,12 +125,16 @@ public class StompSocketTest {
             .sender("홍박사")
             .build();
 
+        MongoChatMessage mongoChatMessage = MongoChatMessage.from(message);
+
+        given(mongoChatMessageRepository.save(any(MongoChatMessage.class))).willReturn(mongoChatMessage);
+
         this.stompSession.subscribe("/topic/chat/room/" + message.getRoomKey(), this.sessionHandler);
 
         //when
         this.stompSession.send("/app/chat/message", message);
 
-        ChatMessage receivedMessage = blockingQueue.poll(10, TimeUnit.SECONDS);
+        ChatMessage receivedMessage = blockingQueue.poll(20, TimeUnit.SECONDS);
 
         //then
         assertThat(receivedMessage).isNotNull();

@@ -11,7 +11,8 @@ import lombok.RequiredArgsConstructor;
 public enum MemberResponseCode implements ResponseCode {
 	MEMBER_FOUND(HttpStatus.OK, MemberServiceStatus.MEMBER_FOUND, "회원 정보 조회 성공"),
 	MEMBER_PASSWORD_UPDATED(HttpStatus.OK, MemberServiceStatus.MEMBER_PASSWORD_UPDATED, "비밀번호 수정 성공"),
-	MEMBER_INFO_UPDATED(HttpStatus.OK, MemberServiceStatus.MEMBER_INFO_UPDATED, "회원 정보 수정 성공"),
+	MEMBER_PROFILE_UPDATED(HttpStatus.OK, MemberServiceStatus.MEMBER_PROFILE_UPDATED, "회원 프로필 수정 성공"),
+	MEMBER_INTRODUCTION_UPDATED(HttpStatus.OK, MemberServiceStatus.MEMBER_INTRODUCTION_UPDATED, "회원 소개 수정 성공"),
 	MEMBER_DELETED(HttpStatus.OK, MemberServiceStatus.MEMBER_DELETED, "회원 탈퇴 성공");
 
 	private final HttpStatus code;

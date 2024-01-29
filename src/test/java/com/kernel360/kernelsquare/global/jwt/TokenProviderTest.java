@@ -56,6 +56,9 @@ public class TokenProviderTest {
 	public void setUp() {
 		byte[] keyBytes = Decoders.BASE64.decode(secret);
 		ReflectionTestUtils.setField(tokenProvider, "key", Keys.hmacShaKeyFor(keyBytes));
+		ReflectionTestUtils.setField(tokenProvider, "secret", secret);
+		ReflectionTestUtils.setField(tokenProvider, "accessTokenValidityInSeconds", 3600);
+		ReflectionTestUtils.setField(tokenProvider, "refreshTokenValidityInSeconds", 1_209_600);
 
 		objectMapper.registerModule(new JavaTimeModule());
 		objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
@@ -191,7 +194,7 @@ public class TokenProviderTest {
 		//given
 		String accessToken = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTkwMDAwMDAwMH0.eHSaEoaFl9Rb7R6YxwyKiACOObHN0XjiNO7T7i1KpkiqVbgz9hQr5EPq5DuRliA_UlsBeIvfU8UHPG7xhwdcRg";
 
-		String refreshTokenString = "eyJtZW1iZXJJZCI6MiwicmVmcmVzaFRva2VuIjoiMjYzOGUxYjQ3MmI2NDRkNTk4YzY1NGNlZWFlN2FhOTAiLCJjcmVhdGVkRGF0ZSI6IjIwMjQtMDEtMTBUMjE6MDA6MzIuNDYxOCIsImV4cGlyYXRpb25EYXRlIjoiMjAyNC0wMS0yNFQyMTowMDozMi40NjE3NiJ9";
+		String refreshTokenString = "eyJtZW1iZXJJZCI6MiwicmVmcmVzaFRva2VuIjoiMjYzOGUxYjQ3MmI2NDRkNTk4YzY1NGNlZWFlN2FhOTAiLCJjcmVhdGVkRGF0ZSI6IjIwMjQtMDEtMTBUMjE6MDA6MzIuNDYxOCIsImV4cGlyYXRpb25EYXRlIjoiMjEyNC0xMi0yNFQyMTowMDozMi40NjE3NiJ9";
 
 		TokenRequest tokenRequest = TokenRequest
 			.builder()

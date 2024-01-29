@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("CoffeeChat 도메인 요청 Dto 종합 테스트")
+@DisplayName("CoffeeChat 도메인 요청 Dto 단위 테스트")
 class CoffeeChatRequestDtoTest {
     ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
     Validator validator = factory.getValidator();

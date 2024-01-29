@@ -11,13 +11,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import static com.kernel360.kernelsquare.global.common_response.response.code.CoffeeChatResponseCode.COFFEE_CHAT_ROOM_CREATED;
-import static com.kernel360.kernelsquare.global.common_response.response.code.CoffeeChatResponseCode.ROOM_ENTRY_SUCCESSFUL;
+import static com.kernel360.kernelsquare.global.common_response.response.code.CoffeeChatResponseCode.*;
 
 @Slf4j
 @RestController
@@ -46,5 +42,16 @@ public class CoffeeChatController {
         EnterCoffeeChatRoomResponse response = coffeeChatService.enterCoffeeChatRoom(enterCoffeeChatRoomRequest);
 
         return ResponseEntityFactory.toResponseEntity(ROOM_ENTRY_SUCCESSFUL, response);
+    }
+
+    @PostMapping("/coffeechat/rooms/{roomKey}")
+    public ResponseEntity<ApiResponse> leaveCoffeeChatRoom(
+        @Valid
+        @PathVariable
+        String roomKey
+    ) {
+        coffeeChatService.leaveCoffeeChatRoom(roomKey);
+
+        return ResponseEntityFactory.toResponseEntity(COFFEE_CHAT_ROOM_LEAVE);
     }
 }

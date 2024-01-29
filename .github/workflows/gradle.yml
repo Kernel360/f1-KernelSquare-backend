@@ -30,6 +30,15 @@ jobs:
         ports:
           - 6379:6379
 
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+        env:
+          MONGO_INITDB_DATABASE: test
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: 1231
+
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK 21
@@ -43,6 +52,7 @@ jobs:
           files: ./src/test/resources/application.yml
         env:
           spring.security.jwt.secret: ${{ secrets.JWT_SECRET_KEY }}
+          spring.data.mongodb.uri: ${{ secrets.MONGO_TEST_URI }}
           custom.domain.image.baseUrl: ${{ secrets.BASE_URL }}
           cloud.aws.s3.bucket: ${{ secrets.S3_BUCKET_NAME }}
           cloud.aws.region.static: ${{ secrets.S3_REGION }}

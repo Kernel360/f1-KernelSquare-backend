@@ -1,0 +1,71 @@
+name: Java CD with Gradle
+
+on:
+  pull_request:
+    types:
+      - closed
+
+permissions:
+  contents: read
+
+jobs:
+  if_merge:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Set main yml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./src/java/resources/application.yml
+        env:
+          spring.datasource.url: ${{ secrets.LOCAL_DB_URL }}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8
+          spring.datasource.username: ${{ secrets.LOCAL_DB_HOST }}
+          spring.datasource.password: ${{ secrets.LOCAL_DB_PASSWORD }}
+          spring.security.jwt.secret: ${{ secrets.JWT_SECRET_KEY }}
+          custom.domain.image.baseUrl: ${{ secrets.BASE_URL }}
+          cloud.aws.s3.bucket: ${{ secrets.S3_BUCKET_NAME }}
+          cloud.aws.region.static: ${{ secrets.S3_REGION }}
+          cloud.aws.credentials.accessKey: ${{ secrets.AWS_ACCESS_KEY }}
+          cloud.aws.credentials.secretKey: ${{ secrets.AWS_ACCESS_SECRET }}
+
+      - name: Run chmod to make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew clean build -x test
+
+      - name: Make DockerCompose
+        run: |
+          touch docker-compose.yml
+          echo "${{ secrets.DOCKER_COMPOSE }}" > docker-compose.yml
+
+      - name: DockerHub Login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Docker Image Build
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }} .
+
+      - name: DockerHub Push
+        run: docker push ${{ secrets.DOCKERHUB_IMAGE }}/${{ secrets.DOCKERHUB_REPOSITORY }}
+
+      - name: Deploy and Run
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          password: ${{ secrets.EC2_PASSWORD }}
+          scripts: |
+            sudo docker-compose down
+            sudo docker-compose pull
+            sudo docker-compose up -d

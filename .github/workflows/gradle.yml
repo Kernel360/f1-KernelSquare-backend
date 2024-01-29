@@ -74,7 +74,7 @@ jobs:
       - name: Docker Compose For Test
         run: |
           touch docker-compose.yml
-          echo "${{ CI_DOCKER_COMPOSE }}" > docker-compose.yml
+          echo "${{ secrets.CI_DOCKER_COMPOSE }}" > docker-compose.yml
           echo docker-compose.yml
           docker-compose up -d
 

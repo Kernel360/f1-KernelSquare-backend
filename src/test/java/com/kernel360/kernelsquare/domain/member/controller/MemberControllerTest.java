@@ -7,6 +7,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.kernel360.kernelsquare.domain.member.dto.UpdateMemberIntroductionRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.member.dto.FindMemberResponse;
-import com.kernel360.kernelsquare.domain.member.dto.UpdateMemberRequest;
+import com.kernel360.kernelsquare.domain.member.dto.UpdateMemberProfileRequest;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
 import com.kernel360.kernelsquare.domain.member.service.MemberService;
 import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
@@ -55,35 +56,66 @@ public class MemberControllerTest {
 
 	@Test
 	@WithMockUser
-	@DisplayName("회원 정보 수정 성공 시, 200 OK와 메시지를 반환한다")
-	void testUpdateMember() throws Exception {
+	@DisplayName("회원 프로필 수정 성공 시, 200 OK와 메시지를 반환한다")
+	void testUpdateMemberProfile() throws Exception {
 		//given
 		String newImageUrl = "s3:dagwafd4323d1";
-		String newIntroduction = "bye, i'm hongjugwang.";
 
-		UpdateMemberRequest request = new UpdateMemberRequest(newImageUrl, newIntroduction);
+		UpdateMemberProfileRequest request = new UpdateMemberProfileRequest(newImageUrl);
 
 		doNothing()
 			.when(memberService)
-			.updateMember(anyLong(), any(UpdateMemberRequest.class));
+			.updateMemberProfile(anyLong(), any(UpdateMemberProfileRequest.class));
 
 		String jsonRequest = objectMapper.writeValueAsString(request);
 
 		//when & then
-		mockMvc.perform(put("/api/v1/members/" + testMemberId)
+		mockMvc.perform(put("/api/v1/members/" + testMemberId + "/profile")
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
 				.content(jsonRequest))
-			.andExpect(status().is(MEMBER_INFO_UPDATED.getStatus().value()))
+			.andExpect(status().is(MEMBER_PROFILE_UPDATED.getStatus().value()))
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.code").value(MEMBER_INFO_UPDATED.getCode()))
-			.andExpect(jsonPath("$.msg").value(MEMBER_INFO_UPDATED.getMsg()));
+			.andExpect(jsonPath("$.code").value(MEMBER_PROFILE_UPDATED.getCode()))
+			.andExpect(jsonPath("$.msg").value(MEMBER_PROFILE_UPDATED.getMsg()));
 
 		//verify
-		verify(memberService, times(1)).updateMember(anyLong(), any(UpdateMemberRequest.class));
+		verify(memberService, times(1)).updateMemberProfile(anyLong(), any(UpdateMemberProfileRequest.class));
 	}
+
+	@Test
+	@WithMockUser
+	@DisplayName("회원 소개 수정 성공 시, 200 OK와 메시지를 반환한다")
+	void testUpdateMemberIntroduction() throws Exception {
+		//given
+		String newIntroduction = "bye, i'm hongjugwang.";
+
+		UpdateMemberIntroductionRequest request = new UpdateMemberIntroductionRequest(newIntroduction);
+
+		doNothing()
+				.when(memberService)
+				.updateMemberIntroduction(anyLong(), any(UpdateMemberIntroductionRequest.class));
+
+		String jsonRequest = objectMapper.writeValueAsString(request);
+
+		//when & then
+		mockMvc.perform(put("/api/v1/members/" + testMemberId + "/introduction")
+						.with(csrf())
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON)
+						.characterEncoding("UTF-8")
+						.content(jsonRequest))
+				.andExpect(status().is(MEMBER_INTRODUCTION_UPDATED.getStatus().value()))
+				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.code").value(MEMBER_INTRODUCTION_UPDATED.getCode()))
+				.andExpect(jsonPath("$.msg").value(MEMBER_INTRODUCTION_UPDATED.getMsg()));
+
+		//verify
+		verify(memberService, times(1)).updateMemberIntroduction(anyLong(), any(UpdateMemberIntroductionRequest.class));
+	}
+
 
 	@Test
 	@WithMockUser

@@ -49,9 +49,12 @@ public class Member extends BaseEntity {
 	@OneToMany(mappedBy = "member")
 	private List<MemberAuthority> authorities = new ArrayList<>();
 
-	public void updateImageUrl(String imageUrl, String introduction) {
-		this.imageUrl = imageUrl;
+	public void updateIntroduction(String introduction) {
 		this.introduction = introduction;
+	}
+
+	public void updateImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
 	}
 
 	public void updatePassword(String password) {

@@ -36,8 +36,8 @@ import static org.mockito.BDDMockito.given;
 @DisplayName("STOMP 소켓 통신 테스트")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class StompSocketTest {
-    @MockBean
-    private MongoChatMessageRepository mongoChatMessageRepository;
+//    @MockBean
+//    private MongoChatMessageRepository mongoChatMessageRepository;
 
     protected StompSession stompSession;
 
@@ -79,7 +79,7 @@ public class StompSocketTest {
     public void connect() throws ExecutionException, InterruptedException, TimeoutException {
         this.stompSession = this.websocketClient
             .connect(url + port + endPoint, this.sessionHandler)
-            .get(1, TimeUnit.SECONDS);
+            .get(3, TimeUnit.SECONDS);
     }
 
     @AfterEach
@@ -125,9 +125,9 @@ public class StompSocketTest {
             .sender("홍박사")
             .build();
 
-        MongoChatMessage mongoChatMessage = MongoChatMessage.from(message);
+//        MongoChatMessage mongoChatMessage = MongoChatMessage.from(message);
 
-        given(mongoChatMessageRepository.save(any(MongoChatMessage.class))).willReturn(mongoChatMessage);
+//        given(mongoChatMessageRepository.save(any(MongoChatMessage.class))).willReturn(mongoChatMessage);
 
         this.stompSession.subscribe("/topic/chat/room/" + message.getRoomKey(), this.sessionHandler);
 

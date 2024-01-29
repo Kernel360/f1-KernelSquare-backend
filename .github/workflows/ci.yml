@@ -33,6 +33,17 @@ jobs:
           MONGO_INITDB_ROOT_USERNAME: root
           MONGO_INITDB_ROOT_PASSWORD: 1231
 
+      zookeeper:
+        image: wurstmeister/zookeeper:latest
+        ports:
+          - 2181:2181
+
+      kafka:
+        image: wurstmeister/kafka:latest
+        ports:
+          - 9092:9092
+        options: --env KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092 --env KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT --env KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092 --env KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT --env KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+
     steps:
       - uses: actions/checkout@v3
 

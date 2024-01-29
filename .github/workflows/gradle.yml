@@ -39,6 +39,11 @@ jobs:
           MONGO_INITDB_ROOT_USERNAME: root
           MONGO_INITDB_ROOT_PASSWORD: 1231
 
+      kafka:
+        image: wurstmeister/kafka:latest
+        ports:
+          - "9092:9092"
+
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK 21

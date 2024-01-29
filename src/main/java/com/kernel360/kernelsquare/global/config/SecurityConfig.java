@@ -101,6 +101,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/v1/coffeechat/rooms").hasRole("MENTOR")
                 .requestMatchers(HttpMethod.POST, "/api/v1/coffeechat/rooms/enter").hasAnyRole("MENTOR", "USER")
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/coffeechat/posts/{postId}").hasRole("MENTOR")
+                .requestMatchers(HttpMethod.PUT, "/api/v1/coffeechat/posts/{postId}").hasRole("MENTOR")
 
                 // ROLE_ADMIN 권한 필요
                 .requestMatchers(hasRoleAdminPatterns).hasRole("ADMIN")

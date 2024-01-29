@@ -1,9 +1,6 @@
 package com.kernel360.kernelsquare.domain.reservation_article.controller;
 
-import com.kernel360.kernelsquare.domain.reservation_article.dto.CreateReservationArticleRequest;
-import com.kernel360.kernelsquare.domain.reservation_article.dto.CreateReservationArticleResponse;
-import com.kernel360.kernelsquare.domain.reservation_article.dto.FindAllReservationArticleResponse;
-import com.kernel360.kernelsquare.domain.reservation_article.dto.FindReservationArticleResponse;
+import com.kernel360.kernelsquare.domain.reservation_article.dto.*;
 import com.kernel360.kernelsquare.domain.reservation_article.service.ReservationArticleService;
 import com.kernel360.kernelsquare.global.common_response.ApiResponse;
 import com.kernel360.kernelsquare.global.common_response.ResponseEntityFactory;
@@ -54,16 +51,18 @@ public class ReservationArticleController {
         return ResponseEntityFactory.toResponseEntity(RESERVATION_ARTICLE_FOUND, findReservationArticleResponse);
     }
 
-    // TODO 수정하기 로직 여기서 작업
-//    @PutMapping("/coffeechat/posts/{postId}")
-//    public ResponseEntity<ApiResponse> updateReservationArticle(
-//            @PathVariable
-//            Long postId
-//    ) {
-//        reservationArticleService.updateReservationArticle(postId);
-//
-//        return ResponseEntityFactory.toResponseEntity();
-//    }
+    @PutMapping("/coffeechat/posts/{postId}")
+    public ResponseEntity<ApiResponse> updateReservationArticle(
+            @PathVariable
+            Long postId,
+            @Valid
+            @RequestBody
+            UpdateReservationArticleRequest updateReservationArticleRequest
+    ) {
+        reservationArticleService.updateReservationArticle(postId, updateReservationArticleRequest);
+
+        return ResponseEntityFactory.toResponseEntity(RESERVATION_ARTICLE_UPDATED);
+    }
 
     @DeleteMapping("coffeechat/posts/{postId}")
     public ResponseEntity<ApiResponse> deleteReservationArticle(

@@ -1,6 +1,5 @@
 package com.kernel360.kernelsquare.domain.reservation.repository;
 
-import com.kernel360.kernelsquare.domain.reservation.dto.FindReservationResponse;
 import com.kernel360.kernelsquare.domain.reservation.entity.Reservation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -18,4 +17,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     @Modifying
     @Query("DELETE FROM Reservation a WHERE a.reservationArticle.id = :postId")
     void deleteAllByReservationArticleId(@Param("postId") Long postId);
+
+    Long countAllByReservationArticleId(Long articleId);
 }

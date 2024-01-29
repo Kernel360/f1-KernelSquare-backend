@@ -14,4 +14,6 @@ public interface HashtagRepository extends JpaRepository<Hashtag, Long> {
     void deleteAllByReservationArticleId(@Param("postId") Long postId);
 
     List<Hashtag> findAllByReservationArticleId(Long articleId);
+
+    Long countAllByReservationArticleId(Long articleId);
 }

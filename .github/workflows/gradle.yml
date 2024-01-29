@@ -24,14 +24,14 @@ jobs:
         ports:
           - 6379:6379
 
-      mongodb:
-        image: mongo:latest
-        ports:
-          - 27017:27017
-        env:
-          MONGO_INITDB_DATABASE: test
-          MONGO_INITDB_ROOT_USERNAME: root
-          MONGO_INITDB_ROOT_PASSWORD: 1231
+      # mongodb:
+      #   image: mongo:latest
+      #   ports:
+      #     - 27017:27017
+      #   env:
+      #     MONGO_INITDB_DATABASE: test
+      #     MONGO_INITDB_ROOT_USERNAME: root
+      #     MONGO_INITDB_ROOT_PASSWORD: 1231
 
       # zookeeper:
       #   image: confluentinc/cp-zookeeper:latest

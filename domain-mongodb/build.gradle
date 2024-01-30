@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.2.0'
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.kernelsquare'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    sourceCompatibility = '21'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    //mongodb
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+}
+
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+tasks.register('prepareKotlinBuildScriptModel') {
+
+}

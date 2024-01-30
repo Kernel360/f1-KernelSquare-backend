@@ -3,10 +3,11 @@ package com.kernel360.kernelsquare.domain.reservation_article.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.kernel360.kernelsquare.domain.hashtag.dto.FindHashtagResponse;
 import com.kernel360.kernelsquare.domain.hashtag.entity.Hashtag;
 import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
-import com.kernel360.kernelsquare.domain.reservation.dto.ReservationDto;
+import com.kernel360.kernelsquare.domain.reservation.dto.FindReservationResponse;
 import com.kernel360.kernelsquare.domain.reservation_article.dto.CreateReservationArticleRequest;
 import com.kernel360.kernelsquare.domain.reservation_article.dto.CreateReservationArticleResponse;
 import com.kernel360.kernelsquare.domain.reservation_article.dto.FindAllReservationArticleResponse;
@@ -57,7 +58,6 @@ class ReservationArticleControllerTest {
                 .id(id)
                 .title("testplz")
                 .content("ahahahahahhhh")
-                .hashtagList(List.of())
                 .build();
     }
 
@@ -81,23 +81,28 @@ class ReservationArticleControllerTest {
                 .build();
     }
 
+    private Hashtag createTestHashtag() {
+        return Hashtag.builder()
+                .content("#tester333")
+                .build();
+    }
+
     @Test
     @WithMockUser
     @DisplayName("예약창 생성 성공시 200 OK 와 응답 메시지를 반환한다.")
     void testCreateReservationArticle() throws Exception {
         // Given
-
         member = createTestMember();
         ReservationArticle reservationArticle = createTestReservationArticle(1L);
+        Hashtag hashtag = createTestHashtag();
 
         CreateReservationArticleRequest createReservationArticleRequest =
                 new CreateReservationArticleRequest(member.getId(), reservationArticle.getTitle(), reservationArticle.getContent(),
-                reservationArticle.getHashtagList().stream().map(Hashtag::getContent).toList(), List.of(LocalDateTime.now(),LocalDateTime.now().plusDays(2)));
+                        List.of(hashtag.getContent()), List.of(LocalDateTime.now(),LocalDateTime.now().plusDays(2)));
 
         objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
         objectMapper.registerModule(new JavaTimeModule());
         String jsonRequest = objectMapper.writeValueAsString(createReservationArticleRequest);
-
 
         given(reservationArticleService.createReservationArticle(any(CreateReservationArticleRequest.class))).willReturn(CreateReservationArticleResponse.from(reservationArticle));
 
@@ -122,8 +127,27 @@ class ReservationArticleControllerTest {
         // Given
         level = createTestLevel();
         member = createTestMember();
-        ReservationArticle article1 = createTestReservationArticle(1L);
-        ReservationArticle article2 = createTestReservationArticle(2L);
+
+        Hashtag hashtag1 = createTestHashtag();
+        Hashtag hashtag2 = createTestHashtag();
+
+        List<Hashtag> hashtagList = List.of(hashtag1,hashtag2);
+
+        ReservationArticle reservationArticle1 = ReservationArticle.builder()
+                .id(1L)
+                .member(member)
+                .title("testplz")
+                .content("ahahahahahhhh")
+                .hashtagList(hashtagList)
+                .build();
+
+        ReservationArticle reservationArticle2 = ReservationArticle.builder()
+                .id(2L)
+                .member(member)
+                .title("testplz22")
+                .content("ahahahahahhhh2222")
+                .hashtagList(hashtagList)
+                .build();
 
         Pageable pageable = PageRequest.of(0,2);
         Pagination pagination = Pagination.builder()
@@ -132,8 +156,8 @@ class ReservationArticleControllerTest {
                 .isEnd(true)
                 .build();
 
-        FindAllReservationArticleResponse findAllReservationArticleResponse1 = FindAllReservationArticleResponse.of(member, article1 ,1L);
-        FindAllReservationArticleResponse findAllReservationArticleResponse2 = FindAllReservationArticleResponse.of(member, article2 ,0L);
+        FindAllReservationArticleResponse findAllReservationArticleResponse1 = FindAllReservationArticleResponse.of(member, reservationArticle1 ,1L);
+        FindAllReservationArticleResponse findAllReservationArticleResponse2 = FindAllReservationArticleResponse.of(member, reservationArticle2 ,0L);
 
         List<FindAllReservationArticleResponse> responsePages = List.of(findAllReservationArticleResponse1, findAllReservationArticleResponse2);
 
@@ -171,23 +195,32 @@ class ReservationArticleControllerTest {
         member = createTestMember();
         ReservationArticle reservationArticle = createTestReservationArticle(1L);
 
-        ReservationDto reservationDto1 = ReservationDto.builder()
-                .finished(true)
+        FindReservationResponse findReservationResponse1 = FindReservationResponse.builder()
                 .startTime(LocalDateTime.now())
-                .memberNickname("tester22")
-                .memberImageUrl("url")
+                .mentiNickname("tester22")
+                .mentiImageUrl("url")
                 .build();
 
-        ReservationDto reservationDto2 = ReservationDto.builder()
-                .finished(true)
+        FindReservationResponse findReservationResponse2 = FindReservationResponse.builder()
                 .startTime(LocalDateTime.now())
-                .memberNickname("tester23")
-                .memberImageUrl("url")
+                .mentiNickname("tester23")
+                .mentiImageUrl("url")
                 .build();
 
-        List<ReservationDto> reservationDtoList = List.of(reservationDto1, reservationDto2);
+        FindHashtagResponse findHashtagResponse1 = FindHashtagResponse.builder()
+                .hashtagId(1L)
+                .content("#JYP")
+                .build();
 
-        FindReservationArticleResponse findReservationArticleResponse = FindReservationArticleResponse.of(member, reservationArticle, reservationDtoList, level);
+        FindHashtagResponse findHashtagResponse2 = FindHashtagResponse.builder()
+                .hashtagId(2L)
+                .content("#YG")
+                .build();
+
+        List<FindReservationResponse> findReservationResponseList = List.of(findReservationResponse1, findReservationResponse2);
+        List<FindHashtagResponse> findHashtagResponseList = List.of(findHashtagResponse1, findHashtagResponse2);
+
+        FindReservationArticleResponse findReservationArticleResponse = FindReservationArticleResponse.of(member, reservationArticle, findHashtagResponseList,findReservationResponseList);
 
         given(reservationArticleService.findReservationArticle(anyLong())).willReturn(findReservationArticleResponse);
 

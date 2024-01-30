@@ -4,5 +4,5 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum MessageType {
-    ENTER, TALK, LEAVE
+    ENTER, TALK, LEAVE, EXPIRE
 }

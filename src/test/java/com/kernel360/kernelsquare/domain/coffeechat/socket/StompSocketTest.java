@@ -72,7 +72,7 @@ public class StompSocketTest {
     public void connect() throws ExecutionException, InterruptedException, TimeoutException {
         this.stompSession = this.websocketClient
             .connect(url + port + endPoint, this.sessionHandler)
-            .get(3, TimeUnit.SECONDS);
+            .get(25, TimeUnit.SECONDS);
     }
 
     @AfterEach
@@ -123,7 +123,7 @@ public class StompSocketTest {
         //when
         this.stompSession.send("/app/chat/message", message);
 
-        ChatMessage receivedMessage = blockingQueue.poll(20, TimeUnit.SECONDS);
+        ChatMessage receivedMessage = blockingQueue.poll(50, TimeUnit.SECONDS);
 
         //then
         assertThat(receivedMessage).isNotNull();

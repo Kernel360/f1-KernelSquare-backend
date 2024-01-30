@@ -29,15 +29,14 @@ public record FindReservationArticleResponse(
             Member member,
             ReservationArticle article,
             List<FindHashtagResponse> findHashtagResponses,
-            List<FindReservationResponse> findReservationResponses,
-            Level level) {
+            List<FindReservationResponse> findReservationResponses) {
         return new FindReservationArticleResponse(
                 article.getId(),
                 member.getId(),
                 member.getNickname(),
                 ImageUtils.makeImageUrl(member.getImageUrl()),
-                level.getName(),
-                ImageUtils.makeImageUrl(level.getImageUrl()),
+                member.getLevel().getName(),
+                ImageUtils.makeImageUrl(member.getLevel().getImageUrl()),
                 article.getTitle(),
                 article.getContent(),
                 findHashtagResponses,

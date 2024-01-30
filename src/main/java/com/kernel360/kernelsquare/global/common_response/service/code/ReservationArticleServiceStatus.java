@@ -11,7 +11,7 @@ public enum ReservationArticleServiceStatus implements ServiceStatus {
     TOO_MANY_HASHTAG(3103),
     TOO_MANY_RESERVATION(3104),
     RESERVATION_TIME_LIMIT(3105),
-
+    STATUS_NOT_FOUND(3106),
 
     //success
     RESERVATION_ARTICLE_CREATED(3140),

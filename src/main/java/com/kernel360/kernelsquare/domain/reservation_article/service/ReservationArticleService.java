@@ -125,7 +125,7 @@ public class ReservationArticleService {
                 .map(FindReservationResponse::from)
                 .toList();
 
-        return FindReservationArticleResponse.of(member, reservationArticle, findHashtagResponses, findReservationResponses, member.getLevel());
+        return FindReservationArticleResponse.of(member, reservationArticle, findHashtagResponses, findReservationResponses);
     }
 
     @Transactional
@@ -156,6 +156,8 @@ public class ReservationArticleService {
                 } else if (hashtagRequest.changed().equals("remove")) {
                     removeHashtagCount++;
                     removeHashtags.put(hashtagRequest.hashtagId(), hashtagRequest.content());
+                } else {
+                    throw new BusinessException(ReservationArticleErrorCode.STATUS_NOT_FOUND);
                 }
             }
 

@@ -133,17 +133,18 @@ class ReservationArticleServiceTest {
         member = createTestMember();
         authority = createTestAuthority();
         memberRole = createTestRole(member, authority);
-        hashtag = createTestHashtag();
+
 
         List<MemberAuthority> memberAuthorityList = List.of(memberRole);
 
         member.initAuthorities(memberAuthorityList);
 
         ReservationArticle reservationArticle = createTestReservationArticle(1L);
+        Hashtag hashtag = createTestHashtag();
 
         CreateReservationArticleRequest createReservationArticleRequest =
                 new CreateReservationArticleRequest(member.getId(), reservationArticle.getTitle(), reservationArticle.getContent(),
-                        reservationArticle.getHashtagList().stream().map(Hashtag::getContent).toList(), List.of(LocalDateTime.now(),LocalDateTime.now().plusDays(2)));
+                        List.of(hashtag.getContent()), List.of(LocalDateTime.now(),LocalDateTime.now().plusDays(2)));
 
         given(memberRepository.findById(anyLong())).willReturn(Optional.ofNullable(member));
         given(reservationArticleRepository.save(any(ReservationArticle.class))).willReturn(reservationArticle);
@@ -165,8 +166,28 @@ class ReservationArticleServiceTest {
         // Given
         level = createTestLevel();
         member = createTestMember();
-        ReservationArticle reservationArticle1 = createTestReservationArticle(1L);
-        ReservationArticle reservationArticle2 = createTestReservationArticle(2L);
+
+        Hashtag hashtag1 = createTestHashtag();
+        Hashtag hashtag2 = createTestHashtag();
+
+        List<Hashtag> hashtagList = List.of(hashtag1,hashtag2);
+
+        ReservationArticle reservationArticle1 = ReservationArticle.builder()
+                .id(1L)
+                .member(member)
+                .title("testplz")
+                .content("ahahahahahhhh")
+                .hashtagList(hashtagList)
+                .build();
+
+        ReservationArticle reservationArticle2 = ReservationArticle.builder()
+                .id(2L)
+                .member(member)
+                .title("testplz22")
+                .content("ahahahahahhhh2222")
+                .hashtagList(hashtagList)
+                .build();
+
         List<ReservationArticle> articles = List.of(reservationArticle1, reservationArticle2);
 
         Pageable pageable = PageRequest.of(0,2);
@@ -203,18 +224,12 @@ class ReservationArticleServiceTest {
         member = createTestMember();
         hashtag = createTestHashtag();
         chatRoom = createChatRoom();
-        // reservation = createTestReservation(chatRoom);
 
         ReservationArticle reservationArticle = createTestReservationArticle(1L);
         Hashtag testHashtag = createTestHashtag();
-//        List<String> expectedHashtags = List.of(testHashtag).stream()
-//                .map(Hashtag::getContent).toList();
         Reservation testReservation = createTestReservation(chatRoom);
-//        List<LocalDateTime> expectedDateTimes = List.of(testReservation).stream()
-//                .map(Reservation::getStartTime).toList();
 
         given(reservationArticleRepository.findById(anyLong())).willReturn(Optional.ofNullable(reservationArticle));
-        // given(reservation.getChatRoom().getId()).willReturn(anyLong());
         given(hashTagRepository.findAllByReservationArticleId(anyLong())).willReturn(List.of(testHashtag));
         given(reservationRepository.findAllByReservationArticleId(anyLong())).willReturn(List.of(testReservation));
 

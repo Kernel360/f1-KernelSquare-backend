@@ -1,1 +1,8 @@
 rootProject.name = 'kernelsquare'
+
+include 'admin-api'
+include 'member-api'
+include 'core'
+include 'domain-mysql'
+include 'domain-mongodb'
+

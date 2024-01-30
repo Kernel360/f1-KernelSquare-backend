@@ -1,10 +1,11 @@
 package com.kernel360.kernelsquare.domain.reservation_article.dto;
 
+import com.kernel360.kernelsquare.domain.hashtag.dto.FindHashtagResponse;
 import com.kernel360.kernelsquare.domain.hashtag.entity.Hashtag;
 import com.kernel360.kernelsquare.domain.image.utils.ImageUtils;
 import com.kernel360.kernelsquare.domain.level.entity.Level;
 import com.kernel360.kernelsquare.domain.member.entity.Member;
-import com.kernel360.kernelsquare.domain.reservation.dto.ReservationDto;
+import com.kernel360.kernelsquare.domain.reservation.dto.FindReservationResponse;
 import com.kernel360.kernelsquare.domain.reservation_article.entity.ReservationArticle;
 
 import java.time.LocalDateTime;
@@ -19,27 +20,27 @@ public record FindReservationArticleResponse(
         String levelImageUrl,
         String title,
         String content,
-        List<String> hashTagList,
-        List<ReservationDto> dataTimes,
+        List<FindHashtagResponse> hashtags,
+        List<FindReservationResponse> dateTimes,
         LocalDateTime createdDate,
         LocalDateTime modifiedDate
 ) {
     public static FindReservationArticleResponse of(
             Member member,
             ReservationArticle article,
-            List<ReservationDto> reservationDtos,
-            Level level) {
+            List<FindHashtagResponse> findHashtagResponses,
+            List<FindReservationResponse> findReservationResponses) {
         return new FindReservationArticleResponse(
                 article.getId(),
                 member.getId(),
                 member.getNickname(),
                 ImageUtils.makeImageUrl(member.getImageUrl()),
-                level.getName(),
-                ImageUtils.makeImageUrl(level.getImageUrl()),
+                member.getLevel().getName(),
+                ImageUtils.makeImageUrl(member.getLevel().getImageUrl()),
                 article.getTitle(),
                 article.getContent(),
-                article.getHashtagList().stream().map(Hashtag::getContent).toList(),
-                reservationDtos,
+                findHashtagResponses,
+                findReservationResponses,
                 article.getCreatedDate(),
                 article.getModifiedDate()
         );

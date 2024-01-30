@@ -40,9 +40,8 @@ public class ReservationArticle extends BaseEntity {
         this.hashtagList = hashtagList;
     }
 
-    public void update(String title, String content, List<Hashtag> hashtagList) {
+    public void update(String title, String content) {
         this.title = title;
         this.content = content;
-        this.hashtagList = hashtagList;
     }
 }

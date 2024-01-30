@@ -46,6 +46,11 @@ jobs:
       #     - zookeeper
 
 
+      kafka:
+        image: wurstmeister/kafka:latest
+        ports:
+          - "9092:9092"
+
     steps:
       - uses: actions/checkout@v3
 

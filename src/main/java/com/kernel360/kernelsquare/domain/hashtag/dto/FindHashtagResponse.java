@@ -1,12 +1,11 @@
 package com.kernel360.kernelsquare.domain.hashtag.dto;
 
 import com.kernel360.kernelsquare.domain.hashtag.entity.Hashtag;
+import lombok.Builder;
 
-/**
- * DTO for {@link com.kernel360.kernelsquare.domain.hashtag.entity.Hashtag}
- */
+@Builder
 public record FindHashtagResponse(
-        Long id,
+        Long hashtagId,
         String content
 ) {
     public static FindHashtagResponse from(Hashtag hashtag) {

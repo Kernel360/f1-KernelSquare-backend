@@ -24,6 +24,18 @@ jobs:
         ports:
           - 6379:6379
 
+      zookeeper:
+        image: confluentinc/cp-zookeeper:latest
+        ports:
+          - 2181:2181
+
+      kafka:
+        image: confluentinc/cp-kafka:latest
+        ports:
+          - 9092:9092
+        # depends_on:
+        #   - zookeeper
+
       # mongodb:
       #   image: mongo:latest
       #   ports:
@@ -33,22 +45,10 @@ jobs:
       #     MONGO_INITDB_ROOT_USERNAME: root
       #     MONGO_INITDB_ROOT_PASSWORD: 1231
 
-      # zookeeper:
-      #   image: confluentinc/cp-zookeeper:latest
-      #   ports:
-      #     - 2181:2181
-
-      # kafka:
-      #   image: confluentinc/cp-kafka:latest
-      #   ports:
-      #     - 9092:9092
-      #   depends_on:
-      #     - zookeeper
-
-
     steps:
-      - uses: actions/checkout@v3
-
+      - name: Checkout head repository
+        uses: actions/checkout@v3
+        
       - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:

@@ -1,0 +1,7 @@
+spring:
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+
+  data:
+    mongodb:
+      uri: ${MONGO_TEST_URI}

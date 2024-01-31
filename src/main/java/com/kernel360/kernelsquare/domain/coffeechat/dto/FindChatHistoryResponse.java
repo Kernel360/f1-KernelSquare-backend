@@ -6,11 +6,11 @@ import lombok.Builder;
 import java.util.List;
 
 @Builder
-public record GetChatHistoryResponse(
+public record FindChatHistoryResponse(
     List<MongoChatMessage> chatHistory
 ) {
-    public static GetChatHistoryResponse of(List<MongoChatMessage> chatHistory) {
-        return GetChatHistoryResponse.builder()
+    public static FindChatHistoryResponse of(List<MongoChatMessage> chatHistory) {
+        return FindChatHistoryResponse.builder()
             .chatHistory(chatHistory)
             .build();
     }

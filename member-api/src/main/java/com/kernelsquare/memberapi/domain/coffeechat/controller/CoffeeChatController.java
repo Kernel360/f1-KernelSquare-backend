@@ -50,13 +50,13 @@ public class CoffeeChatController {
 		return ResponseEntityFactory.toResponseEntity(COFFEE_CHAT_ROOM_LEAVE);
 	}
 
-	@GetMapping("/coffeechat/rooms/{roomkey}")
-	public ResponseEntity<ApiResponse<GetChatHistoryResponse>> getChatHistory(
+	@GetMapping("/coffeechat/rooms/{roomKey}")
+	public ResponseEntity<ApiResponse<FindChatHistoryResponse>> findChatHistory(
 		@Valid
 		@PathVariable
 		String roomKey
 	) {
-		GetChatHistoryResponse response = coffeeChatService.getChatHistory(roomKey);
+		FindChatHistoryResponse response = coffeeChatService.findChatHistory(roomKey);
 
 		return ResponseEntityFactory.toResponseEntity(CHAT_HISTORY_FOUND, response);
 	}

@@ -7,6 +7,9 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.kernelsquare.domainmongodb.domain.coffeechat.entity.MongoChatMessage;
+import com.kernelsquare.domainmongodb.domain.coffeechat.entity.MongoMessageType;
+import com.kernelsquare.memberapi.domain.coffeechat.dto.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +21,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import com.kernelsquare.memberapi.domain.coffeechat.dto.CreateCoffeeChatRoomRequest;
-import com.kernelsquare.memberapi.domain.coffeechat.dto.CreateCoffeeChatRoomResponse;
-import com.kernelsquare.memberapi.domain.coffeechat.dto.EnterCoffeeChatRoomRequest;
-import com.kernelsquare.memberapi.domain.coffeechat.dto.EnterCoffeeChatRoomResponse;
 import com.kernelsquare.memberapi.domain.coffeechat.service.CoffeeChatService;
 import com.kernelsquare.domainmysql.domain.coffeechat.entity.ChatRoom;
+
+import java.util.List;
 
 @DisplayName("채팅 컨트롤러 통합 테스트")
 @WithMockUser
@@ -109,5 +110,33 @@ class CoffeeChatControllerTest {
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 			.andExpect(jsonPath("$.code").value(ROOM_ENTRY_SUCCESSFUL.getCode()))
 			.andExpect(jsonPath("$.msg").value(ROOM_ENTRY_SUCCESSFUL.getMsg()));
+	}
+
+	@Test
+	@DisplayName("채팅 내역 조회 성공시 200 OK와 메시지를 반환한다.")
+	void testFindChatHistory() throws Exception {
+		//given
+		MongoChatMessage mongoChatMessage = MongoChatMessage.builder()
+			.roomKey("key")
+			.type(MongoMessageType.TALK)
+			.message("hi")
+			.sender("에키드나")
+			.build();
+
+		List<MongoChatMessage> chatHistory = List.of(mongoChatMessage);
+
+		FindChatHistoryResponse findChatHistoryResponse = FindChatHistoryResponse.of(chatHistory);
+
+		given(coffeeChatService.findChatHistory(mongoChatMessage.getRoomKey())).willReturn(findChatHistoryResponse);
+
+		//when & then
+		mockMvc.perform(get("/api/v1/coffeechat/rooms/" + mongoChatMessage.getRoomKey())
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8"))
+			.andExpect(status().is(CHAT_HISTORY_FOUND.getStatus().value()))
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.code").value(CHAT_HISTORY_FOUND.getCode()))
+			.andExpect(jsonPath("$.msg").value(CHAT_HISTORY_FOUND.getMsg()));
 	}
 }

@@ -83,9 +83,10 @@ public class CoffeeChatService {
 		//TODO 특정 채팅방의 유저 리스트가 필요하다면?
 	}
 
-	public GetChatHistoryResponse getChatHistory(String roomKey) {
+	public FindChatHistoryResponse findChatHistory(String roomKey) {
 		List<MongoChatMessage> chatHistory = mongoChatMessageRepository.findAllByRoomKey(roomKey);
-		return GetChatHistoryResponse.of(chatHistory);
+
+		return FindChatHistoryResponse.of(chatHistory);
 	}
 
 	@Transactional

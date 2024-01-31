@@ -51,12 +51,12 @@ public class CoffeeChatController {
     }
 
     @GetMapping("/coffeechat/rooms/{roomKey}")
-    public ResponseEntity<ApiResponse<GetChatHistoryResponse>> getChatHistory(
+    public ResponseEntity<ApiResponse<FindChatHistoryResponse>> findChatHistory(
         @Valid
         @PathVariable
         String roomKey
     ) {
-        GetChatHistoryResponse response = coffeeChatService.getChatHistory(roomKey);
+        FindChatHistoryResponse response = coffeeChatService.findChatHistory(roomKey);
 
         return ResponseEntityFactory.toResponseEntity(CHAT_HISTORY_FOUND, response);
     }

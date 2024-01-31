@@ -23,7 +23,7 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
 
     annotationProcessor 'org.projectlombok:lombok'
-    
+
     //AOP
     implementation 'org.springframework.boot:spring-boot-starter-aop'
 
@@ -37,4 +37,12 @@ tasks.named('test') {
 
 tasks.register('prepareKotlinBuildScriptModel') {
 
+}
+
+tasks.named('bootJar') {
+    enabled = false
+}
+
+tasks.named('jar') {
+    enabled = true
 }

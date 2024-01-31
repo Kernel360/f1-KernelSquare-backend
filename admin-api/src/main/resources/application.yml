@@ -1,0 +1,91 @@
+spring:
+  datasource:
+    url: ${LOCAL_DB_URL}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${LOCAL_DB_HOST}
+    password: ${LOCAL_DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+    properties:
+      hibernate:
+        format_sql: true
+
+    database: mysql
+
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+
+  #    show-sql: true
+
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+
+    # ====> 소켓 통신의 임시 화면을 위함, 정식 화면이 생기면 삭제 할 것 !!
+    serialization:
+      fail-on-empty-beans: false
+  # <====
+
+  ## file upload max size (파일 업로드 크기 설정)
+  #  servlet:
+  #    multipart:
+  #      max-file-size: 20MB
+  #      max-request-size: 20MB
+
+
+  redis:
+    serialization:
+      class-property-type-name: RefreshToken.class
+
+  security:
+    jwt:
+      header: Authorization
+      secret: ${JWT_SECRET_KEY}
+      access-token-validity-in-seconds: 3600     # 1시간
+      refresh-token-validity-in-seconds: 1_209_600  # 2주
+
+  flyway:
+    enabled: false
+    baseline-on-migrate: true
+
+  # ====> 소켓 통신의 임시 화면을 위함, 정식 화면이 생기면 삭제 할 것 !!
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: false
+  freemarker:
+    cache: false
+# <====
+
+logging.level:
+  org.hibernate.SQL: debug
+  #  org.hibernate.type: trace
+  org.springframework.security: debug
+
+cloud:
+  aws:
+    s3:
+      bucket: ${S3_BUCKET_NAME}
+    stack.auto: false
+    region.static: ${S3_REGION}
+    credentials:
+      accessKey: ${AWS_ACCESS_KEY}
+      secretKey: ${AWS_ACCESS_SECRET}
+
+custom:
+  domain:
+    image:
+      baseUrl: ${BASE_URL}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus, health, info, metrics
+#  observations:
+#    key-values:
+server:
+  port: 8500
+#      application: KS_SingleModule  #태그

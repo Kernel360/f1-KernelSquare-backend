@@ -2,6 +2,8 @@ package com.kernel360.kernelsquare.domain.coffeechat.dto;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Builder
 @NoArgsConstructor
@@ -16,6 +18,7 @@ public class ChatMessage {
 
     private String message;
 
+    private LocalDateTime sendTime;
     public void setMessage(String message) {
         this.message = message;
     }

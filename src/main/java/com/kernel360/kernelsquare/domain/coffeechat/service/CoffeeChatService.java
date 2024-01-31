@@ -2,7 +2,9 @@ package com.kernel360.kernelsquare.domain.coffeechat.service;
 
 import com.kernel360.kernelsquare.domain.coffeechat.dto.*;
 import com.kernel360.kernelsquare.domain.coffeechat.entity.ChatRoom;
+import com.kernel360.kernelsquare.domain.coffeechat.entity.MongoChatMessage;
 import com.kernel360.kernelsquare.domain.coffeechat.repository.CoffeeChatRepository;
+import com.kernel360.kernelsquare.domain.coffeechat.repository.MongoChatMessageRepository;
 import com.kernel360.kernelsquare.global.common_response.error.code.CoffeeChatErrorCode;
 import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -20,6 +23,7 @@ import java.util.List;
 public class CoffeeChatService {
     private final CoffeeChatRepository coffeeChatRepository;
     private final SimpMessageSendingOperations sendingOperations;
+    private final MongoChatMessageRepository mongoChatMessageRepository;
 
     @Transactional
     public CreateCoffeeChatRoomResponse createCoffeeChatRoom(CreateCoffeeChatRoomRequest createCoffeeChatRoomRequest) {
@@ -34,6 +38,10 @@ public class CoffeeChatService {
     public EnterCoffeeChatRoomResponse enterCoffeeChatRoom(EnterCoffeeChatRoomRequest enterCoffeeChatRoomRequest) {
         ChatRoom chatRoom = coffeeChatRepository.findById(enterCoffeeChatRoomRequest.roomId())
             .orElseThrow(() -> new BusinessException(CoffeeChatErrorCode.COFFEE_CHAT_ROOM_NOT_FOUND));
+
+        if (chatRoom.getExpirationTime().isAfter(LocalDateTime.now())) {
+            throw new BusinessException(CoffeeChatErrorCode.COFFEE_CHAT_ROOM_EXPIRED);
+        }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -70,6 +78,11 @@ public class CoffeeChatService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         //TODO 특정 채팅방의 유저 리스트가 필요하다면?
+    }
+
+    public GetChatHistoryResponse getChatHistory(String roomKey) {
+        List<MongoChatMessage> chatHistory = mongoChatMessageRepository.findAllByRoomKey(roomKey);
+        return GetChatHistoryResponse.of(chatHistory);
     }
 
     @Transactional

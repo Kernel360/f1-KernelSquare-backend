@@ -43,6 +43,9 @@ public class SecurityConfig {
 		"/topic/chat/room",
 		"/app/chat/message",
 		"/webjars/**",
+		"/ws/**",
+		"/topic/test/room",
+		"/app/test/message",
 	};
 
 	private final String[] hasAnyAuthorityPatterns = new String[] {
@@ -87,6 +90,7 @@ public class SecurityConfig {
 			.requestMatchers(hasAnyAuthorityPatterns).authenticated()
 			.requestMatchers(HttpMethod.GET, "/api/v1/members/{memberId}").authenticated()
 			.requestMatchers(HttpMethod.GET, "/api/v1/techs").authenticated()
+			.requestMatchers(HttpMethod.GET, "/api/v1/coffeechat/rooms/{roomKey}").authenticated()
 
 			// ROLE_USER 권한 필요
 			.requestMatchers(hasRoleUserPatterns).permitAll()

@@ -1,7 +1,11 @@
 package com.kernelsquare.memberapi.domain.coffeechat.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+import com.kernelsquare.domainmongodb.domain.coffeechat.entity.MongoChatMessage;
+import com.kernelsquare.domainmongodb.domain.coffeechat.repository.MongoChatMessageRepository;
+import com.kernelsquare.memberapi.domain.coffeechat.dto.*;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
@@ -14,11 +18,6 @@ import com.kernelsquare.core.common_response.error.exception.BusinessException;
 import com.kernelsquare.core.type.MessageType;
 import com.kernelsquare.domainmysql.domain.coffeechat.entity.ChatRoom;
 import com.kernelsquare.domainmysql.domain.coffeechat.repository.CoffeeChatRepository;
-import com.kernelsquare.memberapi.domain.coffeechat.dto.ChatMessage;
-import com.kernelsquare.memberapi.domain.coffeechat.dto.CreateCoffeeChatRoomRequest;
-import com.kernelsquare.memberapi.domain.coffeechat.dto.CreateCoffeeChatRoomResponse;
-import com.kernelsquare.memberapi.domain.coffeechat.dto.EnterCoffeeChatRoomRequest;
-import com.kernelsquare.memberapi.domain.coffeechat.dto.EnterCoffeeChatRoomResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class CoffeeChatService {
 	private final CoffeeChatRepository coffeeChatRepository;
 	private final SimpMessageSendingOperations sendingOperations;
+	private final MongoChatMessageRepository mongoChatMessageRepository;
 
 	@Transactional
 	public CreateCoffeeChatRoomResponse createCoffeeChatRoom(CreateCoffeeChatRoomRequest createCoffeeChatRoomRequest) {
@@ -41,6 +41,10 @@ public class CoffeeChatService {
 	public EnterCoffeeChatRoomResponse enterCoffeeChatRoom(EnterCoffeeChatRoomRequest enterCoffeeChatRoomRequest) {
 		ChatRoom chatRoom = coffeeChatRepository.findById(enterCoffeeChatRoomRequest.roomId())
 			.orElseThrow(() -> new BusinessException(CoffeeChatErrorCode.COFFEE_CHAT_ROOM_NOT_FOUND));
+
+		if (chatRoom.getExpirationTime().isAfter(LocalDateTime.now())) {
+			throw new BusinessException(CoffeeChatErrorCode.COFFEE_CHAT_ROOM_EXPIRED);
+		}
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -77,6 +81,11 @@ public class CoffeeChatService {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
 		//TODO 특정 채팅방의 유저 리스트가 필요하다면?
+	}
+
+	public GetChatHistoryResponse getChatHistory(String roomKey) {
+		List<MongoChatMessage> chatHistory = mongoChatMessageRepository.findAllByRoomKey(roomKey);
+		return GetChatHistoryResponse.of(chatHistory);
 	}
 
 	@Transactional

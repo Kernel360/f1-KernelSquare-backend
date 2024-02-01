@@ -31,7 +31,10 @@
     </div>
     <ul class="list-group">
         <li class="list-group-item" v-for="message in messages">
-            {{message.sender}} - {{message.message}}
+            <span class="message-time" v-if="message.type === 'TALK'">
+            ({{ new Date(message.sendTime).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) }})
+            </span>
+            {{message.sender}} : {{message.message}}
         </li>
     </ul>
     <div></div>
@@ -56,18 +59,34 @@
             roomId: roomId,
             sender: sender,
             message: '',
-            messages: []
+            messages: [],
         },
         methods: {
             sendMessage: function() {
-                ws.send("/app/chat/message", {}, JSON.stringify({type:'TALK', room_key:this.roomId, sender:this.sender, message:this.message}));
+                var now = new Date();
+                var sendTime = now.getFullYear() + '-' +
+                    ('0' + (now.getMonth()+1)).slice(-2) + '-' +
+                    ('0' + now.getDate()).slice(-2) + 'T' +
+                    ('0' + now.getHours()).slice(-2) + ':' +
+                    ('0' + now.getMinutes()).slice(-2) + ':' +
+                    ('0' + now.getSeconds()).slice(-2) + '.' +
+                    ('00' + now.getMilliseconds()).slice(-3) + 'Z';
+                ws.send("/app/chat/message", {}, JSON.stringify({type:'TALK', room_key:this.roomId, sender:this.sender, message:this.message, send_time:sendTime}));
                 this.message = '';
             },
             recvMessage: function(recv) {
-                this.messages.unshift({"type":recv.type,"sender":(recv.type=='ENTER' || recv.type=='LEAVE')?'[알림]':recv.sender,"message":recv.message})
+                this.messages.unshift({"type":recv.type,"sender":(recv.type=='ENTER' || recv.type=='LEAVE')?'[알림]':recv.sender,"message":recv.message,"sendTime":recv.send_time})
             },
             leaveRoom: function() {
-                ws.send("/app/chat/message", {}, JSON.stringify({type:'LEAVE', room_key:this.roomId, sender:this.sender}));
+                var now = new Date();
+                var sendTime = now.getFullYear() + '-' +
+                    ('0' + (now.getMonth()+1)).slice(-2) + '-' +
+                    ('0' + now.getDate()).slice(-2) + 'T' +
+                    ('0' + now.getHours()).slice(-2) + ':' +
+                    ('0' + now.getMinutes()).slice(-2) + ':' +
+                    ('0' + now.getSeconds()).slice(-2) + '.' +
+                    ('00' + now.getMilliseconds()).slice(-3) + 'Z';
+                ws.send("/app/chat/message", {}, JSON.stringify({type:'LEAVE', room_key:this.roomId, sender:this.sender, send_time:sendTime}));
                 ws.disconnect();
             }
         }
@@ -79,7 +98,15 @@
                 var recv = JSON.parse(message.body);
                 vm.recvMessage(recv);
             });
-            ws.send("/app/chat/message", {}, JSON.stringify({type:'ENTER', room_key:vm.$data.roomId, sender:vm.$data.sender}));
+            var now = new Date();
+            var sendTime = now.getFullYear() + '-' +
+                ('0' + (now.getMonth()+1)).slice(-2) + '-' +
+                ('0' + now.getDate()).slice(-2) + 'T' +
+                ('0' + now.getHours()).slice(-2) + ':' +
+                ('0' + now.getMinutes()).slice(-2) + ':' +
+                ('0' + now.getSeconds()).slice(-2) + '.' +
+                ('00' + now.getMilliseconds()).slice(-3) + 'Z';
+            ws.send("/app/chat/message", {}, JSON.stringify({type:'ENTER', room_key:vm.$data.roomId, sender:vm.$data.sender, send_time:sendTime}));
         }, function(error) {
             if(reconnect++ <= 5) {
                 setTimeout(function() {

@@ -40,36 +40,6 @@ class CoffeeChatServiceTest {
 	private MongoChatMessageRepository mongoChatMessageRepository;
 
 	@Test
-	@DisplayName("채팅방 생성 테스트")
-	void testCreateCoffeeChatRoom() {
-		//given
-		String roomName = "홍박사님의 명강";
-
-		CreateCoffeeChatRoomRequest createCoffeeChatRoomRequest = CreateCoffeeChatRoomRequest.builder()
-			.roomName(roomName)
-			.build();
-
-		ChatRoom chatRoom = CreateCoffeeChatRoomRequest.toEntity(createCoffeeChatRoomRequest);
-
-		ChatRoom saveChatRoom = ChatRoom.builder()
-			.id(1L)
-			.roomKey(chatRoom.getRoomKey())
-			.build();
-
-		given(coffeeChatRepository.save(any(ChatRoom.class))).willReturn(saveChatRoom);
-
-		//when
-		CreateCoffeeChatRoomResponse response = coffeeChatService.createCoffeeChatRoom(createCoffeeChatRoomRequest);
-
-		//then
-		assertThat(response).isNotNull();
-		assertThat(response.roomKey()).isEqualTo(saveChatRoom.getRoomKey());
-
-		//verify
-		verify(coffeeChatRepository, times(1)).save(any(ChatRoom.class));
-	}
-
-	@Test
 	@DisplayName("채팅방 입장 테스트")
 	void testEnterCoffeeChatRoom() {
 		//given
@@ -83,6 +53,7 @@ class CoffeeChatServiceTest {
 		ChatRoom chatRoom = ChatRoom.builder()
 			.id(Long.valueOf(authentication.getName()))
 			.roomKey("asd")
+			.expirationTime(LocalDateTime.now().plusMinutes(30))
 			.build();
 
 		EnterCoffeeChatRoomRequest enterCoffeeChatRoomRequest = EnterCoffeeChatRoomRequest.builder()

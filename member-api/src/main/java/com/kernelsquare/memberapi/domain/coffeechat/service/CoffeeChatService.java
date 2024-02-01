@@ -42,7 +42,7 @@ public class CoffeeChatService {
 		ChatRoom chatRoom = coffeeChatRepository.findById(enterCoffeeChatRoomRequest.roomId())
 			.orElseThrow(() -> new BusinessException(CoffeeChatErrorCode.COFFEE_CHAT_ROOM_NOT_FOUND));
 
-		if (chatRoom.getExpirationTime().isAfter(LocalDateTime.now())) {
+		if (!chatRoom.getExpirationTime().isAfter(LocalDateTime.now())) {
 			throw new BusinessException(CoffeeChatErrorCode.COFFEE_CHAT_ROOM_EXPIRED);
 		}
 

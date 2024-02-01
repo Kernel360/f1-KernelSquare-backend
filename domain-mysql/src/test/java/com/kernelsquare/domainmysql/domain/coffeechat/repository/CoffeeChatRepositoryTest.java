@@ -1,9 +1,9 @@
-package com.kernel360.kernelsquare.domain.coffeechat.repository;
+package com.kernelsquare.domainmysql.domain.coffeechat.repository;
 
-import com.kernel360.kernelsquare.domain.coffeechat.entity.ChatRoom;
-import com.kernel360.kernelsquare.global.common_response.error.code.CoffeeChatErrorCode;
-import com.kernel360.kernelsquare.global.common_response.error.exception.BusinessException;
-import com.kernel360.kernelsquare.global.config.JpaAuditingConfig;
+import com.kernelsquare.core.common_response.error.code.CoffeeChatErrorCode;
+import com.kernelsquare.core.common_response.error.exception.BusinessException;
+import com.kernelsquare.domainmysql.config.JpaConfig;
+import com.kernelsquare.domainmysql.domain.coffeechat.entity.ChatRoom;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("커피챗 레포지토리 단위 테스트")
 @DataJpaTest
-@Import(JpaAuditingConfig.class)
+@Import(JpaConfig.class)
 class CoffeeChatRepositoryTest {
     @Autowired
     private CoffeeChatRepository coffeeChatRepository;

@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Builder
 @NoArgsConstructor
@@ -20,6 +22,8 @@ public class ChatMessage {
 	private String sender;
 
 	private String message;
+
+	private LocalDateTime sendTime;
 
 	public void setMessage(String message) {
 		this.message = message;

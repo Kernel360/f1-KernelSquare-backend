@@ -11,6 +11,12 @@ java {
     sourceCompatibility = '21'
 }
 
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
 repositories {
     mavenCentral()
 }
@@ -27,6 +33,9 @@ dependencies {
 
     //mongodb
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
+    //Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 

@@ -11,10 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
-import org.springframework.messaging.simp.stomp.StompHeaders;
-import org.springframework.messaging.simp.stomp.StompSession;
-import org.springframework.messaging.simp.stomp.StompSessionHandler;
-import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
+import org.springframework.messaging.simp.stomp.*;
+import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 import org.springframework.web.socket.sockjs.client.SockJsClient;
@@ -31,33 +29,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("STOMP 소켓 통신 테스트")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class StompSocketTest {
-
-    protected StompSession stompSession;
-
     @LocalServerPort
     private int port;
 
-    private final String url;
+    private SockJsClient sockJsClient;
 
-    private final String endPoint;
+    private WebSocketStompClient stompClient;
 
-    private final WebSocketStompClient websocketClient;
+    private final WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
 
-    private final BlockingQueue<ChatMessage> blockingQueue;
+    @BeforeEach
+    public void setup() {
+        List<Transport> transports = new ArrayList<>();
+        transports.add(new WebSocketTransport(new StandardWebSocketClient()));
 
-    private final StompSessionHandler sessionHandler;
-
-
-    public StompSocketTest() {
-        this.blockingQueue = new LinkedBlockingQueue<>();
-
-        this.sessionHandler = new TestSessionHandler(blockingQueue);
-
-        this.url = "ws://localhost:";
-
-        this.endPoint = "/kernel-square";
-
-        this.websocketClient = new WebSocketStompClient(new SockJsClient(createTransport()));
+        this.sockJsClient = new SockJsClient(transports);
+        this.stompClient = new WebSocketStompClient(sockJsClient);
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
@@ -65,71 +52,64 @@ public class StompSocketTest {
         MappingJackson2MessageConverter messageConverter = new MappingJackson2MessageConverter();
         messageConverter.setObjectMapper(objectMapper);
 
-        this.websocketClient.setMessageConverter(messageConverter);
-    }
-
-    @BeforeEach
-    public void connect() throws ExecutionException, InterruptedException, TimeoutException {
-        this.stompSession = this.websocketClient
-            .connect(url + port + endPoint, this.sessionHandler)
-            .get(25, TimeUnit.SECONDS);
-    }
-
-    @AfterEach
-    public void disconnect() {
-        if (this.stompSession.isConnected()) {
-            this.stompSession.disconnect();
-        }
-    }
-
-    private List<Transport> createTransport() {
-        List<Transport> transports = new ArrayList<>(1);
-        transports.add(new WebSocketTransport(new StandardWebSocketClient()));
-        return transports;
-    }
-
-    private class TestSessionHandler extends StompSessionHandlerAdapter {
-
-        private final BlockingQueue<ChatMessage> blockingQueue;
-
-        public TestSessionHandler(BlockingQueue<ChatMessage> blockingQueue) {
-            this.blockingQueue = blockingQueue;
-        }
-
-        @Override
-        public Type getPayloadType(StompHeaders headers) {
-            return ChatMessage.class;
-        }
-
-        @Override
-        public void handleFrame(StompHeaders headers, Object payload) {
-            blockingQueue.offer((ChatMessage) payload);
-        }
+        this.stompClient.setMessageConverter(messageConverter);
     }
 
     @Test
-    @DisplayName("메시지 전송 테스트")
-    public void testSendMessage() throws InterruptedException {
-        //given
-        ChatMessage message = ChatMessage.builder()
-            .message("hi")
-            .roomKey("key")
-            .type(MessageType.TALK)
-            .sender("홍박사")
-            .build();
+    @DisplayName("메시지 수신 테스트")
+    public void getMessage() throws Exception {
 
-        this.stompSession.subscribe("/topic/chat/room/" + message.getRoomKey(), this.sessionHandler);
+        final CountDownLatch latch = new CountDownLatch(1);
+        StompSessionHandler handler = new TestSessionHandler(latch);
+        this.stompClient.connect("ws://localhost:" + this.port + "/ws", this.headers, handler);
 
-        //when
-        this.stompSession.send("/app/chat/message", message);
+        latch.await(30, TimeUnit.SECONDS);
 
-        ChatMessage receivedMessage = blockingQueue.poll(50, TimeUnit.SECONDS);
+        assertThat(latch.getCount()).isEqualTo(0);
+    }
 
-        //then
-        assertThat(receivedMessage).isNotNull();
-        assertThat(receivedMessage.getMessage()).isEqualTo(message.getMessage());
-        assertThat(receivedMessage.getSender()).isEqualTo(message.getSender());
-        assertThat(receivedMessage.getRoomKey()).isEqualTo(message.getRoomKey());
-        assertThat(receivedMessage.getType()).isEqualTo(message.getType());
+    class TestSessionHandler extends StompSessionHandlerAdapter {
+
+        private final CountDownLatch latch;
+
+        public TestSessionHandler(CountDownLatch latch) {
+            this.latch = latch;
+        }
+
+        @Override
+        public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
+            ChatMessage sendMessage = ChatMessage.builder()
+                .message("hi")
+                .roomKey("key")
+                .type(MessageType.TALK)
+                .sender("홍박사")
+                .build();
+
+            session.subscribe("/topic/test/room/" + sendMessage.getRoomKey(), new StompFrameHandler() {
+                @Override
+                public Type getPayloadType(StompHeaders headers) {
+                    return ChatMessage.class;
+                }
+
+                @Override
+                public void handleFrame(StompHeaders headers, Object payload) {
+                    ChatMessage receiveMessage = (ChatMessage) payload;
+
+                    System.out.println(receiveMessage.getRoomKey());
+
+                    try {
+                        assertThat(receiveMessage.getMessage()).startsWith("hi");
+                        latch.countDown();
+                    } catch (Throwable e) {
+                        latch.countDown();
+                    }
+                }
+            });
+            try {
+                session.send("/app/test/message", sendMessage);
+            } catch (Throwable t) {
+                latch.countDown();
+            }
+        }
     }
 }

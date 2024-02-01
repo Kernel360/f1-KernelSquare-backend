@@ -34,7 +34,7 @@ public class MongoChatMessage {
             .type(MongoMessageType.valueOf(String.valueOf(message.getType())))
             .sender(message.getSender())
             .message(message.getMessage())
-            .sendTime(LocalDateTime.now())
+            .sendTime(message.getSendTime())
             .build();
     }
 }

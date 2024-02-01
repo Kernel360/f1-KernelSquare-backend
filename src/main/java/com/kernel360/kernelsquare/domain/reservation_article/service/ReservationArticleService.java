@@ -75,6 +75,7 @@ public class ReservationArticleService {
 			// 새로운 Chatroom 생성
 			ChatRoom chatroom = ChatRoom.builder()
 				.roomKey(UUID.randomUUID().toString())
+				.expirationTime(dateTime.plusMinutes(30))
 				.build();
 
 			coffeeChatRepository.save(chatroom);

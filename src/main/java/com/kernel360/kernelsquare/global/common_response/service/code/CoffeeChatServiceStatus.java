@@ -12,11 +12,13 @@ public enum CoffeeChatServiceStatus implements ServiceStatus {
     MEMBER_MISMATCH(3204),
     AUTHORITY_NOT_VALID(3205),
     MESSAGE_DELIVERY_FAILED(3206),
+    COFFEE_CHAT_ROOM_EXPIRED(3207),
 
     //success
     COFFEE_CHAT_ROOM_CREATED(3240),
     ROOM_ENTRY_SUCCESSFUL(3241),
-    COFFEE_CHAT_ROOM_LEAVE(3242);
+    COFFEE_CHAT_ROOM_LEAVE(3242),
+    CHAT_HISTORY_FOUND(3243);
 
     private final Integer code;
 

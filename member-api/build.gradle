@@ -2,7 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.0'
     id 'io.spring.dependency-management' version '1.1.4'
-    id 'org.asciidoctor.convert' version '1.5.9.2'
+    id 'org.asciidoctor.jvm.convert' version '3.3.2'
 }
 
 group = 'com.kernelsquare'
@@ -29,6 +29,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
 
     //QueryDSL
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
@@ -85,6 +86,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+
     testImplementation 'com.h2database:h2'
 }
 

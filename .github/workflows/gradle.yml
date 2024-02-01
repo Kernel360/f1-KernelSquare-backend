@@ -47,6 +47,46 @@ jobs:
           cloud.aws.credentials.accessKey: ${{ secrets.AWS_ACCESS_KEY }}
           cloud.aws.credentials.secretKey: ${{ secrets.AWS_ACCESS_SECRET }}
 
+      - name: Set up admin-api test application.yml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./admin-api/src/test/resources/application.yml
+        env:
+          spring.security.jwt.secret: ${{ secrets.JWT_SECRET_KEY }}
+          spring.data.mongodb.uri: ${{ secrets.MONGO_TEST_URI }}
+          custom.domain.image.baseUrl: ${{ secrets.BASE_URL }}
+          cloud.aws.s3.bucket: ${{ secrets.S3_BUCKET_NAME }}
+          cloud.aws.region.static: ${{ secrets.S3_REGION }}
+          cloud.aws.credentials.accessKey: ${{ secrets.AWS_ACCESS_KEY }}
+          cloud.aws.credentials.secretKey: ${{ secrets.AWS_ACCESS_SECRET }}
+
+      - name: Set up domain-mongodb test application.yml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./domain-mongodb/src/test/resources/application.yml
+        env:
+          spring.data.mongodb.uri: ${{ secrets.MONGO_TEST_URI }}
+
+      - name: Set up domain-mysql test application.yml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./domain-mysql/src/test/resources/application.yml
+        env:
+          spring.security.jwt.secret: ${{ secrets.JWT_SECRET_KEY }}
+
+      - name: Set up member-api test application.yml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./member-api/src/test/resources/application.yml
+        env:
+          spring.security.jwt.secret: ${{ secrets.JWT_SECRET_KEY }}
+          spring.data.mongodb.uri: ${{ secrets.MONGO_TEST_URI }}
+          custom.domain.image.baseUrl: ${{ secrets.BASE_URL }}
+          cloud.aws.s3.bucket: ${{ secrets.S3_BUCKET_NAME }}
+          cloud.aws.region.static: ${{ secrets.S3_REGION }}
+          cloud.aws.credentials.accessKey: ${{ secrets.AWS_ACCESS_KEY }}
+          cloud.aws.credentials.secretKey: ${{ secrets.AWS_ACCESS_SECRET }}
+
       - name: Run chmod to make gradlew executable
         run: chmod +x ./gradlew
 

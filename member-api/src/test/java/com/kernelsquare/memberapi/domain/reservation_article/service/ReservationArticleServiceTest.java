@@ -139,6 +139,11 @@ class ReservationArticleServiceTest {
 		member.initAuthorities(memberAuthorityList);
 
 		ReservationArticle reservationArticle = createTestReservationArticle(1L);
+
+		LocalDateTime localDateTime = LocalDateTime.now().plusDays(8L);
+
+		reservationArticle.addStartTime(localDateTime);
+
 		Hashtag hashtag = createTestHashtag();
 
 		CreateReservationArticleRequest createReservationArticleRequest =
@@ -181,6 +186,8 @@ class ReservationArticleServiceTest {
 			.hashtagList(hashtagList)
 			.build();
 
+		reservationArticle1.addStartTime(LocalDateTime.now());
+
 		ReservationArticle reservationArticle2 = ReservationArticle.builder()
 			.id(2L)
 			.member(member)
@@ -188,6 +195,8 @@ class ReservationArticleServiceTest {
 			.content("ahahahahahhhh2222")
 			.hashtagList(hashtagList)
 			.build();
+
+		reservationArticle2.addStartTime(LocalDateTime.now());
 
 		List<ReservationArticle> articles = List.of(reservationArticle1, reservationArticle2);
 

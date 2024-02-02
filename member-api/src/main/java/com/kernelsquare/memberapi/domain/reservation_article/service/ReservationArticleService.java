@@ -15,7 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.kernelsquare.core.common_response.error.code.MemberErrorCode;
 import com.kernelsquare.core.common_response.error.code.ReservationArticleErrorCode;
 import com.kernelsquare.core.common_response.error.exception.BusinessException;
 import com.kernelsquare.core.dto.PageResponse;
@@ -71,6 +70,10 @@ public class ReservationArticleService {
 			hashtagRepository.save(hashTag);
 		}
 
+		LocalDate currentDate = LocalDateTime.now().toLocalDate();
+		LocalDateTime startTime = LocalDateTime.MAX;
+		LocalDateTime endTime = LocalDateTime.MIN;
+
 		for (LocalDateTime dateTime : createReservationArticleRequest.dateTimes()) {
 			// 새로운 Chatroom 생성
 			ChatRoom chatroom = ChatRoom.builder()
@@ -79,6 +82,9 @@ public class ReservationArticleService {
 				.build();
 
 			coffeeChatRepository.save(chatroom);
+			if (startTime.isAfter(dateTime)) {
+				startTime = dateTime;
+			}
 
 			// Reservation 생성 및 설정
 			Reservation reservation = Reservation.builder()
@@ -90,6 +96,20 @@ public class ReservationArticleService {
 
 			reservationRepository.save(reservation);
 		}
+
+		// 3일 기간 체크
+		Long checkDurationDay = ChronoUnit.DAYS.between(startTime.toLocalDate(), endTime.toLocalDate());
+		if (checkDurationDay > 3) {
+			throw new BusinessException(ReservationArticleErrorCode.RESERVATION_TIME_LIMIT);
+		}
+
+		// 예약 생성 기한 체크 로직 (7일 이후, 한달 이전)
+		if (!startTime.toLocalDate().isAfter(currentDate.plusDays(7)) && currentDate.isBefore(
+			currentDate.plusMonths(1))) {
+			throw new BusinessException(ReservationArticleErrorCode.RESERVATION_PERIOD_LIMIT);
+		}
+
+		saveReservationArticle.addStartTime(startTime);
 
 		return CreateReservationArticleResponse.from(saveReservationArticle);
 	}

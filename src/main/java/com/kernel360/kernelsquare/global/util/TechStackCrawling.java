@@ -41,6 +41,10 @@ public class TechStackCrawling {
             PreparedStatement pstmt = conn.prepareStatement(insertQuery);
 
             for (int i=1; i<=totalPages; i++) {
+                if (i > 30) {
+                    break;
+                }
+
                 String stackOverFlowUrl = "https://stackoverflow.com/tags?page=" + i + "&tab=popular";
                 doc = Jsoup.connect(stackOverFlowUrl).get();
 
@@ -53,12 +57,16 @@ public class TechStackCrawling {
                         pstmt.setString(1, techStack);
                         pstmt.setTimestamp(2, timestamp);
                         pstmt.setTimestamp(3, timestamp);
-
-                        pstmt.executeUpdate();
+                        try {
+                            pstmt.executeUpdate();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            System.out.println(techStack);
+                        }
                     }
                 }
                 /* 1초에 30번, 1일에 10000번 제한이 있습니다. */
-                Thread.sleep(250);
+                Thread.sleep(200);
             }
 
             pstmt.close();

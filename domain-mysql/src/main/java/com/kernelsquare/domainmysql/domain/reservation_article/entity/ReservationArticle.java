@@ -53,6 +53,7 @@ public class ReservationArticle extends BaseEntity {
 		this.title = title;
 		this.content = content;
 		this.hashtagList = hashtagList;
+		this.startTime = startTime;
 	}
 
 	public void update(String title, String content) {

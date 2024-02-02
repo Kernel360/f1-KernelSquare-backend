@@ -28,4 +28,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 	@Modifying
 	@Query("DELETE FROM Reservation a WHERE a.reservationArticle.id = :postId")
 	void deleteAllByReservationArticleId(@Param("postId") Long postId);
+
+	// @Query("SELECT MIN(a.startTime) FROM Reservation a WHERE a.reservationArticle.id = :articleId GROUP BY a.reservationArticle.id")
+	// LocalDateTime findStartTimeByReservationArticleId(@Param("articleId") Long articleId);
 }

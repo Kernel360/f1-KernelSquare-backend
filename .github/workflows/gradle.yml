@@ -1,4 +1,4 @@
-name: Java CI with Gradle
+name: Java CI with Gradle V0.1
 
 on:
   pull_request_target:
@@ -79,6 +79,9 @@ jobs:
         with:
           files: ./member-api/src/test/resources/application.yml
         env:
+          spring.datasource.url: ${{ secrets.TEST_DB_URL }}
+          spring.datasource.username: ${{ secrets.TEST_DB_HOST }}
+          spring.datasource.password: ${{ secrets.TEST_DB_PASSWORD }}
           spring.security.jwt.secret: ${{ secrets.JWT_SECRET_KEY }}
           spring.data.mongodb.uri: ${{ secrets.MONGO_TEST_URI }}
           custom.domain.image.baseUrl: ${{ secrets.BASE_URL }}

@@ -22,17 +22,6 @@ jobs:
         ports:
           - 6379:6379
 
-      # mysql:
-      #   image: mysql:8
-      #   env:
-      #     MYSQL_ROOT_PASSWORD: root_password
-      #     MYSQL_DATABASE: testdb
-      #     MYSQL_USER: test_user
-      #     MYSQL_PASSWORD: test_password
-      #   ports:
-      #     - "3306:3306"
-      #   options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -90,15 +79,9 @@ jobs:
         with:
           files: ./member-api/src/test/resources/application.yml
         env:
-          # TEST_DB_URL: jdbc:mysql://localhost:3306/testdb
-          # TEST_DB_HOST: test_user
-          # TEST_DB_PASSWORD: test_password
-          TEST_DB_URL: ${{ secrets.TEST_DB_URL }}
-          TEST_DB_HOST: ${{ secrets.TEST_DB_HOST }}
-          TEST_DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
-          # spring.datasource.url: ${{ secrets.TEST_DB_URL }}
-          # spring.datasource.username: ${{ secrets.TEST_DB_HOST }}
-          # spring.datasource.password: ${{ secrets.TEST_DB_PASSWORD }}
+          spring.datasource.url: ${{ secrets.TEST_DB_URL }}
+          spring.datasource.username: ${{ secrets.TEST_DB_HOST }}
+          spring.datasource.password: ${{ secrets.TEST_DB_PASSWORD }}
           spring.security.jwt.secret: ${{ secrets.JWT_SECRET_KEY }}
           spring.data.mongodb.uri: ${{ secrets.MONGO_TEST_URI }}
           custom.domain.image.baseUrl: ${{ secrets.BASE_URL }}

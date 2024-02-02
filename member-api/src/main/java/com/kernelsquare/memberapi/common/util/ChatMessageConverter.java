@@ -1,7 +1,5 @@
 package com.kernelsquare.memberapi.common.util;
 
-import java.time.LocalDateTime;
-
 import com.kernelsquare.domainmongodb.domain.coffeechat.entity.MongoChatMessage;
 import com.kernelsquare.domainmongodb.domain.coffeechat.entity.MongoMessageType;
 import com.kernelsquare.memberapi.domain.coffeechat.dto.ChatMessage;
@@ -13,7 +11,7 @@ public class ChatMessageConverter {
 			.type(MongoMessageType.valueOf(String.valueOf(message.getType())))
 			.sender(message.getSender())
 			.message(message.getMessage())
-			.sendTime(LocalDateTime.now())
+			.sendTime(message.getSendTime())
 			.build();
 	}
 }

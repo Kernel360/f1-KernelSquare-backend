@@ -29,7 +29,7 @@ public class ReservationService {
 
 	@Transactional(readOnly = true)
 	public FindAllReservationResponse findAllReservationByMemberId(Long memberId) {
-		List<Reservation> reservationList = reservationRepository.findAllByMemberId(Long.valueOf(memberId));
+		List<Reservation> reservationList = reservationRepository.findAllByMemberId(memberId);
 
 		List<FindReservationResponse> reservationResponseList = reservationList.stream()
 			.map(FindReservationResponse::from)

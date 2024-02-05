@@ -57,16 +57,18 @@ class ReservationControllerTest {
 		//given
 		FindReservationResponse findReservationResponse1 = FindReservationResponse.builder()
 			.reservationId(1L)
-			.startTime(LocalDateTime.now())
+			.startTime(LocalDateTime.of(2024, 10, 10, 0, 30))
 			.menteeNickname("홍주광")
 			.menteeImageUrl("s3:12d12dgba")
+			.roomId(1L)
 			.build();
 
 		FindReservationResponse findReservationResponse2 = FindReservationResponse.builder()
 			.reservationId(2L)
-			.startTime(LocalDateTime.now())
+			.startTime(LocalDateTime.of(2024, 10, 10, 1, 00))
 			.menteeNickname("김원상")
 			.menteeImageUrl("s3:122212dgba")
+			.roomId(2L)
 			.build();
 
 		List<FindReservationResponse> reservationResponses = List.of(findReservationResponse1,
@@ -121,7 +123,7 @@ class ReservationControllerTest {
 					fieldWithPath("data.reservation_responses[].reservation_id").type(JsonFieldType.NUMBER)
 						.description("예약 아이디"),
 					//todo : 방 아이디 type 확인 -> Null 맞음?
-					fieldWithPath("data.reservation_responses[].room_id").type(JsonFieldType.NULL)
+					fieldWithPath("data.reservation_responses[].room_id").type(JsonFieldType.NUMBER)
 						.description("방 아이디"),
 					fieldWithPath("data.reservation_responses[].start_time").type(JsonFieldType.STRING)
 						.description("커피챗 시작 시간"),

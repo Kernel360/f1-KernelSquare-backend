@@ -1,11 +1,12 @@
 package com.kernelsquare.memberapi.domain.search.service;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.*;
-
-import java.util.List;
-
+import com.kernelsquare.domainmysql.domain.level.entity.Level;
+import com.kernelsquare.domainmysql.domain.member.entity.Member;
+import com.kernelsquare.domainmysql.domain.question.entity.Question;
+import com.kernelsquare.domainmysql.domain.search.repository.SearchRepository;
+import com.kernelsquare.domainmysql.domain.tech_stack.entity.TechStack;
+import com.kernelsquare.memberapi.domain.search.dto.SearchQuestionResponse;
+import com.kernelsquare.memberapi.domain.search.dto.SearchTechStackResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,11 +19,12 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import com.kernelsquare.memberapi.domain.search.dto.SearchQuestionResponse;
-import com.kernelsquare.domainmysql.domain.level.entity.Level;
-import com.kernelsquare.domainmysql.domain.member.entity.Member;
-import com.kernelsquare.domainmysql.domain.question.entity.Question;
-import com.kernelsquare.domainmysql.domain.search.repository.SearchRepository;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.*;
 
 @DisplayName("검색 서비스 통합 테스트")
 @ExtendWith(MockitoExtension.class)
@@ -79,7 +81,7 @@ class SearchServiceTest {
 
 	@Test
 	@DisplayName("질문 검색 테스트")
-	void testFindAllQuestions() {
+	void testSearchQuestions() {
 		//given
 		Question question1 = createTestQuestion(1L);
 		Question question2 = createTestQuestion(2L);
@@ -112,4 +114,41 @@ class SearchServiceTest {
 		//verify
 		verify(searchRepository, times(1)).searchQuestionsByKeyword(any(Pageable.class), anyString());
 	}
-}
+
+	@Test
+	@DisplayName("기술 스택 검색 테스트")
+	void testSearchTechStacks() {
+		//given
+		TechStack techStack1 = new TechStack(1L, "JavaScript");
+		TechStack techStack2 = new TechStack(2L, "Python");
+
+		List<TechStack> testSkills = List.of(techStack1, techStack2);
+
+		Pageable pageable = PageRequest.of(0, 2);
+		Page<TechStack> pages = new PageImpl<>(testSkills, pageable, testSkills.size());
+
+		String keyword = "j";
+
+		given(searchRepository.searchTechStacksByKeyword(pageable, keyword)).willReturn(pages);
+
+		Integer currentPage = pageable.getPageNumber() + 1;
+
+		Integer totalPages = pages.getTotalPages();
+
+		if (totalPages == 0)
+			totalPages += 1;
+
+		//when
+		SearchTechStackResponse searchResults = searchService.searchTechStacks(pageable, keyword);
+
+		//then
+		assertThat(searchResults).isNotNull();
+		assertThat(searchResults.pagination().totalPage()).isEqualTo(totalPages);
+		assertThat(searchResults.pagination().pageable()).isEqualTo(pages.getSize());
+		assertThat(searchResults.pagination().isEnd()).isEqualTo(currentPage.equals(totalPages));
+		assertThat(searchResults.techStackList()).isNotNull();
+
+		//verify
+		verify(searchRepository, times(1)).searchTechStacksByKeyword(any(Pageable.class), anyString());
+		}
+	}

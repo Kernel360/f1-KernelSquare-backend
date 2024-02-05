@@ -7,6 +7,7 @@ public enum TechStackServiceStatus implements ServiceStatus {
 	//error
 	TECH_STACK_NOT_FOUND(2305),
 	TECH_STACK_ALREADY_EXISTED(2306),
+	PAGE_NOT_FOUND(2307),
 
 	//sccess
 	TECH_STACK_CREATED(2346),

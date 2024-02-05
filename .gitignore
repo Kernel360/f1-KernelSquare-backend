@@ -7,6 +7,7 @@ logs/**
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+src/main/java/com/kernel360/kernelsquare/global/compose/mongo/data/
 
 ### STS ###
 .apt_generated

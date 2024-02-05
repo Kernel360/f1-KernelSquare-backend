@@ -85,11 +85,11 @@ public class SecurityConfig {
 			.requestMatchers(HttpMethod.GET, "/api/v1/coffeechat/posts").permitAll()
 			.requestMatchers(HttpMethod.GET, "/api/v1/coffeechat/posts/{postId}").permitAll()
 			.requestMatchers(HttpMethod.GET, "/api/v1/hashtags").permitAll()
+			.requestMatchers(HttpMethod.GET, "/api/v1/techs").permitAll()
 
 			// 모든 권한에 대한 접근 허용
 			.requestMatchers(hasAnyAuthorityPatterns).authenticated()
 			.requestMatchers(HttpMethod.GET, "/api/v1/members/{memberId}").authenticated()
-			.requestMatchers(HttpMethod.GET, "/api/v1/techs").authenticated()
 			.requestMatchers(HttpMethod.GET, "/api/v1/coffeechat/rooms/{roomKey}").authenticated()
 
 			// ROLE_USER 권한 필요

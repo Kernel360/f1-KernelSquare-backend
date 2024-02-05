@@ -81,8 +81,9 @@ public class ReservationService {
 		Reservation reservation = reservationRepository.findById(addReservationMemberRequest.reservationId())
 			.orElseThrow(() -> new BusinessException(ReservationErrorCode.RESERVATION_NOT_FOUND));
 
+		// 예약 중복 확인 체크하기
 		for (Reservation bookedReservation : reservationList) {
-			if (bookedReservation.getStartTime().equals(LocalDateTime.now())) {
+			if (bookedReservation.getStartTime().equals(addReservationMemberRequest.startTime())) {
 				throw new BusinessException(ReservationErrorCode.DUPLICATE_RESERVATION_TIME);
 			}
 		}

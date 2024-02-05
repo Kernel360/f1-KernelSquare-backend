@@ -7,6 +7,8 @@ logs/**
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+core/src/main/java/com/kernelsquare/core/compose/data/db/**
+core
 
 ### STS ###
 .apt_generated

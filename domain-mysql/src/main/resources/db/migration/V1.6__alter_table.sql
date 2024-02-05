@@ -1,2 +1,5 @@
-ALTER TABLE `tech_stack`
-    MODIFY `skill` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL;
+ALTER TABLE `reservation_article`
+    ADD COLUMN `start_time` datetime NOT NULL DEFAULT '2099-12-31T00:00:00';
+
+ALTER TABLE `reservation_article`
+    MODIFY `start_time` datetime NOT NULL;

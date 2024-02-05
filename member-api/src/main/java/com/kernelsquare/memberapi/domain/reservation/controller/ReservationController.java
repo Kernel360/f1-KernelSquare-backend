@@ -28,7 +28,7 @@ import lombok.RequiredArgsConstructor;
 public class ReservationController {
 	private final ReservationService reservationService;
 
-	@GetMapping("/coffechat/reservations")
+	@GetMapping("/coffeechat/reservations")
 	public ResponseEntity<ApiResponse<FindAllReservationResponse>> findAllReservationByMemberId(@AuthenticationPrincipal
 	MemberPrincipal memberPrincipal) {
 		FindAllReservationResponse findAllReservationResponse = reservationService.findAllReservationByMemberId(
@@ -50,7 +50,7 @@ public class ReservationController {
 	AddReservationMemberRequest addReservationMemberRequest) {
 		AddReservationMemberResponse addReservationMemberResponse = reservationService.AddReservationMember(
 			addReservationMemberRequest);
-		
+
 		return ResponseEntityFactory.toResponseEntity(RESERVATION_SUCCESS, addReservationMemberResponse);
 	}
 }

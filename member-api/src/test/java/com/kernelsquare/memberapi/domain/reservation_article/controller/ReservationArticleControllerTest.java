@@ -203,14 +203,14 @@ class ReservationArticleControllerTest {
 
 		FindReservationResponse findReservationResponse1 = FindReservationResponse.builder()
 			.startTime(LocalDateTime.now())
-			.mentiNickname("tester22")
-			.mentiImageUrl("url")
+			.menteeNickname("tester22")
+			.menteeImageUrl("url")
 			.build();
 
 		FindReservationResponse findReservationResponse2 = FindReservationResponse.builder()
 			.startTime(LocalDateTime.now())
-			.mentiNickname("tester23")
-			.mentiImageUrl("url")
+			.menteeNickname("tester23")
+			.menteeImageUrl("url")
 			.build();
 
 		FindHashtagResponse findHashtagResponse1 = FindHashtagResponse.builder()

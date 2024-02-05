@@ -25,6 +25,7 @@ import com.kernelsquare.memberapi.domain.coffeechat.service.CoffeeChatService;
 import com.kernelsquare.domainmysql.domain.coffeechat.entity.ChatRoom;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 @DisplayName("채팅 컨트롤러 통합 테스트")
 @WithMockUser
@@ -123,7 +124,9 @@ class CoffeeChatControllerTest {
 			.sender("에키드나")
 			.build();
 
-		List<MongoChatMessage> chatHistory = List.of(mongoChatMessage);
+		List<FindMongoChatMessage> chatHistory = Stream.of(mongoChatMessage)
+			.map(FindMongoChatMessage::from)
+			.toList();
 
 		FindChatHistoryResponse findChatHistoryResponse = FindChatHistoryResponse.of(chatHistory);
 

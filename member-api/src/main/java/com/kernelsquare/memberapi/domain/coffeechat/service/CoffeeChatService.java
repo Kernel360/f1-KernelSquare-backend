@@ -84,7 +84,9 @@ public class CoffeeChatService {
 	}
 
 	public FindChatHistoryResponse findChatHistory(String roomKey) {
-		List<MongoChatMessage> chatHistory = mongoChatMessageRepository.findAllByRoomKey(roomKey);
+		List<FindMongoChatMessage> chatHistory = mongoChatMessageRepository.findAllByRoomKey(roomKey).stream()
+			.map(FindMongoChatMessage::from)
+			.toList();
 
 		return FindChatHistoryResponse.of(chatHistory);
 	}

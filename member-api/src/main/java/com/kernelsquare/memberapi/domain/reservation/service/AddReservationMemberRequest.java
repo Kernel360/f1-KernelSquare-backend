@@ -13,8 +13,7 @@ public record AddReservationMemberRequest(
 	Long reservationArticleId,
 	Long reservationId,
 	Long memberId,
-	LocalDateTime startTime,
-	String roomKey
+	LocalDateTime startTime
 ) {
 
 	public static Reservation toEntity(AddReservationMemberRequest addReservationMemberRequest,

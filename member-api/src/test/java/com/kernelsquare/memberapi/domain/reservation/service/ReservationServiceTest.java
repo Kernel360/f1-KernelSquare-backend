@@ -65,7 +65,7 @@ class ReservationServiceTest {
 		//when
 		FindAllReservationResponse findAllReservationResponse = reservationService.findAllReservationByMemberId(
 			memberId);
-		FindReservationResponse reservationResponse = findAllReservationResponse.reservationResponseList().get(0);
+		FindReservationResponse reservationResponse = findAllReservationResponse.reservationResponses().get(0);
 
 		//then
 		assertThat(findAllReservationResponse).isNotNull();
@@ -126,7 +126,6 @@ class ReservationServiceTest {
 			.reservationId(1L)
 			.reservationArticleId(1L)
 			.memberId(1L)
-			.roomKey("asdadw")
 			.startTime(LocalDateTime.now())
 			.build();
 

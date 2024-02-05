@@ -31,7 +31,7 @@ import com.kernelsquare.domainmysql.domain.question.entity.Question;
 import com.kernelsquare.domainmysql.domain.question.repository.QuestionRepository;
 import com.kernelsquare.domainmysql.domain.question_tech_stack.repository.QuestionTechStackRepository;
 
-@DisplayName("질문 서비스 통합 테스트")
+@DisplayName("질문 서비스 단위 테스트")
 @ExtendWith(MockitoExtension.class)
 class QuestionServiceTest {
 	@InjectMocks

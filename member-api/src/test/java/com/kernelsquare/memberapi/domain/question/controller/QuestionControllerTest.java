@@ -34,7 +34,7 @@ import com.kernelsquare.domainmysql.domain.level.entity.Level;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
 import com.kernelsquare.domainmysql.domain.question.entity.Question;
 
-@DisplayName("질문 컨트롤러 통합 테스트")
+@DisplayName("질문 컨트롤러 단위 테스트")
 @WithMockUser
 @WebMvcTest(QuestionController.class)
 class QuestionControllerTest {

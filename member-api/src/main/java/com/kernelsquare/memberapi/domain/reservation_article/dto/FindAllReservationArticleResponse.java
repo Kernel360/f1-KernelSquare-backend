@@ -3,6 +3,7 @@ package com.kernelsquare.memberapi.domain.reservation_article.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.kernelsquare.domainmysql.domain.hashtag.entity.Hashtag;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
 import com.kernelsquare.domainmysql.domain.reservation_article.entity.ReservationArticle;
@@ -17,7 +18,9 @@ public record FindAllReservationArticleResponse(
 	String levelImageUrl,
 	String title,
 	List<String> hashTagList,
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
 	LocalDateTime createdDate,
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
 	LocalDateTime modifiedDate,
 	Boolean articleStatus,
 	Long fullCheck

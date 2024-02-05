@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import com.kernelsquare.memberapi.domain.coffeechat.dto.ChatMessageRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.kernelsquare.core.type.MessageType;
-import com.kernelsquare.memberapi.domain.coffeechat.dto.ChatMessage;
+import com.kernelsquare.memberapi.domain.coffeechat.dto.ChatMessageResponse;
 
 @DisplayName("STOMP 소켓 통신 테스트")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -83,7 +84,7 @@ public class StompSocketTest {
 
 		@Override
 		public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
-			ChatMessage sendMessage = ChatMessage.builder()
+			ChatMessageRequest sendMessage = ChatMessageRequest.builder()
 				.message("hi")
 				.roomKey("key")
 				.type(MessageType.TALK)
@@ -93,12 +94,12 @@ public class StompSocketTest {
 			session.subscribe("/topic/test/room/" + sendMessage.getRoomKey(), new StompFrameHandler() {
 				@Override
 				public Type getPayloadType(StompHeaders headers) {
-					return ChatMessage.class;
+					return ChatMessageResponse.class;
 				}
 
 				@Override
 				public void handleFrame(StompHeaders headers, Object payload) {
-					ChatMessage receiveMessage = (ChatMessage)payload;
+					ChatMessageResponse receiveMessage = (ChatMessageResponse)payload;
 
 					System.out.println(receiveMessage.getRoomKey());
 

@@ -1,7 +1,6 @@
 package com.kernelsquare.memberapi.domain.coffeechat.dto;
 
 import com.kernelsquare.core.type.MessageType;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,20 +12,19 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatMessage {
+public class ChatMessageRequest {
 
-	private MessageType type;
+    private MessageType type;
 
-	private String roomKey;
+    private String roomKey;
 
-	private String sender;
+    private String sender;
 
-	private String message;
+    private String message;
 
-	private LocalDateTime sendTime;
+    private LocalDateTime sendTime;
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    public void setMessage(String message) {
+        this.message = message;
+    }
 }
-

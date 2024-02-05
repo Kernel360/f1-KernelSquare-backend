@@ -19,7 +19,12 @@ public enum ReservationArticleErrorCode implements ErrorCode {
 		"최대 예약 수를 초과하였습니다."),
 	RESERVATION_TIME_LIMIT(HttpStatus.BAD_REQUEST, ReservationArticleServiceStatus.RESERVATION_TIME_LIMIT,
 		"최대 예약 기간을 초과하였습니다."),
-	STATUS_NOT_FOUND(HttpStatus.NOT_FOUND, ReservationArticleServiceStatus.STATUS_NOT_FOUND, "존재하지 않는 상태값입니다.");
+	STATUS_NOT_FOUND(HttpStatus.NOT_FOUND, ReservationArticleServiceStatus.STATUS_NOT_FOUND, "존재하지 않는 상태값입니다."),
+	RESERVATION_PERIOD_LIMIT(HttpStatus.BAD_REQUEST, ReservationArticleServiceStatus.RESERVATION_PERIOD_LIMIT,
+		"가능한 예약 기간이 아닙니다."),
+	MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, ReservationArticleServiceStatus.MEMBER_NOT_FOUND, "존재하지 않은 회원"),
+	DELETE_ONLY_BEFORE_7DAYS(HttpStatus.BAD_REQUEST, ReservationArticleServiceStatus.DELETE_ONLY_BEFORE_7DAYS,
+		"7일 이전에만 삭제 가능합니다.");
 
 	private final HttpStatus httpStatus;
 	private final ServiceStatus serviceStatus;

@@ -49,7 +49,8 @@ public class SecurityConfig {
 	};
 
 	private final String[] hasAnyAuthorityPatterns = new String[] {
-		"/api/v1/images"
+		"/api/v1/images",
+		"/api/v1/coffeechat/reservations"
 	};
 
 	private final String[] hasRoleUserPatterns = new String[] {
@@ -58,6 +59,8 @@ public class SecurityConfig {
 		"/api/v1/questions/answers/{answerId}",
 		"/api/v1/questions/{questionId}/answers",
 		"/api/v1/questions/answers/{answerId}/vote",
+		"/api/v1/coffeechat/reservations/book",
+		"/api/v1/coffeechat/reservations/{reservationId}"
 	};
 
 	private final String[] hasRoleAdminPatterns = new String[] {
@@ -86,11 +89,11 @@ public class SecurityConfig {
 			.requestMatchers(HttpMethod.GET, "/api/v1/coffeechat/posts").permitAll()
 			.requestMatchers(HttpMethod.GET, "/api/v1/coffeechat/posts/{postId}").permitAll()
 			.requestMatchers(HttpMethod.GET, "/api/v1/hashtags").permitAll()
+			.requestMatchers(HttpMethod.GET, "/api/v1/techs").permitAll()
 
 			// 모든 권한에 대한 접근 허용
 			.requestMatchers(hasAnyAuthorityPatterns).authenticated()
 			.requestMatchers(HttpMethod.GET, "/api/v1/members/{memberId}").authenticated()
-			.requestMatchers(HttpMethod.GET, "/api/v1/techs").authenticated()
 			.requestMatchers(HttpMethod.GET, "/api/v1/coffeechat/rooms/{roomKey}").authenticated()
 
 			// ROLE_USER 권한 필요

@@ -68,4 +68,8 @@ public class Reservation extends BaseEntity {
 		this.reservationArticle = reservationArticle;
 		this.chatRoom = chatRoom;
 	}
+
+	public void addMember(Member member) {
+		this.member = member;
+	}
 }

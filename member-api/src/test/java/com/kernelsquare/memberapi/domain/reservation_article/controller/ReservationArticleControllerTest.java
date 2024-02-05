@@ -141,6 +141,7 @@ class ReservationArticleControllerTest {
 			.title("testplz")
 			.content("ahahahahahhhh")
 			.hashtagList(hashtagList)
+			.startTime(LocalDateTime.now())
 			.build();
 
 		ReservationArticle reservationArticle2 = ReservationArticle.builder()
@@ -149,6 +150,7 @@ class ReservationArticleControllerTest {
 			.title("testplz22")
 			.content("ahahahahahhhh2222")
 			.hashtagList(hashtagList)
+			.startTime(LocalDateTime.now())
 			.build();
 
 		Pageable pageable = PageRequest.of(0, 2);
@@ -159,9 +161,9 @@ class ReservationArticleControllerTest {
 			.build();
 
 		FindAllReservationArticleResponse findAllReservationArticleResponse1 = FindAllReservationArticleResponse.of(
-			member, reservationArticle1, 1L);
+			member, reservationArticle1, true, 1L);
 		FindAllReservationArticleResponse findAllReservationArticleResponse2 = FindAllReservationArticleResponse.of(
-			member, reservationArticle2, 0L);
+			member, reservationArticle2, false, 0L);
 
 		List<FindAllReservationArticleResponse> responsePages = List.of(findAllReservationArticleResponse1,
 			findAllReservationArticleResponse2);
@@ -201,14 +203,14 @@ class ReservationArticleControllerTest {
 
 		FindReservationResponse findReservationResponse1 = FindReservationResponse.builder()
 			.startTime(LocalDateTime.now())
-			.mentiNickname("tester22")
-			.mentiImageUrl("url")
+			.menteeNickname("tester22")
+			.menteeImageUrl("url")
 			.build();
 
 		FindReservationResponse findReservationResponse2 = FindReservationResponse.builder()
 			.startTime(LocalDateTime.now())
-			.mentiNickname("tester23")
-			.mentiImageUrl("url")
+			.menteeNickname("tester23")
+			.menteeImageUrl("url")
 			.build();
 
 		FindHashtagResponse findHashtagResponse1 = FindHashtagResponse.builder()

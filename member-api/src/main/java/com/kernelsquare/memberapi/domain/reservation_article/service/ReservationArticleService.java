@@ -1,5 +1,6 @@
 package com.kernelsquare.memberapi.domain.reservation_article.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -15,7 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.kernelsquare.core.common_response.error.code.MemberErrorCode;
 import com.kernelsquare.core.common_response.error.code.ReservationArticleErrorCode;
 import com.kernelsquare.core.common_response.error.exception.BusinessException;
 import com.kernelsquare.core.dto.PageResponse;
@@ -55,10 +55,11 @@ public class ReservationArticleService {
 	public CreateReservationArticleResponse createReservationArticle(
 		CreateReservationArticleRequest createReservationArticleRequest) {
 		Member member = memberRepository.findById(createReservationArticleRequest.memberId())
-			.orElseThrow(() -> new BusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
+			.orElseThrow(() -> new BusinessException(ReservationArticleErrorCode.MEMBER_NOT_FOUND));
 
 		ReservationArticle reservationArticle = CreateReservationArticleRequest.toEntity(
 			createReservationArticleRequest, member);
+
 		ReservationArticle saveReservationArticle = reservationArticleRepository.save(reservationArticle);
 
 		// HashTag 저장
@@ -71,6 +72,11 @@ public class ReservationArticleService {
 			hashtagRepository.save(hashTag);
 		}
 
+		//todo : 클라이언트와 서버 시간이 다름 (영국 시간대) 어떻게
+		LocalDate currentDate = LocalDateTime.now().toLocalDate();
+		LocalDateTime startTime = LocalDateTime.MAX;
+		LocalDateTime endTime = LocalDateTime.MIN;
+
 		for (LocalDateTime dateTime : createReservationArticleRequest.dateTimes()) {
 			// 새로운 Chatroom 생성
 			ChatRoom chatroom = ChatRoom.builder()
@@ -79,6 +85,9 @@ public class ReservationArticleService {
 				.build();
 
 			coffeeChatRepository.save(chatroom);
+			if (startTime.isAfter(dateTime)) {
+				startTime = dateTime;
+			}
 
 			// Reservation 생성 및 설정
 			Reservation reservation = Reservation.builder()
@@ -90,6 +99,20 @@ public class ReservationArticleService {
 
 			reservationRepository.save(reservation);
 		}
+
+		// 3일 기간 체크
+		Long checkDurationDay = ChronoUnit.DAYS.between(startTime.toLocalDate(), endTime.toLocalDate());
+		if (checkDurationDay > 3) {
+			throw new BusinessException(ReservationArticleErrorCode.RESERVATION_TIME_LIMIT);
+		}
+
+		// 예약 생성 기한 체크 로직 (7일 이후, 한달 이전)
+		if (!startTime.toLocalDate().isAfter(currentDate.plusDays(7)) && currentDate.isBefore(
+			currentDate.plusMonths(1))) {
+			throw new BusinessException(ReservationArticleErrorCode.RESERVATION_PERIOD_LIMIT);
+		}
+
+		saveReservationArticle.addStartTime(startTime);
 
 		return CreateReservationArticleResponse.from(saveReservationArticle);
 	}
@@ -112,16 +135,31 @@ public class ReservationArticleService {
 
 		List<FindAllReservationArticleResponse> responsePages = pages.getContent().stream()
 			.map(article -> {
+				Boolean articleStatus = canIReservation(article.getStartTime());
 				Long fullCheck = reservationRepository.countByReservationArticleIdAndMemberIdIsNull(article.getId());
 				return FindAllReservationArticleResponse.of(
 					article.getMember(),
 					article,
+					articleStatus,
 					fullCheck
 				);
 			})
 			.toList();
 
 		return PageResponse.of(pagination, responsePages);
+	}
+
+	private Boolean canIReservation(LocalDateTime startTime) {
+		boolean check = false;
+		LocalDateTime currentTime = LocalDateTime.now();
+
+		LocalDate minStartDate = startTime.toLocalDate();
+		LocalDate currentDate = currentTime.toLocalDate();
+
+		if (currentDate.isAfter(minStartDate.minusDays(7)) && currentDate.isBefore(minStartDate.minusDays(1))) {
+			check = true;
+		}
+		return check;
 	}
 
 	@Transactional(readOnly = true)
@@ -177,10 +215,10 @@ public class ReservationArticleService {
 				}
 			}
 
-			// 수정된 해시태그 5개 넘는지 체크로직
+			// 수정된 해시태그 10개 넘는지 체크로직
 			long currentHashtagCount = hashtagRepository.countAllByReservationArticleId(postId);
 			long updatedHashtagCount = currentHashtagCount + addHashtagCount - removeHashtagCount;
-			if (updatedHashtagCount >= 5) {
+			if (updatedHashtagCount >= 10) {
 				throw new BusinessException(ReservationArticleErrorCode.TOO_MANY_HASHTAG);
 			}
 
@@ -280,11 +318,18 @@ public class ReservationArticleService {
 			}
 		}
 	}
-
+	
 	@Transactional
 	public void deleteReservationArticle(Long postId) {
-		reservationArticleRepository.findById(postId)
+		ReservationArticle reservationArticle = reservationArticleRepository.findById(postId)
 			.orElseThrow(() -> new BusinessException(ReservationArticleErrorCode.RESERVATION_ARTICLE_NOT_FOUND));
+
+		LocalDate currentDate = LocalDateTime.now().toLocalDate();
+		LocalDate startDate = reservationArticle.getStartTime().toLocalDate();
+
+		if (!currentDate.isBefore(startDate.minusDays(7))) {
+			throw new BusinessException(ReservationArticleErrorCode.DELETE_ONLY_BEFORE_7DAYS);
+		}
 
 		reservationArticleRepository.deleteById(postId);
 

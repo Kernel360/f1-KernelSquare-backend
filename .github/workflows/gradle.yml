@@ -2,7 +2,7 @@ name: Java CI with Gradle V0.1
 
 on:
   pull_request_target:
-    types: [opened, reopened, synchronize, labeled]
+    types: [ opened, reopened, synchronize, labeled ]
 
 permissions:
   contents: read

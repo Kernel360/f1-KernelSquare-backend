@@ -13,7 +13,7 @@ public record CreateMemberAnswerVoteRequest(
 	@NotNull(message = "회원 ID를 입력해 주세요.")
 	Long memberId,
 	@NotNull(message = "투표 상태를 입력해 주세요.")
-	int status
+	Integer status
 ) {
 	@AssertTrue(message = "Status는 1 또는 -1 이어야 합니다.")
 	private boolean isStatusValid() {

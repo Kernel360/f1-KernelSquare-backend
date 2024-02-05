@@ -19,11 +19,13 @@ public record FindAllReservationArticleResponse(
 	List<String> hashTagList,
 	LocalDateTime createdDate,
 	LocalDateTime modifiedDate,
+	Boolean articleStatus,
 	Long fullCheck
 ) {
 	public static FindAllReservationArticleResponse of(
 		Member member,
 		ReservationArticle article,
+		Boolean articleStatus,
 		Long fullCheck) {
 		return new FindAllReservationArticleResponse(
 			article.getId(),
@@ -36,6 +38,7 @@ public record FindAllReservationArticleResponse(
 			article.getHashtagList().stream().map(Hashtag::getContent).toList(),
 			article.getCreatedDate(),
 			article.getModifiedDate(),
+			articleStatus,
 			fullCheck
 		);
 	}

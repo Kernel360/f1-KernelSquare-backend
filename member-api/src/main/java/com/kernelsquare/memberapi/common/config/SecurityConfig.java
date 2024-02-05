@@ -83,6 +83,7 @@ public class SecurityConfig {
 			.requestMatchers(HttpMethod.GET, "/api/v1/questions/{questionId}").permitAll()
 			.requestMatchers(HttpMethod.GET, "/api/v1/questions").permitAll()
 			.requestMatchers(HttpMethod.GET, "/api/v1/search/questions").permitAll()
+			.requestMatchers(HttpMethod.GET, "/api/v1/search/techs").permitAll()
 			.requestMatchers(HttpMethod.GET, "/api/v1/questions/{questiondId}/answers").permitAll()
 			.requestMatchers(HttpMethod.GET, "/api/v1/levels").permitAll()
 			.requestMatchers(HttpMethod.GET, "/api/v1/coffeechat/posts").permitAll()

@@ -2,6 +2,8 @@ package com.kernelsquare.domainmysql.domain.search.repository;
 
 import java.util.List;
 
+import com.kernelsquare.domainmysql.domain.tech_stack.entity.QTechStack;
+import com.kernelsquare.domainmysql.domain.tech_stack.entity.TechStack;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -53,6 +55,32 @@ public class SearchRepositoryImpl extends QuerydslRepositorySupport implements S
 		JPAQuery<Long> countQuery = queryFactory
 			.select(question.count())
 			.from(question)
+			.where(builder);
+
+		return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
+	}
+
+	@Override
+	public Page<TechStack> searchTechStacksByKeyword(Pageable pageable, String keyword) {
+		QTechStack techStack = QTechStack.techStack;
+
+		BooleanBuilder builder = new BooleanBuilder();
+		if (keyword != null && !keyword.isEmpty()) {
+			String keywordLowerCase = keyword.toLowerCase();
+
+			builder.or(techStack.skill.toLowerCase().contains(keywordLowerCase));
+		}
+
+		List<TechStack> content = queryFactory
+			.selectFrom(techStack)
+			.where(builder)
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.fetch();
+
+		JPAQuery<Long> countQuery = queryFactory
+			.select(techStack.count())
+			.from(techStack)
 			.where(builder);
 
 		return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);

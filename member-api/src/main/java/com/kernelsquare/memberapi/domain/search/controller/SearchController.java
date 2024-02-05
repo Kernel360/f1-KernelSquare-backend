@@ -2,6 +2,7 @@ package com.kernelsquare.memberapi.domain.search.controller;
 
 import static com.kernelsquare.core.common_response.response.code.SearchResponseCode.*;
 
+import com.kernelsquare.memberapi.domain.search.dto.SearchTechStackResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,20 @@ public class SearchController {
 		String keyword
 	) {
 		SearchQuestionResponse searchResults = searchService.searchQuestions(pageable, keyword);
+
 		return ResponseEntityFactory.toResponseEntity(SEARCH_QUESTION_COMPLETED, searchResults);
+	}
+
+	@GetMapping("/search/techs")
+	public ResponseEntity<ApiResponse<SearchTechStackResponse>> searchTechStacks(
+		@PageableDefault(page = 0, size = 10)
+		Pageable pageable,
+		@RequestParam
+		String keyword
+	) {
+		SearchTechStackResponse searchResults = searchService.searchTechStacks(pageable, keyword);
+
+		return ResponseEntityFactory.toResponseEntity(SEARCH_TECH_STACK_COMPLETED, searchResults);
 	}
 }
 

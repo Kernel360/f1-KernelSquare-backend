@@ -38,6 +38,10 @@ spring:
     serialization:
       class-property-type-name: RefreshToken.class
 
+  data:
+    mongodb:
+      uri: ${MONGO_URI}
+
   security:
     jwt:
       header: Authorization

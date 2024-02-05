@@ -72,6 +72,7 @@ public class ReservationArticleService {
 			hashtagRepository.save(hashTag);
 		}
 
+		//todo : 클라이언트와 서버 시간이 다름 (영국 시간대) 어떻게
 		LocalDate currentDate = LocalDateTime.now().toLocalDate();
 		LocalDateTime startTime = LocalDateTime.MAX;
 		LocalDateTime endTime = LocalDateTime.MIN;
@@ -317,7 +318,7 @@ public class ReservationArticleService {
 			}
 		}
 	}
-
+	
 	@Transactional
 	public void deleteReservationArticle(Long postId) {
 		ReservationArticle reservationArticle = reservationArticleRepository.findById(postId)

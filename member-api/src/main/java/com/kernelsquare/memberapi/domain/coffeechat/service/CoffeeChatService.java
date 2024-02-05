@@ -3,7 +3,6 @@ package com.kernelsquare.memberapi.domain.coffeechat.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.kernelsquare.domainmongodb.domain.coffeechat.entity.MongoChatMessage;
 import com.kernelsquare.domainmongodb.domain.coffeechat.repository.MongoChatMessageRepository;
 import com.kernelsquare.memberapi.domain.coffeechat.dto.*;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -98,11 +97,12 @@ public class CoffeeChatService {
 		chatRooms.forEach(chatRoom -> {
 			chatRoom.deactivateRoom();
 
-			ChatMessage message = ChatMessage.builder()
+			ChatMessageResponse message = ChatMessageResponse.builder()
 				.type(MessageType.EXPIRE)
 				.roomKey(chatRoom.getRoomKey())
 				.sender("system")
 				.message("채팅방 사용 시간이 만료되었습니다.")
+				.sendTime(LocalDateTime.now())
 				.build();
 
 			sendingOperations.convertAndSend("/topic/chat/room/" + message.getRoomKey(), message);

@@ -1,15 +1,12 @@
 package com.kernelsquare.memberapi.domain.coffeechat.controller;
 
-import com.kernelsquare.memberapi.config.TestWebSocketConfig;
+import com.kernelsquare.core.common_response.error.code.CoffeeChatErrorCode;
+import com.kernelsquare.core.common_response.error.exception.BusinessException;
+import com.kernelsquare.memberapi.domain.coffeechat.dto.ChatMessageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Import;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-
-import com.kernelsquare.core.common_response.error.code.CoffeeChatErrorCode;
-import com.kernelsquare.core.common_response.error.exception.BusinessException;
-import com.kernelsquare.memberapi.domain.coffeechat.dto.ChatMessage;
 
 @Controller
 class TestMessageController {
@@ -17,7 +14,7 @@ class TestMessageController {
 	private SimpMessagingTemplate messagingTemplate;
 
 	@MessageMapping("/test/message")
-	public void messageHandler(ChatMessage message) {
+	public void messageHandler(ChatMessageRequest message) {
 
 		switch (message.getType()) {
 			case ENTER -> message.setMessage(message.getSender() + "님이 입장하였습니다.");

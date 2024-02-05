@@ -31,5 +31,4 @@ public record CreateReservationArticleRequest(
 			.member(member)
 			.build();
 	}
-
 }

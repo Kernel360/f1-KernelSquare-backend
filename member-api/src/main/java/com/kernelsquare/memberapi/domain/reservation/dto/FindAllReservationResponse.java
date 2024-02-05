@@ -6,12 +6,12 @@ import lombok.Builder;
 
 @Builder
 public record FindAllReservationResponse(
-	List<FindReservationResponse> reservationResponseList
+	List<FindReservationResponse> reservationResponses
 ) {
-	public static FindAllReservationResponse from(List<FindReservationResponse> reservationResponseList) {
+	public static FindAllReservationResponse from(List<FindReservationResponse> reservationResponses) {
 		return FindAllReservationResponse
 			.builder()
-			.reservationResponseList(reservationResponseList)
+			.reservationResponses(reservationResponses)
 			.build();
 	}
 }

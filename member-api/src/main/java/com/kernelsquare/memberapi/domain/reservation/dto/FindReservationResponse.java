@@ -11,8 +11,8 @@ public record FindReservationResponse(
 	Long reservationId,
 	Long roomId,
 	LocalDateTime startTime,
-	String mentiNickname,
-	String mentiImageUrl
+	String menteeNickname,
+	String menteeImageUrl
 ) {
 	public static FindReservationResponse from(Reservation reservation) {
 

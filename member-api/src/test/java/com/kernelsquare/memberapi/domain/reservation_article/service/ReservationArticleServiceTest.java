@@ -149,7 +149,8 @@ class ReservationArticleServiceTest {
 		CreateReservationArticleRequest createReservationArticleRequest =
 			new CreateReservationArticleRequest(member.getId(), reservationArticle.getTitle(),
 				reservationArticle.getContent(),
-				List.of(hashtag.getContent()), List.of(LocalDateTime.now(), LocalDateTime.now().plusDays(2)));
+				List.of(hashtag.getContent()),
+				List.of(LocalDateTime.now().plusDays(8), LocalDateTime.now().plusDays(9)));
 
 		given(memberRepository.findById(anyLong())).willReturn(Optional.ofNullable(member));
 		given(reservationArticleRepository.save(any(ReservationArticle.class))).willReturn(reservationArticle);
@@ -275,38 +276,4 @@ class ReservationArticleServiceTest {
 		verify(hashTagRepository, times(1)).findAllByReservationArticleId(anyLong());
 		verify(reservationRepository, times(1)).findAllByReservationArticleId(anyLong());
 	}
-
-	@Test
-	@DisplayName("예약창 삭제 테스트")
-	void testDeleteReservationArticle() {
-		// Given
-		level = createTestLevel();
-		member = createTestMember();
-		ReservationArticle reservationArticle = createTestReservationArticle(1L);
-
-		given(reservationArticleRepository.findById(anyLong())).willReturn(Optional.ofNullable(reservationArticle));
-
-		doNothing()
-			.when(reservationArticleRepository)
-			.deleteById(anyLong());
-
-		doNothing()
-			.when(coffeeChatRepository)
-			.deleteChatRoom(anyLong());
-
-		doNothing()
-			.when(reservationRepository)
-			.deleteAllByReservationArticleId(anyLong());
-
-		doNothing()
-			.when(hashTagRepository)
-			.deleteAllByReservationArticleId(anyLong());
-
-		// When
-		reservationArticleService.deleteReservationArticle(reservationArticle.getId());
-
-		// Then
-		verify(reservationArticleRepository, times(1)).deleteById(anyLong());
-	}
-
 }

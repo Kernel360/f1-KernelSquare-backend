@@ -1,5 +1,6 @@
 package com.kernelsquare.domainmysql.domain.reservation_article.entity;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.kernelsquare.domainmysql.domain.base.BaseEntity;
@@ -38,20 +39,29 @@ public class ReservationArticle extends BaseEntity {
 	@Column(nullable = false, name = "content", columnDefinition = "text")
 	private String content;
 
+	@Column(nullable = false, name = "start_time", columnDefinition = "datetime")
+	private LocalDateTime startTime;
+
 	@OneToMany(mappedBy = "reservationArticle")
 	private List<Hashtag> hashtagList;
 
 	@Builder
-	public ReservationArticle(Long id, Member member, String title, String content, List<Hashtag> hashtagList) {
+	public ReservationArticle(Long id, Member member, String title, String content,
+		List<Hashtag> hashtagList, LocalDateTime startTime) {
 		this.id = id;
 		this.member = member;
 		this.title = title;
 		this.content = content;
 		this.hashtagList = hashtagList;
+		this.startTime = startTime;
 	}
 
 	public void update(String title, String content) {
 		this.title = title;
 		this.content = content;
+	}
+
+	public void addStartTime(LocalDateTime startTime) {
+		this.startTime = startTime;
 	}
 }

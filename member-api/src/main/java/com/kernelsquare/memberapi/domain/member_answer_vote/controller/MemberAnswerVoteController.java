@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.kernelsquare.memberapi.domain.member_answer_vote.dto.CreateMemberAnswerVoteRequest;
-import com.kernelsquare.memberapi.domain.member_answer_vote.service.MemberAnswerVoteService;
 import com.kernelsquare.core.common_response.ApiResponse;
 import com.kernelsquare.core.common_response.ResponseEntityFactory;
+import com.kernelsquare.memberapi.domain.member_answer_vote.dto.CreateMemberAnswerVoteRequest;
+import com.kernelsquare.memberapi.domain.member_answer_vote.service.MemberAnswerVoteService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class MemberAnswerVoteController {
-
 	private final MemberAnswerVoteService memberAnswerVoteService;
 
 	@PostMapping("/questions/answers/{answerId}/vote")

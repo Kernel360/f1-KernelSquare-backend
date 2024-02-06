@@ -132,7 +132,7 @@ public class AuthControllerTest {
 			.builder()
 			.nickname("woww")
 			.email("jugwang@naver.com")
-			.password("hashedPassword")
+			.password("hashedPassw@1d")
 			.build();
 
 		Member member = Member
@@ -140,7 +140,7 @@ public class AuthControllerTest {
 			.id(1L)
 			.nickname("woww")
 			.email("jugwang@naver.com")
-			.password("hashedPassword")
+			.password("hashedPassw@1")
 			.experience(10000L)
 			.introduction("hi, i'm hongjugwang.")
 			.imageUrl("s3:qwe12fasdawczx")

@@ -8,8 +8,11 @@ logs/**
 !**/src/main/**/build/
 !**/src/test/**/build/
 core/src/main/java/com/kernelsquare/core/compose/data/db/**
-core
 src/main/java/com/kernel360/kernelsquare/global/compose/mongo/**
+member-api/logs/**
+admin-api/logs/**
+member-api/member-api/logs/**
+admin-api/admin-api/logs/**
 
 ### STS ###
 .apt_generated

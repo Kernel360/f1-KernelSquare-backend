@@ -2,6 +2,9 @@ package com.kernelsquare.memberapi.domain.search.service;
 
 import java.util.List;
 
+import com.kernelsquare.core.common_response.error.code.TechStackErrorCode;
+import com.kernelsquare.domainmysql.domain.tech_stack.entity.TechStack;
+import com.kernelsquare.memberapi.domain.search.dto.SearchTechStackResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -48,5 +51,32 @@ public class SearchService {
 		PageResponse<FindQuestionResponse> pageResponse = PageResponse.of(pagination, pageQuestionList);
 
 		return SearchQuestionResponse.of(totalCount, pageResponse);
+	}
+
+	public SearchTechStackResponse searchTechStacks(Pageable pageable, String keyword) {
+		Integer currentPage = pageable.getPageNumber() + 1;
+
+		Page<TechStack> pages = searchRepository.searchTechStacksByKeyword(pageable, keyword);
+
+		Long totalCount = pages.getTotalElements();
+
+		Integer totalPages = pages.getTotalPages();
+
+		if (totalPages == 0)
+			totalPages += 1;
+
+		if (currentPage > totalPages) {
+			throw new BusinessException(TechStackErrorCode.PAGE_NOT_FOUND);
+		}
+
+		Pagination pagination = Pagination.toEntity(totalPages, pages.getSize(), currentPage.equals(totalPages));
+
+		List<String> pageTechStackList = pages.getContent().stream()
+			.map(TechStack::getSkill)
+			.toList();
+
+		PageResponse<String> pageResponse = PageResponse.of(pagination, pageTechStackList);
+
+		return SearchTechStackResponse.of(totalCount, pageResponse);
 	}
 }

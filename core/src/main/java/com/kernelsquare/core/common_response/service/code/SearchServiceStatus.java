@@ -7,7 +7,8 @@ public enum SearchServiceStatus implements ServiceStatus {
 	//error
 
 	//success
-	SEARCH_QUESTION_COMPLETED(2540);
+	SEARCH_QUESTION_COMPLETED(2540),
+	SEARCH_TECH_STACK_COMPLETED(2541);
 
 	private final Integer code;
 

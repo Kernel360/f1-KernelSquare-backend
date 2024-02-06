@@ -96,11 +96,11 @@ class CoffeeChatServiceTest {
 
 		//then
 		assertThat(findChatHistoryResponse.chatHistory()).isNotNull();
-		assertThat(findChatHistoryResponse.chatHistory().get(0).getMessage()).isEqualTo(mongoChatMessage.getMessage());
-		assertThat(findChatHistoryResponse.chatHistory().get(0).getSender()).isEqualTo(mongoChatMessage.getSender());
-		assertThat(findChatHistoryResponse.chatHistory().get(0).getRoomKey()).isEqualTo(mongoChatMessage.getRoomKey());
-		assertThat(findChatHistoryResponse.chatHistory().get(0).getType()).isEqualTo(mongoChatMessage.getType());
-		assertThat(findChatHistoryResponse.chatHistory().get(0).getSendTime()).isEqualTo(mongoChatMessage.getSendTime());
+		assertThat(findChatHistoryResponse.chatHistory().get(0).message()).isEqualTo(mongoChatMessage.getMessage());
+		assertThat(findChatHistoryResponse.chatHistory().get(0).sender()).isEqualTo(mongoChatMessage.getSender());
+		assertThat(findChatHistoryResponse.chatHistory().get(0).roomKey()).isEqualTo(mongoChatMessage.getRoomKey());
+		assertThat(findChatHistoryResponse.chatHistory().get(0).type()).isEqualTo(mongoChatMessage.getType());
+		assertThat(findChatHistoryResponse.chatHistory().get(0).sendTime()).isEqualTo(mongoChatMessage.getSendTime());
 
 		//verify
 		verify(mongoChatMessageRepository, times(1)).findAllByRoomKey(anyString());

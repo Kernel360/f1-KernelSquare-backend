@@ -2,6 +2,7 @@ package com.kernelsquare.memberapi.domain.reservation.dto;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.kernelsquare.domainmysql.domain.reservation.entity.Reservation;
 
 import lombok.Builder;
@@ -10,6 +11,7 @@ import lombok.Builder;
 public record FindReservationResponse(
 	Long reservationId,
 	Long roomId,
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
 	LocalDateTime startTime,
 	String menteeNickname,
 	String menteeImageUrl

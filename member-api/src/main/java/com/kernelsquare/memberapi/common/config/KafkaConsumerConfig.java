@@ -13,13 +13,13 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
-import com.kernelsquare.memberapi.domain.coffeechat.dto.ChatMessage;
+import com.kernelsquare.memberapi.domain.coffeechat.dto.ChatMessageResponse;
 
 @Configuration
 @EnableKafka
 public class KafkaConsumerConfig {
 	@Bean
-	public ConsumerFactory<String, ChatMessage> consumerFactory() {
+	public ConsumerFactory<String, ChatMessageResponse> consumerFactory() {
 		Map<String, Object> config = new HashMap<>();
 
 		config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
@@ -32,8 +32,8 @@ public class KafkaConsumerConfig {
 	}
 
 	@Bean
-	public ConcurrentKafkaListenerContainerFactory<String, ChatMessage> kafkaListenerContainerFactory() {
-		ConcurrentKafkaListenerContainerFactory<String, ChatMessage> factory = new ConcurrentKafkaListenerContainerFactory<>();
+	public ConcurrentKafkaListenerContainerFactory<String, ChatMessageResponse> kafkaListenerContainerFactory() {
+		ConcurrentKafkaListenerContainerFactory<String, ChatMessageResponse> factory = new ConcurrentKafkaListenerContainerFactory<>();
 		factory.setConsumerFactory(consumerFactory());
 		return factory;
 	}

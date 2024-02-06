@@ -9,6 +9,7 @@ logs/**
 !**/src/test/**/build/
 core/src/main/java/com/kernelsquare/core/compose/data/db/**
 core
+src/main/java/com/kernel360/kernelsquare/global/compose/mongo/**
 
 ### STS ###
 .apt_generated

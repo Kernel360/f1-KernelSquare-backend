@@ -9,7 +9,6 @@ logs/**
 !**/src/test/**/build/
 core/src/main/java/com/kernelsquare/core/compose/data/db/**
 core
-core/src/main/java/com/kernelsquare/core/compose/**
 
 ### STS ###
 .apt_generated

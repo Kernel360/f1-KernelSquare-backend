@@ -1,4 +1,4 @@
-package com.kernelsquare.memberapi.domain.reservation.service;
+package com.kernelsquare.memberapi.domain.reservation.dto;
 
 import java.time.LocalDateTime;
 

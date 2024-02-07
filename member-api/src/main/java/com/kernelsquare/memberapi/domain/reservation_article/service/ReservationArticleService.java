@@ -107,7 +107,7 @@ public class ReservationArticleService {
 		}
 
 		// 예약 생성 기한 체크 로직 (7일 이후, 한달 이전)
-		if (!startTime.toLocalDate().isAfter(currentDate.plusDays(7)) && currentDate.isBefore(
+		if (!startTime.toLocalDate().isAfter(currentDate.plusDays(6)) && currentDate.isBefore(
 			currentDate.plusMonths(1))) {
 			throw new BusinessException(ReservationArticleErrorCode.RESERVATION_PERIOD_LIMIT);
 		}

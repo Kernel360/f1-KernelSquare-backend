@@ -195,6 +195,7 @@ class ReservationControllerTest {
 		AddReservationMemberRequest addReservationMemberRequest = AddReservationMemberRequest.builder()
 			.reservationArticleId(1L)
 			.reservationId(1L)
+			.memberId(1L)
 			.startTime(LocalDateTime.now())
 			.build();
 
@@ -247,6 +248,7 @@ class ReservationControllerTest {
 				requestFields(
 					fieldWithPath("reservation_article_id").type(JsonFieldType.NUMBER).description("예약 게시글 id"),
 					fieldWithPath("reservation_id").type(JsonFieldType.NUMBER).description("예약 아이디"),
+					fieldWithPath("member_id").type(JsonFieldType.NUMBER).description("회원 아이디"),
 					//todo : 시작 시간 type 확인 -> ARRAY 맞음?
 					fieldWithPath("start_time").type(JsonFieldType.ARRAY).description("시작 시간")
 				),

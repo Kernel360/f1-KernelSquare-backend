@@ -17,7 +17,7 @@ public enum ReservationErrorCode implements ErrorCode {
 	MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, ReservationServiceStatus.MEMBER_NOT_FOUND,
 		"회원이 존재하지 않습니다."),
 	RESERVATION_ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND, ReservationServiceStatus.RESERVATION_ARTICLE_NOT_FOUND,
-		"회원이 존재하지 않습니다."),
+		"예약 게시글이 존재하지 않습니다."),
 	CHAT_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, ReservationServiceStatus.CHAT_ROOM_NOT_FOUND,
 		"채팅창이 존재하지 않습니다."),
 	RESERVATION_ALREADY_EXIST(HttpStatus.CONFLICT, ReservationServiceStatus.RESERVATION_ALREADY_EXIST,

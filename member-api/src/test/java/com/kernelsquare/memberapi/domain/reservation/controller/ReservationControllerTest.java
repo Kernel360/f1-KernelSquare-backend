@@ -36,7 +36,7 @@ import com.kernelsquare.memberapi.domain.auth.dto.MemberPrincipal;
 import com.kernelsquare.memberapi.domain.reservation.dto.AddReservationMemberResponse;
 import com.kernelsquare.memberapi.domain.reservation.dto.FindAllReservationResponse;
 import com.kernelsquare.memberapi.domain.reservation.dto.FindReservationResponse;
-import com.kernelsquare.memberapi.domain.reservation.service.AddReservationMemberRequest;
+import com.kernelsquare.memberapi.domain.reservation.dto.AddReservationMemberRequest;
 import com.kernelsquare.memberapi.domain.reservation.service.ReservationService;
 
 @DisplayName("예약 컨트롤러 테스트")

@@ -27,6 +27,7 @@ public record CreateReservationArticleRequest(
 		Member member) {
 		return ReservationArticle.builder()
 			.title(createReservationArticleRequest.title())
+			.startTime(LocalDateTime.now())
 			.content(createReservationArticleRequest.content())
 			.member(member)
 			.build();

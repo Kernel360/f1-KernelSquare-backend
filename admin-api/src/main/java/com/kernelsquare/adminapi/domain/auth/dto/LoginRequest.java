@@ -1,19 +1,23 @@
 package com.kernelsquare.adminapi.domain.auth.dto;
 
+import com.kernelsquare.core.validation.ValidationGroups;
+import com.kernelsquare.core.validation.constants.AuthValidationConstants;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
 @Builder
 public record LoginRequest(
-	@NotBlank(message = "이메일을 입력해 주세요.")
-	@Email(message = "이메일 형식으로 입력해 주세요.")
-	@Size(min = 5, max = 40, message = "이메일 길이를 확인해 주세요.")
+	@NotBlank(message = AuthValidationConstants.EMAIL_NOT_BLANK, groups = ValidationGroups.NotBlankGroup.class)
+	@Size(min = 5, max = 40, message = AuthValidationConstants.EMAIL_SIZE, groups = ValidationGroups.SizeGroup.class)
+	@Pattern(regexp = "^[^ㄱ-ㅎㅏ-ㅣ가-힣]*$", message = AuthValidationConstants.EMAIL_PATTERN, groups = ValidationGroups.PatternGroup.class)
+	@Email(message = AuthValidationConstants.EMAIL, groups = ValidationGroups.EmailGroup.class)
 	String email,
 
-	@NotBlank(message = "비밀번호를 입력해 주세요.")
-	@Size(min = 8, max = 16, message = "비밀번호 길이를 확인해 주세요.")
+	@NotBlank(message = AuthValidationConstants.PASSWORD_NOT_BLANK, groups = ValidationGroups.NotBlankGroup.class)
 	String password
 ) {
 }

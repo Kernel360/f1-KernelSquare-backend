@@ -3,10 +3,12 @@ package com.kernelsquare.memberapi.domain.auth.dto;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import com.kernelsquare.core.validation.ValidationSequence;
+import com.kernelsquare.core.validation.constants.AuthValidationConstants;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -15,101 +17,128 @@ import jakarta.validation.ValidatorFactory;
 
 @DisplayName("Auth 도메인 요청 Dto 종합 테스트")
 class AuthRequestDtoTest {
-	ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-	Validator validator = factory.getValidator();
+	private final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+	private final Validator validator = factory.getValidator();
 
 	@Test
-	@DisplayName("이메일 중복 체크 검증 테스트")
-	void validateCheckDuplicateEmailRequest() {
-		CheckDuplicateEmailRequest checkDuplicateEmailRequest1 = CheckDuplicateEmailRequest.builder()
+	@DisplayName("유효한 회원가입 요청에 대한 테스트")
+	void validSignUpRequest() {
+		// given
+		SignUpRequest signUpRequest = SignUpRequest.builder()
+			.email("valid@example.com")
+			.nickname("validNi")
+			.password("lid@Pad123")
+			.build();
+
+		// when
+		Set<ConstraintViolation<SignUpRequest>> violations = validator.validate(signUpRequest,
+			ValidationSequence.class);
+
+		// then
+		assertThat(violations).isEmpty();
+	}
+
+	@Test
+	@DisplayName("닉네임이 유효하지 않은 경우의 테스트")
+	void invalidNickname() {
+		// given
+		SignUpRequest signUpRequest = SignUpRequest.builder()
+			.email("valid@example.com")
+			.nickname("invalidNickname1")
+			.password("Valid@Password123")
+			.build();
+
+		// when
+		Set<ConstraintViolation<SignUpRequest>> violations = validator.validate(signUpRequest,
+			ValidationSequence.class);
+
+		// then
+		assertThat(violations).hasSize(2);
+		assertThat(violations).extracting("message").contains(AuthValidationConstants.NICKNAME_SIZE);
+	}
+
+	@Test
+	@DisplayName("비밀번호가 유효하지 않은 경우의 테스트")
+	void invalidPassword() {
+		// given
+		SignUpRequest signUpRequest = SignUpRequest.builder()
+			.email("valid@example.com")
+			.nickname("validNickname")
+			.password("invalidpassword")
+			.build();
+
+		// when
+		Set<ConstraintViolation<SignUpRequest>> violations = validator.validate(signUpRequest,
+			ValidationSequence.class);
+
+		// then
+		assertThat(violations).hasSize(1);
+		assertThat(violations).extracting("message").contains(AuthValidationConstants.NICKNAME_SIZE);
+	}
+
+	@Test
+	@DisplayName("이메일 주소가 빈 문자열일 때의 테스트")
+	void blankEmail() {
+		// given
+		CheckDuplicateEmailRequest request = CheckDuplicateEmailRequest.builder()
 			.email("")
 			.build();
 
-		CheckDuplicateEmailRequest checkDuplicateEmailRequest2 = CheckDuplicateEmailRequest.builder()
-			.email("asdsaas")
-			.build();
+		// when
+		Set<ConstraintViolation<CheckDuplicateEmailRequest>> violations = validator.validate(request,
+			ValidationSequence.class);
 
-		Set<ConstraintViolation<CheckDuplicateEmailRequest>> violations1 = validator.validate(
-			checkDuplicateEmailRequest1);
-		Set<String> msgList1 = violations1.stream().map(ConstraintViolation::getMessage).collect(Collectors.toSet());
-
-		Set<ConstraintViolation<CheckDuplicateEmailRequest>> violations2 = validator.validate(
-			checkDuplicateEmailRequest2);
-		Set<String> msgList2 = violations2.stream().map(ConstraintViolation::getMessage).collect(Collectors.toSet());
-
-		//then
-		assertThat(msgList1).isEqualTo(Set.of("이메일을 입력해 주세요.", "이메일 길이를 확인해 주세요."));
-		assertThat(msgList2).isEqualTo(Set.of("이메일 형식으로 입력해 주세요."));
+		// then
+		assertThat(violations).hasSize(1);
+		assertThat(violations).extracting("message").contains(AuthValidationConstants.EMAIL_NOT_BLANK);
 	}
 
 	@Test
-	@DisplayName("닉네임 중복 체크 검증 테스트")
-	void validateCheckDuplicateNicknameRequest() {
-		CheckDuplicateNicknameRequest checkDuplicateNicknameRequest = CheckDuplicateNicknameRequest.builder()
-			.nickname("")
+	@DisplayName("이메일 주소가 유효하지 않은 경우의 테스트")
+	void invalidEmail() {
+		// given
+		CheckDuplicateEmailRequest request = CheckDuplicateEmailRequest.builder()
+			.email("invalidEmail")
 			.build();
 
-		Set<ConstraintViolation<CheckDuplicateNicknameRequest>> violations = validator.validate(
-			checkDuplicateNicknameRequest);
-		Set<String> msgList = violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toSet());
+		// when
+		Set<ConstraintViolation<CheckDuplicateEmailRequest>> violations = validator.validate(request,
+			ValidationSequence.class);
 
-		//then
-		assertThat(msgList).isEqualTo(Set.of("닉네임을 입력해 주세요.", "닉네임 길이를 확인해 주세요."));
+		// then
+		assertThat(violations).hasSize(1);
+		assertThat(violations).extracting("message").contains(AuthValidationConstants.EMAIL);
 	}
 
 	@Test
-	@DisplayName("로그인 요청 검증 테스트")
-	void validateLoginRequest() {
-		LoginRequest loginRequest1 = LoginRequest.builder()
-			.email("")
-			.password("")
+	@DisplayName("유효한 닉네임에 대한 테스트")
+	void validNickname() {
+		// given
+		CheckDuplicateNicknameRequest request = CheckDuplicateNicknameRequest.builder()
+			.nickname("validNic")
 			.build();
 
-		LoginRequest loginRequest2 = LoginRequest.builder()
-			.email("asdasdas")
-			.password("asdassdd")
-			.build();
+		// when
+		Set<ConstraintViolation<CheckDuplicateNicknameRequest>> violations = validator.validate(request,
+			ValidationSequence.class);
 
-		Set<ConstraintViolation<LoginRequest>> violations1 = validator.validate(loginRequest1);
-		Set<String> msgList1 = violations1.stream().map(ConstraintViolation::getMessage).collect(Collectors.toSet());
-
-		Set<ConstraintViolation<LoginRequest>> violations2 = validator.validate(loginRequest2);
-		Set<String> msgList2 = violations2.stream().map(ConstraintViolation::getMessage).collect(Collectors.toSet());
-
-		//then
-		assertThat(msgList1).isEqualTo(Set.of("이메일을 입력해 주세요.", "이메일 길이를 확인해 주세요.",
-			"비밀번호를 입력해 주세요.", "비밀번호 길이를 확인해 주세요."));
-
-		assertThat(msgList2).isEqualTo(Set.of("이메일 형식으로 입력해 주세요."));
+		// then
+		assertThat(violations).isEmpty();
 	}
 
 	@Test
-	@DisplayName("회원가입 요청 검증 테스트")
-	void validateSignUpRequest() {
-		SignUpRequest signUpRequest1 = SignUpRequest.builder()
-			.email("")
-			.nickname("")
-			.password("")
+	@DisplayName("유효한 로그인 요청에 대한 테스트")
+	void validLoginRequest() {
+		// given
+		LoginRequest loginRequest = LoginRequest.builder()
+			.email("valid@example.com")
+			.password("ValidPassword123")
 			.build();
 
-		SignUpRequest signUpRequest2 = SignUpRequest.builder()
-			.email("asdasdas")
-			.nickname("홍박사")
-			.password("asdasdas")
-			.build();
+		// when
+		Set<ConstraintViolation<LoginRequest>> violations = validator.validate(loginRequest, ValidationSequence.class);
 
-		Set<ConstraintViolation<SignUpRequest>> violations1 = validator.validate(signUpRequest1);
-		Set<String> msgList1 = violations1.stream().map(ConstraintViolation::getMessage).collect(Collectors.toSet());
-
-		Set<ConstraintViolation<SignUpRequest>> violations2 = validator.validate(signUpRequest2);
-		Set<String> msgList2 = violations2.stream().map(ConstraintViolation::getMessage).collect(Collectors.toSet());
-
-		//then
-		assertThat(msgList1).isEqualTo(Set.of("이메일을 입력해 주세요.", "이메일 길이를 확인해 주세요.",
-			"닉네임을 입력해 주세요.", "닉네임 길이를 확인해 주세요.",
-			"비밀번호를 입력해 주세요.", "비밀번호 길이를 확인해 주세요."));
-
-		assertThat(msgList2).isEqualTo(Set.of("이메일 형식으로 입력해 주세요."));
+		// then
+		assertThat(violations).isEmpty();
 	}
-
 }

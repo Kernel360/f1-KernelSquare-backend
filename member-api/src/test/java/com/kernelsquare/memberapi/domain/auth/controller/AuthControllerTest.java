@@ -18,6 +18,11 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kernelsquare.core.type.AuthorityType;
+import com.kernelsquare.domainmysql.domain.authority.entity.Authority;
+import com.kernelsquare.domainmysql.domain.level.entity.Level;
+import com.kernelsquare.domainmysql.domain.member.entity.Member;
+import com.kernelsquare.domainmysql.domain.member_authority.entity.MemberAuthority;
 import com.kernelsquare.memberapi.domain.auth.dto.CheckDuplicateEmailRequest;
 import com.kernelsquare.memberapi.domain.auth.dto.CheckDuplicateNicknameRequest;
 import com.kernelsquare.memberapi.domain.auth.dto.LoginRequest;
@@ -27,11 +32,6 @@ import com.kernelsquare.memberapi.domain.auth.dto.TokenRequest;
 import com.kernelsquare.memberapi.domain.auth.dto.TokenResponse;
 import com.kernelsquare.memberapi.domain.auth.service.AuthService;
 import com.kernelsquare.memberapi.domain.auth.service.TokenProvider;
-import com.kernelsquare.core.type.AuthorityType;
-import com.kernelsquare.domainmysql.domain.authority.entity.Authority;
-import com.kernelsquare.domainmysql.domain.level.entity.Level;
-import com.kernelsquare.domainmysql.domain.member.entity.Member;
-import com.kernelsquare.domainmysql.domain.member_authority.entity.MemberAuthority;
 
 @DisplayName("인증 컨트롤러 테스트")
 @WebMvcTest(AuthController.class)
@@ -132,7 +132,7 @@ public class AuthControllerTest {
 			.builder()
 			.nickname("woww")
 			.email("jugwang@naver.com")
-			.password("hashedPassword")
+			.password("hashedPassw@1d")
 			.build();
 
 		Member member = Member
@@ -140,7 +140,7 @@ public class AuthControllerTest {
 			.id(1L)
 			.nickname("woww")
 			.email("jugwang@naver.com")
-			.password("hashedPassword")
+			.password("hashedPassw@1")
 			.experience(10000L)
 			.introduction("hi, i'm hongjugwang.")
 			.imageUrl("s3:qwe12fasdawczx")

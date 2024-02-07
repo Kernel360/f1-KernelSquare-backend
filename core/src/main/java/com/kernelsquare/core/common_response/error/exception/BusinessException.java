@@ -9,6 +9,7 @@ public class BusinessException extends RuntimeException {
 	private final transient ErrorCode errorCode;
 
 	public BusinessException(ErrorCode errorCode) {
+		super(errorCode.getMsg());
 		this.errorCode = errorCode;
 	}
 }

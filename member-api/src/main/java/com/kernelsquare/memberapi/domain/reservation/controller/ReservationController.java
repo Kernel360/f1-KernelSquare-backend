@@ -17,7 +17,7 @@ import com.kernelsquare.core.common_response.ResponseEntityFactory;
 import com.kernelsquare.memberapi.domain.auth.dto.MemberPrincipal;
 import com.kernelsquare.memberapi.domain.reservation.dto.AddReservationMemberResponse;
 import com.kernelsquare.memberapi.domain.reservation.dto.FindAllReservationResponse;
-import com.kernelsquare.memberapi.domain.reservation.service.AddReservationMemberRequest;
+import com.kernelsquare.memberapi.domain.reservation.dto.AddReservationMemberRequest;
 import com.kernelsquare.memberapi.domain.reservation.service.ReservationService;
 
 import lombok.RequiredArgsConstructor;

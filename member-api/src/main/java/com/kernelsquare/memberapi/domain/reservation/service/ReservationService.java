@@ -40,7 +40,7 @@ public class ReservationService {
 	}
 
 	@Transactional
-	public void deleteReservation(Long reservationId) {
+	public void deleteReservationMember(Long reservationId) {
 		Reservation reservation = reservationRepository.findById(reservationId)
 			.orElseThrow(() -> new BusinessException(ReservationErrorCode.RESERVATION_NOT_FOUND));
 
@@ -49,7 +49,7 @@ public class ReservationService {
 			throw new BusinessException(ReservationErrorCode.RESERVATION_CANCEL_DENIED_TIME_PASSED);
 		}
 
-		reservationRepository.deleteById(reservationId);
+		reservation.deleteMember();
 	}
 
 	@Transactional

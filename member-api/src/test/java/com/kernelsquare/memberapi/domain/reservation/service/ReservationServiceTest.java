@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import com.kernelsquare.memberapi.domain.reservation.dto.AddReservationMemberRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +22,7 @@ import com.kernelsquare.domainmysql.domain.reservation.entity.Reservation;
 import com.kernelsquare.domainmysql.domain.reservation.repository.ReservationRepository;
 import com.kernelsquare.domainmysql.domain.reservation_article.entity.ReservationArticle;
 import com.kernelsquare.domainmysql.domain.reservation_article.repository.ReservationArticleRepository;
+import com.kernelsquare.memberapi.domain.reservation.dto.AddReservationMemberRequest;
 import com.kernelsquare.memberapi.domain.reservation.dto.AddReservationMemberResponse;
 import com.kernelsquare.memberapi.domain.reservation.dto.FindAllReservationResponse;
 import com.kernelsquare.memberapi.domain.reservation.dto.FindReservationResponse;
@@ -126,7 +126,6 @@ class ReservationServiceTest {
 			.builder()
 			.reservationId(1L)
 			.reservationArticleId(1L)
-			.memberId(1L)
 			.startTime(LocalDateTime.now())
 			.build();
 
@@ -154,7 +153,7 @@ class ReservationServiceTest {
 
 		//when
 		AddReservationMemberResponse addReservationMemberResponse = reservationService.AddReservationMember(
-			addReservationMemberRequest);
+			addReservationMemberRequest, member.getId());
 
 		//then
 		assertThat(addReservationMemberResponse).isNotNull();

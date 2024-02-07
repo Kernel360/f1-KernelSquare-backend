@@ -53,7 +53,8 @@ public class ReservationService {
 	}
 
 	@Transactional
-	public AddReservationMemberResponse AddReservationMember(AddReservationMemberRequest addReservationMemberRequest) {
+	public AddReservationMemberResponse AddReservationMember(AddReservationMemberRequest addReservationMemberRequest,
+		Long memberId) {
 		// 해당 예약 게시글이 존재하는 지 확인
 		ReservationArticle reservationArticle = reservationArticleRepository.findById(
 				addReservationMemberRequest.reservationArticleId())
@@ -66,7 +67,7 @@ public class ReservationService {
 		}
 
 		List<Reservation> reservationList = reservationRepository.findAllByMemberId(
-			addReservationMemberRequest.memberId());
+			memberId);
 
 		// 멘티가 한 번에 할 수 있는 최대 예약의 수는 10개
 		if (reservationList.size() >= 10) {
@@ -75,14 +76,14 @@ public class ReservationService {
 
 		// 멘티가 하나의 예약 게시글에 할 수 있는 최대 예약은 1개
 		if (reservationRepository.existsByReservationArticleIdAndMemberId(
-			addReservationMemberRequest.reservationArticleId(), addReservationMemberRequest.memberId())) {
+			addReservationMemberRequest.reservationArticleId(), memberId)) {
 			throw new BusinessException(ReservationErrorCode.RESERVATION_ALREADY_EXIST);
 		}
 
 		Reservation reservation = reservationRepository.findById(addReservationMemberRequest.reservationId())
 			.orElseThrow(() -> new BusinessException(ReservationErrorCode.RESERVATION_NOT_FOUND));
 
-		if (!reservation.getMember().equals(null)) {
+		if (reservation.getMember() != null) {
 			throw new BusinessException(ReservationErrorCode.RESERVATION_ALREADY_TAKEN);
 		}
 
@@ -93,7 +94,7 @@ public class ReservationService {
 			}
 		}
 
-		Member member = memberRepository.findById(addReservationMemberRequest.memberId())
+		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new BusinessException(ReservationErrorCode.MEMBER_NOT_FOUND));
 
 		reservation.addMember(member);

@@ -3,7 +3,6 @@ package com.kernelsquare.memberapi.domain.reservation.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.kernelsquare.memberapi.domain.reservation.dto.AddReservationMemberRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +14,7 @@ import com.kernelsquare.domainmysql.domain.reservation.entity.Reservation;
 import com.kernelsquare.domainmysql.domain.reservation.repository.ReservationRepository;
 import com.kernelsquare.domainmysql.domain.reservation_article.entity.ReservationArticle;
 import com.kernelsquare.domainmysql.domain.reservation_article.repository.ReservationArticleRepository;
+import com.kernelsquare.memberapi.domain.reservation.dto.AddReservationMemberRequest;
 import com.kernelsquare.memberapi.domain.reservation.dto.AddReservationMemberResponse;
 import com.kernelsquare.memberapi.domain.reservation.dto.FindAllReservationResponse;
 import com.kernelsquare.memberapi.domain.reservation.dto.FindReservationResponse;
@@ -81,6 +81,10 @@ public class ReservationService {
 
 		Reservation reservation = reservationRepository.findById(addReservationMemberRequest.reservationId())
 			.orElseThrow(() -> new BusinessException(ReservationErrorCode.RESERVATION_NOT_FOUND));
+
+		if (!reservation.getMember().equals(null)) {
+			throw new BusinessException(ReservationErrorCode.RESERVATION_ALREADY_TAKEN);
+		}
 
 		// 예약 중복 확인 체크하기
 		for (Reservation bookedReservation : reservationList) {

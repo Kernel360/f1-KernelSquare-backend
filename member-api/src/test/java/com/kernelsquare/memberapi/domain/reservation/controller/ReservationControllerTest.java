@@ -33,10 +33,10 @@ import com.kernelsquare.domainmysql.domain.authority.entity.Authority;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
 import com.kernelsquare.domainmysql.domain.member_authority.entity.MemberAuthority;
 import com.kernelsquare.memberapi.domain.auth.dto.MemberPrincipal;
+import com.kernelsquare.memberapi.domain.reservation.dto.AddReservationMemberRequest;
 import com.kernelsquare.memberapi.domain.reservation.dto.AddReservationMemberResponse;
 import com.kernelsquare.memberapi.domain.reservation.dto.FindAllReservationResponse;
 import com.kernelsquare.memberapi.domain.reservation.dto.FindReservationResponse;
-import com.kernelsquare.memberapi.domain.reservation.dto.AddReservationMemberRequest;
 import com.kernelsquare.memberapi.domain.reservation.service.ReservationService;
 
 @DisplayName("예약 컨트롤러 테스트")
@@ -145,7 +145,7 @@ class ReservationControllerTest {
 
 		doNothing()
 			.when(reservationService)
-			.deleteReservation(anyLong());
+			.deleteReservationMember(anyLong());
 
 		Member member = Member.builder()
 			.id(1L)
@@ -185,7 +185,7 @@ class ReservationControllerTest {
 					fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 상태 코드"))));
 
 		//verify
-		verify(reservationService, times(1)).deleteReservation(anyLong());
+		verify(reservationService, times(1)).deleteReservationMember(anyLong());
 	}
 
 	@Test
@@ -193,7 +193,6 @@ class ReservationControllerTest {
 	void testAddReservationMember() throws Exception {
 		//given
 		AddReservationMemberRequest addReservationMemberRequest = AddReservationMemberRequest.builder()
-			.memberId(1L)
 			.reservationArticleId(1L)
 			.reservationId(1L)
 			.startTime(LocalDateTime.now())
@@ -206,7 +205,7 @@ class ReservationControllerTest {
 
 		doReturn(addReservationMemberResponse)
 			.when(reservationService)
-			.AddReservationMember(any(AddReservationMemberRequest.class));
+			.AddReservationMember(any(AddReservationMemberRequest.class), anyLong());
 
 		Member member = Member.builder()
 			.id(1L)
@@ -248,7 +247,6 @@ class ReservationControllerTest {
 				requestFields(
 					fieldWithPath("reservation_article_id").type(JsonFieldType.NUMBER).description("예약 게시글 id"),
 					fieldWithPath("reservation_id").type(JsonFieldType.NUMBER).description("예약 아이디"),
-					fieldWithPath("member_id").type(JsonFieldType.NUMBER).description("회원 아이디"),
 					//todo : 시작 시간 type 확인 -> ARRAY 맞음?
 					fieldWithPath("start_time").type(JsonFieldType.ARRAY).description("시작 시간")
 				),
@@ -260,6 +258,6 @@ class ReservationControllerTest {
 						.description("예약 게시글 아이디"))));
 
 		//verify
-		verify(reservationService, times(1)).AddReservationMember(any(AddReservationMemberRequest.class));
+		verify(reservationService, times(1)).AddReservationMember(any(AddReservationMemberRequest.class), anyLong());
 	}
 }

@@ -40,6 +40,7 @@ public class ReservationArticleService {
 		Page<ReservationArticle> pages = reservationArticleRepository.findAll(pageable);
 		Integer totalPages = pages.getTotalPages();
 
+		//
 		if (totalPages == 0)
 			totalPages += 1;
 

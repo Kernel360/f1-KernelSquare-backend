@@ -30,6 +30,8 @@ public class AnswerService {
 
 		//
 		if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() != "anonymousUser") {
+
+			//
 			Long memberId = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
 			List<MemberAnswerVote> voteList = memberAnswerVoteRepository.findAllByMemberId(memberId);
 			Map<Long, Integer> voteStatusMap = voteList.stream()

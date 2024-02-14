@@ -40,6 +40,8 @@ public class AnswerService {
 			Map<Long, Integer> voteStatusMap = voteList.stream()
 				.collect(Collectors.toMap(MemberAnswerVote::getAnswerId, MemberAnswerVote::getStatus));
 			List<Answer> answerList = answerRepository.findAnswersByQuestionIdSortedByCreationDate(questionId);
+
+			//
 			for (Answer answer : answerList) {
 				if (voteStatusMap.containsKey(answer.getId())) {
 					result.add(FindAnswerResponse.from(answer, null, answer.getMember().getLevel().getName(),

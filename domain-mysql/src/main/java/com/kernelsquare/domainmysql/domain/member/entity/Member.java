@@ -90,6 +90,8 @@ public class Member extends BaseEntity {
 	}
 
 	public boolean isExperienceExceed(Long experience) {
+
+		//
 		if (experience >= this.level.getLevelUpperLimit()) {
 			return true;
 		}

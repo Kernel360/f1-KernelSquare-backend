@@ -40,6 +40,6 @@ public class MemberDetailService implements UserDetailsService {
 					.getAuthorityType()
 					.getDescription()))
 			.toList();
-		return new MemberPrincipal(member, authorities);
+		return new MemberPrincipal(member.getId(), member.getPassword(), authorities);
 	}
 }

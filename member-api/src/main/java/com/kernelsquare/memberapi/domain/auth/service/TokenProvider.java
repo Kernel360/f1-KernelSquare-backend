@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.kernelsquare.memberapi.domain.auth.dto.MemberPrincipal;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -157,7 +158,7 @@ public class TokenProvider implements InitializingBean {
 			.map(SimpleGrantedAuthority::new)
 			.toList();
 
-		User principal = new User(claims.getSubject(), "", authorities);
+		MemberPrincipal principal = new MemberPrincipal(Long.valueOf(claims.getSubject()), "", authorities);
 
 		return new UsernamePasswordAuthenticationToken(principal, token, authorities);
 	}

@@ -2,6 +2,7 @@ package com.kernelsquare.memberapi.domain.reservation.controller;
 
 import static com.kernelsquare.core.common_response.response.code.ReservationResponseCode.*;
 
+import com.kernelsquare.memberapi.domain.auth.service.MemberDetailService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -32,7 +33,7 @@ public class ReservationController {
 	public ResponseEntity<ApiResponse<FindAllReservationResponse>> findAllReservationByMemberId(@AuthenticationPrincipal
 	MemberPrincipal memberPrincipal) {
 		FindAllReservationResponse findAllReservationResponse = reservationService.findAllReservationByMemberId(
-			memberPrincipal.getMember()
+			memberPrincipal
 				.getId());
 
 		return ResponseEntityFactory.toResponseEntity(RESERVATION_ALL_FOUND, findAllReservationResponse);
@@ -50,7 +51,7 @@ public class ReservationController {
 		@AuthenticationPrincipal MemberPrincipal memberPrincipal, @RequestBody
 	AddReservationMemberRequest addReservationMemberRequest) {
 		AddReservationMemberResponse addReservationMemberResponse = reservationService.AddReservationMember(
-			addReservationMemberRequest, memberPrincipal.getMember().getId());
+			addReservationMemberRequest, memberPrincipal.getId());
 
 		return ResponseEntityFactory.toResponseEntity(RESERVATION_SUCCESS, addReservationMemberResponse);
 	}

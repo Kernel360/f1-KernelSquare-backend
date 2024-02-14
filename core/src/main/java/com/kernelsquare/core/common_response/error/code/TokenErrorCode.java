@@ -19,6 +19,8 @@ public enum TokenErrorCode implements ErrorCode {
 
 	private final HttpStatus httpStatus;
 	private final ServiceStatus serviceStatus;
+
+	//
 	private final String msg;
 
 	@Override

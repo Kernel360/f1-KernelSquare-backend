@@ -46,6 +46,7 @@ public class AuthService {
 		if (findMember.isExperienceExceed(findMember.getExperience())) {
 			findMember.updateExperience(findMember.getExperience() - findMember.getLevel().getLevelUpperLimit());
 			Level nextLevel = levelRepository.findByName(findMember.getLevel().getName() + 1)
+				//
 				.orElseThrow(() -> new BusinessException(LevelErrorCode.LEVEL_NOT_FOUND));
 			findMember.updateLevel(nextLevel);
 		}

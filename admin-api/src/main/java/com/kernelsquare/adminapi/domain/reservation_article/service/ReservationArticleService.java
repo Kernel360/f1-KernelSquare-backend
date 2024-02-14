@@ -80,6 +80,7 @@ public class ReservationArticleService {
 
 	@Transactional
 	public void deleteReservationArticle(Long postId) {
+		//
 		reservationArticleRepository.findById(postId)
 			.orElseThrow(() -> new BusinessException(ReservationArticleErrorCode.RESERVATION_ARTICLE_NOT_FOUND));
 

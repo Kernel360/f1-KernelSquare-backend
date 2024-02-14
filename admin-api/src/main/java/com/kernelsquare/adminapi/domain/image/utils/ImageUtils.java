@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.kernelsquare.adminapi.domain.image.component.ImageComponent;
 
+//
 public class ImageUtils {
 
 	// 클라이언트에게 받은 이미지 파일을 받아서 s3에 저장할 file path를 만듦

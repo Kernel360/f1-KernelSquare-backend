@@ -31,6 +31,8 @@ public class ImageController {
 		@RequestPart(value = "file")
 		MultipartFile multipartFile
 	) {
+
+		//
 		UploadImageResponse uploadImageResponse = imageService.uploadImage(category, multipartFile);
 
 		return ResponseEntityFactory.toResponseEntity(IMAGE_UPLOAD_COMPLETED, uploadImageResponse);

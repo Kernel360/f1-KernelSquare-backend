@@ -54,6 +54,8 @@ public class AuthService {
 
 	@Transactional
 	public SignUpResponse signUp(final SignUpRequest signUpRequest) {
+
+		//
 		Level level = levelRepository.findByName(1L)
 			.orElseThrow(() -> new BusinessException(LevelErrorCode.LEVEL_NOT_FOUND));
 		String encodedPassword = passwordEncoder.encode(signUpRequest.password());

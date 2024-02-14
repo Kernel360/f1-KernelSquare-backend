@@ -102,6 +102,7 @@ public class Member extends BaseEntity {
 		this.authorities = authorities;
 	}
 
+	// Builder
 	@Builder
 	public Member(Long id, String nickname, String email, String password, Long experience, String imageUrl,
 		String introduction, Level level, List<MemberAuthority> authorities) {

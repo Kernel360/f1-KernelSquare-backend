@@ -27,6 +27,8 @@ public class AnswerService {
 	@Transactional(readOnly = true)
 	public FindAllAnswerResponse findAllAnswer(Long questionId) {
 		List<FindAnswerResponse> result = new ArrayList<>();
+
+		//
 		if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() != "anonymousUser") {
 			Long memberId = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
 			List<MemberAnswerVote> voteList = memberAnswerVoteRepository.findAllByMemberId(memberId);

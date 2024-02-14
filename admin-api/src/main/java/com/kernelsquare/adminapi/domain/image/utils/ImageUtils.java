@@ -25,6 +25,8 @@ public class ImageUtils {
 	}
 
 	public static String makeImageUrl(String filePath) {
+
+		//
 		if (filePath != null) {
 			String baseUrl = ImageComponent.getBaseUrl();
 			return baseUrl + "/" + filePath;

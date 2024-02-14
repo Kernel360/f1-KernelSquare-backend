@@ -10,6 +10,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
 @Builder
+//
 public record LoginRequest(
 	@NotBlank(message = AuthValidationConstants.EMAIL_NOT_BLANK, groups = ValidationGroups.NotBlankGroup.class)
 	@Size(min = 5, max = 40, message = AuthValidationConstants.EMAIL_SIZE, groups = ValidationGroups.SizeGroup.class)

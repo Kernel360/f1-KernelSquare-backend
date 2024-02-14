@@ -38,6 +38,7 @@ public class Question extends BaseEntity {
 	@Column(nullable = false, name = "content", columnDefinition = "text")
 	private String content;
 
+	//
 	@Column(name = "image_url", columnDefinition = "varchar(100)")
 	private String imageUrl;
 

@@ -44,6 +44,7 @@ public class Question extends BaseEntity {
 	@Column(name = "view_count", columnDefinition = "bigint")
 	private Long viewCount;
 
+	//
 	@Column(nullable = false, name = "closed_status", columnDefinition = "tinyint")
 	private Boolean closedStatus;
 

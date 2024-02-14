@@ -21,6 +21,7 @@ public class CoffeeChatController {
 	public ResponseEntity<ApiResponse<CreateCoffeeChatRoomResponse>> createCoffeeChatRoom(
 		@Valid
 		@RequestBody
+			//
 		CreateCoffeeChatRoomRequest createCoffeeChatRoomRequest
 	) {
 		CreateCoffeeChatRoomResponse response = coffeeChatService.createCoffeeChatRoom(createCoffeeChatRoomRequest);

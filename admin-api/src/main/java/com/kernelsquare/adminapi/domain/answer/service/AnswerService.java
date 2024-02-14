@@ -44,6 +44,8 @@ public class AnswerService {
 			//
 			for (Answer answer : answerList) {
 				if (voteStatusMap.containsKey(answer.getId())) {
+
+					//
 					result.add(FindAnswerResponse.from(answer, null, answer.getMember().getLevel().getName(),
 						Long.valueOf(voteStatusMap.get(answer.getId()))));
 				} else {

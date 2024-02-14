@@ -26,6 +26,7 @@ public class AnswerController {
 
 	@GetMapping("/questions/{questionId}/answers")
 	public ResponseEntity<ApiResponse<FindAllAnswerResponse>> findAllAnswers(@PathVariable Long questionId) {
+		//
 		FindAllAnswerResponse findAllAnswerResponse = answerService.findAllAnswer(questionId);
 		return ResponseEntityFactory.toResponseEntity(ANSWERS_ALL_FOUND, findAllAnswerResponse);
 	}

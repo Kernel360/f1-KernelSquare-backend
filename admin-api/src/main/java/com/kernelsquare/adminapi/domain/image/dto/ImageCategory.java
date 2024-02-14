@@ -5,6 +5,7 @@ import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 
+//
 @RequiredArgsConstructor
 public enum ImageCategory {
     MEMBER("member"),

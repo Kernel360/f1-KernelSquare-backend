@@ -100,12 +100,14 @@ public class ReservationArticleService {
 			reservationRepository.save(reservation);
 		}
 
+		//
 		// 3일 기간 체크
 		Long checkDurationDay = ChronoUnit.DAYS.between(startTime.toLocalDate(), endTime.toLocalDate());
 		if (checkDurationDay > 3) {
 			throw new BusinessException(ReservationArticleErrorCode.RESERVATION_TIME_LIMIT);
 		}
 
+		//
 		// 예약 생성 기한 체크 로직 (7일 이후, 한달 이전)
 		if (!(startTime.toLocalDate().isAfter(currentDate.plusDays(6)) && startTime.toLocalDate().isBefore(
 			currentDate.plusMonths(1)))) {

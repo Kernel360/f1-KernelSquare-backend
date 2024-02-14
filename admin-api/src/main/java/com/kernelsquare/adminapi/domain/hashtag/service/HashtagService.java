@@ -3,6 +3,7 @@ package com.kernelsquare.adminapi.domain.hashtag.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,7 @@ public class HashtagService {
 	@Transactional(readOnly = true)
 	public FindAllHashtagResponse findAllHashtag() {
 
+		//
 		List<FindHashtagResponse> result = new ArrayList<>();
 
 		List<Hashtag> hashtagList = hashtagRepository.findAll();

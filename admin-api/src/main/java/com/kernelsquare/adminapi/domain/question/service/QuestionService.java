@@ -32,9 +32,7 @@ public class QuestionService {
 	private final LevelRepository levelRepository;
 
 	@Transactional(readOnly = true)
-	public FindQuestionResponse findQuestion(
-		Long questionId
-	) {
+	public FindQuestionResponse findQuestion(Long questionId) {
 		Question question = questionRepository.findById(questionId)
 			.orElseThrow(() -> new BusinessException(QuestionErrorCode.QUESTION_NOT_FOUND));
 
@@ -46,6 +44,7 @@ public class QuestionService {
 	@Transactional(readOnly = true)
 	public PageResponse<FindQuestionResponse> findAllQuestions(Pageable pageable) {
 
+		//
 		Integer currentPage = pageable.getPageNumber() + 1;
 
 		Page<Question> pages = questionRepository.findAll(pageable);

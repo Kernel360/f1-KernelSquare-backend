@@ -34,6 +34,8 @@ public class AnswerService {
 			//
 			Long memberId = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
 			List<MemberAnswerVote> voteList = memberAnswerVoteRepository.findAllByMemberId(memberId);
+
+			//
 			Map<Long, Integer> voteStatusMap = voteList.stream()
 				.collect(Collectors.toMap(MemberAnswerVote::getAnswerId, MemberAnswerVote::getStatus));
 			List<Answer> answerList = answerRepository.findAnswersByQuestionIdSortedByCreationDate(questionId);

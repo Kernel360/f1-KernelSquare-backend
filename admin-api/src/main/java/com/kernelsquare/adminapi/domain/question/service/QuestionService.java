@@ -60,6 +60,7 @@ public class QuestionService {
 
 		Pagination pagination = Pagination.toEntity(totalPages, pages.getSize(), currentPage.equals(totalPages));
 
+		//
 		List<FindQuestionResponse> responsePages = pages.getContent().stream()
 			.map(Question::getId)
 			.map(this::findQuestion)

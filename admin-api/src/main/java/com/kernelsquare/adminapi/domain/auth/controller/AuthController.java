@@ -31,6 +31,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthController {
 	private final AuthService authService;
+	//
 	private final TokenProvider tokenProvider;
 
 	@PostMapping("/auth/login")

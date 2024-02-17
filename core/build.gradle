@@ -29,6 +29,10 @@ dependencies {
     //AOP
     implementation 'org.springframework.boot:spring-boot-starter-aop'
 
+    //TokenGenerator
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+
+    //Monitoring
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'io.micrometer:micrometer-registry-prometheus'
 }

@@ -43,6 +43,9 @@ dependencies {
     implementation 'org.flywaydb:flyway-core'
     implementation 'org.flywaydb:flyway-mysql'
 
+    //StringUtils for Entity Validation
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+
     //Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'

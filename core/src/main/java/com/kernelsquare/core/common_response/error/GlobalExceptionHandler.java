@@ -8,17 +8,23 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.kernelsquare.core.common_response.ApiResponse;
 import com.kernelsquare.core.common_response.ResponseEntityFactory;
 import com.kernelsquare.core.common_response.error.exception.BusinessException;
+import com.kernelsquare.core.common_response.error.exception.InvalidParamException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler(BusinessException.class)
-	public ResponseEntity<ApiResponse> handleBusinessException(BusinessException e) {
+	public ResponseEntity<ApiResponse> onBusinessException(BusinessException e) {
+		return ResponseEntityFactory.toResponseEntity(e.getErrorCode());
+	}
+
+	@ExceptionHandler(InvalidParamException.class)
+	public ResponseEntity<ApiResponse> onInvalidParamException(InvalidParamException e) {
 		return ResponseEntityFactory.toResponseEntity(e.getErrorCode());
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<ApiResponse> handleNotValidException(MethodArgumentNotValidException e) {
+	public ResponseEntity<ApiResponse> onMethodArgumentNotValidException(MethodArgumentNotValidException e) {
 		return ResponseEntityFactory.toResponseEntity(e);
 	}
 }

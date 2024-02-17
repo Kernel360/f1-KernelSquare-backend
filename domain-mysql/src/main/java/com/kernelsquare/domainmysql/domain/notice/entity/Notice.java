@@ -1,4 +1,4 @@
-package com.kernelsquare.domainmysql.domain.notice;
+package com.kernelsquare.domainmysql.domain.notice.entity;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -48,7 +48,7 @@ public class Notice extends BaseEntity {
 	}
 
 	@Builder
-	public Notice(String noticeToken, String noticeTitle, String noticeContent, NoticeCategory noticeCategory) {
+	public Notice(String noticeTitle, String noticeContent, NoticeCategory noticeCategory) {
 		if (StringUtils.isBlank(noticeTitle))
 			throw new InvalidParamException("Notice.noticeTitle");
 		if (StringUtils.isBlank(noticeContent))

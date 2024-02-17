@@ -6,6 +6,7 @@ import com.kernelsquare.core.common_response.error.exception.InvalidParamExcepti
 import com.kernelsquare.core.util.TokenGenerator;
 import com.kernelsquare.domainmysql.domain.base.BaseEntity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -30,11 +31,17 @@ public class Notice extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(nullable = false, unique = true, name = "notice_token", columnDefinition = "bigint")
 	private String noticeToken;
+
+	@Column(nullable = false, name = "notice_title", columnDefinition = "varchar(50)")
 	private String noticeTitle;
+
+	@Column(nullable = false, name = "notice_content", columnDefinition = "text")
 	private String noticeContent;
 
 	@Enumerated(EnumType.STRING)
+	@Column(nullable = false, name = "notice_category", columnDefinition = "varchar(20)")
 	private NoticeCategory noticeCategory;
 
 	@Getter

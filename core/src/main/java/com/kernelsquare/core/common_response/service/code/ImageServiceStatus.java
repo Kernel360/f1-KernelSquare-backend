@@ -7,6 +7,7 @@ public enum ImageServiceStatus implements ServiceStatus {
 	//error
 	IMAGE_IS_EMPTY(2400),
 	IMAGE_UPLOAD_FAILED(2401),
+	FILE_EXTENSION_NOT_VALID(2402),
 
 	//success
 	IMAGE_UPLOAD_COMPLETED(2440),

@@ -5,6 +5,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.kernelsquare.memberapi.domain.member_answer_vote.dto.CreateMemberAnswerVoteRequest;
+import java.util.Objects;
+import java.util.Optional;
+
 import com.kernelsquare.core.common_response.error.code.AnswerErrorCode;
 import com.kernelsquare.core.common_response.error.code.MemberAnswerVoteErrorCode;
 import com.kernelsquare.core.common_response.error.code.MemberErrorCode;
@@ -32,6 +35,16 @@ public class MemberAnswerVoteService {
 
 		Answer answer = answerRepository.findById(answerId)
 			.orElseThrow(() -> new BusinessException(AnswerErrorCode.ANSWER_NOT_FOUND));
+
+		if(Objects.equals(answer.getMember().getId(), createMemberAnswerVoteRequest.memberId())) {
+			throw new BusinessException(MemberAnswerVoteErrorCode.MEMBER_ANSWER_VOTE_SELF_IMPOSSIBLE);
+		}
+
+		Optional<MemberAnswerVote> checkedDuplicateVote = memberAnswerVoteRepository.findByMemberIdAndAnswerId(
+				createMemberAnswerVoteRequest.memberId(), answerId);
+		if(checkedDuplicateVote.isPresent()) {
+			throw new BusinessException(MemberAnswerVoteErrorCode.MEMBER_ANSWER_VOTE_DUPLICATION);
+		}
 
 		MemberAnswerVote memberAnswerVote = CreateMemberAnswerVoteRequest.toEntity(
 			createMemberAnswerVoteRequest, member, answer

@@ -1,13 +1,12 @@
 package com.kernelsquare.memberapi.domain.auth.service;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import com.kernelsquare.core.type.AuthorityType;
+import com.kernelsquare.domainmysql.domain.authority.entity.Authority;
+import com.kernelsquare.domainmysql.domain.level.entity.Level;
+import com.kernelsquare.domainmysql.domain.member.entity.Member;
+import com.kernelsquare.domainmysql.domain.member.repository.MemberRepository;
+import com.kernelsquare.domainmysql.domain.member_authority.entity.MemberAuthority;
+import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,14 +14,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
-import com.kernelsquare.core.type.AuthorityType;
-import com.kernelsquare.domainmysql.domain.authority.entity.Authority;
-import com.kernelsquare.domainmysql.domain.level.entity.Level;
-import com.kernelsquare.domainmysql.domain.member.entity.Member;
-import com.kernelsquare.domainmysql.domain.member.repository.MemberRepository;
-import com.kernelsquare.domainmysql.domain.member_authority.entity.MemberAuthority;
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 @DisplayName("회원 디테일 서비스 테스트")
 @ExtendWith(MockitoExtension.class)
@@ -68,22 +65,22 @@ public class MemberDetailServiceTest {
 
 		Optional<Member> optionalMember = Optional.of(member);
 
-		Set<SimpleGrantedAuthority> authorities = member.getAuthorities().stream()
+		List<SimpleGrantedAuthority> authorities = member.getAuthorities().stream()
 			.map(MemberAuthority::getAuthority)
 			.map(auth -> new SimpleGrantedAuthority(auth.getAuthorityType().getDescription()))
-			.collect(Collectors.toUnmodifiableSet());
+			.toList();
 
 		doReturn(optionalMember)
 			.when(memberRepository)
 			.findById(anyLong());
 
 		//when
-		UserDetails userDetails = memberDetailService.loadUserByUsername(String.valueOf(member.getId()));
+		MemberAdapter memberAdapter = (MemberAdapter) memberDetailService.loadUserByUsername(String.valueOf(member.getId()));
 
 		//then
-		assertThat(userDetails.getUsername()).isEqualTo(String.valueOf(member.getId()));
-		assertThat(userDetails.getPassword()).isEqualTo(member.getPassword());
-		assertThat(userDetails.getAuthorities()).isEqualTo(authorities);
+		assertThat(memberAdapter.getUsername()).isEqualTo(String.valueOf(member.getId()));
+		assertThat(memberAdapter.getPassword()).isEqualTo(member.getPassword());
+		assertThat(memberAdapter.getAuthorities()).isEqualTo(authorities);
 
 		//verify
 		verify(memberRepository, only()).findById(anyLong());

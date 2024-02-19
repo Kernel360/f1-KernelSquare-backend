@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.kernelsquare.core.common_response.ApiResponse;
 import com.kernelsquare.core.common_response.ResponseEntityFactory;
 import com.kernelsquare.memberapi.domain.auth.dto.MemberPrincipal;
+import com.kernelsquare.memberapi.domain.reservation.dto.AddReservationMemberRequest;
 import com.kernelsquare.memberapi.domain.reservation.dto.AddReservationMemberResponse;
 import com.kernelsquare.memberapi.domain.reservation.dto.FindAllReservationResponse;
-import com.kernelsquare.memberapi.domain.reservation.dto.AddReservationMemberRequest;
 import com.kernelsquare.memberapi.domain.reservation.service.ReservationService;
 
 import lombok.RequiredArgsConstructor;
@@ -40,16 +40,17 @@ public class ReservationController {
 
 	@DeleteMapping("/coffeechat/reservations/{reservationId}")
 	public ResponseEntity<ApiResponse> deleteReservation(@PathVariable Long reservationId) {
-		reservationService.deleteReservation(reservationId);
+		reservationService.deleteReservationMember(reservationId);
 
 		return ResponseEntityFactory.toResponseEntity(RESERVATION_DELETED);
 	}
 
 	@PutMapping("/coffeechat/reservations/book")
-	public ResponseEntity<ApiResponse<AddReservationMemberResponse>> addReservationMember(@RequestBody
+	public ResponseEntity<ApiResponse<AddReservationMemberResponse>> addReservationMember(
+		@AuthenticationPrincipal MemberPrincipal memberPrincipal, @RequestBody
 	AddReservationMemberRequest addReservationMemberRequest) {
 		AddReservationMemberResponse addReservationMemberResponse = reservationService.AddReservationMember(
-			addReservationMemberRequest);
+			addReservationMemberRequest, memberPrincipal.getMember().getId());
 
 		return ResponseEntityFactory.toResponseEntity(RESERVATION_SUCCESS, addReservationMemberResponse);
 	}

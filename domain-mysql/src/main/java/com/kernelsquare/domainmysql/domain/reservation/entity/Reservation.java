@@ -72,4 +72,8 @@ public class Reservation extends BaseEntity {
 	public void addMember(Member member) {
 		this.member = member;
 	}
+
+	public void deleteMember() {
+		this.member = null;
+	}
 }

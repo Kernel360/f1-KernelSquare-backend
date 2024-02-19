@@ -3,7 +3,6 @@ package com.kernelsquare.memberapi.domain.reservation.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.kernelsquare.memberapi.domain.reservation.dto.AddReservationMemberRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +14,7 @@ import com.kernelsquare.domainmysql.domain.reservation.entity.Reservation;
 import com.kernelsquare.domainmysql.domain.reservation.repository.ReservationRepository;
 import com.kernelsquare.domainmysql.domain.reservation_article.entity.ReservationArticle;
 import com.kernelsquare.domainmysql.domain.reservation_article.repository.ReservationArticleRepository;
+import com.kernelsquare.memberapi.domain.reservation.dto.AddReservationMemberRequest;
 import com.kernelsquare.memberapi.domain.reservation.dto.AddReservationMemberResponse;
 import com.kernelsquare.memberapi.domain.reservation.dto.FindAllReservationResponse;
 import com.kernelsquare.memberapi.domain.reservation.dto.FindReservationResponse;
@@ -40,7 +40,7 @@ public class ReservationService {
 	}
 
 	@Transactional
-	public void deleteReservation(Long reservationId) {
+	public void deleteReservationMember(Long reservationId) {
 		Reservation reservation = reservationRepository.findById(reservationId)
 			.orElseThrow(() -> new BusinessException(ReservationErrorCode.RESERVATION_NOT_FOUND));
 
@@ -49,11 +49,12 @@ public class ReservationService {
 			throw new BusinessException(ReservationErrorCode.RESERVATION_CANCEL_DENIED_TIME_PASSED);
 		}
 
-		reservationRepository.deleteById(reservationId);
+		reservation.deleteMember();
 	}
 
 	@Transactional
-	public AddReservationMemberResponse AddReservationMember(AddReservationMemberRequest addReservationMemberRequest) {
+	public AddReservationMemberResponse AddReservationMember(AddReservationMemberRequest addReservationMemberRequest,
+		Long memberId) {
 		// 해당 예약 게시글이 존재하는 지 확인
 		ReservationArticle reservationArticle = reservationArticleRepository.findById(
 				addReservationMemberRequest.reservationArticleId())
@@ -66,7 +67,7 @@ public class ReservationService {
 		}
 
 		List<Reservation> reservationList = reservationRepository.findAllByMemberId(
-			addReservationMemberRequest.memberId());
+			memberId);
 
 		// 멘티가 한 번에 할 수 있는 최대 예약의 수는 10개
 		if (reservationList.size() >= 10) {
@@ -75,12 +76,16 @@ public class ReservationService {
 
 		// 멘티가 하나의 예약 게시글에 할 수 있는 최대 예약은 1개
 		if (reservationRepository.existsByReservationArticleIdAndMemberId(
-			addReservationMemberRequest.reservationArticleId(), addReservationMemberRequest.memberId())) {
+			addReservationMemberRequest.reservationArticleId(), memberId)) {
 			throw new BusinessException(ReservationErrorCode.RESERVATION_ALREADY_EXIST);
 		}
 
 		Reservation reservation = reservationRepository.findById(addReservationMemberRequest.reservationId())
 			.orElseThrow(() -> new BusinessException(ReservationErrorCode.RESERVATION_NOT_FOUND));
+
+		if (reservation.getMember() != null) {
+			throw new BusinessException(ReservationErrorCode.RESERVATION_ALREADY_TAKEN);
+		}
 
 		// 예약 중복 확인 체크하기
 		for (Reservation bookedReservation : reservationList) {
@@ -89,7 +94,7 @@ public class ReservationService {
 			}
 		}
 
-		Member member = memberRepository.findById(addReservationMemberRequest.memberId())
+		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new BusinessException(ReservationErrorCode.MEMBER_NOT_FOUND));
 
 		reservation.addMember(member);

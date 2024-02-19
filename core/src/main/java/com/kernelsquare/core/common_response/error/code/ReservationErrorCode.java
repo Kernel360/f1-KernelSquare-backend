@@ -17,7 +17,7 @@ public enum ReservationErrorCode implements ErrorCode {
 	MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, ReservationServiceStatus.MEMBER_NOT_FOUND,
 		"회원이 존재하지 않습니다."),
 	RESERVATION_ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND, ReservationServiceStatus.RESERVATION_ARTICLE_NOT_FOUND,
-		"회원이 존재하지 않습니다."),
+		"예약 게시글이 존재하지 않습니다."),
 	CHAT_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, ReservationServiceStatus.CHAT_ROOM_NOT_FOUND,
 		"채팅창이 존재하지 않습니다."),
 	RESERVATION_ALREADY_EXIST(HttpStatus.CONFLICT, ReservationServiceStatus.RESERVATION_ALREADY_EXIST,
@@ -25,7 +25,9 @@ public enum ReservationErrorCode implements ErrorCode {
 	RESERVATION_AVAILABLE_TIME_PASSED(HttpStatus.BAD_REQUEST,
 		ReservationServiceStatus.RESERVATION_AVAILABLE_TIME_PASSED, "예약 가능한 시간이 아닙니다."),
 	DUPLICATE_RESERVATION_TIME(HttpStatus.CONFLICT, ReservationServiceStatus.DUPLICATE_RESERVATION_TIME,
-		"해당 시간에 이미 다른 멘토링 예약이 존재합니다.");
+		"해당 시간에 이미 다른 멘토링 예약이 존재합니다."),
+	RESERVATION_ALREADY_TAKEN(HttpStatus.CONFLICT, ReservationServiceStatus.RESERVATION_ALREADY_TAKEN,
+		"선택할 수 없는 예약입니다.");
 
 	private final HttpStatus httpStatus;
 	private final ServiceStatus serviceStatus;

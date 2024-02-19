@@ -4,7 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.kernelsquare.domainmongodb.domain.coffeechat.repository.MongoChatMessageRepository;
+import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
 import com.kernelsquare.memberapi.domain.coffeechat.dto.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
@@ -20,6 +22,7 @@ import com.kernelsquare.domainmysql.domain.coffeechat.repository.CoffeeChatRepos
 
 import lombok.RequiredArgsConstructor;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CoffeeChatService {
@@ -37,13 +40,21 @@ public class CoffeeChatService {
 	}
 
 	@Transactional
-	public EnterCoffeeChatRoomResponse enterCoffeeChatRoom(EnterCoffeeChatRoomRequest enterCoffeeChatRoomRequest) {
+	public EnterCoffeeChatRoomResponse enterCoffeeChatRoom(EnterCoffeeChatRoomRequest enterCoffeeChatRoomRequest, MemberAdapter memberAdapter) {
 		ChatRoom chatRoom = coffeeChatRepository.findById(enterCoffeeChatRoomRequest.roomId())
 			.orElseThrow(() -> new BusinessException(CoffeeChatErrorCode.COFFEE_CHAT_ROOM_NOT_FOUND));
 
 		if (!chatRoom.getExpirationTime().isAfter(LocalDateTime.now())) {
 			throw new BusinessException(CoffeeChatErrorCode.COFFEE_CHAT_ROOM_EXPIRED);
 		}
+
+		log.info("enterCoffeeChatRoom에서 확인해보자. : " + memberAdapter.getAuthorities());
+
+		log.info("enterCoffeeChatRoom에서 확인해보자. : " + memberAdapter.getMember());
+
+		log.info("enterCoffeeChatRoom에서 확인해보자. : " + memberAdapter.getMember().getAuthorities());
+
+		log.info("enterCoffeeChatRoom에서 확인해보자. : " + memberAdapter.getMember().getLevel());
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 

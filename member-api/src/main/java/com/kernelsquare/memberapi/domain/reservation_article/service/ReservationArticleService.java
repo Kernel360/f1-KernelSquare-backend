@@ -3,13 +3,7 @@ package com.kernelsquare.memberapi.domain.reservation_article.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.PriorityQueue;
-import java.util.UUID;
+import java.util.*;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -59,6 +53,14 @@ public class ReservationArticleService {
 
 		ReservationArticle reservationArticle = CreateReservationArticleRequest.toEntity(
 			createReservationArticleRequest, member);
+
+		// 예약창이 있는 경우 생성 불가 (1인 1예약창 정책)
+		if (reservationRepository.existsByMemberIdAndFinishedIsFalseAndEndTimeAfter(
+				member.getId(),
+				LocalDateTime.now()
+		)) {
+			throw new BusinessException(ReservationArticleErrorCode.TOO_MANY_RESERVATION_ARTICLE);
+		}
 
 		ReservationArticle saveReservationArticle = reservationArticleRepository.save(reservationArticle);
 

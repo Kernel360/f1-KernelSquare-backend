@@ -24,7 +24,9 @@ public enum ReservationArticleErrorCode implements ErrorCode {
 		"가능한 예약 기간이 아닙니다."),
 	MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, ReservationArticleServiceStatus.MEMBER_NOT_FOUND, "존재하지 않은 회원"),
 	DELETE_ONLY_BEFORE_7DAYS(HttpStatus.BAD_REQUEST, ReservationArticleServiceStatus.DELETE_ONLY_BEFORE_7DAYS,
-		"7일 이전에만 삭제 가능합니다.");
+		"7일 이전에만 삭제 가능합니다."),
+	TOO_MANY_RESERVATION_ARTICLE(HttpStatus.BAD_REQUEST, ReservationArticleServiceStatus.TOO_MANY_RESERVATION_ARTICLE,
+			"현재 끝나지 않은 커피챗 예약을 지닌 예약창이 있습니다.");
 
 	private final HttpStatus httpStatus;
 	private final ServiceStatus serviceStatus;

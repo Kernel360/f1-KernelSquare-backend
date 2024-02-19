@@ -17,7 +17,7 @@ import com.kernelsquare.domainmysql.domain.member.entity.Member;
 import com.kernelsquare.domainmysql.domain.member_answer_vote.entity.MemberAnswerVote;
 import com.kernelsquare.domainmysql.domain.question.entity.Question;
 
-@DisplayName("투표 레포지토리 통합 테스트")
+@DisplayName("투표 레포지토리 단위 테스트")
 @DataJpaTest
 @Import(DBConfig.class)
 public class MemberAnswerVoteRepositoryTest {

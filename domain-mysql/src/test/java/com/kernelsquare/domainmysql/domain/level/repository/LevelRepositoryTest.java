@@ -15,7 +15,7 @@ import com.kernelsquare.core.common_response.error.exception.BusinessException;
 import com.kernelsquare.domainmysql.config.DBConfig;
 import com.kernelsquare.domainmysql.domain.level.entity.Level;
 
-@DisplayName("레벨 레포지토리 통합 테스트")
+@DisplayName("레벨 레포지토리 단 테스트")
 @DataJpaTest
 @Import(DBConfig.class)
 class LevelRepositoryTest {

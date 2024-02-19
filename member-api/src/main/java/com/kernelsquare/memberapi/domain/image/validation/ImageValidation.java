@@ -1,4 +1,4 @@
-package com.kernelsquare.core.validation.image;
+package com.kernelsquare.memberapi.domain.image.validation;
 
 import com.kernelsquare.core.common_response.error.code.CategoryErrorCode;
 import com.kernelsquare.core.common_response.error.code.ImageErrorCode;

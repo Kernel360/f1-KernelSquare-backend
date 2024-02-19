@@ -5,7 +5,7 @@ import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.kernelsquare.core.common_response.error.code.ImageErrorCode;
 import com.kernelsquare.core.common_response.error.exception.BusinessException;
-import com.kernelsquare.core.validation.image.ImageValidation;
+import com.kernelsquare.memberapi.domain.image.validation.ImageValidation;
 import com.kernelsquare.memberapi.domain.image.dto.UploadImageResponse;
 import com.kernelsquare.memberapi.domain.image.utils.ImageUtils;
 import lombok.RequiredArgsConstructor;

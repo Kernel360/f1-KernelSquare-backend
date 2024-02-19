@@ -14,5 +14,8 @@ public interface MemberAnswerVoteRepository extends JpaRepository<MemberAnswerVo
 	Optional<MemberAnswerVote> findByMemberIdAndAnswerId(@Param("memberId") Long memberId,
 		@Param("answerId") Long answerId);
 
+	@Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END FROM MemberAnswerVote a WHERE a.member.id = :memberId AND a.answer.id = :answerId")
+	Boolean existsByMemberIdAndAnswerId(@Param("memberId") Long memberId, @Param("answerId") Long answerId);
+
 	List<MemberAnswerVote> findAllByMemberId(Long memberId);
 }

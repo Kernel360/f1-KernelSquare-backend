@@ -40,9 +40,7 @@ public class MemberAnswerVoteService {
 			throw new BusinessException(MemberAnswerVoteErrorCode.MEMBER_ANSWER_VOTE_SELF_IMPOSSIBLE);
 		}
 
-		Optional<MemberAnswerVote> checkedDuplicateVote = memberAnswerVoteRepository.findByMemberIdAndAnswerId(
-				createMemberAnswerVoteRequest.memberId(), answerId);
-		if(checkedDuplicateVote.isPresent()) {
+		if(memberAnswerVoteRepository.existsByMemberIdAndAnswerId(createMemberAnswerVoteRequest.memberId(), answerId)) {
 			throw new BusinessException(MemberAnswerVoteErrorCode.MEMBER_ANSWER_VOTE_DUPLICATION);
 		}
 

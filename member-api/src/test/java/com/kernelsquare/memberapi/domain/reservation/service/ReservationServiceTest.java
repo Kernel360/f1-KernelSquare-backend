@@ -82,7 +82,7 @@ class ReservationServiceTest {
 	void testAddReservationMember() throws Exception {
 		//given
 		Member member = Member.builder()
-			.id(1L)
+			.id(4L)
 			.nickname("김주과아")
 			.experience(121200L)
 			.imageUrl("s3:D12d12d")
@@ -95,7 +95,7 @@ class ReservationServiceTest {
 		Optional<Member> memberOptional = Optional.of(member);
 
 		ReservationArticle reservationArticle = ReservationArticle.builder()
-			.id(1L)
+			.id(3L)
 			.title("최고로멋진나는김원상")
 			.content("나는스프링의아이돌")
 			.hashtagList(List.of())
@@ -108,16 +108,10 @@ class ReservationServiceTest {
 
 		List<Reservation> reservationList = new ArrayList<>();
 
-		Reservation reservation = Reservation.builder()
-			.reservationArticle(reservationArticle)
-			.startTime(LocalDateTime.now())
-			.endTime(LocalDateTime.now())
-			.build();
-
 		Reservation newReservation = Reservation.builder()
 			.reservationArticle(reservationArticle)
 			.startTime(LocalDateTime.now().plusDays(1L))
-			.endTime(LocalDateTime.now())
+			.endTime(LocalDateTime.now().plusDays(1L).plusMinutes(30))
 			.build();
 
 		Optional<Reservation> reservationOptional = Optional.of(newReservation);
@@ -125,11 +119,11 @@ class ReservationServiceTest {
 		AddReservationMemberRequest addReservationMemberRequest = AddReservationMemberRequest
 			.builder()
 			.reservationId(1L)
-			.reservationArticleId(1L)
+			.reservationArticleId(3L)
 			.startTime(LocalDateTime.now())
 			.build();
 
-		reservationList.add(reservation);
+		reservationList.add(newReservation);
 
 		doReturn(reservationArticleOptional)
 			.when(reservationArticleRepository)

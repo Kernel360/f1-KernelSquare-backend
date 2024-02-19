@@ -33,14 +33,14 @@ class ReservationRepositoryTest {
     private Long testMemberId = 1L;
     private Long testReservationArticleId = 1L;
     private LocalDateTime testStartTime = LocalDateTime.now();
-    private LocalDateTime testExpireTime = LocalDateTime.now();
+    private LocalDateTime testExpireTime = LocalDateTime.now().plusMinutes(30L);
 
     @BeforeEach
     void setUp() {
         testMember = createMember(testMemberId, "test@email.com");
         testChatRoom = createChatRoom("testRoomKey", testExpireTime);
         testReservationArticle = createReservationArticle(testReservationArticleId, testMember);
-        testReservation = createTestReservation(testStartTime, testStartTime.plusMinutes(30L), testReservationArticle, testChatRoom);
+        testReservation = createTestReservation(testStartTime, testExpireTime, testReservationArticle, testChatRoom);
         testReservation.addMember(testMember);
     }
 

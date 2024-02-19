@@ -1,16 +1,18 @@
 package com.kernelsquare.memberapi.domain.reservation.controller;
 
-import static com.kernelsquare.core.common_response.response.code.ReservationResponseCode.*;
-import static com.kernelsquare.memberapi.config.ApiDocumentUtils.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import java.time.LocalDateTime;
-import java.util.List;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.kernelsquare.core.type.AuthorityType;
+import com.kernelsquare.domainmysql.domain.authority.entity.Authority;
+import com.kernelsquare.domainmysql.domain.member.entity.Member;
+import com.kernelsquare.domainmysql.domain.member_authority.entity.MemberAuthority;
+import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
+import com.kernelsquare.memberapi.domain.reservation.dto.AddReservationMemberRequest;
+import com.kernelsquare.memberapi.domain.reservation.dto.AddReservationMemberResponse;
+import com.kernelsquare.memberapi.domain.reservation.dto.FindAllReservationResponse;
+import com.kernelsquare.memberapi.domain.reservation.dto.FindReservationResponse;
+import com.kernelsquare.memberapi.domain.reservation.service.ReservationService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,24 +22,22 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.kernelsquare.core.type.AuthorityType;
-import com.kernelsquare.domainmysql.domain.authority.entity.Authority;
-import com.kernelsquare.domainmysql.domain.member.entity.Member;
-import com.kernelsquare.domainmysql.domain.member_authority.entity.MemberAuthority;
-import com.kernelsquare.memberapi.domain.auth.dto.MemberPrincipal;
-import com.kernelsquare.memberapi.domain.reservation.dto.AddReservationMemberRequest;
-import com.kernelsquare.memberapi.domain.reservation.dto.AddReservationMemberResponse;
-import com.kernelsquare.memberapi.domain.reservation.dto.FindAllReservationResponse;
-import com.kernelsquare.memberapi.domain.reservation.dto.FindReservationResponse;
-import com.kernelsquare.memberapi.domain.reservation.service.ReservationService;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static com.kernelsquare.core.common_response.response.code.ReservationResponseCode.*;
+import static com.kernelsquare.memberapi.config.ApiDocumentUtils.getDocumentRequest;
+import static com.kernelsquare.memberapi.config.ApiDocumentUtils.getDocumentResponse;
+import static org.mockito.Mockito.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DisplayName("예약 컨트롤러 테스트")
 @WebMvcTest(ReservationController.class)
@@ -92,9 +92,7 @@ class ReservationControllerTest {
 			.imageUrl("agawsc")
 			.build();
 
-		List<? extends GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
-
-		MemberPrincipal memberPrincipal = new MemberPrincipal(member, authorities);
+		MemberAdapter memberAdapter = new MemberAdapter(member);
 
 		doReturn(findAllReservationResponse)
 			.when(reservationService)
@@ -104,7 +102,7 @@ class ReservationControllerTest {
 		ResultActions resultActions = mockMvc.perform(
 			RestDocumentationRequestBuilders.get("/api/v1/coffeechat/reservations")
 				.with(csrf())
-				.with(user(memberPrincipal))
+				.with(user(memberAdapter))
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8"));
@@ -162,15 +160,15 @@ class ReservationControllerTest {
 			.imageUrl("agawsc")
 			.build();
 
-		List<? extends GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
+//		List<? extends GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
 
-		MemberPrincipal memberPrincipal = new MemberPrincipal(member, authorities);
+		MemberAdapter memberAdapter = new MemberAdapter(member);
 
 		//when
 		ResultActions resultActions = mockMvc.perform(
 			RestDocumentationRequestBuilders.delete("/api/v1/coffeechat/reservations/" + reservationId)
 				.with(csrf())
-				.with(user(memberPrincipal))
+				.with(user(memberAdapter))
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8"));
@@ -223,9 +221,9 @@ class ReservationControllerTest {
 			.imageUrl("agawsc")
 			.build();
 
-		List<? extends GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
+//		List<? extends GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
 
-		MemberPrincipal memberPrincipal = new MemberPrincipal(member, authorities);
+		MemberAdapter memberAdapter = new MemberAdapter(member);
 
 		String jsonRequest = objectMapper.writeValueAsString(addReservationMemberRequest);
 
@@ -233,7 +231,7 @@ class ReservationControllerTest {
 		ResultActions resultActions = mockMvc.perform(
 			RestDocumentationRequestBuilders.put("/api/v1/coffeechat/reservations/book")
 				.with(csrf())
-				.with(user(memberPrincipal))
+				.with(user(memberAdapter))
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")

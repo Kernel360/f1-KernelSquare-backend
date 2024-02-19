@@ -14,7 +14,7 @@ public enum MemberAnswerVoteErrorCode implements ErrorCode {
 	MEMBER_ANSWER_VOTE_SELF_IMPOSSIBLE(
 			HttpStatus.BAD_REQUEST, MemberAnswerVoteStatus.MEMBER_ANSWER_VOTE_SELF_IMPOSSIBLE, "본인 답변에는 투표할 수 없습니다."),
 	MEMBER_ANSWER_VOTE_DUPLICATION(
-			HttpStatus.CONFLICT, MemberAnswerVoteStatus.MEMBER_ANSWER_VOTE_DUPLICATION, "중복 투표입니다."	);
+			HttpStatus.CONFLICT, MemberAnswerVoteStatus.MEMBER_ANSWER_VOTE_DUPLICATION, "중복 투표입니다.");
 
 	private final HttpStatus code;
 	private final ServiceStatus serviceStatus;

@@ -45,6 +45,6 @@ class CoffeeChatRequestDtoTest {
 		Set<String> msgList = violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toSet());
 
 		//then
-		assertThat(msgList).isEqualTo(Set.of("회원 ID를 입력해 주세요.", "방 ID를 입력해 주세요.", "예약창 제목을 입력해 주세요."));
+		assertThat(msgList).isEqualTo(Set.of("예약 ID를 입력해 주세요.", "예약창 제목을 입력해 주세요.", "방 ID를 입력해 주세요."));
 	}
 }

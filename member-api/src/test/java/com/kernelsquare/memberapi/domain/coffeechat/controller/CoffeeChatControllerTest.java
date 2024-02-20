@@ -7,8 +7,15 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.kernelsquare.core.type.AuthorityType;
 import com.kernelsquare.domainmongodb.domain.coffeechat.entity.MongoChatMessage;
 import com.kernelsquare.domainmongodb.domain.coffeechat.entity.MongoMessageType;
+import com.kernelsquare.domainmysql.domain.authority.entity.Authority;
+import com.kernelsquare.domainmysql.domain.level.entity.Level;
+import com.kernelsquare.domainmysql.domain.member.entity.Member;
+import com.kernelsquare.domainmysql.domain.member_authority.entity.MemberAuthority;
+import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
+import com.kernelsquare.memberapi.domain.auth.dto.SetMemberToAdaptor;
 import com.kernelsquare.memberapi.domain.coffeechat.dto.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -87,14 +94,39 @@ class CoffeeChatControllerTest {
 
 		EnterCoffeeChatRoomRequest enterCoffeeChatRoomRequest = EnterCoffeeChatRoomRequest.builder()
 			.roomId(1L)
-			.memberId(1L)
+			.reservationId(1L)
 			.articleTitle("불꽃남자의 예절 주입방")
 			.build();
 
-		EnterCoffeeChatRoomResponse enterCoffeeChatRoomResponse = EnterCoffeeChatRoomResponse.of(
-			enterCoffeeChatRoomRequest.articleTitle(), chatRoom);
+		Level level = Level.builder()
+			.name(6L)
+			.imageUrl("1.jpg")
+			.build();
 
-		given(coffeeChatService.enterCoffeeChatRoom(any(EnterCoffeeChatRoomRequest.class))).willReturn(
+		Member member = Member.builder()
+			.id(1L)
+			.nickname("machine")
+			.email("awdag@nsavasc.om")
+			.password("hashed")
+			.experience(1200L)
+			.introduction("basfas")
+			.authorities(List.of(
+				MemberAuthority.builder()
+					.member(Member.builder().build())
+					.authority(Authority.builder().authorityType(AuthorityType.ROLE_USER).build())
+					.build()))
+			.imageUrl("agawsc")
+			.level(level)
+			.build();
+
+		MemberAdapter memberAdapter = new MemberAdapter(SetMemberToAdaptor.of(member));
+
+		ChatRoomMember chatRoomMember = ChatRoomMember.from(member);
+
+		EnterCoffeeChatRoomResponse enterCoffeeChatRoomResponse = EnterCoffeeChatRoomResponse.of(
+			enterCoffeeChatRoomRequest.articleTitle(), chatRoom, List.of(chatRoomMember));
+
+		given(coffeeChatService.enterCoffeeChatRoom(any(EnterCoffeeChatRoomRequest.class), any(MemberAdapter.class))).willReturn(
 			enterCoffeeChatRoomResponse);
 
 		objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
@@ -103,6 +135,7 @@ class CoffeeChatControllerTest {
 		//when & then
 		mockMvc.perform(post("/api/v1/coffeechat/rooms/enter")
 				.with(csrf())
+				.with(user(memberAdapter))
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")

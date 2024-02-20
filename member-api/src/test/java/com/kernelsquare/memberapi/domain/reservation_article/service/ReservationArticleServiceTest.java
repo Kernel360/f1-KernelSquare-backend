@@ -182,7 +182,7 @@ class ReservationArticleServiceTest {
 	}
 
 	@Test
-	@DisplayName("예약게시글 생성 가능 일시(LocalDateTime) 초과시 에러 메시지")
+	@DisplayName("예약창 예약 생성 가능 일시(LocalDateTime) 7일 이후 1달 이내 초과시 에러 메시지")
 	void testCreateReservationArticleExceedDateTime() {
 		// Given
 		member = createTestMember();
@@ -228,6 +228,52 @@ class ReservationArticleServiceTest {
 		verify(reservationArticleRepository, times(1)).save(any(ReservationArticle.class));
 	}
 
+	@Test
+	@DisplayName("예약창 예약 생성 가능 일시(LocalDateTime) 구간 3일 초과시 에러 메시지")
+	void testCreateReservationArticleExceedDateTimeInterval() {
+		// Given
+		member = createTestMember();
+		authority = createTestAuthority();
+		memberRole = createTestRole(member, authority);
+
+		List<MemberAuthority> memberAuthorityList = List.of(memberRole);
+
+		member.initAuthorities(memberAuthorityList);
+
+		ReservationArticle reservationArticle = createTestReservationArticle(1L);
+
+		LocalDateTime localDateTime = LocalDateTime.now().plusDays(8L);
+
+		reservationArticle.addStartTime(localDateTime);
+
+		Hashtag hashtag = createTestHashtag();
+
+		CreateReservationArticleRequest createReservationArticleRequest =
+				new CreateReservationArticleRequest(member.getId(), reservationArticle.getTitle(),
+						reservationArticle.getContent(),
+						List.of(hashtag.getContent()),
+						List.of(LocalDateTime.now().plusDays(7L), LocalDateTime.now().plusDays(11L).plusMinutes(30L)));
+
+		given(memberRepository.findById(anyLong())).willReturn(Optional.ofNullable(member));
+		given(reservationRepository.existsByMemberIdAndFinishedIsFalseAndEndTimeAfter(eq(member.getId()), any(LocalDateTime.class))).willReturn(
+				false
+		);
+		given(reservationArticleRepository.save(any(ReservationArticle.class))).willReturn(reservationArticle);
+
+		// When
+
+		// Then
+		assertThatThrownBy(() ->
+				reservationArticleService.createReservationArticle(createReservationArticleRequest))
+				.isExactlyInstanceOf(BusinessException.class)
+				.extracting("errorCode")
+				.isEqualTo(ReservationArticleErrorCode.RESERVATION_TIME_LIMIT);
+
+		// Verify
+		verify(memberRepository, times(1)).findById(anyLong());
+		verify(reservationRepository, times(1)).existsByMemberIdAndFinishedIsFalseAndEndTimeAfter(eq(member.getId()), any(LocalDateTime.class));
+		verify(reservationArticleRepository, times(1)).save(any(ReservationArticle.class));
+	}
 
 
 	@Test

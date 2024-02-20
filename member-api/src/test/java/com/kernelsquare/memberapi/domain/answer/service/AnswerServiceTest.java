@@ -53,6 +53,8 @@ public class AnswerServiceTest {
 	@Mock
 	private MemberAnswerVoteRepository memberAnswerVoteRepository;
 
+	Member member;
+
 	@Test
 	@DisplayName("질문에 대한 답변 조회")
 	void findAllAnswer() throws Exception {
@@ -251,8 +253,6 @@ public class AnswerServiceTest {
 		verify(answerRepository, times(1)).deleteById(anyLong());
 		verify(answerRepository, times(1)).findById(anyLong());
 	}
-
-	Member member;
 
 	private Question createTestQuestion() {
 		return Question

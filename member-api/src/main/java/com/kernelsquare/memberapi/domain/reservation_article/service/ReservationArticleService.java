@@ -75,7 +75,7 @@ public class ReservationArticleService {
 		}
 
 		//todo : 클라이언트와 서버 시간이 다름 (영국 시간대) 어떻게
-		LocalDate currentDate = LocalDateTime.now().toLocalDate();
+		LocalDateTime currentDateTime = LocalDateTime.now();
 		LocalDateTime startTime = LocalDateTime.MAX;
 		LocalDateTime endTime = LocalDateTime.MIN;
 
@@ -109,8 +109,8 @@ public class ReservationArticleService {
 		}
 
 		// 예약 생성 기한 체크 로직 (7일 이후, 한달 이전)
-		if (!(startTime.toLocalDate().isAfter(currentDate.plusDays(6)) && startTime.toLocalDate().isBefore(
-			currentDate.plusMonths(1)))) {
+		if (!(startTime.isAfter(currentDateTime.plusDays(6)) && startTime.isBefore(
+				currentDateTime.plusMonths(1)))) {
 			throw new BusinessException(ReservationArticleErrorCode.RESERVATION_PERIOD_LIMIT);
 		}
 

@@ -60,12 +60,12 @@ class ReservationRepositoryTest {
 
     @Test
     @DisplayName("회원 아이디와 진행 중인 예약이 현재 시간 이후에 종료되는지 여부 조회")
-    void testExistsByMemberIdAndFinishedIsFalseAndEndTimeAfter() {
+    void testexistsByMemberIdAndEndTimeAfter() {
         //given
         reservationRepository.save(testReservation);
 
         //when
-        Boolean reservationExpected = reservationRepository.existsByMemberIdAndFinishedIsFalseAndEndTimeAfter(
+        Boolean reservationExpected = reservationRepository.existsByMemberIdAndEndTimeAfter(
                 testMemberId, LocalDateTime.now());
 
         //then

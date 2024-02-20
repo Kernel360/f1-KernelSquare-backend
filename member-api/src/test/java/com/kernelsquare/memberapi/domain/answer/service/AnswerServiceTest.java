@@ -53,7 +53,7 @@ public class AnswerServiceTest {
 	@Mock
 	private MemberAnswerVoteRepository memberAnswerVoteRepository;
 
-	Member member;
+	private Member member;
 
 	@Test
 	@DisplayName("질문에 대한 답변 조회")

@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class CoffeeChatValidation {
 
     public static void validateChatRoom(ChatRoom chatRoom) {
-        LocalDateTime startTime = chatRoom.getExpirationTime().minusMinutes(10000000000L);
+        LocalDateTime startTime = chatRoom.getExpirationTime().minusMinutes(30L);
 
         if (startTime.isAfter(LocalDateTime.now())) {
             throw new BusinessException(CoffeeChatErrorCode.COFFEE_CHAT_ROOM_NOT_ACTIVE);

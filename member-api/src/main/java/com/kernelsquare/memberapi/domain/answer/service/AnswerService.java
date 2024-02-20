@@ -3,6 +3,7 @@ package com.kernelsquare.memberapi.domain.answer.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -76,6 +77,11 @@ public class AnswerService {
 			.orElseThrow(() -> new BusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
 		Question question = questionRepository.findById(questionId)
 			.orElseThrow(() -> new BusinessException(QuestionErrorCode.QUESTION_NOT_FOUND));
+
+		if(Objects.equals(question.getMember().getId(), createAnswerRequest.memberId())) {
+			throw new BusinessException(AnswerErrorCode.ANSWER_SELF_IMPOSSIBLE);
+		}
+
 		Answer answer = CreateAnswerRequest.toEntity(createAnswerRequest, question, member);
 		answerRepository.save(answer);
 		member.addExperience(ExperiencePolicy.MEMBER_DAILY_ATTENDED.getReward());

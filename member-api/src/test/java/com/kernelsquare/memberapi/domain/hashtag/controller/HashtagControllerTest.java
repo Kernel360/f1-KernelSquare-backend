@@ -35,8 +35,8 @@ class HashtagControllerTest {
 	@DisplayName("모든 해시태그 조회 성공시 200 OK와 응답 메시지를 반환한다.")
 	void testFindAllHashtag() throws Exception {
 		// Given
-		FindHashtagResponse response1 = new FindHashtagResponse(1L, "#testtag");
-		FindHashtagResponse response2 = new FindHashtagResponse(2L, "#mentoring");
+		FindHashtagResponse response1 = new FindHashtagResponse(1L, "testtag");
+		FindHashtagResponse response2 = new FindHashtagResponse(2L, "mentoring");
 
 		FindAllHashtagResponse allHashtagResponse = FindAllHashtagResponse.from(List.of(response1, response2));
 
@@ -64,7 +64,7 @@ class HashtagControllerTest {
 	@DisplayName("해시태그 삭제 성공시 200 OK 와 응답 메시지를 반환한다.")
 	void testDeleteHashtag() throws Exception {
 		// Given
-		Hashtag hashtag = Hashtag.builder().id(1L).content("#김밥천국").build();
+		Hashtag hashtag = Hashtag.builder().id(1L).content("김밥천국").build();
 
 		doNothing()
 			.when(hashtagService)

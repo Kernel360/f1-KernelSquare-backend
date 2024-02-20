@@ -159,7 +159,7 @@ class ReservationArticleServiceTest {
 			new CreateReservationArticleRequest(member.getId(), reservationArticle.getTitle(),
 				reservationArticle.getContent(),
 				List.of(hashtag.getContent()),
-				List.of(LocalDateTime.now().plusDays(8), LocalDateTime.now().plusDays(9)));
+				List.of(LocalDateTime.now().plusDays(7), LocalDateTime.now().plusDays(8)));
 
 		given(memberRepository.findById(anyLong())).willReturn(Optional.ofNullable(member));
 		given(reservationRepository.existsByMemberIdAndFinishedIsFalseAndEndTimeAfter(eq(member.getId()), any(LocalDateTime.class))).willReturn(

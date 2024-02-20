@@ -162,7 +162,7 @@ class ReservationArticleServiceTest {
 				List.of(LocalDateTime.now().plusDays(7), LocalDateTime.now().plusDays(8)));
 
 		given(memberRepository.findById(anyLong())).willReturn(Optional.ofNullable(member));
-		given(reservationRepository.existsByMemberIdAndFinishedIsFalseAndEndTimeAfter(eq(member.getId()), any(LocalDateTime.class))).willReturn(
+		given(reservationRepository.existsByMemberIdAndFinishedIsFalseAndEndTimeAfter(anyLong(), any(LocalDateTime.class))).willReturn(
 				false
 		);
 		given(reservationArticleRepository.save(any(ReservationArticle.class))).willReturn(reservationArticle);
@@ -177,7 +177,7 @@ class ReservationArticleServiceTest {
 
 		// Verify
 		verify(memberRepository, times(1)).findById(anyLong());
-		verify(reservationRepository, times(1)).existsByMemberIdAndFinishedIsFalseAndEndTimeAfter(eq(member.getId()), any(LocalDateTime.class));
+		verify(reservationRepository, times(1)).existsByMemberIdAndFinishedIsFalseAndEndTimeAfter(anyLong(), any(LocalDateTime.class));
 		verify(reservationArticleRepository, times(1)).save(any(ReservationArticle.class));
 	}
 
@@ -208,7 +208,7 @@ class ReservationArticleServiceTest {
 						List.of(LocalDateTime.now().plusDays(40L), LocalDateTime.now().plusDays(41L)));
 
 		given(memberRepository.findById(anyLong())).willReturn(Optional.ofNullable(member));
-		given(reservationRepository.existsByMemberIdAndFinishedIsFalseAndEndTimeAfter(eq(member.getId()), any(LocalDateTime.class))).willReturn(
+		given(reservationRepository.existsByMemberIdAndFinishedIsFalseAndEndTimeAfter(anyLong(), any(LocalDateTime.class))).willReturn(
 				false
 		);
 		given(reservationArticleRepository.save(any(ReservationArticle.class))).willReturn(reservationArticle);
@@ -224,7 +224,7 @@ class ReservationArticleServiceTest {
 
 		// Verify
 		verify(memberRepository, times(1)).findById(anyLong());
-		verify(reservationRepository, times(1)).existsByMemberIdAndFinishedIsFalseAndEndTimeAfter(eq(member.getId()), any(LocalDateTime.class));
+		verify(reservationRepository, times(1)).existsByMemberIdAndFinishedIsFalseAndEndTimeAfter(anyLong(), any(LocalDateTime.class));
 		verify(reservationArticleRepository, times(1)).save(any(ReservationArticle.class));
 	}
 
@@ -255,7 +255,7 @@ class ReservationArticleServiceTest {
 						List.of(LocalDateTime.now().plusDays(7L), LocalDateTime.now().plusDays(11L).plusMinutes(30L)));
 
 		given(memberRepository.findById(anyLong())).willReturn(Optional.ofNullable(member));
-		given(reservationRepository.existsByMemberIdAndFinishedIsFalseAndEndTimeAfter(eq(member.getId()), any(LocalDateTime.class))).willReturn(
+		given(reservationRepository.existsByMemberIdAndFinishedIsFalseAndEndTimeAfter(anyLong(), any(LocalDateTime.class))).willReturn(
 				false
 		);
 		given(reservationArticleRepository.save(any(ReservationArticle.class))).willReturn(reservationArticle);
@@ -271,7 +271,7 @@ class ReservationArticleServiceTest {
 
 		// Verify
 		verify(memberRepository, times(1)).findById(anyLong());
-		verify(reservationRepository, times(1)).existsByMemberIdAndFinishedIsFalseAndEndTimeAfter(eq(member.getId()), any(LocalDateTime.class));
+		verify(reservationRepository, times(1)).existsByMemberIdAndFinishedIsFalseAndEndTimeAfter(anyLong(), any(LocalDateTime.class));
 		verify(reservationArticleRepository, times(1)).save(any(ReservationArticle.class));
 	}
 

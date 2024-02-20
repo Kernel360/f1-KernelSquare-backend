@@ -8,6 +8,7 @@ import com.kernelsquare.domainmysql.domain.reservation_article.entity.Reservatio
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
 @Builder
@@ -15,8 +16,10 @@ public record CreateReservationArticleRequest(
 	@NotNull(message = "회원 ID를 입력해 주세요.")
 	Long memberId,
 	@NotBlank(message = "예약창 제목을 입력해 주세요.")
+	@Size(max = 100, message = "예약창 제목은 100자를 넘을 수 없습니다.")
 	String title,
 	@NotBlank(message = "예약창 내용을 입력해 주세요.")
+	@Size(max = 1000, message = "예약창 내용은 1000자를 넘을 수 없습니다.")
 	String content,
 	@NotNull(message = "최소 빈 리스트로 입력해 주세요.")
 	List<String> hashTags,

@@ -93,7 +93,6 @@ class CoffeeChatControllerTest {
 			.build();
 
 		EnterCoffeeChatRoomRequest enterCoffeeChatRoomRequest = EnterCoffeeChatRoomRequest.builder()
-			.roomId(1L)
 			.reservationId(1L)
 			.articleTitle("불꽃남자의 예절 주입방")
 			.build();

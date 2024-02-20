@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Builder
@@ -18,11 +19,17 @@ public class ChatMessageRequest {
 
     private String roomKey;
 
+    private Long senderId;
+
     private String sender;
+
+    private String senderImageUrl;
 
     private String message;
 
     private LocalDateTime sendTime;
+
+    private List<ChatRoomMember> memberList;
 
     public void setMessage(String message) {
         this.message = message;

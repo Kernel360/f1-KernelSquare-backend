@@ -26,6 +26,11 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(MaxUploadSizeExceededException.class)
 	public ResponseEntity<ApiResponse> handleMaxSizeException(MaxUploadSizeExceededException e) {
-		return ResponseEntityFactory.toResponseEntity((StatusCode) e);
+		return ResponseEntityFactory.toResponseEntity(e);
+	}
+
+	@ExceptionHandler(RuntimeException.class)
+	public ResponseEntity<ApiResponse> handleRuntimeException(RuntimeException e) {
+		return ResponseEntityFactory.toResponseEntity(e);
 	}
 }

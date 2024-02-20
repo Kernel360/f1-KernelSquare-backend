@@ -28,10 +28,10 @@ spring:
   # <====
 
   # file upload max size (파일 업로드 크기 설정)
-    servlet:
-      multipart:
-        max-file-size: 3MB
-        max-request-size: 3MB
+  servlet:
+    multipart:
+      max-file-size: 3MB
+      max-request-size: 3MB
 
 
   redis:

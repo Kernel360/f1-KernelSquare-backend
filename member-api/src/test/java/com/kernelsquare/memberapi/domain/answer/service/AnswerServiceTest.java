@@ -107,6 +107,9 @@ public class AnswerServiceTest {
 
 		Long foundTestAnswerId = 1L;
 
+		Long memberId = 2L; // 본인 질문에 답변 달 수 없기에 foundMemberId 와 다르게 설정
+		member = createTestMember(memberId);
+
 		Question foundQuestion = createTestQuestion();
 		Optional<Question> optionalFoundQuestion = Optional.of(foundQuestion);
 
@@ -249,6 +252,8 @@ public class AnswerServiceTest {
 		verify(answerRepository, times(1)).findById(anyLong());
 	}
 
+	Member member;
+
 	private Question createTestQuestion() {
 		return Question
 			.builder()
@@ -256,6 +261,7 @@ public class AnswerServiceTest {
 			.content("Test Content")
 			.imageUrl("S3:TestImage")
 			.closedStatus(false)
+			.member(member)
 			.build();
 	}
 

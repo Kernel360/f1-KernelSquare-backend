@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum AnswerServiceStatus implements ServiceStatus {
 	// error
-	ANSWER_CREATION_NOT_AUTHORIZED(2200),
 	ANSWER_UPDATE_NOT_AUTHORIZED(2201),
 	ANSWER_NOT_FOUND(2202),
 	ANSWER_SELF_IMPOSSIBLE(2203),

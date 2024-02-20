@@ -1,6 +1,7 @@
 package com.kernelsquare.domainmysql.domain.notice.entity;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.DynamicUpdate;
 
 import com.kernelsquare.core.common_response.error.exception.InvalidParamException;
 import com.kernelsquare.core.util.TokenGenerator;
@@ -23,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 @Entity(name = "Notice")
 @Table(name = "notice")
 @Getter
+@DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Notice extends BaseEntity {
 	private final String NOTICE_PREFIX = "ntc_";
@@ -31,7 +33,7 @@ public class Notice extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false, unique = true, name = "notice_token", columnDefinition = "bigint")
+	@Column(nullable = false, unique = true, name = "notice_token", columnDefinition = "varchar(50)")
 	private String noticeToken;
 
 	@Column(nullable = false, name = "notice_title", columnDefinition = "varchar(50)")
@@ -67,5 +69,22 @@ public class Notice extends BaseEntity {
 		this.noticeTitle = noticeTitle;
 		this.noticeContent = noticeContent;
 		this.noticeCategory = noticeCategory;
+	}
+
+	public void changeGeneral() {
+		this.noticeCategory = NoticeCategory.GENERAL;
+	}
+
+	public void changeQNA() {
+		this.noticeCategory = NoticeCategory.QNA;
+	}
+
+	public void changeCoffeeChat() {
+		this.noticeCategory = NoticeCategory.COFFEE_CHAT;
+	}
+
+	public void updateTitleAndContent(String noticeTitle, String noticeContent) {
+		this.noticeTitle = noticeTitle;
+		this.noticeContent = noticeContent;
 	}
 }

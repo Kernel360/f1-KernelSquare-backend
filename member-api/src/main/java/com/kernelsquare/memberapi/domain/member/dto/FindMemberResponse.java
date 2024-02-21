@@ -12,7 +12,6 @@ public record FindMemberResponse(
 	Long experience,
 	String introduction,
 	String imageUrl,
-
 	Long level
 ) {
 

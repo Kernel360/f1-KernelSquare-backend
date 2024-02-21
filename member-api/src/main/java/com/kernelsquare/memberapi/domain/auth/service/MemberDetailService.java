@@ -5,7 +5,7 @@ import com.kernelsquare.core.common_response.error.exception.BusinessException;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
 import com.kernelsquare.domainmysql.domain.member.repository.MemberRepository;
 import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
-import com.kernelsquare.memberapi.domain.auth.dto.SetMemberToAdaptor;
+import com.kernelsquare.memberapi.domain.auth.dto.MemberAdaptorInstance;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
@@ -22,7 +22,7 @@ public class MemberDetailService implements UserDetailsService {
 	private final MemberRepository memberRepository;
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
 		Member member = memberRepository.findById(Long.parseLong(username)).orElseThrow(() -> new BusinessException(
 			MemberErrorCode.MEMBER_NOT_FOUND));
@@ -30,8 +30,8 @@ public class MemberDetailService implements UserDetailsService {
 		Hibernate.initialize(member.getLevel());
 		Hibernate.initialize(member.getAuthorities());
 
-		SetMemberToAdaptor setMember = SetMemberToAdaptor.of(member);
+		MemberAdaptorInstance memberInstance = MemberAdaptorInstance.of(member);
 
-		return new MemberAdapter(setMember);
+		return new MemberAdapter(memberInstance);
 	}
 }

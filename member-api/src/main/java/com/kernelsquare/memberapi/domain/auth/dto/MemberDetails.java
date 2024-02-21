@@ -17,10 +17,10 @@ public class MemberDetails implements UserDetails {
     private final List<SimpleGrantedAuthority> authorities;
 
     /* 일반 로그인 */
-    public MemberDetails(SetMemberToAdaptor setMember) {
-        this.member = setMember.member();
-        this.level = setMember.level();
-        this.authorities = setMember.authorities();
+    public MemberDetails(MemberAdaptorInstance memberInstance) {
+        this.member = memberInstance.member();
+        this.level = memberInstance.level();
+        this.authorities = memberInstance.authorities();
     }
 
     @Override

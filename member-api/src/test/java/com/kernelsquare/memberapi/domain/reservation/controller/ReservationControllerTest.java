@@ -8,7 +8,7 @@ import com.kernelsquare.domainmysql.domain.authority.entity.Authority;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
 import com.kernelsquare.domainmysql.domain.member_authority.entity.MemberAuthority;
 import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
-import com.kernelsquare.memberapi.domain.auth.dto.SetMemberToAdaptor;
+import com.kernelsquare.memberapi.domain.auth.dto.MemberAdaptorInstance;
 import com.kernelsquare.memberapi.domain.reservation.dto.AddReservationMemberRequest;
 import com.kernelsquare.memberapi.domain.reservation.dto.AddReservationMemberResponse;
 import com.kernelsquare.memberapi.domain.reservation.dto.FindAllReservationResponse;
@@ -93,7 +93,7 @@ class ReservationControllerTest {
 			.imageUrl("agawsc")
 			.build();
 
-		MemberAdapter memberAdapter = new MemberAdapter(SetMemberToAdaptor.of(member));
+		MemberAdapter memberAdapter = new MemberAdapter(MemberAdaptorInstance.of(member));
 
 		doReturn(findAllReservationResponse)
 			.when(reservationService)
@@ -161,7 +161,7 @@ class ReservationControllerTest {
 			.imageUrl("agawsc")
 			.build();
 
-		MemberAdapter memberAdapter = new MemberAdapter(SetMemberToAdaptor.of(member));
+		MemberAdapter memberAdapter = new MemberAdapter(MemberAdaptorInstance.of(member));
 
 		//when
 		ResultActions resultActions = mockMvc.perform(
@@ -220,7 +220,7 @@ class ReservationControllerTest {
 			.imageUrl("agawsc")
 			.build();
 
-		MemberAdapter memberAdapter = new MemberAdapter(SetMemberToAdaptor.of(member));
+		MemberAdapter memberAdapter = new MemberAdapter(MemberAdaptorInstance.of(member));
 
 		String jsonRequest = objectMapper.writeValueAsString(addReservationMemberRequest);
 

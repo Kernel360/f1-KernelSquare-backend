@@ -15,7 +15,7 @@ import com.kernelsquare.domainmysql.domain.level.entity.Level;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
 import com.kernelsquare.domainmysql.domain.member_authority.entity.MemberAuthority;
 import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
-import com.kernelsquare.memberapi.domain.auth.dto.SetMemberToAdaptor;
+import com.kernelsquare.memberapi.domain.auth.dto.MemberAdaptorInstance;
 import com.kernelsquare.memberapi.domain.coffeechat.dto.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -118,7 +118,7 @@ class CoffeeChatControllerTest {
 			.level(level)
 			.build();
 
-		MemberAdapter memberAdapter = new MemberAdapter(SetMemberToAdaptor.of(member));
+		MemberAdapter memberAdapter = new MemberAdapter(MemberAdaptorInstance.of(member));
 
 		ChatRoomMember chatRoomMember = ChatRoomMember.from(member);
 

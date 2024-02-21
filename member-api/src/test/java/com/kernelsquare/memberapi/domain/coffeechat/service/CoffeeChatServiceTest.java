@@ -13,7 +13,7 @@ import com.kernelsquare.domainmysql.domain.reservation.entity.Reservation;
 import com.kernelsquare.domainmysql.domain.reservation.repository.ReservationRepository;
 import com.kernelsquare.domainmysql.domain.reservation_article.entity.ReservationArticle;
 import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
-import com.kernelsquare.memberapi.domain.auth.dto.SetMemberToAdaptor;
+import com.kernelsquare.memberapi.domain.auth.dto.MemberAdaptorInstance;
 import com.kernelsquare.memberapi.domain.coffeechat.dto.EnterCoffeeChatRoomRequest;
 import com.kernelsquare.memberapi.domain.coffeechat.dto.EnterCoffeeChatRoomResponse;
 import com.kernelsquare.memberapi.domain.coffeechat.dto.FindChatHistoryResponse;
@@ -121,7 +121,7 @@ class CoffeeChatServiceTest {
 
 		reservation.addMember(mentee);
 
-		MemberAdapter memberAdapter = new MemberAdapter(SetMemberToAdaptor.of(mentor));
+		MemberAdapter memberAdapter = new MemberAdapter(MemberAdaptorInstance.of(mentor));
 
 		given(reservationRepository.findById(anyLong())).willReturn(Optional.of(reservation));
 

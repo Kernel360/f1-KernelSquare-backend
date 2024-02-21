@@ -9,13 +9,13 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import java.util.List;
 
 @Builder
-public record SetMemberToAdaptor(
+public record MemberAdaptorInstance(
     Member member,
     Level level,
     List<SimpleGrantedAuthority> authorities
 ) {
-    public static SetMemberToAdaptor of(Member member) {
-        return SetMemberToAdaptor.builder()
+    public static MemberAdaptorInstance of(Member member) {
+        return MemberAdaptorInstance.builder()
             .member(member)
             .level(member.getLevel())
             .authorities(getAuthorities(member))

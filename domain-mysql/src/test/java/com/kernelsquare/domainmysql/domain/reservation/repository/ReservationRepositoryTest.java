@@ -65,7 +65,7 @@ class ReservationRepositoryTest {
         reservationRepository.save(testReservation);
 
         //when
-        Boolean reservationExpected = reservationRepository.existsByMemberIdAndFinishedIsFalseAndEndTimeAfter(
+        Boolean reservationExpected = reservationRepository.existsByMemberIdAndEndTimeAfter(
                 testMemberId, LocalDateTime.now());
 
         //then

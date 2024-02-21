@@ -55,7 +55,7 @@ public class ReservationArticleService {
 			createReservationArticleRequest, member);
 
 		// 예약창이 있는 경우 생성 불가 (1인 1예약창 정책)
-		if (reservationRepository.existsByMemberIdAndFinishedIsFalseAndEndTimeAfter(
+		if (reservationRepository.existsByMemberIdAndEndTimeAfter(
 				member.getId(),
 				LocalDateTime.now()
 		)) {
@@ -74,8 +74,7 @@ public class ReservationArticleService {
 			hashtagRepository.save(hashTag);
 		}
 
-		//todo : 클라이언트와 서버 시간이 다름 (영국 시간대) 어떻게
-		LocalDateTime currentDateTime = LocalDateTime.now();
+		LocalDate currentDate = LocalDateTime.now().toLocalDate();
 		LocalDateTime startTime = LocalDateTime.MAX;
 		LocalDateTime endTime = LocalDateTime.MIN;
 

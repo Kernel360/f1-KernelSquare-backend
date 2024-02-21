@@ -162,7 +162,7 @@ class ReservationArticleServiceTest {
 				List.of(LocalDateTime.now().plusDays(7), LocalDateTime.now().plusDays(8)));
 
 		given(memberRepository.findById(anyLong())).willReturn(Optional.ofNullable(member));
-		given(reservationRepository.existsByMemberIdAndFinishedIsFalseAndEndTimeAfter(anyLong(), any(LocalDateTime.class))).willReturn(
+		given(reservationRepository.existsByMemberIdAndEndTimeAfter(eq(member.getId()), any(LocalDateTime.class))).willReturn(
 				false
 		);
 		given(reservationArticleRepository.save(any(ReservationArticle.class))).willReturn(reservationArticle);

@@ -30,8 +30,8 @@ class HashtagServiceTest {
 	void testFindAllHashtag() {
 		// Given
 		List<Hashtag> expectedHashtags = Arrays.asList(
-			Hashtag.builder().content("#김밥천국").build(),
-			Hashtag.builder().content("#라멘").build()
+			Hashtag.builder().content("김밥천국").build(),
+			Hashtag.builder().content("라멘").build()
 		);
 		given(hashtagRepository.findAll()).willReturn(expectedHashtags);
 
@@ -51,7 +51,7 @@ class HashtagServiceTest {
 	@DisplayName("해시태그 삭제 테스트")
 	void testDeleteHashtag() {
 		// Given
-		Hashtag hashtag = Hashtag.builder().id(1L).content("#김밥천국").build();
+		Hashtag hashtag = Hashtag.builder().id(1L).content("김밥천국").build();
 
 		doNothing().when(hashtagRepository).deleteById(hashtag.getId());
 

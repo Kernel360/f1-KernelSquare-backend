@@ -14,7 +14,7 @@ import com.kernelsquare.domainmysql.domain.reservation.entity.Reservation;
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 	Boolean existsByReservationArticleIdAndMemberId(Long reservationArticleId, Long memberId);
 
-	Boolean existsByMemberIdAndFinishedIsFalseAndEndTimeAfter(Long memberId, LocalDateTime currentTime);
+	Boolean existsByMemberIdAndEndTimeAfter(Long memberId, LocalDateTime currentTime);
 
 	List<Reservation> findAllByReservationArticleId(Long articleId);
 

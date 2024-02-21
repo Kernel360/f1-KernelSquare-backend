@@ -231,11 +231,6 @@ public class NoticeControllerTest {
 	@WithMockUser
 	@DisplayName("모든 공지 조회 성공 시 200 OK와 성공 응답을 반환한다.")
 	void testFindAllNotice() throws Exception {
-		// Page<NoticeInfo> allNoticeInfo = noticeService.findAllNotice(pageable);
-		// List<NoticeDto.FindAllResponse> findAllResponses = allNoticeInfo.getContent().stream()
-		// 	.map(info -> noticeDtoMapper.toFindAllResponse(info))
-		// 	.toList();
-		// return PageResponse.of(pageable, allNoticeInfo, findAllResponses);
 
 		Notice notice = Notice.builder()
 			.noticeTitle("글이사라졌나요?")

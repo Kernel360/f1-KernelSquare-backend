@@ -9,7 +9,9 @@ public class ChatMessageConverter {
 		return MongoChatMessage.builder()
 			.roomKey(message.getRoomKey())
 			.type(MongoMessageType.valueOf(String.valueOf(message.getType())))
+			.senderId(message.getSenderId())
 			.sender(message.getSender())
+			.senderImageUrl(message.getSenderImageUrl())
 			.message(message.getMessage())
 			.sendTime(message.getSendTime())
 			.build();

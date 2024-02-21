@@ -1,10 +1,19 @@
 package com.kernelsquare.memberapi.domain.coffeechat.service;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
+import com.kernelsquare.core.common_response.error.code.CoffeeChatErrorCode;
+import com.kernelsquare.core.common_response.error.code.ReservationErrorCode;
+import com.kernelsquare.core.common_response.error.exception.BusinessException;
+import com.kernelsquare.core.type.MessageType;
 import com.kernelsquare.domainmongodb.domain.coffeechat.repository.MongoChatMessageRepository;
+import com.kernelsquare.domainmysql.domain.coffeechat.entity.ChatRoom;
+import com.kernelsquare.domainmysql.domain.coffeechat.repository.CoffeeChatRepository;
+import com.kernelsquare.domainmysql.domain.reservation.entity.Reservation;
+import com.kernelsquare.domainmysql.domain.reservation.repository.ReservationRepository;
+import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
 import com.kernelsquare.memberapi.domain.coffeechat.dto.*;
+import com.kernelsquare.memberapi.domain.coffeechat.validation.CoffeeChatValidation;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
@@ -12,20 +21,21 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.kernelsquare.core.common_response.error.code.CoffeeChatErrorCode;
-import com.kernelsquare.core.common_response.error.exception.BusinessException;
-import com.kernelsquare.core.type.MessageType;
-import com.kernelsquare.domainmysql.domain.coffeechat.entity.ChatRoom;
-import com.kernelsquare.domainmysql.domain.coffeechat.repository.CoffeeChatRepository;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
-import lombok.RequiredArgsConstructor;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CoffeeChatService {
 	private final CoffeeChatRepository coffeeChatRepository;
 	private final SimpMessageSendingOperations sendingOperations;
 	private final MongoChatMessageRepository mongoChatMessageRepository;
+	private final ReservationRepository reservationRepository;
+
+	private final ConcurrentHashMap<String, List<ChatRoomMember>> chatRoomMemberList = new ConcurrentHashMap<>();
 
 	@Transactional
 	public CreateCoffeeChatRoomResponse createCoffeeChatRoom(CreateCoffeeChatRoomRequest createCoffeeChatRoomRequest) {
@@ -37,39 +47,43 @@ public class CoffeeChatService {
 	}
 
 	@Transactional
-	public EnterCoffeeChatRoomResponse enterCoffeeChatRoom(EnterCoffeeChatRoomRequest enterCoffeeChatRoomRequest) {
-		ChatRoom chatRoom = coffeeChatRepository.findById(enterCoffeeChatRoomRequest.roomId())
-			.orElseThrow(() -> new BusinessException(CoffeeChatErrorCode.COFFEE_CHAT_ROOM_NOT_FOUND));
+	public EnterCoffeeChatRoomResponse enterCoffeeChatRoom(EnterCoffeeChatRoomRequest enterCoffeeChatRoomRequest, MemberAdapter memberAdapter) {
 
-		if (!chatRoom.getExpirationTime().isAfter(LocalDateTime.now())) {
-			throw new BusinessException(CoffeeChatErrorCode.COFFEE_CHAT_ROOM_EXPIRED);
-		}
+		Reservation reservation = reservationRepository.findById(enterCoffeeChatRoomRequest.reservationId())
+			.orElseThrow(() -> new BusinessException(ReservationErrorCode.RESERVATION_NOT_FOUND));
 
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		ChatRoom chatRoom = reservation.getChatRoom();
 
-		if (authentication.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_MENTOR"))) {
-			if (Long.valueOf(authentication.getName()).equals(enterCoffeeChatRoomRequest.memberId())) {
+		CoffeeChatValidation.validateChatRoom(chatRoom);
 
-				chatRoom.activateRoom(enterCoffeeChatRoomRequest.articleTitle());
-
-				return EnterCoffeeChatRoomResponse.of(enterCoffeeChatRoomRequest.articleTitle(), chatRoom);
-			} else {
-				throw new BusinessException(CoffeeChatErrorCode.MENTOR_MISMATCH);
+		switch (CoffeeChatValidation.validatePermission(reservation, memberAdapter)) {
+			case MENTOR -> {
+				return mentorEnter(enterCoffeeChatRoomRequest, chatRoom, memberAdapter);
 			}
-		} else if (authentication.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_USER"))) {
-			if (Boolean.FALSE.equals(chatRoom.getActive())) {
-				throw new BusinessException(CoffeeChatErrorCode.COFFEE_CHAT_ROOM_NOT_ACTIVE);
-
-			} else if (Long.valueOf(authentication.getName()).equals(enterCoffeeChatRoomRequest.memberId())) {
-				return EnterCoffeeChatRoomResponse.of(enterCoffeeChatRoomRequest.articleTitle(), chatRoom);
-
-			} else {
-				throw new BusinessException(CoffeeChatErrorCode.MEMBER_MISMATCH);
+			case MENTEE -> {
+				return menteeEnter(enterCoffeeChatRoomRequest, chatRoom, memberAdapter);
 			}
-
-		} else {
-			throw new BusinessException(CoffeeChatErrorCode.AUTHORITY_NOT_VALID);
+			default -> throw new BusinessException(CoffeeChatErrorCode.AUTHORITY_NOT_VALID);
 		}
+	}
+
+	public EnterCoffeeChatRoomResponse mentorEnter(EnterCoffeeChatRoomRequest enterCoffeeChatRoomRequest, ChatRoom chatRoom, MemberAdapter memberAdapter) {
+		chatRoom.activateRoom(enterCoffeeChatRoomRequest.articleTitle());
+
+		//TODO 중복 입장에 대한 정책이 정해지면 로직 구현
+		chatRoomMemberList.computeIfAbsent(chatRoom.getRoomKey(), k -> new ArrayList<>())
+			.add(ChatRoomMember.from(memberAdapter.getMember()));
+
+		return EnterCoffeeChatRoomResponse.of(enterCoffeeChatRoomRequest.articleTitle(), chatRoom, chatRoomMemberList.get(chatRoom.getRoomKey()));
+	}
+
+	public EnterCoffeeChatRoomResponse menteeEnter(EnterCoffeeChatRoomRequest enterCoffeeChatRoomRequest, ChatRoom chatRoom, MemberAdapter memberAdapter) {
+		CoffeeChatValidation.validateChatRoomActive(chatRoom);
+
+		//TODO 중복 입장에 대한 정책이 정해지면 로직 구현
+		chatRoomMemberList.get(chatRoom.getRoomKey()).add(ChatRoomMember.from(memberAdapter.getMember()));
+
+		return EnterCoffeeChatRoomResponse.of(enterCoffeeChatRoomRequest.articleTitle(), chatRoom, chatRoomMemberList.get(chatRoom.getRoomKey()));
 	}
 
 	@Transactional

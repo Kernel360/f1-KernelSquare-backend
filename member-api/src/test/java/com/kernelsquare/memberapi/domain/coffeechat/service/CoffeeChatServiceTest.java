@@ -1,18 +1,22 @@
 package com.kernelsquare.memberapi.domain.coffeechat.service;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.*;
-
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
+import com.kernelsquare.core.type.AuthorityType;
 import com.kernelsquare.domainmongodb.domain.coffeechat.entity.MongoChatMessage;
 import com.kernelsquare.domainmongodb.domain.coffeechat.entity.MongoMessageType;
 import com.kernelsquare.domainmongodb.domain.coffeechat.repository.MongoChatMessageRepository;
-import com.kernelsquare.memberapi.domain.coffeechat.dto.*;
+import com.kernelsquare.domainmysql.domain.authority.entity.Authority;
+import com.kernelsquare.domainmysql.domain.coffeechat.entity.ChatRoom;
+import com.kernelsquare.domainmysql.domain.level.entity.Level;
+import com.kernelsquare.domainmysql.domain.member.entity.Member;
+import com.kernelsquare.domainmysql.domain.member_authority.entity.MemberAuthority;
+import com.kernelsquare.domainmysql.domain.reservation.entity.Reservation;
+import com.kernelsquare.domainmysql.domain.reservation.repository.ReservationRepository;
+import com.kernelsquare.domainmysql.domain.reservation_article.entity.ReservationArticle;
+import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
+import com.kernelsquare.memberapi.domain.auth.dto.MemberAdaptorInstance;
+import com.kernelsquare.memberapi.domain.coffeechat.dto.EnterCoffeeChatRoomRequest;
+import com.kernelsquare.memberapi.domain.coffeechat.dto.EnterCoffeeChatRoomResponse;
+import com.kernelsquare.memberapi.domain.coffeechat.dto.FindChatHistoryResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,14 +24,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.kernelsquare.domainmysql.domain.coffeechat.entity.ChatRoom;
-import com.kernelsquare.domainmysql.domain.coffeechat.repository.CoffeeChatRepository;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.*;
 
 @DisplayName("채팅 서비스 통합 테스트")
 @ExtendWith(MockitoExtension.class)
@@ -35,7 +42,7 @@ class CoffeeChatServiceTest {
 	@InjectMocks
 	private CoffeeChatService coffeeChatService;
 	@Mock
-	private CoffeeChatRepository coffeeChatRepository;
+	private ReservationRepository reservationRepository;
 	@Mock
 	private MongoChatMessageRepository mongoChatMessageRepository;
 
@@ -45,27 +52,81 @@ class CoffeeChatServiceTest {
 		//given
 		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
 		SecurityContextHolder.setContext(securityContext);
-		Authentication authentication = new UsernamePasswordAuthenticationToken(
-			"1", null, Collections.singletonList(new SimpleGrantedAuthority("ROLE_MENTOR")));
-
-		given(securityContext.getAuthentication()).willReturn(authentication);
 
 		ChatRoom chatRoom = ChatRoom.builder()
-			.id(Long.valueOf(authentication.getName()))
+			.id(1L)
 			.roomKey("asd")
 			.expirationTime(LocalDateTime.now().plusMinutes(30))
 			.build();
 
 		EnterCoffeeChatRoomRequest enterCoffeeChatRoomRequest = EnterCoffeeChatRoomRequest.builder()
-			.roomId(1L)
-			.memberId(Long.valueOf(authentication.getName()))
+			.reservationId(1L)
 			.articleTitle("불꽃남자의 예절 주입방")
 			.build();
 
-		given(coffeeChatRepository.findById(anyLong())).willReturn(Optional.of(chatRoom));
+		Level level = Level.builder()
+			.name(6L)
+			.imageUrl("1.jpg")
+			.build();
+
+		Member mentor = Member.builder()
+			.id(1L)
+			.nickname("machine")
+			.email("awdag@nsavasc.om")
+			.password("hashed")
+			.experience(1200L)
+			.introduction("basfas")
+			.authorities(List.of(
+				MemberAuthority.builder()
+					.member(Member.builder().build())
+					.authority(Authority.builder().authorityType(AuthorityType.ROLE_MENTOR).build())
+					.build()))
+			.imageUrl("meto")
+			.level(level)
+			.build();
+
+		Member mentee = Member.builder()
+			.id(2L)
+			.nickname("mmmmm")
+			.email("ttttt@nsavasc.om")
+			.password("easd")
+			.experience(10L)
+			.introduction("gas")
+			.authorities(List.of(
+				MemberAuthority.builder()
+					.member(Member.builder().build())
+					.authority(Authority.builder().authorityType(AuthorityType.ROLE_USER).build())
+					.build()))
+			.imageUrl("mete")
+			.level(level)
+			.build();
+
+		LocalDateTime startTime = LocalDateTime.now().minusMinutes(1L);
+		LocalDateTime endTime = startTime.plusMinutes(30L);
+
+		ReservationArticle reservationArticle = ReservationArticle.builder()
+			.id(1L)
+			.content("abc")
+			.startTime(startTime)
+			.member(mentor)
+			.title("ratest")
+			.build();
+
+		Reservation reservation = Reservation.builder()
+			.chatRoom(chatRoom)
+			.startTime(startTime)
+			.endTime(endTime)
+			.reservationArticle(reservationArticle)
+			.build();
+
+		reservation.addMember(mentee);
+
+		MemberAdapter memberAdapter = new MemberAdapter(MemberAdaptorInstance.of(mentor));
+
+		given(reservationRepository.findById(anyLong())).willReturn(Optional.of(reservation));
 
 		//when
-		EnterCoffeeChatRoomResponse response = coffeeChatService.enterCoffeeChatRoom(enterCoffeeChatRoomRequest);
+		EnterCoffeeChatRoomResponse response = coffeeChatService.enterCoffeeChatRoom(enterCoffeeChatRoomRequest, memberAdapter);
 
 		//then
 		assertThat(response).isNotNull();
@@ -74,7 +135,7 @@ class CoffeeChatServiceTest {
 		assertThat(response.active()).isTrue();
 
 		//verify
-		verify(coffeeChatRepository, times(1)).findById(anyLong());
+		verify(reservationRepository, times(1)).findById(anyLong());
 	}
 
 	@Test

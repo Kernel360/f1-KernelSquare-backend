@@ -74,7 +74,7 @@ public class ReservationArticleService {
 			hashtagRepository.save(hashTag);
 		}
 
-		LocalDate currentDate = LocalDateTime.now().toLocalDate();
+		LocalDateTime currentDateTime = LocalDateTime.now();
 		LocalDateTime startTime = LocalDateTime.MAX;
 		LocalDateTime endTime = LocalDateTime.MIN;
 
@@ -90,6 +90,10 @@ public class ReservationArticleService {
 				startTime = dateTime;
 			}
 
+			if (endTime.isBefore(dateTime.plusMinutes(30))) {
+				endTime = dateTime.plusMinutes(30);
+			}
+
 			// Reservation 생성 및 설정
 			Reservation reservation = Reservation.builder()
 				.startTime(dateTime)
@@ -102,14 +106,14 @@ public class ReservationArticleService {
 		}
 
 		// 3일 기간 체크
-		Long checkDurationDay = ChronoUnit.DAYS.between(startTime.toLocalDate(), endTime.toLocalDate());
-		if (checkDurationDay > 3) {
+		Long checkDurationDay = ChronoUnit.SECONDS.between(startTime, endTime);
+		if (checkDurationDay > 3 * 24 * 60 * 60) {
 			throw new BusinessException(ReservationArticleErrorCode.RESERVATION_TIME_LIMIT);
 		}
 
 		// 예약 생성 기한 체크 로직 (7일 이후, 한달 이전)
-		if (!(startTime.toLocalDate().isAfter(currentDate.plusDays(6)) && startTime.toLocalDate().isBefore(
-			currentDate.plusMonths(1)))) {
+		if (!(startTime.isAfter(currentDateTime.plusDays(6)) && startTime.isBefore(
+				currentDateTime.plusMonths(1)))) {
 			throw new BusinessException(ReservationArticleErrorCode.RESERVATION_PERIOD_LIMIT);
 		}
 

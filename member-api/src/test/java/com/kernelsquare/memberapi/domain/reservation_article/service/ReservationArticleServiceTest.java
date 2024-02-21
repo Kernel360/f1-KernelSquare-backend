@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import com.kernelsquare.core.common_response.error.code.ReservationArticleErrorCode;
+import com.kernelsquare.core.common_response.error.exception.BusinessException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -92,6 +94,13 @@ class ReservationArticleServiceTest {
 			.build();
 	}
 
+	private Reservation createTestReservationStartTime(ChatRoom chatRoom, LocalDateTime startTime) {
+		return Reservation.builder()
+				.chatRoom(chatRoom)
+				.startTime(startTime)
+				.build();
+	}
+
 	private Member createTestMember() {
 		return Member.builder()
 			.id(1L)
@@ -150,7 +159,7 @@ class ReservationArticleServiceTest {
 			new CreateReservationArticleRequest(member.getId(), reservationArticle.getTitle(),
 				reservationArticle.getContent(),
 				List.of(hashtag.getContent()),
-				List.of(LocalDateTime.now().plusDays(8), LocalDateTime.now().plusDays(9)));
+				List.of(LocalDateTime.now().plusDays(7), LocalDateTime.now().plusDays(8)));
 
 		given(memberRepository.findById(anyLong())).willReturn(Optional.ofNullable(member));
 		given(reservationRepository.existsByMemberIdAndEndTimeAfter(eq(member.getId()), any(LocalDateTime.class))).willReturn(
@@ -167,8 +176,105 @@ class ReservationArticleServiceTest {
 		assertThat(createReservationArticleResponse.reservationArticleId()).isEqualTo(reservationArticle.getId());
 
 		// Verify
+		verify(memberRepository, times(1)).findById(anyLong());
+		verify(reservationRepository, times(1)).existsByMemberIdAndEndTimeAfter(anyLong(), any(LocalDateTime.class));
 		verify(reservationArticleRepository, times(1)).save(any(ReservationArticle.class));
 	}
+
+	@Test
+	@DisplayName("예약창 예약 생성 가능 일시(LocalDateTime) 7일 이후 1달 이내 초과시 에러 메시지")
+	void testCreateReservationArticleExceedDateTime() {
+		// Given
+		member = createTestMember();
+		authority = createTestAuthority();
+		memberRole = createTestRole(member, authority);
+
+		List<MemberAuthority> memberAuthorityList = List.of(memberRole);
+
+		member.initAuthorities(memberAuthorityList);
+
+		ReservationArticle reservationArticle = createTestReservationArticle(1L);
+
+		LocalDateTime localDateTime = LocalDateTime.now().plusDays(8L);
+
+		reservationArticle.addStartTime(localDateTime);
+
+		Hashtag hashtag = createTestHashtag();
+
+		CreateReservationArticleRequest createReservationArticleRequest =
+				new CreateReservationArticleRequest(member.getId(), reservationArticle.getTitle(),
+						reservationArticle.getContent(),
+						List.of(hashtag.getContent()),
+						List.of(LocalDateTime.now().plusDays(40L), LocalDateTime.now().plusDays(41L)));
+
+		given(memberRepository.findById(anyLong())).willReturn(Optional.ofNullable(member));
+		given(reservationRepository.existsByMemberIdAndEndTimeAfter(anyLong(), any(LocalDateTime.class))).willReturn(
+				false
+		);
+		given(reservationArticleRepository.save(any(ReservationArticle.class))).willReturn(reservationArticle);
+
+		// When
+
+		// Then
+		assertThatThrownBy(() ->
+				reservationArticleService.createReservationArticle(createReservationArticleRequest))
+				.isExactlyInstanceOf(BusinessException.class)
+				.extracting("errorCode")
+				.isEqualTo(ReservationArticleErrorCode.RESERVATION_PERIOD_LIMIT);
+
+		// Verify
+		verify(memberRepository, times(1)).findById(anyLong());
+		verify(reservationRepository, times(1)).existsByMemberIdAndEndTimeAfter(anyLong(), any(LocalDateTime.class));
+		verify(reservationArticleRepository, times(1)).save(any(ReservationArticle.class));
+	}
+
+	@Test
+	@DisplayName("예약창 예약 생성 가능 일시(LocalDateTime) 구간 3일 초과시 에러 메시지")
+	void testCreateReservationArticleExceedDateTimeInterval() {
+		// Given
+		member = createTestMember();
+		authority = createTestAuthority();
+		memberRole = createTestRole(member, authority);
+
+		List<MemberAuthority> memberAuthorityList = List.of(memberRole);
+
+		member.initAuthorities(memberAuthorityList);
+
+		ReservationArticle reservationArticle = createTestReservationArticle(1L);
+
+		LocalDateTime localDateTime = LocalDateTime.now().plusDays(8L);
+
+		reservationArticle.addStartTime(localDateTime);
+
+		Hashtag hashtag = createTestHashtag();
+
+		CreateReservationArticleRequest createReservationArticleRequest =
+				new CreateReservationArticleRequest(member.getId(), reservationArticle.getTitle(),
+						reservationArticle.getContent(),
+						List.of(hashtag.getContent()),
+						List.of(LocalDateTime.now().plusDays(7L), LocalDateTime.now().plusDays(11L).plusMinutes(30L)));
+
+		given(memberRepository.findById(anyLong())).willReturn(Optional.ofNullable(member));
+		given(reservationRepository.existsByMemberIdAndEndTimeAfter(anyLong(), any(LocalDateTime.class))).willReturn(
+				false
+		);
+		given(reservationArticleRepository.save(any(ReservationArticle.class))).willReturn(reservationArticle);
+
+		// When
+
+		// Then
+		assertThatThrownBy(() ->
+				reservationArticleService.createReservationArticle(createReservationArticleRequest))
+				.isExactlyInstanceOf(BusinessException.class)
+				.extracting("errorCode")
+				.isEqualTo(ReservationArticleErrorCode.RESERVATION_TIME_LIMIT);
+
+		// Verify
+		verify(memberRepository, times(1)).findById(anyLong());
+		verify(reservationRepository, times(1)).existsByMemberIdAndEndTimeAfter(anyLong(), any(LocalDateTime.class));
+		verify(reservationArticleRepository, times(1)).save(any(ReservationArticle.class));
+	}
+
 
 	@Test
 	@DisplayName("모든 예약창 조회 테스트")

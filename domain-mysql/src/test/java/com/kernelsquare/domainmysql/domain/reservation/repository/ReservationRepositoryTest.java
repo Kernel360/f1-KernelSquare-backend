@@ -59,8 +59,8 @@ class ReservationRepositoryTest {
     }
 
     @Test
-    @DisplayName("회원 아이디와 진행 중인 예약이 현재 시간 이후에 종료되는지 여부 조회")
-    void testexistsByMemberIdAndEndTimeAfter() {
+    @DisplayName("예약창이 이미 존재하는지 조회 (현재 시점에서 뒤에 남아있는 예약 존재 여부 확인)")
+    void testExistsByMemberIdAndFinishedIsFalseAndEndTimeAfter() {
         //given
         reservationRepository.save(testReservation);
 

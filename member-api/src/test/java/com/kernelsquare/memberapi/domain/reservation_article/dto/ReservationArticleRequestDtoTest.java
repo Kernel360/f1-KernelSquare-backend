@@ -32,8 +32,8 @@ class ReservationArticleRequestDtoTest {
 		Set<String> msgList = violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toSet());
 
 		//then
-		assertThat(msgList).isEqualTo(Set.of("회원 ID를 입력해 주세요.", "예약창 제목을 입력해 주세요.",
-			"예약창 내용을 입력해 주세요.", "최소 빈 리스트로 입력해 주세요.", "예약 시간을 입력해 주세요."));
+		assertThat(msgList).isEqualTo(Set.of("회원 ID를 입력해 주세요.", "예약창 제목을 입력해 주세요.", "예약창 내용을 입력해 주세요.",
+				"최소 빈 리스트로 입력해 주세요.", "예약 시간을 입력해 주세요.", "예약창 제목은 5자 이상 100자 이하로 작성해 주세요.", "예약창 내용은 10자 이상 1000자 이하로 작성해 주세요."));
 	}
 
 	@Test
@@ -54,8 +54,8 @@ class ReservationArticleRequestDtoTest {
 	}
 
 	@Test
-	@DisplayName("예약창 생성 요청 검증 실패 테스트 - Size")
-	void whenCreateReservationArticleSizeExceedsLimit_thenValidationFails() {
+	@DisplayName("예약창 생성 요청 검증 실패 테스트 - MaxSize")
+	void whenCreateReservationArticleSizeExceedsMaxLimit_thenValidationFails() {
 		CreateReservationArticleRequest createReservationArticleRequest = CreateReservationArticleRequest.builder()
 				.memberId(1L)
 				.title("a".repeat(101))
@@ -67,10 +67,26 @@ class ReservationArticleRequestDtoTest {
 		Set<ConstraintViolation<CreateReservationArticleRequest>> violations = validator.validate(createReservationArticleRequest);
 		Set<String> msgList = violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toSet());
 
-		assertThat(msgList).isEqualTo(Set.of("예약창 제목은 100자를 넘을 수 없습니다.", "예약창 내용은 1000자를 넘을 수 없습니다."));
+		assertThat(msgList).isEqualTo(Set.of("예약창 제목은 5자 이상 100자 이하로 작성해 주세요.", "예약창 내용은 10자 이상 1000자 이하로 작성해 주세요."));
 	}
 
-	//TODO 수정 .. 빌더가 없네?
+	@Test
+	@DisplayName("예약창 생성 요청 검증 실패 테스트 - MinSize")
+	void whenCreateReservationArticleSizeExceedsMinLimit_thenValidationFails() {
+		CreateReservationArticleRequest createReservationArticleRequest = CreateReservationArticleRequest.builder()
+				.memberId(1L)
+				.title("a")
+				.content("a")
+				.hashTags(List.of())
+				.dateTimes(List.of())
+				.build();
+
+		Set<ConstraintViolation<CreateReservationArticleRequest>> violations = validator.validate(createReservationArticleRequest);
+		Set<String> msgList = violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toSet());
+
+		assertThat(msgList).isEqualTo(Set.of("예약창 제목은 5자 이상 100자 이하로 작성해 주세요.", "예약창 내용은 10자 이상 1000자 이하로 작성해 주세요."));
+	}
+
 	@Test
 	@DisplayName("예약창 수정 요청 검증 테스트 - NotNull, NotBlank")
 	void whenUpdateReservationArticleIsNotBlank_thenValidationFails() {
@@ -84,7 +100,8 @@ class ReservationArticleRequestDtoTest {
 		Set<String> msgList = violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toSet());
 
 		//then
-		assertThat(msgList).isEqualTo(Set.of("예약창 제목을 입력해 주세요.", "예약창 내용을 입력해 주세요."));
+		assertThat(msgList).isEqualTo(Set.of("예약창 제목을 입력해 주세요.", "예약창 내용을 입력해 주세요.",
+				"예약창 제목은 5자 이상 100자 이하로 작성해 주세요.", "예약창 내용은 10자 이상 1000자 이하로 작성해 주세요."));
 	}
 
 	@Test
@@ -103,8 +120,8 @@ class ReservationArticleRequestDtoTest {
 	}
 
 	@Test
-	@DisplayName("예약창 수정 요청 검증 실패 테스트 - Size")
-	void whenUpdateReservationArticleSizeExceedsLimit_thenValidationFails() {
+	@DisplayName("예약창 수정 요청 검증 실패 테스트 - MaxSize")
+	void whenUpdateReservationArticleSizeExceedsMaxLimit_thenValidationFails() {
 		UpdateReservationArticleRequest updateReservationArticleRequest = UpdateReservationArticleRequest.builder()
 				.memberId(1L)
 				.title("a".repeat(101))
@@ -114,6 +131,21 @@ class ReservationArticleRequestDtoTest {
 		Set<ConstraintViolation<UpdateReservationArticleRequest>> violations = validator.validate(updateReservationArticleRequest);
 		Set<String> msgList = violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toSet());
 
-		assertThat(msgList).isEqualTo(Set.of("예약창 제목은 100자를 넘을 수 없습니다.", "예약창 내용은 1000자를 넘을 수 없습니다."));
+		assertThat(msgList).isEqualTo(Set.of("예약창 제목은 5자 이상 100자 이하로 작성해 주세요.", "예약창 내용은 10자 이상 1000자 이하로 작성해 주세요."));
+	}
+
+	@Test
+	@DisplayName("예약창 수정 요청 검증 실패 테스트 - MinSize")
+	void whenUpdateReservationArticleSizeExceedsMinLimit_thenValidationFails() {
+		UpdateReservationArticleRequest updateReservationArticleRequest = UpdateReservationArticleRequest.builder()
+				.memberId(1L)
+				.title("a")
+				.content("a")
+				.build();
+
+		Set<ConstraintViolation<UpdateReservationArticleRequest>> violations = validator.validate(updateReservationArticleRequest);
+		Set<String> msgList = violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toSet());
+
+		assertThat(msgList).isEqualTo(Set.of("예약창 제목은 5자 이상 100자 이하로 작성해 주세요.", "예약창 내용은 10자 이상 1000자 이하로 작성해 주세요."));
 	}
 }

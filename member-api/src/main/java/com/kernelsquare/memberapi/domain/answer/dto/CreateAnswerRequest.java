@@ -15,7 +15,7 @@ public record CreateAnswerRequest(
 	@NotNull(message = "회원 ID를 입력해 주세요.")
 	Long memberId,
 	@NotBlank(message = "답변 내용을 입력해 주세요.")
-	@Size(max = 10000, message = "답변 내용은 10000자를 넘을 수 없습니다.")
+	@Size(min = 10, max = 10000, message = "답변 내용은 10자 이상 10000자 이하로 작성해 주세요.")
 	String content,
 	String imageUrl
 ) {

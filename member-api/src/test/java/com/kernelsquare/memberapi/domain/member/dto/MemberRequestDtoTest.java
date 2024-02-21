@@ -44,8 +44,8 @@ class MemberRequestDtoTest {
     }
 
     @Test
-    @DisplayName("자기소개 수정 요청 검증 실패 테스트 - Size")
-    void whenUpdateMemberIntroductionSizeExceedsLimit_thenValidationFails() {
+    @DisplayName("자기소개 수정 요청 검증 실패 테스트 - MaxSize")
+    void whenUpdateMemberIntroductionMaxSizeExceedsLimit_thenValidationFails() {
         UpdateMemberIntroductionRequest updateMemberIntroductionRequest = UpdateMemberIntroductionRequest.builder()
                 .introduction("a".repeat(1001))
                 .build();
@@ -53,6 +53,19 @@ class MemberRequestDtoTest {
         Set<ConstraintViolation<UpdateMemberIntroductionRequest>> violations = validator.validate((updateMemberIntroductionRequest));
         Set<String> msgList = violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toSet());
 
-        assertThat(msgList).isEqualTo(Set.of("자기 소개글은 1000자를 넘을 수 없습니다."));
+        assertThat(msgList).isEqualTo(Set.of("자기 소개글은 10자 이상 1000자 이하로 작성해 주세요."));
+    }
+
+    @Test
+    @DisplayName("자기소개 수정 요청 검증 실패 테스트 - MinSize")
+    void whenUpdateMemberIntroductionMinSizeExceedsLimit_thenValidationFails() {
+        UpdateMemberIntroductionRequest updateMemberIntroductionRequest = UpdateMemberIntroductionRequest.builder()
+                .introduction("a".repeat(1001))
+                .build();
+
+        Set<ConstraintViolation<UpdateMemberIntroductionRequest>> violations = validator.validate((updateMemberIntroductionRequest));
+        Set<String> msgList = violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toSet());
+
+        assertThat(msgList).isEqualTo(Set.of("자기 소개글은 10자 이상 1000자 이하로 작성해 주세요."));
     }
 }

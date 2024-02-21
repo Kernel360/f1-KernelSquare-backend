@@ -29,8 +29,8 @@ public class GlobalExceptionHandler {
 		return ResponseEntityFactory.toResponseEntity(e);
 	}
 
-	@ExceptionHandler(RuntimeException.class)
-	public ResponseEntity<ApiResponse> handleRuntimeException(RuntimeException e) {
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<ApiResponse> handleRuntimeException(Exception e) {
 		return ResponseEntityFactory.toResponseEntity(e);
 	}
 }

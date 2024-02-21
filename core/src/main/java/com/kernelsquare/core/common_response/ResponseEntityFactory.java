@@ -29,7 +29,7 @@ public class ResponseEntityFactory {
 			.body(ApiResponse.of(ImageErrorCode.FILE_SIZE_EXCEEDED));
 	}
 
-	public static ResponseEntity<ApiResponse> toResponseEntity(RuntimeException e) {
+	public static ResponseEntity<ApiResponse> toResponseEntity(Exception e) {
 		return ResponseEntity.internalServerError()
 			.body(new ApiResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), null));
 	}

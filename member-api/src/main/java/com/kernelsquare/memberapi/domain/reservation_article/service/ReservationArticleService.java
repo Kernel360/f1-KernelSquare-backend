@@ -74,7 +74,7 @@ public class ReservationArticleService {
 			hashtagRepository.save(hashTag);
 		}
 
-		LocalDate currentDate = LocalDateTime.now().toLocalDate();
+		LocalDate currentDateTime = LocalDateTime.now().toLocalDate();
 		LocalDateTime startTime = LocalDateTime.MAX;
 		LocalDateTime endTime = LocalDateTime.MIN;
 

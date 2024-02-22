@@ -55,7 +55,7 @@ public class NoticeControllerTest {
 		//given
 		NoticeDto.FindRequest request = NoticeDto.FindRequest.builder().noticeToken("ntc_dwadwada").build();
 
-		NoticeDto.SingleResponse response = NoticeDto.SingleResponse.builder()
+		NoticeDto.FindResponse response = NoticeDto.FindResponse.builder()
 			.noticeTitle("환불 관련 공지입니다.")
 			.noticeToken("ntc_dawdawdwa")
 			.noticeContent("Lets roll out")

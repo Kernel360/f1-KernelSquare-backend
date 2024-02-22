@@ -22,7 +22,7 @@ public class NoticeFacade {
 	private final NoticeService noticeService;
 	private final NoticeDtoMapper noticeDtoMapper;
 
-	public NoticeDto.SingleResponse findNotice(NoticeDto.FindRequest request) {
+	public NoticeDto.FindResponse findNotice(NoticeDto.FindRequest request) {
 		NoticeInfo noticeInfo = noticeService.findNotice(request.noticeToken());
 		return noticeDtoMapper.toSingleResponse(noticeInfo);
 	}

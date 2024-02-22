@@ -13,11 +13,11 @@ public class NoticeDto {
 	@Builder
 	public record CreateRequest(
 		@NotBlank(message = "공지 제목은 필수 입력사항입니다.")
-		@Size(min = 5, max = 50, message = "공지 제목 길이는 5자 이상 50자 이하로 작성해 주세요")
+		@Size(min = 5, max = 100, message = "공지 제목 길이는 5자 이상 50자 이하로 작성해 주세요")
 		String noticeTitle,
 
 		@NotBlank(message = "공지 내용은 필수 입력사항입니다.")
-		@Size(min = 10, max = 1000, message = "공지 내용은 10자 이상 1000자 이하로 작성해 주세요")
+		@Size(min = 10, max = 10000, message = "공지 내용은 10자 이상 1000자 이하로 작성해 주세요")
 		String noticeContent,
 
 		// @EnumValue(enumClass = Notice.NoticeCategory.class, message = "유효한 카테고리를 선택해주세요")
@@ -60,7 +60,7 @@ public class NoticeDto {
 	}
 
 	@Builder
-	public record SingleResponse(
+	public record FindResponse(
 		String noticeTitle,
 		String noticeToken,
 		String noticeContent,

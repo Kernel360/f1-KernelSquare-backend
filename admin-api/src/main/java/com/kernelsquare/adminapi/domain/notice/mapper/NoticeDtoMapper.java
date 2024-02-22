@@ -18,7 +18,7 @@ public interface NoticeDtoMapper {
 
 	NoticeCommand.UpdateCommand toCommand(NoticeDto.UpdateRequest request);
 
-	NoticeDto.SingleResponse toSingleResponse(NoticeInfo noticeInfo);
+	NoticeDto.FindResponse toSingleResponse(NoticeInfo noticeInfo);
 
 	NoticeDto.FindAllResponse toFindAllResponse(NoticeInfo noticeInfo);
 }

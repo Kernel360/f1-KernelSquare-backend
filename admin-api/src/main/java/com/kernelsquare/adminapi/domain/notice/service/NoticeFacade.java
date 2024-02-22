@@ -13,36 +13,34 @@ import com.kernelsquare.domainmysql.domain.notice.info.NoticeInfo;
 import com.kernelsquare.domainmysql.domain.notice.service.NoticeService;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class NoticeFacade {
 	private final NoticeService noticeService;
 	private final NoticeDtoMapper noticeDtoMapper;
 
-	public NoticeDto.SingleResponse createNotice(NoticeDto.CreateRequest request) {
+	public NoticeDto.FindResponse createNotice(NoticeDto.CreateRequest request) {
 		NoticeInfo noticeInfo = noticeService.createNotice(noticeDtoMapper.toCommand(request));
 		return noticeDtoMapper.toSingleResponse(noticeInfo);
 	}
 
-	public NoticeDto.SingleResponse updateNotice(NoticeDto.UpdateRequest request) {
+	public NoticeDto.FindResponse updateNotice(NoticeDto.UpdateRequest request) {
 		NoticeInfo noticeInfo = noticeService.updateNotice(noticeDtoMapper.toCommand(request), request.noticeToken());
 		return noticeDtoMapper.toSingleResponse(noticeInfo);
 	}
 
-	public NoticeDto.SingleResponse changeGeneral(NoticeDto.UpdateCategoryRequest request) {
+	public NoticeDto.FindResponse changeGeneral(NoticeDto.UpdateCategoryRequest request) {
 		NoticeInfo noticeInfo = noticeService.changeGeneral(request.noticeToken());
 		return noticeDtoMapper.toSingleResponse(noticeInfo);
 	}
 
-	public NoticeDto.SingleResponse changeQNA(NoticeDto.UpdateCategoryRequest request) {
+	public NoticeDto.FindResponse changeQNA(NoticeDto.UpdateCategoryRequest request) {
 		NoticeInfo noticeInfo = noticeService.changeQNA(request.noticeToken());
 		return noticeDtoMapper.toSingleResponse(noticeInfo);
 	}
 
-	public NoticeDto.SingleResponse changeCoffeeChat(NoticeDto.UpdateCategoryRequest request) {
+	public NoticeDto.FindResponse changeCoffeeChat(NoticeDto.UpdateCategoryRequest request) {
 		NoticeInfo noticeInfo = noticeService.changeCoffeeChat(request.noticeToken());
 		return noticeDtoMapper.toSingleResponse(noticeInfo);
 	}
@@ -51,7 +49,7 @@ public class NoticeFacade {
 		noticeService.deleteNotice(request.noticeToken());
 	}
 
-	public NoticeDto.SingleResponse findNotice(NoticeDto.FindRequest request) {
+	public NoticeDto.FindResponse findNotice(NoticeDto.FindRequest request) {
 		NoticeInfo noticeInfo = noticeService.findNotice(request.noticeToken());
 		return noticeDtoMapper.toSingleResponse(noticeInfo);
 	}

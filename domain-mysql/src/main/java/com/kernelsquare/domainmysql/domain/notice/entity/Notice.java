@@ -1,5 +1,7 @@
 package com.kernelsquare.domainmysql.domain.notice.entity;
 
+import java.util.Objects;
+
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -62,7 +64,7 @@ public class Notice extends BaseEntity {
 			throw new InvalidParamException("Notice.noticeTitle");
 		if (StringUtils.isBlank(noticeContent))
 			throw new InvalidParamException("Notice.noticeContent");
-		if (noticeCategory == null)
+		if (Objects.isNull(noticeCategory))
 			throw new InvalidParamException("Notice.noticeCategory");
 
 		this.noticeToken = TokenGenerator.randomCharacterWithPrefix(NOTICE_PREFIX);

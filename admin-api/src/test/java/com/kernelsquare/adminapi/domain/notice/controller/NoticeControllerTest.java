@@ -59,7 +59,7 @@ public class NoticeControllerTest {
 			.noticeTitle("환불 관련 공지입니다.")
 			.build();
 
-		NoticeDto.SingleResponse response = NoticeDto.SingleResponse.builder()
+		NoticeDto.FindResponse response = NoticeDto.FindResponse.builder()
 			.noticeTitle("환불 관련 공지입니다.")
 			.noticeToken("ntc_dawdawdwa")
 			.noticeContent("Lets roll out")
@@ -108,7 +108,7 @@ public class NoticeControllerTest {
 		//given
 		NoticeDto.FindRequest request = NoticeDto.FindRequest.builder().noticeToken("ntc_dwadwada").build();
 
-		NoticeDto.SingleResponse response = NoticeDto.SingleResponse.builder()
+		NoticeDto.FindResponse response = NoticeDto.FindResponse.builder()
 			.noticeTitle("환불 관련 공지입니다.")
 			.noticeToken("ntc_dawdawdwa")
 			.noticeContent("Lets roll out")
@@ -157,7 +157,7 @@ public class NoticeControllerTest {
 			.noticeTitle("공지를 수정해보")
 			.build();
 
-		NoticeDto.SingleResponse response = NoticeDto.SingleResponse.builder()
+		NoticeDto.FindResponse response = NoticeDto.FindResponse.builder()
 			.noticeTitle("환불 관련 공지입니다.")
 			.noticeToken("ntc_dawdawdwa")
 			.noticeContent("Lets roll out")
@@ -304,7 +304,7 @@ public class NoticeControllerTest {
 			.noticeToken("ntc_adwag22gsdv")
 			.build();
 
-		NoticeDto.SingleResponse response = NoticeDto.SingleResponse.builder()
+		NoticeDto.FindResponse response = NoticeDto.FindResponse.builder()
 			.noticeTitle("환불 관련 공지입니다.")
 			.noticeToken("ntc_dawdawdwa")
 			.noticeContent("Lets roll out")
@@ -352,7 +352,7 @@ public class NoticeControllerTest {
 			.noticeToken("ntc_adwag22gsdv")
 			.build();
 
-		NoticeDto.SingleResponse response = NoticeDto.SingleResponse.builder()
+		NoticeDto.FindResponse response = NoticeDto.FindResponse.builder()
 			.noticeTitle("환불 관련 공지입니다.")
 			.noticeToken("ntc_dawdawdwa")
 			.noticeContent("Lets roll out")
@@ -400,7 +400,7 @@ public class NoticeControllerTest {
 			.noticeToken("ntc_adwag22gsdv")
 			.build();
 
-		NoticeDto.SingleResponse response = NoticeDto.SingleResponse.builder()
+		NoticeDto.FindResponse response = NoticeDto.FindResponse.builder()
 			.noticeTitle("환불 관련 공지입니다.")
 			.noticeToken("ntc_dawdawdwa")
 			.noticeContent("Lets roll out")

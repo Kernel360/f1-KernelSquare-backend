@@ -22,9 +22,7 @@ import com.kernelsquare.core.dto.PageResponse;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
@@ -32,38 +30,38 @@ public class NoticeController {
 	private final NoticeFacade noticeFacade;
 
 	@PostMapping("/notices")
-	public ResponseEntity<ApiResponse<NoticeDto.SingleResponse>> createNotice(
+	public ResponseEntity<ApiResponse<NoticeDto.FindResponse>> createNotice(
 		@Valid @RequestBody NoticeDto.CreateRequest request) {
-		NoticeDto.SingleResponse singleResponse = noticeFacade.createNotice(request);
-		return ResponseEntityFactory.toResponseEntity(NOTICE_FOUND, singleResponse);
+		NoticeDto.FindResponse findResponse = noticeFacade.createNotice(request);
+		return ResponseEntityFactory.toResponseEntity(NOTICE_FOUND, findResponse);
 	}
 
 	@PutMapping("/notices")
-	public ResponseEntity<ApiResponse<NoticeDto.SingleResponse>> updateNotice(
+	public ResponseEntity<ApiResponse<NoticeDto.FindResponse>> updateNotice(
 		@Valid @RequestBody NoticeDto.UpdateRequest request) {
-		NoticeDto.SingleResponse singleResponse = noticeFacade.updateNotice(request);
-		return ResponseEntityFactory.toResponseEntity(NOTICE_UPDATED, singleResponse);
+		NoticeDto.FindResponse findResponse = noticeFacade.updateNotice(request);
+		return ResponseEntityFactory.toResponseEntity(NOTICE_UPDATED, findResponse);
 	}
 
 	@PutMapping("/notices/change-general")
-	public ResponseEntity<ApiResponse<NoticeDto.SingleResponse>> changeGeneral(
+	public ResponseEntity<ApiResponse<NoticeDto.FindResponse>> changeGeneral(
 		@Valid @RequestBody NoticeDto.UpdateCategoryRequest request) {
-		NoticeDto.SingleResponse singleResponse = noticeFacade.changeGeneral(request);
-		return ResponseEntityFactory.toResponseEntity(NOTICE_UPDATED, singleResponse);
+		NoticeDto.FindResponse findResponse = noticeFacade.changeGeneral(request);
+		return ResponseEntityFactory.toResponseEntity(NOTICE_UPDATED, findResponse);
 	}
 
 	@PutMapping("/notices/change-qna")
-	public ResponseEntity<ApiResponse<NoticeDto.SingleResponse>> changeQNA(
+	public ResponseEntity<ApiResponse<NoticeDto.FindResponse>> changeQNA(
 		@Valid @RequestBody NoticeDto.UpdateCategoryRequest request) {
-		NoticeDto.SingleResponse singleResponse = noticeFacade.changeQNA(request);
-		return ResponseEntityFactory.toResponseEntity(NOTICE_UPDATED, singleResponse);
+		NoticeDto.FindResponse findResponse = noticeFacade.changeQNA(request);
+		return ResponseEntityFactory.toResponseEntity(NOTICE_UPDATED, findResponse);
 	}
 
 	@PutMapping("/notices/change-coffee-chat")
-	public ResponseEntity<ApiResponse<NoticeDto.SingleResponse>> changeCoffeeChat(
+	public ResponseEntity<ApiResponse<NoticeDto.FindResponse>> changeCoffeeChat(
 		@Valid @RequestBody NoticeDto.UpdateCategoryRequest request) {
-		NoticeDto.SingleResponse singleResponse = noticeFacade.changeCoffeeChat(request);
-		return ResponseEntityFactory.toResponseEntity(NOTICE_UPDATED, singleResponse);
+		NoticeDto.FindResponse findResponse = noticeFacade.changeCoffeeChat(request);
+		return ResponseEntityFactory.toResponseEntity(NOTICE_UPDATED, findResponse);
 	}
 
 	@DeleteMapping("/notices")
@@ -73,10 +71,10 @@ public class NoticeController {
 	}
 
 	@GetMapping("/notices")
-	public ResponseEntity<ApiResponse<NoticeDto.SingleResponse>> findNotice(
+	public ResponseEntity<ApiResponse<NoticeDto.FindResponse>> findNotice(
 		@Valid @RequestBody NoticeDto.FindRequest request) {
-		NoticeDto.SingleResponse singleResponse = noticeFacade.findNotice(request);
-		return ResponseEntityFactory.toResponseEntity(NOTICE_FOUND, singleResponse);
+		NoticeDto.FindResponse findResponse = noticeFacade.findNotice(request);
+		return ResponseEntityFactory.toResponseEntity(NOTICE_FOUND, findResponse);
 	}
 
 	@GetMapping("/notices/all")

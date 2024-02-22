@@ -14,7 +14,7 @@ import com.kernelsquare.memberapi.domain.notice.dto.NoticeDto;
 )
 public interface NoticeDtoMapper {
 
-	NoticeDto.SingleResponse toSingleResponse(NoticeInfo noticeInfo);
+	NoticeDto.FindResponse toSingleResponse(NoticeInfo noticeInfo);
 
 	NoticeDto.FindAllResponse toFindAllResponse(NoticeInfo noticeInfo);
 }

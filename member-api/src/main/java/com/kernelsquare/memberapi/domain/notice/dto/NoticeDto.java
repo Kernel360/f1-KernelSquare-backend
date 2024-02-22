@@ -17,7 +17,7 @@ public class NoticeDto {
 	}
 
 	@Builder
-	public record SingleResponse(
+	public record FindResponse(
 		String noticeTitle,
 		String noticeToken,
 		String noticeContent,

@@ -19,9 +19,7 @@ import com.kernelsquare.memberapi.domain.notice.service.NoticeFacade;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
@@ -29,15 +27,15 @@ public class NoticeController {
 	private final NoticeFacade noticeFacade;
 
 	@GetMapping("/notices")
-	public ResponseEntity<ApiResponse<NoticeDto.SingleResponse>> findNotice(
+	public ResponseEntity<ApiResponse<NoticeDto.FindResponse>> findNotice(
 		@Valid @RequestBody NoticeDto.FindRequest request) {
-		NoticeDto.SingleResponse singleResponse = noticeFacade.findNotice(request);
-		return ResponseEntityFactory.toResponseEntity(NOTICE_FOUND, singleResponse);
+		NoticeDto.FindResponse findResponse = noticeFacade.findNotice(request);
+		return ResponseEntityFactory.toResponseEntity(NOTICE_FOUND, findResponse);
 	}
 
 	@GetMapping("/notices/all")
 	public ResponseEntity<ApiResponse<PageResponse<NoticeDto.FindAllResponse>>> findAllNotices
-		(@PageableDefault(page = 0, size = 5, sort = "id", direction = Sort.Direction.DESC)
+		(@PageableDefault(page = 0, size = 5, sort = "createdDate", direction = Sort.Direction.DESC)
 		Pageable pageable) {
 		PageResponse pageResponse = noticeFacade.findAllNotice(pageable);
 		return ResponseEntityFactory.toResponseEntity(NOTICE_ALL_FOUND, pageResponse);

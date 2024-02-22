@@ -19,17 +19,6 @@ import static com.kernelsquare.core.common_response.response.code.CoffeeChatResp
 public class CoffeeChatController {
 	private final CoffeeChatService coffeeChatService;
 
-	@PostMapping("/coffeechat/rooms")
-	public ResponseEntity<ApiResponse<CreateCoffeeChatRoomResponse>> createCoffeeChatRoom(
-		@Valid
-		@RequestBody
-		CreateCoffeeChatRoomRequest createCoffeeChatRoomRequest
-	) {
-		CreateCoffeeChatRoomResponse response = coffeeChatService.createCoffeeChatRoom(createCoffeeChatRoomRequest);
-
-		return ResponseEntityFactory.toResponseEntity(COFFEE_CHAT_ROOM_CREATED, response);
-	}
-
 	@PostMapping("/coffeechat/rooms/enter")
 	public ResponseEntity<ApiResponse<EnterCoffeeChatRoomResponse>> enterCoffeeChatRoom(
 		@AuthenticationPrincipal
@@ -41,17 +30,6 @@ public class CoffeeChatController {
 		EnterCoffeeChatRoomResponse response = coffeeChatService.enterCoffeeChatRoom(enterCoffeeChatRoomRequest, memberAdapter);
 
 		return ResponseEntityFactory.toResponseEntity(ROOM_ENTRY_SUCCESSFUL, response);
-	}
-
-	@PostMapping("/coffeechat/rooms/{roomKey}")
-	public ResponseEntity<ApiResponse> leaveCoffeeChatRoom(
-		@Valid
-		@PathVariable
-		String roomKey
-	) {
-		coffeeChatService.leaveCoffeeChatRoom(roomKey);
-
-		return ResponseEntityFactory.toResponseEntity(COFFEE_CHAT_ROOM_LEAVE);
 	}
 
 	@GetMapping("/coffeechat/rooms/{roomKey}")

@@ -87,7 +87,7 @@
                     ('0' + now.getSeconds()).slice(-2) + '.' +
                     ('00' + now.getMilliseconds()).slice(-3) + 'Z';
                 ws.send("/app/chat/message", {}, JSON.stringify({type:'LEAVE', room_key:this.roomId, sender:this.sender, send_time:sendTime}));
-                ws.disconnect();
+                ws.disconnect({}, {memberId:"1", roomKey:roomId});
             }
         }
     });
@@ -97,7 +97,7 @@
             ws.subscribe("/topic/chat/room/"+vm.$data.roomId, function(message) {
                 var recv = JSON.parse(message.body);
                 vm.recvMessage(recv);
-            });
+            }, {memberId:"1"});
             var now = new Date();
             var sendTime = now.getFullYear() + '-' +
                 ('0' + (now.getMonth()+1)).slice(-2) + '-' +

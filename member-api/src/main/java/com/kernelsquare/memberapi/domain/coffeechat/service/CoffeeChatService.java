@@ -10,21 +10,18 @@ import com.kernelsquare.domainmysql.domain.coffeechat.repository.CoffeeChatRepos
 import com.kernelsquare.domainmysql.domain.reservation.entity.Reservation;
 import com.kernelsquare.domainmysql.domain.reservation.repository.ReservationRepository;
 import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
+import com.kernelsquare.memberapi.domain.coffeechat.component.ChatRoomMemberManager;
 import com.kernelsquare.memberapi.domain.coffeechat.dto.*;
 import com.kernelsquare.memberapi.domain.coffeechat.validation.CoffeeChatValidation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Service
@@ -34,17 +31,7 @@ public class CoffeeChatService {
 	private final SimpMessageSendingOperations sendingOperations;
 	private final MongoChatMessageRepository mongoChatMessageRepository;
 	private final ReservationRepository reservationRepository;
-
-	private final ConcurrentHashMap<String, List<ChatRoomMember>> chatRoomMemberList = new ConcurrentHashMap<>();
-
-	@Transactional
-	public CreateCoffeeChatRoomResponse createCoffeeChatRoom(CreateCoffeeChatRoomRequest createCoffeeChatRoomRequest) {
-		ChatRoom chatRoom = CreateCoffeeChatRoomRequest.toEntity(createCoffeeChatRoomRequest);
-
-		ChatRoom saveChatRoom = coffeeChatRepository.save(chatRoom);
-
-		return CreateCoffeeChatRoomResponse.from(saveChatRoom);
-	}
+	private final ChatRoomMemberManager chatRoomMemberManager;
 
 	@Transactional
 	public EnterCoffeeChatRoomResponse enterCoffeeChatRoom(EnterCoffeeChatRoomRequest enterCoffeeChatRoomRequest, MemberAdapter memberAdapter) {
@@ -70,30 +57,19 @@ public class CoffeeChatService {
 	public EnterCoffeeChatRoomResponse mentorEnter(EnterCoffeeChatRoomRequest enterCoffeeChatRoomRequest, ChatRoom chatRoom, MemberAdapter memberAdapter) {
 		chatRoom.activateRoom(enterCoffeeChatRoomRequest.articleTitle());
 
-		//TODO 중복 입장에 대한 정책이 정해지면 로직 구현
-		chatRoomMemberList.computeIfAbsent(chatRoom.getRoomKey(), k -> new ArrayList<>())
-			.add(ChatRoomMember.from(memberAdapter.getMember()));
+		chatRoomMemberManager.addChatRoom(chatRoom.getRoomKey());
 
-		return EnterCoffeeChatRoomResponse.of(enterCoffeeChatRoomRequest.articleTitle(), chatRoom, chatRoomMemberList.get(chatRoom.getRoomKey()));
+		CoffeeChatValidation.validateDuplicateEntry(chatRoomMemberManager, sendingOperations, chatRoom, memberAdapter);
+
+		return EnterCoffeeChatRoomResponse.of(enterCoffeeChatRoomRequest.articleTitle(), chatRoom, chatRoomMemberManager.getChatRoom(chatRoom.getRoomKey()));
 	}
 
 	public EnterCoffeeChatRoomResponse menteeEnter(EnterCoffeeChatRoomRequest enterCoffeeChatRoomRequest, ChatRoom chatRoom, MemberAdapter memberAdapter) {
 		CoffeeChatValidation.validateChatRoomActive(chatRoom);
 
-		//TODO 중복 입장에 대한 정책이 정해지면 로직 구현
-		chatRoomMemberList.get(chatRoom.getRoomKey()).add(ChatRoomMember.from(memberAdapter.getMember()));
+		CoffeeChatValidation.validateDuplicateEntry(chatRoomMemberManager, sendingOperations, chatRoom, memberAdapter);
 
-		return EnterCoffeeChatRoomResponse.of(enterCoffeeChatRoomRequest.articleTitle(), chatRoom, chatRoomMemberList.get(chatRoom.getRoomKey()));
-	}
-
-	@Transactional
-	public void leaveCoffeeChatRoom(String roomKey) {
-		ChatRoom chatRoom = coffeeChatRepository.findByRoomKey(roomKey)
-			.orElseThrow(() -> new BusinessException(CoffeeChatErrorCode.COFFEE_CHAT_ROOM_NOT_FOUND));
-
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-		//TODO 특정 채팅방의 유저 리스트가 필요하다면?
+		return EnterCoffeeChatRoomResponse.of(enterCoffeeChatRoomRequest.articleTitle(), chatRoom, chatRoomMemberManager.getChatRoom(chatRoom.getRoomKey()));
 	}
 
 	public FindChatHistoryResponse findChatHistory(String roomKey) {

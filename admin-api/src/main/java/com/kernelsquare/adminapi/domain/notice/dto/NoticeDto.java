@@ -3,6 +3,7 @@ package com.kernelsquare.adminapi.domain.notice.dto;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.kernelsquare.core.validation.validator.EnumValue;
 import com.kernelsquare.domainmysql.domain.notice.entity.Notice;
 
 import jakarta.validation.constraints.NotBlank;
@@ -20,8 +21,8 @@ public class NoticeDto {
 		@Size(min = 10, max = 10000, message = "공지 내용은 10자 이상 1000자 이하로 작성해 주세요")
 		String noticeContent,
 
-		// @EnumValue(enumClass = Notice.NoticeCategory.class, message = "유효한 카테고리를 선택해주세요")
-		Notice.NoticeCategory noticeCategory
+		@EnumValue(enumClass = Notice.NoticeCategory.class, message = "유효한 카테고리를 선택해주세요")
+		String noticeCategory
 	) {
 	}
 

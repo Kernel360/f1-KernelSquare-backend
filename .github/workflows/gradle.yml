@@ -9,10 +9,10 @@ permissions:
 
 jobs:
   build:
-    if: |
-      (github.event.action == 'opened' || github.event.action == 'reopened' || github.event.action == 'synchronize') &&
-      contains(github.event.pull_request.labels.*.name, 'CI') &&
-      github.event.pull_request.base.ref == 'main'
+    # if: |
+    #   (github.event.action == 'opened' || github.event.action == 'reopened' || github.event.action == 'synchronize') &&
+    #   contains(github.event.pull_request.labels.*.name, 'CI') &&
+    #   github.event.pull_request.base.ref == 'main'
 
     runs-on: ubuntu-latest
 

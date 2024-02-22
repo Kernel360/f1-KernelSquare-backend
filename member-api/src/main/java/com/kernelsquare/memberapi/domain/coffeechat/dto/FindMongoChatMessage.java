@@ -9,11 +9,15 @@ import java.time.LocalDateTime;
 
 @Builder
 public record FindMongoChatMessage(
-    MongoMessageType type,
-
     String roomKey,
 
+    MongoMessageType type,
+
+    Long senderId,
+
     String sender,
+
+    String senderImageUrl,
 
     String message,
 
@@ -22,9 +26,11 @@ public record FindMongoChatMessage(
 ) {
     public static FindMongoChatMessage from(MongoChatMessage message) {
         return FindMongoChatMessage.builder()
-            .type(message.getType())
             .roomKey(message.getRoomKey())
+            .type(message.getType())
+            .senderId(message.getSenderId())
             .sender(message.getSender())
+            .senderImageUrl(message.getSenderImageUrl())
             .message(message.getMessage())
             .sendTime(message.getSendTime())
             .build();

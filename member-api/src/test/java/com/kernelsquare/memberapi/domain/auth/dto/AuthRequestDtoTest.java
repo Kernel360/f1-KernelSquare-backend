@@ -8,7 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.kernelsquare.core.validation.ValidationSequence;
-import com.kernelsquare.core.validation.constants.AuthValidationConstants;
+import com.kernelsquare.core.validation.constants.AuthValidationMessage;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -54,7 +54,7 @@ class AuthRequestDtoTest {
 
 		// then
 		assertThat(violations).hasSize(2);
-		assertThat(violations).extracting("message").contains(AuthValidationConstants.NICKNAME_SIZE);
+		assertThat(violations).extracting("message").contains(AuthValidationMessage.NICKNAME_SIZE);
 	}
 
 	@Test
@@ -73,7 +73,7 @@ class AuthRequestDtoTest {
 
 		// then
 		assertThat(violations).hasSize(1);
-		assertThat(violations).extracting("message").contains(AuthValidationConstants.NICKNAME_SIZE);
+		assertThat(violations).extracting("message").contains(AuthValidationMessage.NICKNAME_SIZE);
 	}
 
 	@Test
@@ -90,7 +90,7 @@ class AuthRequestDtoTest {
 
 		// then
 		assertThat(violations).hasSize(1);
-		assertThat(violations).extracting("message").contains(AuthValidationConstants.EMAIL_NOT_BLANK);
+		assertThat(violations).extracting("message").contains(AuthValidationMessage.EMAIL_NOT_BLANK);
 	}
 
 	@Test
@@ -107,7 +107,7 @@ class AuthRequestDtoTest {
 
 		// then
 		assertThat(violations).hasSize(1);
-		assertThat(violations).extracting("message").contains(AuthValidationConstants.EMAIL);
+		assertThat(violations).extracting("message").contains(AuthValidationMessage.EMAIL);
 	}
 
 	@Test

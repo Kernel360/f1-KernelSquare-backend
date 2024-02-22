@@ -79,7 +79,7 @@ public class NoticeController {
 
 	@GetMapping("/notices/all")
 	public ResponseEntity<ApiResponse<PageResponse<NoticeDto.FindAllResponse>>> findAllNotices
-		(@PageableDefault(page = 0, size = 5, sort = "id", direction = Sort.Direction.DESC)
+		(@PageableDefault(page = 0, size = 5, sort = "createdDate", direction = Sort.Direction.DESC)
 		Pageable pageable) {
 		PageResponse pageResponse = noticeFacade.findAllNotice(pageable);
 		return ResponseEntityFactory.toResponseEntity(NOTICE_ALL_FOUND, pageResponse);

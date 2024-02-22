@@ -7,6 +7,7 @@ public enum QuestionServiceStatus implements ServiceStatus {
 	//error
 	QUESTION_NOT_FOUND(2100),
 	PAGE_NOT_FOUND(2101),
+	TOO_LONG_KEYWORD(2102),
 
 	//success
 	QUESTION_CREATED(2140),

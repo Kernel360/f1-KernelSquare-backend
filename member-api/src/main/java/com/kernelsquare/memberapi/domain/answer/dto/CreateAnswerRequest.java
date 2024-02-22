@@ -1,5 +1,7 @@
 package com.kernelsquare.memberapi.domain.answer.dto;
 
+import com.kernelsquare.core.validation.annotations.BadWordFilter;
+import com.kernelsquare.core.validation.constants.BadWordValidationMessage;
 import com.kernelsquare.memberapi.domain.image.utils.ImageUtils;
 import com.kernelsquare.domainmysql.domain.answer.entity.Answer;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
@@ -16,6 +18,7 @@ public record CreateAnswerRequest(
 	Long memberId,
 	@NotBlank(message = "답변 내용을 입력해 주세요.")
 	@Size(min = 10, max = 10000, message = "답변 내용은 10자 이상 10000자 이하로 작성해 주세요.")
+	@BadWordFilter(message = BadWordValidationMessage.NO_BAD_WORD_IN_CONTENT)
 	String content,
 	String imageUrl
 ) {

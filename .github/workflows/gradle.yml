@@ -1,19 +1,14 @@
 name: Java CI with Gradle V0.1
 
 on:
-  pull_request_target:
-    types: [ opened, reopened, synchronize, labeled ]
+  pull_request:
+    branches: [ develop ]
 
 permissions:
   contents: read
 
 jobs:
   build:
-    if: |
-      (github.event.action == 'opened' || github.event.action == 'reopened' || github.event.action == 'synchronize') &&
-      contains(github.event.pull_request.labels.*.name, 'CI') &&
-      github.event.pull_request.base.ref == 'main'
-
     runs-on: ubuntu-latest
 
     services:

@@ -18,6 +18,10 @@ public class Logging {
 
 	private static final String TRACE_ID_NAME = "request_id";
 
+	@Pointcut("bean(*Component)")
+	private void component() {
+	}
+
 	@Pointcut("bean(*Service)")
 	private void service() {
 	}
@@ -26,7 +30,7 @@ public class Logging {
 	private void controller() {
 	}
 
-	@AfterThrowing(pointcut = "service()", throwing = "exception")
+	@AfterThrowing(pointcut = "service() || component()", throwing = "exception")
 	private void logException(
 		JoinPoint joinPoint,
 		RuntimeException exception

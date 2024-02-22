@@ -4,6 +4,8 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.stream.Stream;
 
+import com.kernelsquare.core.validation.annotations.EnumValue;
+
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
@@ -16,8 +18,6 @@ public class ValueOfEnumValidator implements ConstraintValidator<EnumValue, Stri
 		acceptedValues = Stream.of(constraintAnnotation.enumClass().getEnumConstants())
 			.map(this::getDescription)
 			.toList();
-
-		System.out.println(acceptedValues);
 	}
 
 	@Override

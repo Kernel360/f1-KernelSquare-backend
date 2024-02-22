@@ -46,44 +46,6 @@ class CoffeeChatControllerTest {
 	private ObjectMapper objectMapper = new ObjectMapper();
 
 	@Test
-	@DisplayName("채팅방 생성 성공시 200 OK와 메시지를 반환한다")
-	void testCreateCoffeeChatRoom() throws Exception {
-		//given
-		String roomName = "불꽃남자의 예절 주입방";
-
-		CreateCoffeeChatRoomRequest createCoffeeChatRoomRequest = CreateCoffeeChatRoomRequest.builder()
-			.roomName(roomName)
-			.build();
-
-		ChatRoom chatRoom = CreateCoffeeChatRoomRequest.toEntity(createCoffeeChatRoomRequest);
-
-		ChatRoom saveChatRoom = ChatRoom.builder()
-			.id(1L)
-			.roomKey(chatRoom.getRoomKey())
-			.build();
-
-		CreateCoffeeChatRoomResponse createCoffeeChatRoomResponse = CreateCoffeeChatRoomResponse.from(saveChatRoom);
-
-		given(coffeeChatService.createCoffeeChatRoom(any(CreateCoffeeChatRoomRequest.class))).willReturn(
-			createCoffeeChatRoomResponse);
-
-		objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
-		String jsonRequest = objectMapper.writeValueAsString(createCoffeeChatRoomRequest);
-
-		//when & then
-		mockMvc.perform(post("/api/v1/coffeechat/rooms")
-				.with(csrf())
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8")
-				.content(jsonRequest))
-			.andExpect(status().is(COFFEE_CHAT_ROOM_CREATED.getStatus().value()))
-			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.code").value(COFFEE_CHAT_ROOM_CREATED.getCode()))
-			.andExpect(jsonPath("$.msg").value(COFFEE_CHAT_ROOM_CREATED.getMsg()));
-	}
-
-	@Test
 	@DisplayName("채팅방 입장 성공시 200 OK와 메시지를 반환한다")
 	void testEnterCoffeeChatRoom() throws Exception {
 		//given

@@ -19,21 +19,6 @@ class CoffeeChatRequestDtoTest {
 	Validator validator = factory.getValidator();
 
 	@Test
-	@DisplayName("채팅방 생성 요청 검증 테스트")
-	void validateCreateCoffeeChatRoomRequest() {
-		CreateCoffeeChatRoomRequest createCoffeeChatRoomRequest = CreateCoffeeChatRoomRequest.builder()
-			.roomName("")
-			.build();
-
-		Set<ConstraintViolation<CreateCoffeeChatRoomRequest>> violations = validator.validate(
-			createCoffeeChatRoomRequest);
-		Set<String> msgList = violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toSet());
-
-		//then
-		assertThat(msgList).isEqualTo(Set.of("방 이름을 입력해 주세요."));
-	}
-
-	@Test
 	@DisplayName("채팅방 입장 요청 검증 테스트")
 	void validateEnterCoffeeChatRoomRequest() {
 		EnterCoffeeChatRoomRequest enterCoffeeChatRoomRequest = EnterCoffeeChatRoomRequest.builder()

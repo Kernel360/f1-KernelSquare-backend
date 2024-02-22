@@ -14,6 +14,7 @@ import com.kernelsquare.domainmysql.domain.reservation.repository.ReservationRep
 import com.kernelsquare.domainmysql.domain.reservation_article.entity.ReservationArticle;
 import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
 import com.kernelsquare.memberapi.domain.auth.dto.MemberAdaptorInstance;
+import com.kernelsquare.memberapi.domain.coffeechat.component.ChatRoomMemberManager;
 import com.kernelsquare.memberapi.domain.coffeechat.dto.EnterCoffeeChatRoomRequest;
 import com.kernelsquare.memberapi.domain.coffeechat.dto.EnterCoffeeChatRoomResponse;
 import com.kernelsquare.memberapi.domain.coffeechat.dto.FindChatHistoryResponse;
@@ -45,6 +46,8 @@ class CoffeeChatServiceTest {
 	private ReservationRepository reservationRepository;
 	@Mock
 	private MongoChatMessageRepository mongoChatMessageRepository;
+	@Mock
+	private ChatRoomMemberManager chatRoomMemberManager;
 
 	@Test
 	@DisplayName("채팅방 입장 테스트")
@@ -124,6 +127,8 @@ class CoffeeChatServiceTest {
 		MemberAdapter memberAdapter = new MemberAdapter(MemberAdaptorInstance.of(mentor));
 
 		given(reservationRepository.findById(anyLong())).willReturn(Optional.of(reservation));
+
+		doNothing().when(chatRoomMemberManager).addChatRoom(anyString());
 
 		//when
 		EnterCoffeeChatRoomResponse response = coffeeChatService.enterCoffeeChatRoom(enterCoffeeChatRoomRequest, memberAdapter);

@@ -27,6 +27,10 @@ public class SearchService {
 
 	public SearchQuestionResponse searchQuestions(Pageable pageable, String keyword) {
 
+		if (keyword.length() > 150) {
+			throw new BusinessException(QuestionErrorCode.TOO_LONG_KEYWORD);
+		}
+
 		Integer currentPage = pageable.getPageNumber() + 1;
 
 		Page<Question> pages = searchRepository.searchQuestionsByKeyword(pageable, keyword);
@@ -54,6 +58,11 @@ public class SearchService {
 	}
 
 	public SearchTechStackResponse searchTechStacks(Pageable pageable, String keyword) {
+
+		if (keyword.length() > 150) {
+			throw new BusinessException(QuestionErrorCode.TOO_LONG_KEYWORD);
+		}
+
 		Integer currentPage = pageable.getPageNumber() + 1;
 
 		Page<TechStack> pages = searchRepository.searchTechStacksByKeyword(pageable, keyword);

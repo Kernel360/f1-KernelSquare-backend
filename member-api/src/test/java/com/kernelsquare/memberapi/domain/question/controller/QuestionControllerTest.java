@@ -51,8 +51,8 @@ class QuestionControllerTest {
 	private Question createTestQuestion(Long id) {
 		return Question.builder()
 			.id(id)
-			.title("테스트")
-			.content("성공하자")
+			.title("테스트하자자")
+			.content("성공하자성공하자성공하자")
 			.imageUrl("test.jpg")
 			.viewCount(0L)
 			.closedStatus(false)

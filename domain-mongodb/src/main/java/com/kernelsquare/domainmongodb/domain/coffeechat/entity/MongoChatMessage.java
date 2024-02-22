@@ -1,13 +1,12 @@
 package com.kernelsquare.domainmongodb.domain.coffeechat.entity;
 
-import java.time.LocalDateTime;
-
+import lombok.Builder;
+import lombok.Getter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import lombok.Builder;
-import lombok.Getter;
+import java.time.LocalDateTime;
 
 @Builder
 @Getter
@@ -22,7 +21,11 @@ public class MongoChatMessage {
 
 	private MongoMessageType type;
 
+	private Long senderId;
+
 	private String sender;
+
+	private String senderImageUrl;
 
 	private String message;
 

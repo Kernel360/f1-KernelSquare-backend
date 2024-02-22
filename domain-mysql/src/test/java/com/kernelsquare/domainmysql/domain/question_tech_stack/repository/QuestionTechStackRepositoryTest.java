@@ -18,7 +18,7 @@ import com.kernelsquare.domainmysql.domain.question.entity.Question;
 import com.kernelsquare.domainmysql.domain.question_tech_stack.entity.QuestionTechStack;
 import com.kernelsquare.domainmysql.domain.tech_stack.entity.TechStack;
 
-@DisplayName("질문 - 기술 스택 레포지토리 통합 테스트")
+@DisplayName("질문 - 기술 스택 레포지토리 단위 테스트")
 @DataJpaTest
 @Import(DBConfig.class)
 class QuestionTechStackRepositoryTest {

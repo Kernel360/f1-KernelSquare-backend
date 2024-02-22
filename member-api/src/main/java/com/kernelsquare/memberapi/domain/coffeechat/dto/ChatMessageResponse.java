@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Builder
@@ -20,20 +21,29 @@ public class ChatMessageResponse {
 
 	private String roomKey;
 
+	private Long senderId;
+
 	private String sender;
+
+	private String senderImageUrl;
 
 	private String message;
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
 	private LocalDateTime sendTime;
 
+	private List<ChatRoomMember> memberList;
+
 	public static ChatMessageResponse convertResponse(ChatMessageRequest chatMessageRequest) {
 		return ChatMessageResponse.builder()
 			.type(chatMessageRequest.getType())
 			.roomKey(chatMessageRequest.getRoomKey())
+			.senderId(chatMessageRequest.getSenderId())
 			.sender(chatMessageRequest.getSender())
+			.senderImageUrl(chatMessageRequest.getSenderImageUrl())
 			.message(chatMessageRequest.getMessage())
 			.sendTime(chatMessageRequest.getSendTime())
+			.memberList(chatMessageRequest.getMemberList())
 			.build();
 	}
 }

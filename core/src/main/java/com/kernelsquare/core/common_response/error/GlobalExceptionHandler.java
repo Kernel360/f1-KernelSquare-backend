@@ -9,6 +9,7 @@ import com.kernelsquare.core.common_response.ApiResponse;
 import com.kernelsquare.core.common_response.ResponseEntityFactory;
 import com.kernelsquare.core.common_response.error.exception.BusinessException;
 import com.kernelsquare.core.common_response.error.exception.InvalidParamException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -25,6 +26,16 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<ApiResponse> onMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+		return ResponseEntityFactory.toResponseEntity(e);
+	}
+
+	@ExceptionHandler(MaxUploadSizeExceededException.class)
+	public ResponseEntity<ApiResponse> onMaxSizeException(MaxUploadSizeExceededException e) {
+		return ResponseEntityFactory.toResponseEntity(e);
+	}
+
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<ApiResponse> onRuntimeException(Exception e) {
 		return ResponseEntityFactory.toResponseEntity(e);
 	}
 }

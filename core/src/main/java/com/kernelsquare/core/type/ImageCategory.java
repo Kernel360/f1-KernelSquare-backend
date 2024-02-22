@@ -1,4 +1,4 @@
-package com.kernelsquare.memberapi.domain.image.dto;
+package com.kernelsquare.core.type;
 
 import java.util.Arrays;
 import java.util.List;

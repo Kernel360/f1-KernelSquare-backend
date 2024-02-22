@@ -3,13 +3,7 @@ package com.kernelsquare.memberapi.domain.reservation_article.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.PriorityQueue;
-import java.util.UUID;
+import java.util.*;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -60,6 +54,14 @@ public class ReservationArticleService {
 		ReservationArticle reservationArticle = CreateReservationArticleRequest.toEntity(
 			createReservationArticleRequest, member);
 
+		// 예약창이 있는 경우 생성 불가 (1인 1예약창 정책)
+		if (reservationRepository.existsByMemberIdAndEndTimeAfter(
+				member.getId(),
+				LocalDateTime.now()
+		)) {
+			throw new BusinessException(ReservationArticleErrorCode.TOO_MANY_RESERVATION_ARTICLE);
+		}
+
 		ReservationArticle saveReservationArticle = reservationArticleRepository.save(reservationArticle);
 
 		// HashTag 저장
@@ -72,8 +74,7 @@ public class ReservationArticleService {
 			hashtagRepository.save(hashTag);
 		}
 
-		//todo : 클라이언트와 서버 시간이 다름 (영국 시간대) 어떻게
-		LocalDate currentDate = LocalDateTime.now().toLocalDate();
+		LocalDateTime currentDateTime = LocalDateTime.now();
 		LocalDateTime startTime = LocalDateTime.MAX;
 		LocalDateTime endTime = LocalDateTime.MIN;
 
@@ -89,6 +90,10 @@ public class ReservationArticleService {
 				startTime = dateTime;
 			}
 
+			if (endTime.isBefore(dateTime.plusMinutes(30))) {
+				endTime = dateTime.plusMinutes(30);
+			}
+
 			// Reservation 생성 및 설정
 			Reservation reservation = Reservation.builder()
 				.startTime(dateTime)
@@ -101,14 +106,14 @@ public class ReservationArticleService {
 		}
 
 		// 3일 기간 체크
-		Long checkDurationDay = ChronoUnit.DAYS.between(startTime.toLocalDate(), endTime.toLocalDate());
-		if (checkDurationDay > 3) {
+		Long checkDurationDay = ChronoUnit.SECONDS.between(startTime, endTime);
+		if (checkDurationDay > 3 * 24 * 60 * 60) {
 			throw new BusinessException(ReservationArticleErrorCode.RESERVATION_TIME_LIMIT);
 		}
 
 		// 예약 생성 기한 체크 로직 (7일 이후, 한달 이전)
-		if (!(startTime.toLocalDate().isAfter(currentDate.plusDays(6)) && startTime.toLocalDate().isBefore(
-			currentDate.plusMonths(1)))) {
+		if (!(startTime.isAfter(currentDateTime.plusDays(6)) && startTime.isBefore(
+				currentDateTime.plusMonths(1)))) {
 			throw new BusinessException(ReservationArticleErrorCode.RESERVATION_PERIOD_LIMIT);
 		}
 

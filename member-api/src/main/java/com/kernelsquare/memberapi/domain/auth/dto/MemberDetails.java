@@ -1,7 +1,7 @@
 package com.kernelsquare.memberapi.domain.auth.dto;
 
+import com.kernelsquare.domainmysql.domain.level.entity.Level;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
-import com.kernelsquare.domainmysql.domain.member_authority.entity.MemberAuthority;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -12,26 +12,19 @@ import java.util.List;
 
 @Getter
 public class MemberDetails implements UserDetails {
-    private Member member;
+    private final Member member;
+    private final Level level;
+    private final List<SimpleGrantedAuthority> authorities;
 
     /* 일반 로그인 */
-    public MemberDetails(Member member) {
-        this.member = member;
+    public MemberDetails(MemberAdaptorInstance memberInstance) {
+        this.member = memberInstance.member();
+        this.level = memberInstance.level();
+        this.authorities = memberInstance.authorities();
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<SimpleGrantedAuthority> authorities;
-        authorities = member
-			.getAuthorities()
-			.stream()
-			.map(MemberAuthority::getAuthority)
-			.map(authority ->
-				new SimpleGrantedAuthority(authority
-					.getAuthorityType()
-					.getDescription()))
-			.toList();
-
         return authorities;
     }
 

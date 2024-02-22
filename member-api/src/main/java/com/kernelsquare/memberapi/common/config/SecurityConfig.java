@@ -60,7 +60,8 @@ public class SecurityConfig {
 		"/api/v1/questions/{questionId}/answers",
 		"/api/v1/questions/answers/{answerId}/vote",
 		"/api/v1/coffeechat/reservations/book",
-		"/api/v1/coffeechat/reservations/{reservationId}"
+		"/api/v1/coffeechat/reservations/{reservationId}",
+		"/api/v1/notices/**"
 	};
 
 	private final String[] hasRoleAdminPatterns = new String[] {

@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CoffeeChatService {
@@ -34,7 +33,8 @@ public class CoffeeChatService {
 	private final ChatRoomMemberManager chatRoomMemberManager;
 
 	@Transactional
-	public EnterCoffeeChatRoomResponse enterCoffeeChatRoom(EnterCoffeeChatRoomRequest enterCoffeeChatRoomRequest, MemberAdapter memberAdapter) {
+	public EnterCoffeeChatRoomResponse enterCoffeeChatRoom(EnterCoffeeChatRoomRequest enterCoffeeChatRoomRequest,
+                                                            MemberAdapter memberAdapter) {
 
 		Reservation reservation = reservationRepository.findById(enterCoffeeChatRoomRequest.reservationId())
 			.orElseThrow(() -> new BusinessException(ReservationErrorCode.RESERVATION_NOT_FOUND));
@@ -54,22 +54,28 @@ public class CoffeeChatService {
 		}
 	}
 
-	public EnterCoffeeChatRoomResponse mentorEnter(EnterCoffeeChatRoomRequest enterCoffeeChatRoomRequest, ChatRoom chatRoom, MemberAdapter memberAdapter) {
+	public EnterCoffeeChatRoomResponse mentorEnter(EnterCoffeeChatRoomRequest enterCoffeeChatRoomRequest,
+		                                            ChatRoom chatRoom, MemberAdapter memberAdapter) {
+
 		chatRoom.activateRoom(enterCoffeeChatRoomRequest.articleTitle());
 
 		chatRoomMemberManager.addChatRoom(chatRoom.getRoomKey());
 
 		CoffeeChatValidation.validateDuplicateEntry(chatRoomMemberManager, sendingOperations, chatRoom, memberAdapter);
 
-		return EnterCoffeeChatRoomResponse.of(enterCoffeeChatRoomRequest.articleTitle(), chatRoom, chatRoomMemberManager.getChatRoom(chatRoom.getRoomKey()));
+		return EnterCoffeeChatRoomResponse.of(enterCoffeeChatRoomRequest.articleTitle(), chatRoom,
+            chatRoomMemberManager.getChatRoom(chatRoom.getRoomKey()));
 	}
 
-	public EnterCoffeeChatRoomResponse menteeEnter(EnterCoffeeChatRoomRequest enterCoffeeChatRoomRequest, ChatRoom chatRoom, MemberAdapter memberAdapter) {
+	public EnterCoffeeChatRoomResponse menteeEnter(EnterCoffeeChatRoomRequest enterCoffeeChatRoomRequest,
+		                                            ChatRoom chatRoom, MemberAdapter memberAdapter) {
+
 		CoffeeChatValidation.validateChatRoomActive(chatRoom);
 
 		CoffeeChatValidation.validateDuplicateEntry(chatRoomMemberManager, sendingOperations, chatRoom, memberAdapter);
 
-		return EnterCoffeeChatRoomResponse.of(enterCoffeeChatRoomRequest.articleTitle(), chatRoom, chatRoomMemberManager.getChatRoom(chatRoom.getRoomKey()));
+		return EnterCoffeeChatRoomResponse.of(enterCoffeeChatRoomRequest.articleTitle(), chatRoom,
+                                                chatRoomMemberManager.getChatRoom(chatRoom.getRoomKey()));
 	}
 
 	public FindChatHistoryResponse findChatHistory(String roomKey) {

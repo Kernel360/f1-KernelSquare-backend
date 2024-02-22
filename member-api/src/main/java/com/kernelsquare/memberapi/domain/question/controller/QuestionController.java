@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kernelsquare.core.common_response.ApiResponse;
+import com.kernelsquare.core.common_response.ResponseEntityFactory;
+import com.kernelsquare.core.dto.PageResponse;
 import com.kernelsquare.memberapi.domain.question.dto.CreateQuestionRequest;
 import com.kernelsquare.memberapi.domain.question.dto.CreateQuestionResponse;
 import com.kernelsquare.memberapi.domain.question.dto.FindQuestionResponse;
 import com.kernelsquare.memberapi.domain.question.dto.UpdateQuestionRequest;
 import com.kernelsquare.memberapi.domain.question.service.QuestionService;
-import com.kernelsquare.core.common_response.ApiResponse;
-import com.kernelsquare.core.common_response.ResponseEntityFactory;
-import com.kernelsquare.core.dto.PageResponse;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -54,7 +54,7 @@ public class QuestionController {
 		return ResponseEntityFactory.toResponseEntity(QUESTION_FOUND, findQuestionResponse);
 	}
 
-	@GetMapping("questions")
+	@GetMapping("/questions")
 	public ResponseEntity<ApiResponse<PageResponse<FindQuestionResponse>>> findAllQuestions(
 		@PageableDefault(page = 0, size = 5, sort = "id", direction = Sort.Direction.DESC)
 		Pageable pageable

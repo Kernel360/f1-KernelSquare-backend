@@ -1,5 +1,29 @@
 package com.kernelsquare.memberapi.domain.auth.service;
 
+import static com.kernelsquare.core.common_response.error.code.TokenErrorCode.*;
+
+import java.nio.charset.StandardCharsets;
+import java.security.Key;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.stereotype.Component;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -11,33 +35,19 @@ import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
 import com.kernelsquare.memberapi.domain.auth.dto.TokenRequest;
 import com.kernelsquare.memberapi.domain.auth.dto.TokenResponse;
 import com.kernelsquare.memberapi.domain.auth.entity.RefreshToken;
-import io.jsonwebtoken.*;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Header;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.stereotype.Component;
 
-import java.nio.charset.StandardCharsets;
-import java.security.Key;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static com.kernelsquare.core.common_response.error.code.TokenErrorCode.*;
-
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class TokenProvider implements InitializingBean {
@@ -138,7 +148,9 @@ public class TokenProvider implements InitializingBean {
 		}
 	}
 
-	/** 인증 정보 조회 **/
+	/**
+	 * 인증 정보 조회
+	 **/
 	public Authentication getAuthentication(String token) {
 		Claims claims = parseClaims(token);
 
@@ -146,7 +158,7 @@ public class TokenProvider implements InitializingBean {
 			.map(SimpleGrantedAuthority::new)
 			.toList();
 
-		MemberAdapter memberAdapter = (MemberAdapter) memberDetailService.loadUserByUsername(claims.getSubject());
+		MemberAdapter memberAdapter = (MemberAdapter)memberDetailService.loadUserByUsername(claims.getSubject());
 
 		return new UsernamePasswordAuthenticationToken(memberAdapter, token, authorities);
 	}
@@ -164,7 +176,9 @@ public class TokenProvider implements InitializingBean {
 		}
 	}
 
-	/** Access Token 유효성 검증을 수행 **/
+	/**
+	 * Access Token 유효성 검증을 수행
+	 **/
 	public boolean validateAccessToken(String token) {
 		try {
 			Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
@@ -180,7 +194,9 @@ public class TokenProvider implements InitializingBean {
 		}
 	}
 
-	/** Refresh Token 재발급 **/
+	/**
+	 * Refresh Token 재발급
+	 **/
 	public TokenResponse reissueToken(TokenRequest tokenRequest) {
 		Claims claims = parseClaims(tokenRequest.accessToken());
 		String findIdByAccessToken = parseClaims(tokenRequest.accessToken()).getSubject();
@@ -194,7 +210,9 @@ public class TokenProvider implements InitializingBean {
 			.build();
 	}
 
-	/** Reissued Token 유효성 검증을 수행 **/
+	/**
+	 * Reissued Token 유효성 검증을 수행
+	 **/
 	private void validateReissueToken(RefreshToken refreshToken, String accessTokenId) {
 		if (!refreshToken.getExpirationDate().isAfter(LocalDateTime.now())) {
 			redisTemplate.opsForValue().getOperations().delete(refreshToken.getMemberId());

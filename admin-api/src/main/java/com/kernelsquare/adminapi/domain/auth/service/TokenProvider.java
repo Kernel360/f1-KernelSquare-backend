@@ -47,9 +47,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class TokenProvider implements InitializingBean {
@@ -149,7 +147,9 @@ public class TokenProvider implements InitializingBean {
 		}
 	}
 
-	/** 인증 정보 조회 **/
+	/**
+	 * 인증 정보 조회
+	 **/
 	public Authentication getAuthentication(String token) {
 		Claims claims = parseClaims(token);
 
@@ -175,7 +175,9 @@ public class TokenProvider implements InitializingBean {
 		}
 	}
 
-	/** Access Token 유효성 검증을 수행 **/
+	/**
+	 * Access Token 유효성 검증을 수행
+	 **/
 	public boolean validateAccessToken(String token) {
 		try {
 			Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
@@ -191,7 +193,9 @@ public class TokenProvider implements InitializingBean {
 		}
 	}
 
-	/** Refresh Token 재발급 **/
+	/**
+	 * Refresh Token 재발급
+	 **/
 	public TokenResponse reissueToken(TokenRequest tokenRequest) {
 		Claims claims = parseClaims(tokenRequest.accessToken());
 		String findIdByAccessToken = parseClaims(tokenRequest.accessToken()).getSubject();
@@ -205,7 +209,9 @@ public class TokenProvider implements InitializingBean {
 			.build();
 	}
 
-	/** Reissued Token 유효성 검증을 수행 **/
+	/**
+	 * Reissued Token 유효성 검증을 수행
+	 **/
 	private void validateReissueToken(RefreshToken refreshToken, String accessTokenId) {
 		if (!refreshToken.getExpirationDate().isAfter(LocalDateTime.now())) {
 			redisTemplate.opsForValue().getOperations().delete(refreshToken.getMemberId());

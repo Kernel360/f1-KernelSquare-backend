@@ -1,6 +1,6 @@
 package com.kernelsquare.core.validation.constants;
 
-public class AuthValidationConstants {
+public class AuthValidationMessage {
 	// Not Blank
 	public static final String EMAIL_NOT_BLANK = "이메일을 입력해 주세요.";
 	public static final String NICKNAME_NOT_BLANK = "닉네임을 입력해 주세요.";

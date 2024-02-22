@@ -79,4 +79,12 @@ public class CoffeeChatValidation {
             sendingOperations.convertAndSend("/app/chat/message", message);
         }
     }
+
+    public static void validateChatRoomCapacity(ChatRoomMemberManager manager, ChatRoom chatRoom) {
+        Integer memberCount = manager.countChatRoomMember(chatRoom.getRoomKey());
+
+        if (memberCount >= 2) {
+            throw new BusinessException(CoffeeChatErrorCode.COFFEE_CHAT_ROOM_CAPACITY_EXCEEDED);
+        }
+    }
 }

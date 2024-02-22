@@ -61,6 +61,8 @@ public class CoffeeChatService {
 
 		chatRoomMemberManager.addChatRoom(chatRoom.getRoomKey());
 
+		CoffeeChatValidation.validateChatRoomCapacity(chatRoomMemberManager, chatRoom);
+
 		CoffeeChatValidation.validateDuplicateEntry(chatRoomMemberManager, sendingOperations, chatRoom, memberAdapter);
 
 		return EnterCoffeeChatRoomResponse.of(enterCoffeeChatRoomRequest.articleTitle(), chatRoom,
@@ -71,6 +73,8 @@ public class CoffeeChatService {
 		                                            ChatRoom chatRoom, MemberAdapter memberAdapter) {
 
 		CoffeeChatValidation.validateChatRoomActive(chatRoom);
+
+		CoffeeChatValidation.validateChatRoomCapacity(chatRoomMemberManager, chatRoom);
 
 		CoffeeChatValidation.validateDuplicateEntry(chatRoomMemberManager, sendingOperations, chatRoom, memberAdapter);
 

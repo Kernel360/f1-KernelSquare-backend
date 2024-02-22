@@ -43,4 +43,10 @@ public class ChatRoomMemberManager {
 
         chatRoomMemberList.remove(member);
     }
+
+    public Integer countChatRoomMember(String roomKey) {
+        List<ChatRoomMember> chatRoomMemberList = getChatRoom(roomKey);
+
+        return chatRoomMemberList.size();
+    }
 }

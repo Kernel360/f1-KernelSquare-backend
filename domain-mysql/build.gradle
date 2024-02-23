@@ -43,6 +43,9 @@ dependencies {
     implementation 'org.flywaydb:flyway-core'
     implementation 'org.flywaydb:flyway-mysql'
 
+    //kafka
+    implementation 'org.springframework.kafka:spring-kafka'
+
     //StringUtils for Entity Validation
     implementation 'org.apache.commons:commons-lang3:3.12.0'
 

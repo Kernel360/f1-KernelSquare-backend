@@ -73,6 +73,10 @@ public class Question extends BaseEntity {
 		this.imageUrl = imageUrl;
 	}
 
+	public void updateClosedStatus() {
+		this.closedStatus = true;
+	}
+
 	public void setTechStackList(List<QuestionTechStack> techStackList) {
 		this.techStackList = techStackList;
 	}

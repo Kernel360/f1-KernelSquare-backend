@@ -20,4 +20,7 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
 	@Modifying
 	@Query("UPDATE Answer a SET a.voteCount = a.voteCount - 1 WHERE a.id = :answerId")
 	void downVoteAnswer(@Param("answerId") Long answerId);
+
+	@Query("SELECT a FROM Answer a WHERE a.question.id = :questionId ORDER BY a.voteCount DESC, a.createdDate ASC LIMIT 3")
+	List<Answer> findAnswersByQuestionIdSortedByVoteCount(@Param("questionId") Long questionId);
 }

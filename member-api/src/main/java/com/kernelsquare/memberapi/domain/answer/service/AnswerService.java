@@ -1,21 +1,12 @@
 package com.kernelsquare.memberapi.domain.answer.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.kernelsquare.core.common_response.error.code.AnswerErrorCode;
 import com.kernelsquare.core.common_response.error.code.LevelErrorCode;
-import com.kernelsquare.core.common_response.error.code.MemberErrorCode;
 import com.kernelsquare.core.common_response.error.code.QuestionErrorCode;
 import com.kernelsquare.core.common_response.error.exception.BusinessException;
 import com.kernelsquare.core.util.ExperiencePolicy;
+import com.kernelsquare.core.util.ImageUtils;
+import com.kernelsquare.domainmysql.domain.answer.command.AnswerCommand;
 import com.kernelsquare.domainmysql.domain.answer.entity.Answer;
 import com.kernelsquare.domainmysql.domain.answer.repository.AnswerRepository;
 import com.kernelsquare.domainmysql.domain.level.entity.Level;
@@ -26,22 +17,29 @@ import com.kernelsquare.domainmysql.domain.member_answer_vote.entity.MemberAnswe
 import com.kernelsquare.domainmysql.domain.member_answer_vote.repository.MemberAnswerVoteRepository;
 import com.kernelsquare.domainmysql.domain.question.entity.Question;
 import com.kernelsquare.domainmysql.domain.question.repository.QuestionRepository;
-import com.kernelsquare.memberapi.domain.answer.dto.CreateAnswerRequest;
+import com.kernelsquare.domainmysql.domain.stream.service.SseService;
 import com.kernelsquare.memberapi.domain.answer.dto.FindAllAnswerResponse;
 import com.kernelsquare.memberapi.domain.answer.dto.FindAnswerResponse;
 import com.kernelsquare.memberapi.domain.answer.dto.UpdateAnswerRequest;
-import com.kernelsquare.memberapi.domain.image.utils.ImageUtils;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class AnswerService {
 	private final AnswerRepository answerRepository;
-	private final MemberRepository memberRepository;
 	private final QuestionRepository questionRepository;
 	private final MemberAnswerVoteRepository memberAnswerVoteRepository;
 	private final LevelRepository levelRepository;
+	private final SseService sseService;
 
 	@Transactional(readOnly = true)
 	public FindAllAnswerResponse findAllAnswer(Long questionId) {
@@ -72,17 +70,18 @@ public class AnswerService {
 	}
 
 	@Transactional
-	public Long createAnswer(CreateAnswerRequest createAnswerRequest, Long questionId) {
-		Member member = memberRepository.findById(createAnswerRequest.memberId())
-			.orElseThrow(() -> new BusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
-		Question question = questionRepository.findById(questionId)
+	public Long createAnswer(AnswerCommand.CreateAnswer command) {
+		Member member = command.author();
+
+		Question question = questionRepository.findById(command.questionId())
 			.orElseThrow(() -> new BusinessException(QuestionErrorCode.QUESTION_NOT_FOUND));
 
-		if(Objects.equals(question.getMember().getId(), createAnswerRequest.memberId())) {
+		if(Objects.equals(question.getMember().getId(), member.getId())) {
 			throw new BusinessException(AnswerErrorCode.ANSWER_SELF_IMPOSSIBLE);
 		}
 
-		Answer answer = CreateAnswerRequest.toEntity(createAnswerRequest, question, member);
+		Answer answer = command.toEntity(question);
+
 		answerRepository.save(answer);
 		member.addExperience(ExperiencePolicy.MEMBER_DAILY_ATTENDED.getReward());
 		if (member.isExperienceExceed(member.getExperience())) {
@@ -91,6 +90,9 @@ public class AnswerService {
 				.orElseThrow(() -> new BusinessException(LevelErrorCode.LEVEL_NOT_FOUND));
 			member.updateLevel(nextLevel);
 		}
+
+		sseService.notify(question.getMember().getId(), question.getTitle() + " 글에 답변이 달렸습니다.", "notify");
+
 		return answer.getId();
 	}
 

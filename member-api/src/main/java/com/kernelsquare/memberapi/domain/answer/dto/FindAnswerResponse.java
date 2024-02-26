@@ -3,7 +3,7 @@ package com.kernelsquare.memberapi.domain.answer.dto;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.kernelsquare.memberapi.domain.image.utils.ImageUtils;
+import com.kernelsquare.core.util.ImageUtils;
 import com.kernelsquare.domainmysql.domain.answer.entity.Answer;
 
 public record FindAnswerResponse(

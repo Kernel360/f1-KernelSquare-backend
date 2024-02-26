@@ -42,8 +42,6 @@ public class AuthController {
 		TokenResponse tokenResponse = tokenProvider.createToken(member, loginRequest);
 		LoginResponse loginResponse = LoginResponse.of(member, tokenResponse);
 
-		sseService.notify(member.getId(), member.getNickname() + "이 로그인", "login");
-
 		return ResponseEntityFactory.toResponseEntity(LOGIN_SUCCESS, loginResponse);
 	}
 

@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.kernelsquare.domainmysql.domain.reservation.entity.Reservation;
 
-import com.kernelsquare.memberapi.domain.image.utils.ImageUtils;
+import com.kernelsquare.core.util.ImageUtils;
 import lombok.Builder;
 
 @Builder

@@ -7,7 +7,7 @@ import com.kernelsquare.core.common_response.error.code.ImageErrorCode;
 import com.kernelsquare.core.common_response.error.exception.BusinessException;
 import com.kernelsquare.memberapi.domain.image.validation.ImageValidation;
 import com.kernelsquare.memberapi.domain.image.dto.UploadImageResponse;
-import com.kernelsquare.memberapi.domain.image.utils.ImageUtils;
+import com.kernelsquare.core.util.ImageUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

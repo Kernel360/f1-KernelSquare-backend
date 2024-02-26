@@ -25,7 +25,7 @@ import com.kernelsquare.domainmysql.domain.question_tech_stack.entity.QuestionTe
 import com.kernelsquare.domainmysql.domain.question_tech_stack.repository.QuestionTechStackRepository;
 import com.kernelsquare.domainmysql.domain.tech_stack.entity.TechStack;
 import com.kernelsquare.domainmysql.domain.tech_stack.repository.TechStackRepository;
-import com.kernelsquare.memberapi.domain.image.utils.ImageUtils;
+import com.kernelsquare.core.util.ImageUtils;
 import com.kernelsquare.memberapi.domain.question.dto.CreateQuestionRequest;
 import com.kernelsquare.memberapi.domain.question.dto.CreateQuestionResponse;
 import com.kernelsquare.memberapi.domain.question.dto.FindQuestionResponse;

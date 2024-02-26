@@ -1,4 +1,4 @@
-package com.kernelsquare.core.validation.validator;
+package com.kernelsquare.core.validation.annotations;
 
 import static java.lang.annotation.ElementType.*;
 
@@ -6,6 +6,8 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import com.kernelsquare.core.validation.validator.ValueOfEnumValidator;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

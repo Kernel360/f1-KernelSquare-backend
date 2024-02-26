@@ -11,6 +11,7 @@ import com.kernelsquare.domainmysql.domain.question.entity.Question;
 import com.kernelsquare.domainmysql.domain.question.repository.QuestionRepository;
 import com.kernelsquare.domainmysql.domain.rank.entity.Rank;
 import com.kernelsquare.domainmysql.domain.rank.repository.RankRepository;
+import com.kernelsquare.domainmysql.domain.stream.service.SseService;
 import com.kernelsquare.memberapi.domain.coffeechat.dto.ChatMessageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -30,6 +31,7 @@ public class SchedulerService {
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
     private final RankRepository rankRepository;
+    private final SseService sseService;
 
     @Transactional
     @Scheduled(cron = "0 0/30 * * * *")
@@ -67,6 +69,8 @@ public class SchedulerService {
                     Rank rank = rankRepository.findByName(rankName)
                         .orElseThrow(() -> new BusinessException(RankErrorCode.RANK_NOT_FOUND));
                     answer.updateRank(rank);
+
+                    sseService.notify(answer.getMember().getId(), rank.getName() + "등 답변이 되었습니다.", "notify");
 
                     rankName += 1L;
                 }

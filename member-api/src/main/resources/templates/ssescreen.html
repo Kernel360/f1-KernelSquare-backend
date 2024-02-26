@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSE Example</title>
+</head>
+<body>
+<h1>SSE</h1>
+<div id="output"></div>
+
+<script>
+    const sse = new EventSource("/api/v1/stream/sub/1");
+
+    sse.addEventListener('login', (e) => {
+        const { data: receivedConnectData } = e;
+        console.log('login event data: ',receivedConnectData);  // "connected!"
+        const outputDiv = document.getElementById("output");
+        outputDiv.innerHTML += `<p>${receivedConnectData}</p>`;
+    });
+
+    sse.onerror = (error) => {
+        console.error(`오류: ${error}`);
+        sse.close();
+    };
+</script>
+
+</body>
+</html>

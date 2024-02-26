@@ -2,6 +2,7 @@ package com.kernelsquare.memberapi.domain.auth.controller;
 
 import static com.kernelsquare.core.common_response.response.code.AuthResponseCode.*;
 
+import com.kernelsquare.domainmysql.domain.stream.service.SseService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 public class AuthController {
 	private final AuthService authService;
 	private final TokenProvider tokenProvider;
+	private final SseService sseService;
 
 	@PostMapping("/auth/login")
 	public ResponseEntity<ApiResponse<LoginResponse>> login(
@@ -39,6 +41,9 @@ public class AuthController {
 		Member member = authService.login(loginRequest);
 		TokenResponse tokenResponse = tokenProvider.createToken(member, loginRequest);
 		LoginResponse loginResponse = LoginResponse.of(member, tokenResponse);
+
+		sseService.notify(member.getId(), member.getNickname() + "이 로그인", "login");
+
 		return ResponseEntityFactory.toResponseEntity(LOGIN_SUCCESS, loginResponse);
 	}
 

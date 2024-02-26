@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.kernelsquare.core.validation.constants.BadWordValidationMessage;
+
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -17,6 +19,22 @@ import jakarta.validation.ValidatorFactory;
 class AnswerRequestDtoTest {
 	ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 	Validator validator = factory.getValidator();
+
+	@Test
+	@DisplayName("답변 생성 시 내용에 비속어가 포함되어 있는 지 확인한다.")
+	void whenCreateAnswerContainsBadWord_thenValidationFails() throws Exception {
+		//given
+		CreateAnswerRequest createAnswerRequest = CreateAnswerRequest.builder()
+			.memberId(1L)
+			.content("ㅅㅂ개짜증나진짜로어쩌라는거야")
+			.build();
+
+		Set<ConstraintViolation<CreateAnswerRequest>> violations = validator.validate(createAnswerRequest);
+		Set<String> msgList = violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toSet());
+
+		//then
+		assertThat(msgList).isEqualTo(Set.of(BadWordValidationMessage.NO_BAD_WORD_IN_CONTENT));
+	}
 
 	@Test
 	@DisplayName("답변 생성 요청 검증 테스트 - NotNull, NotBlank")

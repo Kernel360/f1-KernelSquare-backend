@@ -54,7 +54,7 @@ public class NoticeControllerTest {
 	void testCreateNotice() throws Exception {
 		//given
 		NoticeDto.CreateRequest request = NoticeDto.CreateRequest.builder()
-			.noticeCategory(Notice.NoticeCategory.GENERAL)
+			.noticeCategory("일반 공지")
 			.noticeContent("Lets roll out")
 			.noticeTitle("환불 관련 공지입니다.")
 			.build();
@@ -86,7 +86,7 @@ public class NoticeControllerTest {
 			.andDo(document("notice-created", getDocumentRequest(), getDocumentResponse(),
 				requestFields(fieldWithPath("notice_title").type(JsonFieldType.STRING).description("공지 제목"),
 					fieldWithPath("notice_content").type(JsonFieldType.STRING).description("공지 내용"),
-					fieldWithPath("notice_category").type(JsonFieldType.STRING).description("일반 공지")),
+					fieldWithPath("notice_category").type(JsonFieldType.STRING).description("공지 카테고리")),
 				responseFields(fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"),
 					fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 상태 코드"),
 					fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답"),

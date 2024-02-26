@@ -39,7 +39,7 @@ public class ChatRoomMemberManager {
         ChatRoomMember member = chatRoomMemberList.stream()
             .filter(chatRoomMember -> chatRoomMember.memberId().equals(memberId))
             .findFirst()
-            .get();
+            .orElseThrow(() -> new BusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         chatRoomMemberList.remove(member);
     }

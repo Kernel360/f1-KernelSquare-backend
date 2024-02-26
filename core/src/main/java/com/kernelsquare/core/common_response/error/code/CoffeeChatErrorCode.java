@@ -17,7 +17,11 @@ public enum CoffeeChatErrorCode implements ErrorCode {
 	MESSAGE_DELIVERY_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, CoffeeChatServiceStatus.MESSAGE_DELIVERY_FAILED,
 		"토픽으로 메시지 전달 실패"),
 	COFFEE_CHAT_ROOM_EXPIRED(HttpStatus.BAD_REQUEST, CoffeeChatServiceStatus.COFFEE_CHAT_ROOM_EXPIRED,"만료된 채팅방"),
-	COFFEE_CHAT_ROOM_CAPACITY_EXCEEDED(HttpStatus.BAD_REQUEST, CoffeeChatServiceStatus.COFFEE_CHAT_ROOM_CAPACITY_EXCEEDED, "채팅방 정원 초과");
+	COFFEE_CHAT_ROOM_CAPACITY_EXCEEDED(HttpStatus.BAD_REQUEST, CoffeeChatServiceStatus.COFFEE_CHAT_ROOM_CAPACITY_EXCEEDED, "채팅방 정원 초과"),
+	CHAT_MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, CoffeeChatServiceStatus.CHAT_MEMBER_NOT_FOUND, "채팅방 멤버 목록에 존재하지 않는 멤버"),
+	MESSAGE_COMMAND_NOT_VALID(HttpStatus.BAD_REQUEST, CoffeeChatServiceStatus.MESSAGE_COMMAND_NOT_VALID, "유효하지 않는 메시지 Command"),
+	MESSAGE_DESTINATION_NOT_VALID(HttpStatus.BAD_REQUEST, CoffeeChatServiceStatus.MESSAGE_DESTINATION_NOT_VALID, "유효하지 않는 메시지 Destination"),
+	MESSAGE_NATIVEHEADER_NOT_FOUND(HttpStatus.BAD_REQUEST, CoffeeChatServiceStatus.MESSAGE_NATIVEHEADER_NOT_FOUND, "존재하지 않는 NativeHeader"),;
 
 	private final HttpStatus httpStatus;
 	private final ServiceStatus serviceStatus;

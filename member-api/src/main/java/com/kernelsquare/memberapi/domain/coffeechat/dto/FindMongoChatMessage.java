@@ -10,17 +10,11 @@ import java.time.LocalDateTime;
 @Builder
 public record FindMongoChatMessage(
     String roomKey,
-
     MongoMessageType type,
-
     Long senderId,
-
     String sender,
-
     String senderImageUrl,
-
     String message,
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
     LocalDateTime sendTime
 ) {

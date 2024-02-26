@@ -1,7 +1,9 @@
 package com.kernelsquare.core.validation.validator;
 
 import java.lang.reflect.Field;
-import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.kernelsquare.core.validation.annotations.EnumValue;
@@ -11,18 +13,18 @@ import jakarta.validation.ConstraintValidatorContext;
 
 public class ValueOfEnumValidator implements ConstraintValidator<EnumValue, String> {
 
-	private List<String> acceptedValues;
+	private Set<String> acceptedValues;
 
 	@Override
 	public void initialize(EnumValue constraintAnnotation) {
 		acceptedValues = Stream.of(constraintAnnotation.enumClass().getEnumConstants())
 			.map(this::getDescription)
-			.toList();
+			.collect(Collectors.toSet());
 	}
 
 	@Override
 	public boolean isValid(String value, ConstraintValidatorContext context) {
-		if (value == null) {
+		if (Objects.isNull(value)) {
 			return true;
 		}
 

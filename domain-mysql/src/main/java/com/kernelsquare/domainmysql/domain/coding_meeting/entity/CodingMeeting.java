@@ -110,7 +110,7 @@ public class CodingMeeting extends BaseEntity {
         this.codingMeetingClosed = true;
     }
 
-    public List<String> getCodingMeetingHashtagList() {
+    public List<String> getCodingMeetingHashtagStringList() {
         return codingMeetingHashtags.stream().map(
                 CodingMeetingHashtag::getCodingMeetingHashtagContent
         ).toList();

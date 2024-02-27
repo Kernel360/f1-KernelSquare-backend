@@ -39,7 +39,7 @@ public class CodingMeetingInfo {
             this.codingMeetingTitle = codingMeeting.getCodingMeetingTitle();
             this.codingMeetingToken = codingMeeting.getCodingMeetingToken();
             this.codingMeetingContent = codingMeeting.getCodingMeetingContent();
-            this.codingMeetingHashtags = codingMeeting.getCodingMeetingHashtagList();
+            this.codingMeetingHashtags = codingMeeting.getCodingMeetingHashtagStringList();
 
             this.codingMeetingLocationId = codingMeeting.getCodingMeetingLocation().getCodingMeetingLocationItemId();
             this.codingMeetingLocationPlaceName = codingMeeting.getCodingMeetingLocation().getCodingMeetingLocationPlaceName();
@@ -86,7 +86,7 @@ public class CodingMeetingInfo {
 
             this.codingMeetingTitle = codingMeeting.getCodingMeetingTitle();
             this.codingMeetingToken = codingMeeting.getCodingMeetingToken();
-            this.codingMeetingHashtags = codingMeeting.getCodingMeetingHashtagList();
+            this.codingMeetingHashtags = codingMeeting.getCodingMeetingHashtagStringList();
 
             this.codingMeetingStartTime = codingMeeting.getCodingMeetingStartTime();
             this.codingMeetingEndTime = codingMeeting.getCodingMeetingEndTime();

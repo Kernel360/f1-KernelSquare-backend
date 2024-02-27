@@ -5,5 +5,5 @@ import com.kernelsquare.domainmysql.domain.coding_meeting.entity.CodingMeetingHa
 
 public interface CodingMeetingHashtagStore {
     CodingMeetingHashtag store(CodingMeetingHashtag initCodingMeetingHashtag);
-    void delete(Long codingMeeting);
+    void deleteAll(Long codingMeetingId);
 }

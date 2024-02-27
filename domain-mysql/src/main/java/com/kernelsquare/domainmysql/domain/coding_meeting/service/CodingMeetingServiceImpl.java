@@ -3,8 +3,6 @@ package com.kernelsquare.domainmysql.domain.coding_meeting.service;
 import com.kernelsquare.domainmysql.domain.coding_meeting.command.CodingMeetingCommand;
 import com.kernelsquare.domainmysql.domain.coding_meeting.entity.CodingMeeting;
 import com.kernelsquare.domainmysql.domain.coding_meeting.info.CodingMeetingInfo;
-import com.kernelsquare.domainmysql.domain.coding_meeting.info.CodingMeetingListInfo;
-import com.kernelsquare.domainmysql.domain.coding_meeting.info.CodingMeetingTokenInfo;
 import com.kernelsquare.domainmysql.domain.coding_meeting.repository.hashtag.CodingMeetingHashtagFactory;
 import com.kernelsquare.domainmysql.domain.coding_meeting.repository.location.CodingMeetingLocationFactory;
 import com.kernelsquare.domainmysql.domain.coding_meeting.repository.CodingMeetingReader;
@@ -28,13 +26,13 @@ public class CodingMeetingServiceImpl implements CodingMeetingService{
 
     @Override
     @Transactional
-    public CodingMeetingTokenInfo createCodingMeeting(CodingMeetingCommand.CreateCommand command, Long memberId) {
+    public CodingMeetingInfo.TokenInfo createCodingMeeting(CodingMeetingCommand.CreateCommand command, Long memberId) {
         Member member = memberReader.findMember(memberId);
         CodingMeeting initCodingMeeting = command.toEntity(member);
         CodingMeeting codingMeeting = codingMeetingStore.store(initCodingMeeting, memberId);
         codingMeetingHashtagFactory.store(command, codingMeeting);
         codingMeetingLocationFactory.store(command, codingMeeting);
-        return CodingMeetingTokenInfo.of(codingMeeting);
+        return CodingMeetingInfo.TokenInfo.of(codingMeeting);
     }
 
     @Override
@@ -64,15 +62,15 @@ public class CodingMeetingServiceImpl implements CodingMeetingService{
 
     @Override
     @Transactional(readOnly = true)
-    public CodingMeetingInfo findCodingMeeting(String codingMeetingToken) {
+    public CodingMeetingInfo.Info findCodingMeeting(String codingMeetingToken) {
         CodingMeeting codingMeeting = codingMeetingReader.findCodingMeeting(codingMeetingToken);
-        return CodingMeetingInfo.of(codingMeeting);
+        return CodingMeetingInfo.Info.of(codingMeeting);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<CodingMeetingListInfo> findAllCodingMeeting(Pageable pageable, String filterParameter) {
+    public Page<CodingMeetingInfo.ListInfo> findAllCodingMeeting(Pageable pageable, String filterParameter) {
         Page<CodingMeeting> codingMeetingPage = codingMeetingReader.findAllCodingMeeting(pageable, filterParameter);
-        return codingMeetingPage.map(CodingMeetingListInfo::of);
+        return codingMeetingPage.map(CodingMeetingInfo.ListInfo::of);
     }
 }

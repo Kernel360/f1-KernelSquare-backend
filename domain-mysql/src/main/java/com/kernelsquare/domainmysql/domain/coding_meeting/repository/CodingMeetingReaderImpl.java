@@ -29,8 +29,10 @@ public class CodingMeetingReaderImpl implements CodingMeetingReader{
             return codingMeetingRepository.findAll(pageable);
         } else if (Objects.equals(filterParameter, CodingMeetingReadType.OPEN.getParameter())) {
             return codingMeetingRepository.findAllByCodingMeetingClosedIsFalse(pageable);
-        } else {
+        } else if (Objects.equals(filterParameter, CodingMeetingReadType.CLOSED.getParameter())) {
             return codingMeetingRepository.findAllByCodingMeetingClosedIsTrue(pageable);
+        } else {
+            throw new BusinessException(CodingMeetingErrorCode.FILTER_PARAMETER_NOT_VALID);
         }
     }
 }

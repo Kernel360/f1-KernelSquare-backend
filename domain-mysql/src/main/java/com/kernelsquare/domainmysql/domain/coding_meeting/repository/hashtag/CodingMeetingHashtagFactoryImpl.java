@@ -32,7 +32,7 @@ public class CodingMeetingHashtagFactoryImpl implements CodingMeetingHashtagFact
     @Override
     public void update(CodingMeetingCommand.UpdateCommand command, CodingMeeting codingMeeting) {
         List<String> updatedHashtags = command.codingMeetingHashtags();
-        codingMeetingHashtagStore.delete(codingMeeting.getId());
+        codingMeetingHashtagStore.deleteAll(codingMeeting.getId());
         for (String hashtag : updatedHashtags) {
             CodingMeetingHashtag initCodingMeetingHashtag = CodingMeetingHashtag.builder()
                     .codingMeetingHashtagContent(hashtag)
@@ -44,6 +44,6 @@ public class CodingMeetingHashtagFactoryImpl implements CodingMeetingHashtagFact
 
     @Override
     public void delete(CodingMeeting codingMeeting) {
-        codingMeetingHashtagStore.delete(codingMeeting.getId());
+        codingMeetingHashtagStore.deleteAll(codingMeeting.getId());
     }
 }

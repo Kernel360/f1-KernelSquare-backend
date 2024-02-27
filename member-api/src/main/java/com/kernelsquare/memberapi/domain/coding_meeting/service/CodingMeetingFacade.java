@@ -1,8 +1,6 @@
 package com.kernelsquare.memberapi.domain.coding_meeting.service;
 import com.kernelsquare.core.dto.PageResponse;
 import com.kernelsquare.domainmysql.domain.coding_meeting.info.CodingMeetingInfo;
-import com.kernelsquare.domainmysql.domain.coding_meeting.info.CodingMeetingListInfo;
-import com.kernelsquare.domainmysql.domain.coding_meeting.info.CodingMeetingTokenInfo;
 import com.kernelsquare.domainmysql.domain.coding_meeting.service.CodingMeetingService;
 import com.kernelsquare.memberapi.domain.coding_meeting.dto.CodingMeetingDto;
 import com.kernelsquare.memberapi.domain.coding_meeting.mapper.CodingMeetingDtoMapper;
@@ -20,17 +18,17 @@ public class CodingMeetingFacade {
     private final CodingMeetingDtoMapper codingMeetingDtoMapper;
 
     public CodingMeetingDto.CreateResponse createCodingMeeting(CodingMeetingDto.CreateRequest request, Long memberId) {
-        CodingMeetingTokenInfo codingMeetingTokenInfo = codingMeetingService.createCodingMeeting(codingMeetingDtoMapper.toCreateCommand(request), memberId);
+        CodingMeetingInfo.TokenInfo codingMeetingTokenInfo = codingMeetingService.createCodingMeeting(codingMeetingDtoMapper.toCreateCommand(request), memberId);
         return codingMeetingDtoMapper.toCreateResponse(codingMeetingTokenInfo);
     }
 
     public CodingMeetingDto.FindResponse findCodingMeeting(String codingMeetingToken) {
-        CodingMeetingInfo codingMeetingInfo = codingMeetingService.findCodingMeeting(codingMeetingToken);
-        return codingMeetingDtoMapper.toSingleResponse(codingMeetingInfo);
+        CodingMeetingInfo.Info codingMeetingInfo = codingMeetingService.findCodingMeeting(codingMeetingToken);
+        return codingMeetingDtoMapper.toFindResponse(codingMeetingInfo);
     }
 
     public PageResponse findAllCodingMeeting(Pageable pageable, String filterParameter) {
-        Page<CodingMeetingListInfo> allCodingMeetingInfo = codingMeetingService.findAllCodingMeeting(pageable, filterParameter);
+        Page<CodingMeetingInfo.ListInfo> allCodingMeetingInfo = codingMeetingService.findAllCodingMeeting(pageable, filterParameter);
         List<CodingMeetingDto.FindAllResponse> findAllResponses = allCodingMeetingInfo.getContent().stream()
                 .map(info -> codingMeetingDtoMapper.toFindAllResponse(info))
                 .toList();

@@ -63,7 +63,7 @@ public class CodingMeetingController {
         return ResponseEntityFactory.toResponseEntity(CODING_MEETING_DELETED);
     }
 
-    @PostMapping("/coding-meetings/{codingMeetingToken}/status")
+    @PutMapping("/coding-meetings/{codingMeetingToken}/status")
     public ResponseEntity<ApiResponse> closeCodingMeeting(
         @PathVariable String codingMeetingToken) {
         codingMeetingFacade.closeCodingMeeting(codingMeetingToken);

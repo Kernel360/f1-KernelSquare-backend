@@ -16,7 +16,7 @@ public class CodingMeetingHashtagStoreImpl implements CodingMeetingHashtagStore 
     }
 
     @Override
-    public void delete(Long codingMeetingId) {
+    public void deleteAll(Long codingMeetingId) {
         codingMeetingHashtagRepository.deleteAllByCodingMeetingId(codingMeetingId);
     }
 }

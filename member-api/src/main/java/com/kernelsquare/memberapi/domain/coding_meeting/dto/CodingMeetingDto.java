@@ -14,7 +14,6 @@ public class CodingMeetingDto {
 
     @Builder
     public record CreateRequest(
-            Long memberId,
             @NotBlank(message = "모각코 제목은 필수 입력사항입니다.")
             @Size(max = 100, message = "모각코 모집글 제목은 100자 이하로 작성이 가능합니다.")
             String codingMeetingTitle,
@@ -26,7 +25,8 @@ public class CodingMeetingDto {
             String codingMeetingLocationLongitude,
             @NotBlank(message = "모각코 위치 위도는 필수 입력사항입니다.")
             String codingMeetingLocationLatitude,
-            @Min(3) @Max(6)
+            @Min(value = 3, message = "모집 인원 상한은 최소 3인입니다.")
+            @Max(value = 6, message = "모집 인원 상한은 최대 6인입니다.")
             Long codingMeetingMemberUpperLimit,
             LocalDateTime codingMeetingStartTime,
             LocalDateTime codingMeetingEndTime,
@@ -46,7 +46,7 @@ public class CodingMeetingDto {
     @Builder
     public record UpdateRequest(
             @NotBlank(message = "모각코 제목은 필수 입력사항입니다.")
-            @Size(max = 100, message = "모각코 모집글 제목은 100자 이하로 작성이 가능합니다.")
+            @Size(min = 5, max = 100, message = "모각코 모집글 제목은 100자 이하로 작성이 가능합니다.")
             String codingMeetingTitle,
             @NotBlank(message = "모각코 위치 ID는 필수 입력사항입니다.")
             String codingMeetingLocationId,
@@ -62,7 +62,7 @@ public class CodingMeetingDto {
             LocalDateTime codingMeetingEndTime,
             List<String> codingMeetingHashtags,
             @NotBlank(message = "공지 내용은 필수 입력사항입니다.")
-            @Size(max = 10000, message = "모각코 모집글 내용은 10000자 이하로 작성이 가능합니다.")
+            @Size(min = 10, max = 10000, message = "모각코 모집글 내용은 10000자 이하로 작성이 가능합니다.")
             String codingMeetingContent
     ) {
     }

@@ -9,7 +9,6 @@ public class CodingMeetingCommentCommand {
 
     @Builder
     public record CreateCommand(
-            Long memberId,
             String codingMeetingToken,
             String codingMeetingCommentContent
     ) {

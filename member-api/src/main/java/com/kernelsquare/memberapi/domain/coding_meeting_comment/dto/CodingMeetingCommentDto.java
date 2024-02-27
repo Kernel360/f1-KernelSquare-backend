@@ -6,7 +6,6 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 
 public class CodingMeetingCommentDto {
-
     @Builder
     public record FindAllResponse(
             Long memberId,
@@ -23,7 +22,6 @@ public class CodingMeetingCommentDto {
 
     @Builder
     public record CreateRequest(
-       Long memberId,
        String codingMeetingToken,
        String codingMeetingCommentContent
     ) {

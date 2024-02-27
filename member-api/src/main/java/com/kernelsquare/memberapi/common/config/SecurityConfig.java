@@ -1,7 +1,13 @@
 package com.kernelsquare.memberapi.common.config;
 
+import com.kernelsquare.domainmysql.domain.member.repository.MemberRepository;
+import com.kernelsquare.domainmysql.domain.social_login.repository.SocialLoginRepository;
+import com.kernelsquare.memberapi.common.oauth.CustomInMemoryOAuth2AuthorizedClientService;
+import com.kernelsquare.memberapi.common.oauth.service.CustomOAuth2MemberService;
+import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -28,6 +34,14 @@ public class SecurityConfig {
 	private final TokenProvider tokenProvider;
 	private final JWTAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 	private final JWTAccessDeniedHandler jwtAccessDeniedHandler;
+	//	private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+//	private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
+//	private final CustomInMemoryOAuth2AuthorizedClientService customInMemoryOAuth2AuthorizedClientService;
+	private final OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
+	private final CustomOAuth2MemberService customOAuth2MemberService;
+	private final ClientRegistrationRepository clientRegistrationRepository;
+	private final OAuth2AuthorizedClientRepository oAuth2AuthorizedClientRepository;
+	private final CustomInMemoryOAuth2AuthorizedClientService customInMemoryOAuth2AuthorizedClientService;
 
 	private final String[] permitAllPatterns = new String[] {
 		"/api/v1/auth/check/email",
@@ -133,12 +147,14 @@ public class SecurityConfig {
 			sessionManagementConfigurer
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-		// http.oauth2Login(oAuth2LoginConfigurer ->
-		// 		oAuth2LoginConfigurer
-		// 			.successHandler(oAuth2LoginSuccessHandler)
-		// 			.failureHandler(oAuth2LoginFailureHandler)
-		// 			.userInfoEndpoint(userInfoEndpointConfigurer ->
-		// 				userInfoEndpointConfigurer.userService(customOAuth2MemberService)))
+		 http.oauth2Login(oAuth2LoginConfigurer ->
+		 		oAuth2LoginConfigurer
+						.authorizedClientService(customInMemoryOAuth2AuthorizedClientService)
+//		 			.successHandler(oAuth2LoginSuccessHandler)
+//		 			.failureHandler(oAuth2LoginFailureHandler)
+		 			.userInfoEndpoint(userInfoEndpointConfigurer ->
+		 				userInfoEndpointConfigurer.userService(customOAuth2MemberService)));
+
 		http.logout(Customizer.withDefaults());
 
 		return http.build();

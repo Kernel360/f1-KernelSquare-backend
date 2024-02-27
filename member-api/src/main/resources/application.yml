@@ -49,6 +49,17 @@ spring:
       access-token-validity-in-seconds: 3600     # 1시간
       refresh-token-validity-in-seconds: 1_209_600  # 2주
 
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: 500e3ee74e74b383d745
+            client-secret: f05f3cf1564a0193548ec9cb428805861b3a82e9
+            redirect-uri: http://localhost:8501/login/oauth2/code/github
+            scope:
+              - user:email
+            authorization-grant-type: client_credentials
+
   flyway:
     enabled: false
     baseline-on-migrate: true
@@ -67,6 +78,7 @@ logging.level:
   org.hibernate.SQL: debug
   #  org.hibernate.type: trace
   org.springframework.security: debug
+  org.springframework.security.oauth2.client: DEBUG
 
 cloud:
   aws:

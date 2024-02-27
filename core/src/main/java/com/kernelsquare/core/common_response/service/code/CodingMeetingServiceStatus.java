@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 public enum CodingMeetingServiceStatus implements ServiceStatus {
     //error
     CODING_MEETING_NOT_FOUND(5100),
-
+    CODING_MEETING_ALREADY_EXIST(5101),
     //success
     CODING_MEETING_FOUND(5140),
     CODING_MEETING_ALL_FOUND(5141),

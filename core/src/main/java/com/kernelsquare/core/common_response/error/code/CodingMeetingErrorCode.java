@@ -8,7 +8,9 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum CodingMeetingErrorCode implements ErrorCode {
     CODING_MEETING_NOT_FOUND(HttpStatus.NOT_FOUND, CodingMeetingServiceStatus.CODING_MEETING_NOT_FOUND,
-            "모각코를 찾을 수 없습니다.");
+            "모각코를 찾을 수 없습니다."),
+    CODING_MEETING_ALREADY_EXIST(HttpStatus.BAD_REQUEST, CodingMeetingServiceStatus.CODING_MEETING_ALREADY_EXIST,
+            "진행중인 모각코가 이미 존재합니다");
 
     private final HttpStatus httpStatus;
     private final ServiceStatus serviceStatus;

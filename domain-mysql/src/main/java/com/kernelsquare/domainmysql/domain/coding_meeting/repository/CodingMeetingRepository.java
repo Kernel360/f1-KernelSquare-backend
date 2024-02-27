@@ -17,4 +17,6 @@ public interface CodingMeetingRepository extends JpaRepository<CodingMeeting, Lo
     Page<CodingMeeting> findAllByCodingMeetingClosedIsTrue(Pageable pageable);
 
     Page<CodingMeeting> findAllByCodingMeetingClosedIsFalse(Pageable pageable);
+
+    Boolean existsByMemberIdAndCodingMeetingClosedIsFalse(Long memberId);
 }

@@ -31,7 +31,7 @@ public class CodingMeetingServiceImpl implements CodingMeetingService{
     public CodingMeetingTokenInfo createCodingMeeting(CodingMeetingCommand.CreateCommand command, Long memberId) {
         Member member = memberReader.findMember(memberId);
         CodingMeeting initCodingMeeting = command.toEntity(member);
-        CodingMeeting codingMeeting = codingMeetingStore.store(initCodingMeeting);
+        CodingMeeting codingMeeting = codingMeetingStore.store(initCodingMeeting, memberId);
         codingMeetingHashtagFactory.store(command, codingMeeting);
         codingMeetingLocationFactory.store(command, codingMeeting);
         return CodingMeetingTokenInfo.of(codingMeeting);

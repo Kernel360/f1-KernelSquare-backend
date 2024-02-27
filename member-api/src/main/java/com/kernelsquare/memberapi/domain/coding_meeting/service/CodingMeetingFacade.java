@@ -29,8 +29,8 @@ public class CodingMeetingFacade {
         return codingMeetingDtoMapper.toSingleResponse(codingMeetingInfo);
     }
 
-    public PageResponse findAllCodingMeeting(Pageable pageable) {
-        Page<CodingMeetingListInfo> allCodingMeetingInfo = codingMeetingService.findAllCodingMeeting(pageable);
+    public PageResponse findAllCodingMeeting(Pageable pageable, String filterParameter) {
+        Page<CodingMeetingListInfo> allCodingMeetingInfo = codingMeetingService.findAllCodingMeeting(pageable, filterParameter);
         List<CodingMeetingDto.FindAllResponse> findAllResponses = allCodingMeetingInfo.getContent().stream()
                 .map(info -> codingMeetingDtoMapper.toFindAllResponse(info))
                 .toList();

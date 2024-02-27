@@ -71,8 +71,8 @@ public class CodingMeetingServiceImpl implements CodingMeetingService{
 
     @Override
     @Transactional(readOnly = true)
-    public Page<CodingMeetingListInfo> findAllCodingMeeting(Pageable pageable) {
-        Page<CodingMeeting> codingMeetingPage = codingMeetingReader.findAllCodingMeeting(pageable);
+    public Page<CodingMeetingListInfo> findAllCodingMeeting(Pageable pageable, String filterParameter) {
+        Page<CodingMeeting> codingMeetingPage = codingMeetingReader.findAllCodingMeeting(pageable, filterParameter);
         return codingMeetingPage.map(CodingMeetingListInfo::of);
     }
 }

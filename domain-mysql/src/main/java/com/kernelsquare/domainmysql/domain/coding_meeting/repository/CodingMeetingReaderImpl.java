@@ -2,11 +2,14 @@ package com.kernelsquare.domainmysql.domain.coding_meeting.repository;
 
 import com.kernelsquare.core.common_response.error.code.CodingMeetingErrorCode;
 import com.kernelsquare.core.common_response.error.exception.BusinessException;
+import com.kernelsquare.core.type.CodingMeetingReadType;
 import com.kernelsquare.domainmysql.domain.coding_meeting.entity.CodingMeeting;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -21,7 +24,13 @@ public class CodingMeetingReaderImpl implements CodingMeetingReader{
     }
 
     @Override
-    public Page<CodingMeeting> findAllCodingMeeting(Pageable pageable) {
-        return codingMeetingRepository.findAll(pageable);
+    public Page<CodingMeeting> findAllCodingMeeting(Pageable pageable, String filterParameter) {
+        if (Objects.equals(filterParameter, CodingMeetingReadType.ALL.getParameter())) {
+            return codingMeetingRepository.findAll(pageable);
+        } else if (Objects.equals(filterParameter, CodingMeetingReadType.OPEN.getParameter())) {
+            return codingMeetingRepository.findAllByCodingMeetingClosedIsFalse(pageable);
+        } else {
+            return codingMeetingRepository.findAllByCodingMeetingClosedIsTrue(pageable);
+        }
     }
 }

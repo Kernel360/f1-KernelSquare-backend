@@ -41,8 +41,10 @@ public class CodingMeetingController {
     @GetMapping("/coding-meetings")
     public ResponseEntity<ApiResponse<PageResponse<CodingMeetingDto.FindAllResponse>>> findAllCodingMeeting(
         @PageableDefault(page = 0, size = 10, sort = "createdDate", direction = Sort.Direction.DESC)
-        Pageable pageable) {
-        PageResponse pageResponse = codingMeetingFacade.findAllCodingMeeting(pageable);
+        Pageable pageable,
+        @RequestParam(defaultValue = "all")
+        String filter) {
+        PageResponse pageResponse = codingMeetingFacade.findAllCodingMeeting(pageable, filter);
         return ResponseEntityFactory.toResponseEntity(CODING_MEETING_ALL_FOUND, pageResponse);
     }
 

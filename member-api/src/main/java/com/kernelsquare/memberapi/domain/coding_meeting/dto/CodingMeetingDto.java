@@ -1,0 +1,116 @@
+package com.kernelsquare.memberapi.domain.coding_meeting.dto;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.Builder;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+public class CodingMeetingDto {
+
+    @Builder
+    public record CreateRequest(
+            Long memberId,
+            @NotBlank(message = "모각코 제목은 필수 입력사항입니다.")
+            @Size(max = 100, message = "모각코 모집글 제목은 100자 이하로 작성이 가능합니다.")
+            String codingMeetingTitle,
+            @NotBlank(message = "모각코 위치 ID는 필수 입력사항입니다.")
+            String codingMeetingLocationId,
+            @NotBlank(message = "모각코 위치 명은 필수 입력사항입니다.")
+            String codingMeetingLocationPlaceName,
+            @NotBlank(message = "모각코 위치 경도는 필수 입력사항입니다.")
+            String codingMeetingLocationLongitude,
+            @NotBlank(message = "모각코 위치 위도는 필수 입력사항입니다.")
+            String codingMeetingLocationLatitude,
+            @Min(3) @Max(6)
+            Long codingMeetingMemberUpperLimit,
+            LocalDateTime codingMeetingStartTime,
+            LocalDateTime codingMeetingEndTime,
+            List<String> codingMeetingHashtags,
+            @NotBlank(message = "공지 내용은 필수 입력사항입니다.")
+            @Size(max = 10000, message = "모각코 모집글 내용은 10000자 이하로 작성이 가능합니다.")
+            String codingMeetingContent
+            ) {
+    }
+
+    @Builder
+    public record CreateResponse(
+            String codingMeetingToken
+    ) {
+    }
+
+    @Builder
+    public record UpdateRequest(
+            @NotBlank(message = "모각코 제목은 필수 입력사항입니다.")
+            @Size(max = 100, message = "모각코 모집글 제목은 100자 이하로 작성이 가능합니다.")
+            String codingMeetingTitle,
+            @NotBlank(message = "모각코 위치 ID는 필수 입력사항입니다.")
+            String codingMeetingLocationId,
+            @NotBlank(message = "모각코 위치 명은 필수 입력사항입니다.")
+            String codingMeetingLocationPlaceName,
+            @NotBlank(message = "모각코 위치 경도는 필수 입력사항입니다.")
+            String codingMeetingLocationLongitude,
+            @NotBlank(message = "모각코 위치 위도는 필수 입력사항입니다.")
+            String codingMeetingLocationLatitude,
+            @Min(3) @Max(6)
+            Long codingMeetingMemberUpperLimit,
+            LocalDateTime codingMeetingStartTime,
+            LocalDateTime codingMeetingEndTime,
+            List<String> codingMeetingHashtags,
+            @NotBlank(message = "공지 내용은 필수 입력사항입니다.")
+            @Size(max = 10000, message = "모각코 모집글 내용은 10000자 이하로 작성이 가능합니다.")
+            String codingMeetingContent
+    ) {
+    }
+    @Builder
+    public record FindResponse(
+            Long memberId,
+            Long memberLevel,
+            String memberNickname,
+            String memberProfileUrl,
+            String memberLevelImageUrl,
+
+            String codingMeetingTitle,
+            String codingMeetingToken,
+            String codingMeetingContent,
+            List<String> codingMeetingHashtags,
+
+            String codingMeetingLocationId,
+            String codingMeetingLocationPlaceName,
+            String codingMeetingLocationLongitude,
+            String codingMeetingLocationLatitude,
+
+            Long codingMeetingMemberUpperLimit,
+            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+            LocalDateTime codingMeetingStartTime,
+            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+            LocalDateTime codingMeetingEndTime,
+            Boolean codingMeetingClosed
+    ) {
+    }
+
+    @Builder
+    public record FindAllResponse(
+            Long memberId,
+            Long memberLevel,
+            String memberNickname,
+            String memberProfileUrl,
+            String memberLevelImageUrl,
+
+            String codingMeetingTitle,
+            String codingMeetingToken,
+            List<String>codingMeetingHashtags,
+            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+            LocalDateTime codingMeetingStartTime,
+            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+            LocalDateTime codingMeetingEndTime,
+            Boolean codingMeetingClosed,
+            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+            LocalDateTime createdDate
+    ) {
+    }
+}

@@ -46,15 +46,13 @@ public class SecurityConfig {
 		"/ws/**",
 		"/topic/test/room",
 		"/app/test/message",
-
-		//sse 화면 테스트를 하기 위해 관련 경로는 permitAll
-		"/sse/**",
-		"/api/v1/stream/**",
 	};
 
 	private final String[] hasAnyAuthorityPatterns = new String[] {
 		"/api/v1/images",
-		"/api/v1/coffeechat/reservations"
+		"/api/v1/coffeechat/reservations",
+		"/api/v1/alerts/sse/**",
+		"/api/v1/alerts"
 	};
 
 	private final String[] hasRoleUserPatterns = new String[] {

@@ -2,6 +2,7 @@ package com.kernelsquare.memberapi.domain.scheduler;
 
 import com.kernelsquare.core.type.MessageType;
 import com.kernelsquare.domainmongodb.domain.alert.entity.Alert;
+import com.kernelsquare.domainmongodb.domain.alert.repository.AlertStore;
 import com.kernelsquare.domainmysql.domain.answer.entity.Answer;
 import com.kernelsquare.domainmysql.domain.answer.repository.AnswerReader;
 import com.kernelsquare.domainmysql.domain.coffeechat.entity.ChatRoom;
@@ -31,6 +32,7 @@ public class SchedulerServiceImpl implements ScheculerService {
     private final AnswerReader answerReader;
     private final RankReader rankReader;
     private final SseManager sseManager;
+    private final AlertStore alertStore;
 
     @Override
     @Transactional
@@ -70,7 +72,17 @@ public class SchedulerServiceImpl implements ScheculerService {
                     Rank rank = rankReader.findRank(rankName);
                     answer.updateRank(rank);
 
-                    sseManager.send(answer.getMember(), rank.getName() + "등 답변이 되었습니다.", Alert.AlertType.RANK_ANSWER);
+                    String message = question.getTitle() + " 글에 작성하신 답변이 " + rank.getName() + "등 답변이 되었습니다.";
+
+                    Alert alert = Alert.builder()
+                        .memberId(answer.getMember().getId().toString())
+                        .message(message)
+                        .alertType(Alert.AlertType.RANK_ANSWER)
+                        .build();
+
+                    alertStore.store(alert);
+
+                    sseManager.send(answer.getMember(), message, Alert.AlertType.RANK_ANSWER);
 
                     rankName += 1L;
                 }

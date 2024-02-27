@@ -5,6 +5,7 @@ import com.kernelsquare.core.common_response.error.exception.BusinessException;
 import com.kernelsquare.core.util.ExperiencePolicy;
 import com.kernelsquare.core.util.ImageUtils;
 import com.kernelsquare.domainmongodb.domain.alert.entity.Alert;
+import com.kernelsquare.domainmongodb.domain.alert.repository.AlertStore;
 import com.kernelsquare.domainmysql.domain.answer.command.AnswerCommand;
 import com.kernelsquare.domainmysql.domain.answer.entity.Answer;
 import com.kernelsquare.domainmysql.domain.answer.repository.AnswerReader;
@@ -42,6 +43,7 @@ public class AnswerService {
 	private final QuestionReader questionReader;
 	private final LevelReader levelReader;
 	private final SseManager sseManager;
+	private final AlertStore alertStore;
 
 	@Transactional(readOnly = true)
 	public FindAllAnswerResponse findAllAnswer(Long questionId) {
@@ -89,7 +91,17 @@ public class AnswerService {
 			member.updateLevel(nextLevel);
 		}
 
-		sseManager.send(question.getMember(), createMessage(question, member), Alert.AlertType.QUESTION_REPLY);
+		String message = createMessage(question, member);
+
+		Alert alert = Alert.builder()
+			.memberId(question.getMember().getId().toString())
+			.message(message)
+			.alertType(Alert.AlertType.QUESTION_REPLY)
+			.build();
+
+		alertStore.store(alert);
+
+		sseManager.send(question.getMember(), message, Alert.AlertType.QUESTION_REPLY);
 
 		return answer.getId();
 	}

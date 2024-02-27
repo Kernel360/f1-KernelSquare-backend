@@ -18,13 +18,4 @@ public class ScreenController {
 		model.addAttribute("sender", sender);
 		return "chatscreen";
 	}
-
-	@GetMapping("/sse/{memberId}")
-	public String sseDetail(
-		Model model,
-		@PathVariable
-		String memberId) {
-		model.addAttribute("memberId", memberId);
-		return "ssescreen";
-	}
 }

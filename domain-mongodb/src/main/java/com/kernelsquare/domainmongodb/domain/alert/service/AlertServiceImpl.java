@@ -15,11 +15,11 @@ public class AlertServiceImpl implements AlertService {
     private final AlertStore alertStore;
     private final AlertReader alertReader;
 
-    @Override
-    public void createAlert(AlertCommand.CreateCommand command) {
-        var initAlert = command.toEntity();
-        alertStore.store(initAlert);
-    }
+//    @Override
+//    public void createAlert(AlertCommand.CreateCommand command) {
+//        var initAlert = command.toEntity();
+//        alertStore.store(initAlert);
+//    }
 
     @Override
     public List<AlertInfo> findAllAlerts(AlertCommand.FindCommand command) {

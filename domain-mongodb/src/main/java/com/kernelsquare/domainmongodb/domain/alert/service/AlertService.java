@@ -6,7 +6,7 @@ import com.kernelsquare.domainmongodb.domain.alert.info.AlertInfo;
 import java.util.List;
 
 public interface AlertService {
-    void createAlert(AlertCommand.CreateCommand command);
+//    void createAlert(AlertCommand.CreateCommand command);
 
     List<AlertInfo> findAllAlerts(AlertCommand.FindCommand command);
 }

@@ -17,8 +17,7 @@ public class KafkaMessage {
     @Getter
     @RequiredArgsConstructor
     public enum TopicPrefix {
-        CHATTING("chat_"),
-        QUESTION_REPLIED("question_replied_");
+        CHATTING("chat_");
 
         private final String description;
     }

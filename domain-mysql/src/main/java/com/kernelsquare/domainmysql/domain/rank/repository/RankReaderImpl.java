@@ -12,7 +12,7 @@ public class RankReaderImpl implements RankReader {
     public final RankRepository repository;
 
     @Override
-    public Rank findByName(Long name) {
+    public Rank findRank(Long name) {
         return repository.findByName(name)
             .orElseThrow(() -> new BusinessException(RankErrorCode.RANK_NOT_FOUND));
     }

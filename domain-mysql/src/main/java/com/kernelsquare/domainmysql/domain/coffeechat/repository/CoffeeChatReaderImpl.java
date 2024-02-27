@@ -14,13 +14,13 @@ public class CoffeeChatReaderImpl implements CoffeeChatReader {
     private final CoffeeChatRepository coffeeChatRepository;
 
     @Override
-    public ChatRoom findByRoomKey(String roomKey) {
+    public ChatRoom findChatRoom(String roomKey) {
         return coffeeChatRepository.findByRoomKey(roomKey)
             .orElseThrow(() -> new BusinessException(CoffeeChatErrorCode.COFFEE_CHAT_ROOM_NOT_FOUND));
     }
 
     @Override
-    public List<ChatRoom> findAllByActive(Boolean active) {
+    public List<ChatRoom> findActiveChatRooms(Boolean active) {
         return coffeeChatRepository.findAllByActive(active);
     }
 }

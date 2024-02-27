@@ -1,13 +1,13 @@
-package com.kernelsquare.core.common_response.response.code;
+package com.kernelsquare.core.common_response.error.code;
 
+import com.kernelsquare.core.common_response.service.code.AlertServiceStatus;
 import com.kernelsquare.core.common_response.service.code.ServiceStatus;
-import com.kernelsquare.core.common_response.service.code.StreamServiceStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @RequiredArgsConstructor
-public enum StreamResponseCode implements ResponseCode {
-    SSE_SUBSCRIBED(HttpStatus.OK, StreamServiceStatus.SSE_SUBSCRIBED, "SSE 구독 성공");
+public enum AlertErrorCode implements ErrorCode {
+    EMITTER_NOT_FOUND(HttpStatus.NOT_FOUND, AlertServiceStatus.EMITTER_NOT_FOUND, "존재하지 않는 Emitter");
 
     private final HttpStatus httpStatus;
     private final ServiceStatus serviceStatus;

@@ -12,12 +12,12 @@ public class AnswerReaderImpl implements AnswerReader {
     private final AnswerRepository answerRepository;
 
     @Override
-    public List<Answer> findAnswersByQuestionIdSortedByCreationDate(Long questionId) {
+    public List<Answer> findAnswers(Long questionId) {
         return answerRepository.findAnswersByQuestionIdSortedByCreationDate(questionId);
     }
 
     @Override
-    public List<Answer> findAnswersByQuestionIdSortedByVoteCount(Long questionId) {
+    public List<Answer> findAnswersTopThree(Long questionId) {
         return answerRepository.findAnswersByQuestionIdSortedByVoteCount(questionId);
     }
 }

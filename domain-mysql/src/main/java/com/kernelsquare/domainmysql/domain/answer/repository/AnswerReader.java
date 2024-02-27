@@ -5,7 +5,7 @@ import com.kernelsquare.domainmysql.domain.answer.entity.Answer;
 import java.util.List;
 
 public interface AnswerReader {
-    List<Answer> findAnswersByQuestionIdSortedByCreationDate(Long questionId);
+    List<Answer> findAnswers(Long questionId);
 
-    List<Answer> findAnswersByQuestionIdSortedByVoteCount(Long questionId);
+    List<Answer> findAnswersTopThree(Long questionId);
 }

@@ -1,26 +1,27 @@
 package com.kernelsquare.memberapi.domain.answer.service;
 
 import com.kernelsquare.core.common_response.error.code.AnswerErrorCode;
-import com.kernelsquare.core.common_response.error.code.LevelErrorCode;
-import com.kernelsquare.core.common_response.error.code.QuestionErrorCode;
 import com.kernelsquare.core.common_response.error.exception.BusinessException;
 import com.kernelsquare.core.util.ExperiencePolicy;
 import com.kernelsquare.core.util.ImageUtils;
+import com.kernelsquare.domainmongodb.domain.alert.entity.Alert;
 import com.kernelsquare.domainmysql.domain.answer.command.AnswerCommand;
 import com.kernelsquare.domainmysql.domain.answer.entity.Answer;
+import com.kernelsquare.domainmysql.domain.answer.repository.AnswerReader;
 import com.kernelsquare.domainmysql.domain.answer.repository.AnswerRepository;
+import com.kernelsquare.domainmysql.domain.answer.repository.AnswerStore;
 import com.kernelsquare.domainmysql.domain.level.entity.Level;
-import com.kernelsquare.domainmysql.domain.level.repository.LevelRepository;
+import com.kernelsquare.domainmysql.domain.level.repository.LevelReader;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
-import com.kernelsquare.domainmysql.domain.member.repository.MemberRepository;
 import com.kernelsquare.domainmysql.domain.member_answer_vote.entity.MemberAnswerVote;
-import com.kernelsquare.domainmysql.domain.member_answer_vote.repository.MemberAnswerVoteRepository;
+import com.kernelsquare.domainmysql.domain.member_answer_vote.repository.MemberAnswerVoteReader;
 import com.kernelsquare.domainmysql.domain.question.entity.Question;
-import com.kernelsquare.domainmysql.domain.question.repository.QuestionRepository;
-import com.kernelsquare.domainmysql.domain.stream.service.SseService;
+import com.kernelsquare.domainmysql.domain.question.repository.QuestionReader;
+import com.kernelsquare.memberapi.domain.alert.manager.SseManager;
 import com.kernelsquare.memberapi.domain.answer.dto.FindAllAnswerResponse;
 import com.kernelsquare.memberapi.domain.answer.dto.FindAnswerResponse;
 import com.kernelsquare.memberapi.domain.answer.dto.UpdateAnswerRequest;
+import com.kernelsquare.memberapi.domain.answer.validation.AnswerValidation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -29,27 +30,28 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class AnswerService {
 	private final AnswerRepository answerRepository;
-	private final QuestionRepository questionRepository;
-	private final MemberAnswerVoteRepository memberAnswerVoteRepository;
-	private final LevelRepository levelRepository;
-	private final SseService sseService;
+	private final MemberAnswerVoteReader memberAnswerVoteReader;
+	private final AnswerReader answerReader;
+	private final AnswerStore answerStore;
+	private final QuestionReader questionReader;
+	private final LevelReader levelReader;
+	private final SseManager sseManager;
 
 	@Transactional(readOnly = true)
 	public FindAllAnswerResponse findAllAnswer(Long questionId) {
 		List<FindAnswerResponse> result = new ArrayList<>();
 		if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() != "anonymousUser") {
 			Long memberId = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
-			List<MemberAnswerVote> voteList = memberAnswerVoteRepository.findAllByMemberId(memberId);
+			List<MemberAnswerVote> voteList = memberAnswerVoteReader.findAllByMemberId(memberId);
 			Map<Long, Integer> voteStatusMap = voteList.stream()
 				.collect(Collectors.toMap(MemberAnswerVote::getAnswerId, MemberAnswerVote::getStatus));
-			List<Answer> answerList = answerRepository.findAnswersByQuestionIdSortedByCreationDate(questionId);
+			List<Answer> answerList = answerReader.findAnswers(questionId);
 			for (Answer answer : answerList) {
 				if (voteStatusMap.containsKey(answer.getId())) {
 					result.add(FindAnswerResponse.from(answer, null, answer.getMember().getLevel().getName(),
@@ -61,7 +63,7 @@ public class AnswerService {
 			}
 			return FindAllAnswerResponse.from(result);
 		}
-		List<Answer> answerList = answerRepository.findAnswersByQuestionIdSortedByCreationDate(questionId);
+		List<Answer> answerList = answerReader.findAnswers(questionId);
 		for (Answer answer : answerList) {
 			result.add(FindAnswerResponse.from(answer, null, answer.getMember().getLevel().getName(),
 				Long.valueOf("0")));
@@ -73,27 +75,27 @@ public class AnswerService {
 	public Long createAnswer(AnswerCommand.CreateAnswer command) {
 		Member member = command.author();
 
-		Question question = questionRepository.findById(command.questionId())
-			.orElseThrow(() -> new BusinessException(QuestionErrorCode.QUESTION_NOT_FOUND));
+		Question question = questionReader.findQuestion(command.questionId());
 
-		if(Objects.equals(question.getMember().getId(), member.getId())) {
-			throw new BusinessException(AnswerErrorCode.ANSWER_SELF_IMPOSSIBLE);
-		}
+		AnswerValidation.validateQuestionAuthorEqualsAnswerAuthor(question, member);
 
 		Answer answer = command.toEntity(question);
 
-		answerRepository.save(answer);
+		answerStore.store(answer);
 		member.addExperience(ExperiencePolicy.MEMBER_DAILY_ATTENDED.getReward());
 		if (member.isExperienceExceed(member.getExperience())) {
 			member.updateExperience(member.getExperience() - member.getLevel().getLevelUpperLimit());
-			Level nextLevel = levelRepository.findByName(member.getLevel().getName() + 1)
-				.orElseThrow(() -> new BusinessException(LevelErrorCode.LEVEL_NOT_FOUND));
+			Level nextLevel = levelReader.findLevel(member.getLevel().getName() + 1);
 			member.updateLevel(nextLevel);
 		}
 
-		sseService.notify(question.getMember().getId(), question.getTitle() + " 글에 답변이 달렸습니다.", "notify");
+		sseManager.send(question.getMember(), createMessage(question, member), Alert.AlertType.QUESTION_REPLY);
 
 		return answer.getId();
+	}
+
+	private String createMessage(Question question, Member member) {
+		return member.getNickname() + "님이 " + question.getTitle() + " 글에 답변이 달렸습니다.";
 	}
 
 	@Transactional

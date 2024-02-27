@@ -1,16 +1,14 @@
 package com.kernelsquare.memberapi.domain.scheduler;
 
-import com.kernelsquare.core.common_response.error.code.RankErrorCode;
-import com.kernelsquare.core.common_response.error.exception.BusinessException;
 import com.kernelsquare.core.type.MessageType;
 import com.kernelsquare.domainmysql.domain.answer.entity.Answer;
-import com.kernelsquare.domainmysql.domain.answer.repository.AnswerRepository;
+import com.kernelsquare.domainmysql.domain.answer.repository.AnswerReader;
 import com.kernelsquare.domainmysql.domain.coffeechat.entity.ChatRoom;
-import com.kernelsquare.domainmysql.domain.coffeechat.repository.CoffeeChatRepository;
+import com.kernelsquare.domainmysql.domain.coffeechat.repository.CoffeeChatReader;
 import com.kernelsquare.domainmysql.domain.question.entity.Question;
-import com.kernelsquare.domainmysql.domain.question.repository.QuestionRepository;
+import com.kernelsquare.domainmysql.domain.question.repository.QuestionReader;
 import com.kernelsquare.domainmysql.domain.rank.entity.Rank;
-import com.kernelsquare.domainmysql.domain.rank.repository.RankRepository;
+import com.kernelsquare.domainmysql.domain.rank.repository.RankReader;
 import com.kernelsquare.domainmysql.domain.stream.service.SseService;
 import com.kernelsquare.memberapi.domain.coffeechat.dto.ChatMessageResponse;
 import lombok.RequiredArgsConstructor;
@@ -25,18 +23,19 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class SchedulerService {
-    private final CoffeeChatRepository coffeeChatRepository;
+public class SchedulerServiceImpl implements ScheculerService {
     private final SimpMessageSendingOperations sendingOperations;
-    private final QuestionRepository questionRepository;
-    private final AnswerRepository answerRepository;
-    private final RankRepository rankRepository;
     private final SseService sseService;
+    private final CoffeeChatReader coffeeChatReader;
+    private final QuestionReader questionReader;
+    private final AnswerReader answerReader;
+    private final RankReader rankReader;
 
+    @Override
     @Transactional
     @Scheduled(cron = "0 0/30 * * * *")
-    public void disableRoom() {
-        List<ChatRoom> chatRooms = coffeeChatRepository.findAllByActive(true);
+    public void disableChatRoom() {
+        List<ChatRoom> chatRooms = coffeeChatReader.findAllByActive(true);
         chatRooms.forEach(chatRoom -> {
             chatRoom.deactivateRoom();
 
@@ -52,22 +51,22 @@ public class SchedulerService {
         });
     }
 
+    @Override
     @Transactional
     @Scheduled(cron = "0 0 2 * * *")
     public void rankAnswer() {
-        List<Question> questions = questionRepository.findAllByClosedStatus(false);
+        List<Question> questions = questionReader.findAllByClosedStatus(false);
 
         questions.stream()
             .filter(question -> question.getCreatedDate().toLocalDate().isBefore(LocalDate.now().minusDays(7)))
             .forEach(question -> {
                 question.updateClosedStatus();
-                List<Answer> answers = answerRepository.findAnswersByQuestionIdSortedByVoteCount(question.getId());
+                List<Answer> answers = answerReader.findAnswersByQuestionIdSortedByVoteCount(question.getId());
 
                 Long rankName = 1L;
 
                 for (Answer answer : answers) {
-                    Rank rank = rankRepository.findByName(rankName)
-                        .orElseThrow(() -> new BusinessException(RankErrorCode.RANK_NOT_FOUND));
+                    Rank rank = rankReader.findByName(rankName);
                     answer.updateRank(rank);
 
                     sseService.notify(answer.getMember().getId(), rank.getName() + "등 답변이 되었습니다.", "notify");

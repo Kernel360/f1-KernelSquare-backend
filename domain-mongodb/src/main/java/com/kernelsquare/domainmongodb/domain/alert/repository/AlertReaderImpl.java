@@ -13,6 +13,6 @@ public class AlertReaderImpl implements AlertReader {
 
     @Override
     public List<Alert> findAllAlerts(String memberId) {
-        return alertRepository.findAllByMemberId(memberId);
+        return alertRepository.findAllByRecipientId(memberId);
     }
 }

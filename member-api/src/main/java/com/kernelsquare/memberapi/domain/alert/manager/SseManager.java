@@ -19,7 +19,8 @@ public class SseManager {
     }
 
     /* 특정 클라이언트에게 메시지를 보내기 위한 메서드 */
-    public void send(Member member, String message, Alert.AlertType alertType) {
-        sseEmitterHandler.sendEmitter(member.getId(), message, alertType.getDescription());
+    public void send(Alert alert) {
+        sseEmitterHandler.sendEmitter(Long.valueOf(alert.getRecipientId()), alert.getMessage(),
+            alert.getAlertType().getDescription());
     }
 }

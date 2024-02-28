@@ -91,23 +91,7 @@ public class AnswerService {
 			member.updateLevel(nextLevel);
 		}
 
-		String message = createMessage(question, member);
-
-		Alert alert = Alert.builder()
-			.memberId(question.getMember().getId().toString())
-			.message(message)
-			.alertType(Alert.AlertType.QUESTION_REPLY)
-			.build();
-
-		alertStore.store(alert);
-
-		sseManager.send(question.getMember(), message, Alert.AlertType.QUESTION_REPLY);
-
 		return answer.getId();
-	}
-
-	private String createMessage(Question question, Member member) {
-		return member.getNickname() + "님이 " + question.getTitle() + " 글에 답변이 달렸습니다.";
 	}
 
 	@Transactional

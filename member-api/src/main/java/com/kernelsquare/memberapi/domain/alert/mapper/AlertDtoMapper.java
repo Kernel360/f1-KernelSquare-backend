@@ -1,7 +1,7 @@
 package com.kernelsquare.memberapi.domain.alert.mapper;
 
-import com.kernelsquare.domainmongodb.domain.alert.command.AlertCommand;
 import com.kernelsquare.domainmongodb.domain.alert.info.AlertInfo;
+import com.kernelsquare.domainmongodb.domain.alert.command.AlertCommand;
 import com.kernelsquare.memberapi.domain.alert.dto.AlertDto;
 import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
 import org.mapstruct.InjectionStrategy;
@@ -22,6 +22,5 @@ public interface AlertDtoMapper {
         return memberAdapter.getMember().getId().toString();
     }
 
-    @Mapping(target = "recipientId", source = "memberId")
     AlertDto.FindAllResponse toFindAllResponse(AlertInfo alertInfo);
 }

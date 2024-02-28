@@ -8,14 +8,16 @@ import java.time.LocalDateTime;
 
 @Getter
 public class AlertInfo {
-    private final String memberId;
+    private final String recipientId;
+    private final String senderId;
     private final String message;
     private final Alert.AlertType alertType;
     private final LocalDateTime sendTime;
 
     @Builder
     public AlertInfo(Alert alert) {
-        this.memberId = alert.getMemberId();
+        this.recipientId = alert.getRecipientId();
+        this.senderId = alert.getSenderId();
         this.message = alert.getMessage();
         this.alertType = alert.getAlertType();
         this.sendTime = alert.getSendTime();

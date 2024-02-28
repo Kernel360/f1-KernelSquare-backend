@@ -1,8 +1,6 @@
-package com.kernelsquare.memberapi.domain.scheduler;
+package com.kernelsquare.memberapi.domain.scheduler.manager;
 
 import com.kernelsquare.core.type.MessageType;
-import com.kernelsquare.domainmongodb.domain.alert.entity.Alert;
-import com.kernelsquare.domainmongodb.domain.alert.repository.AlertStore;
 import com.kernelsquare.domainmysql.domain.answer.entity.Answer;
 import com.kernelsquare.domainmysql.domain.answer.repository.AnswerReader;
 import com.kernelsquare.domainmysql.domain.coffeechat.entity.ChatRoom;
@@ -11,28 +9,29 @@ import com.kernelsquare.domainmysql.domain.question.entity.Question;
 import com.kernelsquare.domainmysql.domain.question.repository.QuestionReader;
 import com.kernelsquare.domainmysql.domain.rank.entity.Rank;
 import com.kernelsquare.domainmysql.domain.rank.repository.RankReader;
-import com.kernelsquare.memberapi.domain.alert.manager.SseManager;
+import com.kernelsquare.memberapi.domain.alert.mapper.AlertMessageMapper;
+import com.kernelsquare.memberapi.domain.alert.service.AlertService;
 import com.kernelsquare.memberapi.domain.coffeechat.dto.ChatMessageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Service
+@Component
 @RequiredArgsConstructor
-public class SchedulerServiceImpl implements ScheculerService {
+public class SchedulerManagerImpl implements ScheculerManager {
     private final SimpMessageSendingOperations sendingOperations;
     private final CoffeeChatReader coffeeChatReader;
     private final QuestionReader questionReader;
     private final AnswerReader answerReader;
     private final RankReader rankReader;
-    private final SseManager sseManager;
-    private final AlertStore alertStore;
+    private final AlertService alertService;
+    private final AlertMessageMapper alertMessageMapper;
 
     @Override
     @Transactional
@@ -72,17 +71,7 @@ public class SchedulerServiceImpl implements ScheculerService {
                     Rank rank = rankReader.findRank(rankName);
                     answer.updateRank(rank);
 
-                    String message = question.getTitle() + " 글에 작성하신 답변이 " + rank.getName() + "등 답변이 되었습니다.";
-
-                    Alert alert = Alert.builder()
-                        .memberId(answer.getMember().getId().toString())
-                        .message(message)
-                        .alertType(Alert.AlertType.RANK_ANSWER)
-                        .build();
-
-                    alertStore.store(alert);
-
-                    sseManager.send(answer.getMember(), message, Alert.AlertType.RANK_ANSWER);
+                    alertService.storeAndSendAlert(alertMessageMapper.of(question, answer, rank));
 
                     rankName += 1L;
                 }

@@ -10,6 +10,7 @@ public class AlertDto {
     @Builder
     public record FindAllResponse(
         String recipientId,
+        String senderId,
         String message,
         Alert.AlertType alertType,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")

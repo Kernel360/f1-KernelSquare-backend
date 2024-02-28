@@ -3,6 +3,7 @@ package com.kernelsquare.adminapi.domain.notice.dto;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.kernelsquare.core.constants.TimeResponseFormat;
 import com.kernelsquare.core.validation.annotations.EnumValue;
 import com.kernelsquare.domainmysql.domain.notice.entity.Notice;
 
@@ -66,9 +67,9 @@ public class NoticeDto {
 		String noticeToken,
 		String noticeContent,
 		Notice.NoticeCategory noticeCategory,
-		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = TimeResponseFormat.PATTERN)
 		LocalDateTime createdDate,
-		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = TimeResponseFormat.PATTERN)
 		LocalDateTime modifiedDate
 	) {
 	}
@@ -78,9 +79,9 @@ public class NoticeDto {
 		String noticeTitle,
 		String noticeToken,
 		Notice.NoticeCategory noticeCategory,
-		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = TimeResponseFormat.PATTERN)
 		LocalDateTime createdDate,
-		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = TimeResponseFormat.PATTERN)
 		LocalDateTime modifiedDate
 	) {
 	}

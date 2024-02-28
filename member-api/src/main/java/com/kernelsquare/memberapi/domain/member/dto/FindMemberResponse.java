@@ -1,6 +1,6 @@
 package com.kernelsquare.memberapi.domain.member.dto;
 
-import com.kernelsquare.memberapi.domain.image.utils.ImageUtils;
+import com.kernelsquare.core.util.ImageUtilsCore;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
 
 import lombok.Builder;
@@ -22,7 +22,7 @@ public record FindMemberResponse(
 			.nickname(member.getNickname())
 			.experience(member.getExperience())
 			.introduction(member.getIntroduction())
-			.imageUrl(ImageUtils.makeImageUrl(member.getImageUrl()))
+			.imageUrl(ImageUtilsCore.makeImageUrl(member.getImageUrl()))
 			.level(member.getLevel().getName())
 			.build();
 	}

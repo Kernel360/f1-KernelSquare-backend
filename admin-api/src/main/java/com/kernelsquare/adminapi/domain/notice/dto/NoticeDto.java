@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.kernelsquare.core.constants.TimeResponseFormat;
+import com.kernelsquare.core.validation.annotations.EnumValue;
 import com.kernelsquare.domainmysql.domain.notice.entity.Notice;
 
 import jakarta.validation.constraints.NotBlank;

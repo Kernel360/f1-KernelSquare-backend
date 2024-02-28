@@ -1,4 +1,4 @@
-package com.kernelsquare.domainmysql.config;
+package com.kernelsquare.memberapi.common.config;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;

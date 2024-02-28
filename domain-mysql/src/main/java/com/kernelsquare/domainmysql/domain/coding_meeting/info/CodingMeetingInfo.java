@@ -1,5 +1,6 @@
 package com.kernelsquare.domainmysql.domain.coding_meeting.info;
 
+import com.kernelsquare.core.util.ImageUtilsCore;
 import com.kernelsquare.domainmysql.domain.coding_meeting.entity.CodingMeeting;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,8 +34,8 @@ public class CodingMeetingInfo {
             this.memberId = codingMeeting.getMember().getId();
             this.memberLevel = codingMeeting.getMember().getLevel().getName();
             this.memberNickname = codingMeeting.getMember().getNickname();
-            this.memberProfileUrl = codingMeeting.getMember().getImageUrl();
-            this.memberLevelImageUrl = codingMeeting.getMember().getLevel().getImageUrl();
+            this.memberProfileUrl = ImageUtilsCore.makeImageUrl(codingMeeting.getMember().getImageUrl());
+            this.memberLevelImageUrl = ImageUtilsCore.makeImageUrl(codingMeeting.getMember().getLevel().getImageUrl());
 
             this.codingMeetingTitle = codingMeeting.getCodingMeetingTitle();
             this.codingMeetingToken = codingMeeting.getCodingMeetingToken();
@@ -81,8 +82,8 @@ public class CodingMeetingInfo {
             this.memberId = codingMeeting.getMember().getId();
             this.memberLevel = codingMeeting.getMember().getLevel().getName();
             this.memberNickname = codingMeeting.getMember().getNickname();
-            this.memberProfileUrl = codingMeeting.getMember().getImageUrl();
-            this.memberLevelImageUrl = codingMeeting.getMember().getLevel().getImageUrl();
+            this.memberProfileUrl = ImageUtilsCore.makeImageUrl(codingMeeting.getMember().getImageUrl());
+            this.memberLevelImageUrl = ImageUtilsCore.makeImageUrl(codingMeeting.getMember().getLevel().getImageUrl());
 
             this.codingMeetingTitle = codingMeeting.getCodingMeetingTitle();
             this.codingMeetingToken = codingMeeting.getCodingMeetingToken();

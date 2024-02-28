@@ -2,6 +2,8 @@ package com.kernelsquare.memberapi.domain.coding_meeting_comment.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.kernelsquare.core.constants.TimeResponseFormat;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
@@ -24,12 +26,16 @@ public class CodingMeetingCommentDto {
     @Builder
     public record CreateRequest(
        String codingMeetingToken,
+       @NotBlank(message = "모각코 게시글 내용은 필수 입력사항입니다.")
+       @Size(min = 10, max = 10000, message = "모각코 모집글 내용은 10000자 이하로 작성이 가능합니다.")
        String codingMeetingCommentContent
     ) {
     }
 
     @Builder
     public record UpdateRequest(
+       @NotBlank(message = "모각코 게시글 내용은 필수 입력사항입니다.")
+       @Size(min = 10, max = 10000, message = "모각코 모집글 내용은 10000자 이하로 작성이 가능합니다.")
        String codingMeetingCommentContent
     ) {
     }

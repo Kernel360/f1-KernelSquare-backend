@@ -1,6 +1,7 @@
 package com.kernelsquare.memberapi.domain.coding_meeting.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.kernelsquare.core.constants.TimeResponseFormat;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -85,9 +86,9 @@ public class CodingMeetingDto {
             String codingMeetingLocationLatitude,
 
             Long codingMeetingMemberUpperLimit,
-            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = TimeResponseFormat.PATTERN)
             LocalDateTime codingMeetingStartTime,
-            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = TimeResponseFormat.PATTERN)
             LocalDateTime codingMeetingEndTime,
             Boolean codingMeetingClosed
     ) {
@@ -104,12 +105,12 @@ public class CodingMeetingDto {
             String codingMeetingTitle,
             String codingMeetingToken,
             List<String>codingMeetingHashtags,
-            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = TimeResponseFormat.PATTERN)
             LocalDateTime codingMeetingStartTime,
-            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = TimeResponseFormat.PATTERN)
             LocalDateTime codingMeetingEndTime,
             Boolean codingMeetingClosed,
-            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = TimeResponseFormat.PATTERN)
             LocalDateTime createdDate
     ) {
     }

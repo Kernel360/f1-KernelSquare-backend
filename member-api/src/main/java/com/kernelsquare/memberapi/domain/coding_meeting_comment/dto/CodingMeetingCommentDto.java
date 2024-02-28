@@ -1,6 +1,7 @@
 package com.kernelsquare.memberapi.domain.coding_meeting_comment.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.kernelsquare.core.constants.TimeResponseFormat;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
@@ -13,7 +14,7 @@ public class CodingMeetingCommentDto {
             String memberNickname,
             String memberProfileUrl,
             String memberLevelImageUrl,
-            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = TimeResponseFormat.PATTERN)
             LocalDateTime createdDate,
             String codingMeetingCommentToken,
             String codingMeetingCommentContent

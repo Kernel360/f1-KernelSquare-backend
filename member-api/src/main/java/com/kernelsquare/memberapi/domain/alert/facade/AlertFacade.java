@@ -16,11 +16,13 @@ public class AlertFacade {
     private final AlertService alertService;
     private final AlertDtoMapper alertDtoMapper;
 
-    public List<AlertDto.FindAllResponse> findAllAlerts(MemberAdapter memberAdapter) {
+    public AlertDto.PersonalFindAllResponse findAllAlerts(MemberAdapter memberAdapter) {
         List<AlertInfo> allAlertInfo = alertService.findAllAlerts(alertDtoMapper.toCommand(memberAdapter));
 
-        return allAlertInfo.stream()
+        List<AlertDto.FindAllResponse> responseList = allAlertInfo.stream()
             .map(alertDtoMapper::toFindAllResponse)
             .toList();
+
+        return AlertDto.PersonalFindAllResponse.from(responseList);
     }
 }

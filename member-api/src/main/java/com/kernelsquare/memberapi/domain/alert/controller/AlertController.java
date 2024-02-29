@@ -27,11 +27,11 @@ public class AlertController {
     private final SseManager sseManager;
 
     @GetMapping("/alerts")
-    public ResponseEntity<ApiResponse<List<AlertDto.FindAllResponse>>> findAllAlerts(
+    public ResponseEntity<ApiResponse<AlertDto.PersonalFindAllResponse>> findAllAlerts(
         @AuthenticationPrincipal
         MemberAdapter memberAdapter
     ) {
-        List<AlertDto.FindAllResponse> response = alertFacade.findAllAlerts(memberAdapter);
+        AlertDto.PersonalFindAllResponse response = alertFacade.findAllAlerts(memberAdapter);
 
         return ResponseEntityFactory.toResponseEntity(MY_ALERT_ALL_FOUND, response);
     }

@@ -1,6 +1,7 @@
 package com.kernelsquare.memberapi.domain.alert.mapper;
 
 import com.kernelsquare.domainmysql.domain.answer.entity.Answer;
+import com.kernelsquare.domainmysql.domain.member.entity.Member;
 import com.kernelsquare.domainmysql.domain.question.entity.Question;
 import com.kernelsquare.domainmysql.domain.question.repository.QuestionReader;
 import com.kernelsquare.domainmysql.domain.rank.entity.Rank;
@@ -17,10 +18,10 @@ public class AlertMessageMapper {
 
     public QuestionReplyAlertMessage of(Long questionId, MemberAdapter memberAdapter) {
         Question question = questionReader.findQuestion(questionId);
-        String senderId = memberAdapter.getMember().getId().toString();
+        Member sender = memberAdapter.getMember();
         return QuestionReplyAlertMessage.builder()
             .question(question)
-            .senderId(senderId)
+            .sender(sender)
             .build();
     }
 

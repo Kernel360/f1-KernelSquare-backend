@@ -7,5 +7,5 @@ import java.util.List;
 public interface QuestionReader {
     Question findQuestion(Long QuestionId);
 
-    List<Question> findAllByClosedStatus(Boolean closedStatus);
+    List<Question> findClosedQuestions(Boolean closedStatus);
 }

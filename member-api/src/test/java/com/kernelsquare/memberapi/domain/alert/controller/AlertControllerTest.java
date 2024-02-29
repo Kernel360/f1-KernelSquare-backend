@@ -31,15 +31,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.kernelsquare.core.common_response.response.code.AlertResponseCode.MY_ALERT_ALL_FOUND;
-import static com.kernelsquare.core.common_response.response.code.AlertResponseCode.SSE_SUBSCRIBED;
-import static com.kernelsquare.memberapi.config.ApiDocumentUtils.getDocumentRequest;
 import static com.kernelsquare.memberapi.config.ApiDocumentUtils.getDocumentResponse;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -54,10 +51,6 @@ class AlertControllerTest {
     private SseManager sseManager;
     @MockBean
     private AlertFacade alertFacade;
-
-    private ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule())
-        .setPropertyNamingStrategy(
-            PropertyNamingStrategies.SnakeCaseStrategy.INSTANCE);
 
     @Test
     @DisplayName("SSE 구독 성공 시 200 OK를 반환한다.")
@@ -93,7 +86,7 @@ class AlertControllerTest {
                 .characterEncoding("UTF-8"));
 
         //then
-        resultActions.andExpect(status().is(SSE_SUBSCRIBED.getStatus().value()))
+        resultActions.andExpect(status().isOk())
             //TODO 응답 contentType이 null이 맞나?
             .andDo(document("alert-subscribe"));
     }
@@ -122,7 +115,9 @@ class AlertControllerTest {
 
         AlertDto.FindAllResponse findAllResponse = AlertDto.FindAllResponse.builder()
             .recipientId("1")
+            .recipient("시나모롤")
             .senderId("2")
+            .sender("강형욱")
             .message("므헷헷헷x999999")
             .alertType(Alert.AlertType.QUESTION_REPLY)
             .sendTime(LocalDateTime.now())
@@ -150,7 +145,9 @@ class AlertControllerTest {
                     fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 상태 코드"),
                     fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"),
                     fieldWithPath("data.personal_alert_list[].recipient_id").type(JsonFieldType.STRING).description("알림 수신자 ID"),
+                    fieldWithPath("data.personal_alert_list[].recipient").type(JsonFieldType.STRING).description("알림 수신자 닉네임"),
                     fieldWithPath("data.personal_alert_list[].sender_id").type(JsonFieldType.STRING).description("알림 송신자 ID"),
+                    fieldWithPath("data.personal_alert_list[].sender").type(JsonFieldType.STRING).description("알림 송신자 닉네임"),
                     fieldWithPath("data.personal_alert_list[].message").type(JsonFieldType.STRING).description("알림 메시지"),
                     fieldWithPath("data.personal_alert_list[].alert_type").type(JsonFieldType.STRING).description("알림 타입"),
                     fieldWithPath("data.personal_alert_list[].send_time").type(JsonFieldType.STRING).description("알림 보낸 시간")

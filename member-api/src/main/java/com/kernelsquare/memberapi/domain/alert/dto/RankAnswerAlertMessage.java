@@ -16,7 +16,9 @@ public class RankAnswerAlertMessage implements AlertMessage {
     public Alert process() {
         return Alert.builder()
             .recipientId(answer.getMember().getId().toString())
+            .recipient(answer.getMember().getNickname())
             .senderId("system")
+            .sender("system")
             .message(question.getTitle() + " 글에 작성하신 답변이 " + rank.getName() + "등 답변이 되었습니다.")
             .alertType(Alert.AlertType.RANK_ANSWER)
             .build();

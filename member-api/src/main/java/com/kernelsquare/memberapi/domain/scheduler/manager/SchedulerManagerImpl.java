@@ -57,7 +57,7 @@ public class SchedulerManagerImpl implements ScheculerManager {
     @Transactional
     @Scheduled(cron = "0 0 2 * * *")
     public void rankAnswer() {
-        List<Question> questions = questionReader.findAllByClosedStatus(false);
+        List<Question> questions = questionReader.findClosedQuestions(false);
 
         questions.stream()
             .filter(question -> question.getCreatedDate().toLocalDate().isBefore(LocalDate.now().minusDays(7)))

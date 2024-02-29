@@ -9,7 +9,9 @@ import java.time.LocalDateTime;
 @Getter
 public class AlertInfo {
     private final String recipientId;
+    private final String recipient;
     private final String senderId;
+    private final String sender;
     private final String message;
     private final Alert.AlertType alertType;
     private final LocalDateTime sendTime;
@@ -17,7 +19,9 @@ public class AlertInfo {
     @Builder
     public AlertInfo(Alert alert) {
         this.recipientId = alert.getRecipientId();
+        this.recipient = alert.getRecipient();
         this.senderId = alert.getSenderId();
+        this.sender = alert.getSender();
         this.message = alert.getMessage();
         this.alertType = alert.getAlertType();
         this.sendTime = alert.getSendTime();

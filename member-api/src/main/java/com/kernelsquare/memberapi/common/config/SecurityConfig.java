@@ -51,8 +51,7 @@ public class SecurityConfig {
 	private final String[] hasAnyAuthorityPatterns = new String[] {
 		"/api/v1/images",
 		"/api/v1/coffeechat/reservations",
-		"/api/v1/alerts/sse/**",
-		"/api/v1/alerts"
+		"/api/v1/alerts/**",
 	};
 
 	private final String[] hasRoleUserPatterns = new String[] {

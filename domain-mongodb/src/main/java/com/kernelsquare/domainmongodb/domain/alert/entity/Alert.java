@@ -21,7 +21,11 @@ public class Alert {
     @Indexed
     private String recipientId;
 
+    private String recipient;
+
     private String senderId;
+
+    private String sender;
 
     private String message;
 
@@ -39,18 +43,24 @@ public class Alert {
     }
 
     @Builder
-    public Alert(String recipientId, String senderId, String message, AlertType alertType) {
+    public Alert(String recipientId, String recipient, String senderId, String sender, String message, AlertType alertType) {
         if (StringUtils.isBlank(recipientId))
             throw new InvalidParameterException("Invalid recipientId");
+        if (StringUtils.isBlank(recipient))
+            throw new InvalidParameterException("Invalid recipient");
         if (StringUtils.isBlank(senderId))
             throw new InvalidParameterException("Invalid senderId");
+        if (StringUtils.isBlank(sender))
+            throw new InvalidParameterException("Invalid sender");
         if (StringUtils.isBlank(message))
             throw new InvalidParameterException("Invalid message");
         if (Objects.isNull(alertType))
             throw new InvalidParameterException("Invalid AlertType");
 
         this.recipientId = recipientId;
+        this.recipient = recipient;
         this.senderId = senderId;
+        this.sender = sender;
         this.message = message;
         this.alertType = alertType;
         this.sendTime = LocalDateTime.now();

@@ -41,7 +41,9 @@ public class AlertController {
         @AuthenticationPrincipal
         MemberAdapter memberAdapter
     ) {
-        return ResponseEntity.ok(sseManager.subscribe(memberAdapter));
+        SseEmitter sseEmitter = sseManager.subscribe(memberAdapter);
+
+        return ResponseEntity.ok(sseEmitter);
     }
 
 }

@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 
 @RequiredArgsConstructor
 public enum AlertResponseCode implements ResponseCode {
-    SSE_SUBSCRIBED(HttpStatus.OK, AlertServiceStatus.SSE_SUBSCRIBED, "SSE 구독 성공"),
     MY_ALERT_ALL_FOUND(HttpStatus.OK, AlertServiceStatus.MY_ALERT_ALL_FOUND, "나의 알림 모두 조회 성공");
 
     private final HttpStatus code;

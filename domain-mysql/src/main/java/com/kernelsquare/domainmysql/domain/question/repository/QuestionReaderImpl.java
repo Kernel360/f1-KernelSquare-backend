@@ -20,7 +20,7 @@ public class QuestionReaderImpl implements QuestionReader {
     }
 
     @Override
-    public List<Question> findAllByClosedStatus(Boolean closedStatus) {
+    public List<Question> findClosedQuestions(Boolean closedStatus) {
         return questionRepository.findAllByClosedStatus(closedStatus);
     }
 }

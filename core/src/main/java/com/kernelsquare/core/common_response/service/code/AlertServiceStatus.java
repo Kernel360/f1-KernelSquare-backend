@@ -5,8 +5,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum AlertServiceStatus implements ServiceStatus {
     // success
-    SSE_SUBSCRIBED(6100),
-    MY_ALERT_ALL_FOUND(6101);
+    MY_ALERT_ALL_FOUND(6100);
 
     private final Integer code;
 

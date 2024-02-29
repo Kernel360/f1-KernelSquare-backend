@@ -91,6 +91,9 @@ public class SecurityConfig {
 			.requestMatchers(HttpMethod.GET, "/api/v1/coffeechat/posts/{postId}").permitAll()
 			.requestMatchers(HttpMethod.GET, "/api/v1/hashtags").permitAll()
 			.requestMatchers(HttpMethod.GET, "/api/v1/techs").permitAll()
+			.requestMatchers(HttpMethod.GET, "/api/v1/coding-meetings").permitAll()
+			.requestMatchers(HttpMethod.GET, "/api/v1/coding-meetings/{codingMeetingToken}").permitAll()
+			.requestMatchers(HttpMethod.GET, "/api/v1/coding-meeting-comments/{codingMeetingToken}").permitAll()
 
 			// 모든 권한에 대한 접근 허용
 			.requestMatchers(hasAnyAuthorityPatterns).authenticated()
@@ -107,6 +110,12 @@ public class SecurityConfig {
 			.requestMatchers(HttpMethod.PUT, "/api/v1/questions/{questionId}").hasRole("USER")
 			.requestMatchers(HttpMethod.DELETE, "/api/v1/questions/{questionId}").hasRole("USER")
 			.requestMatchers(HttpMethod.POST, "/api/v1/questions/{questionId}/answers").hasRole("USER")
+			.requestMatchers(HttpMethod.POST, "/api/v1/coding-meetings").hasRole("USER")
+			.requestMatchers(HttpMethod.PUT, "/api/v1/coding-meetings/**").hasRole("USER")
+			.requestMatchers(HttpMethod.DELETE, "/api/v1/coding-meetings/{codingMeetingToken}").hasRole("USER")
+			.requestMatchers(HttpMethod.POST, "/api/v1/coding-meeting-comments").hasRole("USER")
+			.requestMatchers(HttpMethod.PUT, "/api/v1/coding-meeting-comments/{codingMeetingCommentToken}").hasRole("USER")
+			.requestMatchers(HttpMethod.DELETE, "/api/v1/coding-meeting-comments/{codingMeetingCommentToken}").hasRole("USER")
 
 			// ROLE_MENTOR 권한 필요
 			.requestMatchers(HttpMethod.POST, "/api/v1/coffeechat/posts").hasRole("MENTOR")

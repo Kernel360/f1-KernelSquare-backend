@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.kernelsquare.core.constants.TimeResponseFormat;
 import com.kernelsquare.memberapi.domain.image.utils.ImageUtils;
 import com.kernelsquare.domainmysql.domain.level.entity.Level;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
@@ -22,9 +23,9 @@ public record FindQuestionResponse(
 	Long level,
 	String levelImageUrl,
 	List<String> skills,
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = TimeResponseFormat.PATTERN)
 	LocalDateTime createdDate,
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = TimeResponseFormat.PATTERN)
 	LocalDateTime modifiedDate
 ) {
 	public static FindQuestionResponse of(Member member, Question question, Level level) {

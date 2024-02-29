@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.kernelsquare.core.util.ImageUtils;
+import com.kernelsquare.core.constants.TimeResponseFormat;
 import com.kernelsquare.domainmysql.domain.answer.entity.Answer;
 
 public record FindAnswerResponse(
@@ -15,9 +16,9 @@ public record FindAnswerResponse(
 	String createdBy,
 	Long authorLevel,
 	String answerImageUrl,
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = TimeResponseFormat.PATTERN)
 	LocalDateTime createdDate,
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = TimeResponseFormat.PATTERN)
 	LocalDateTime modifiedDate,
 	Long voteCount,
 	Long voteStatus

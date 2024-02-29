@@ -7,5 +7,5 @@ public interface AnswerStore {
 
     void downVote(Long answerId);
 
-    void store(Answer answer);
+    Answer store(Answer answer);
 }

@@ -42,8 +42,6 @@ public class AnswerService {
 	private final AnswerStore answerStore;
 	private final QuestionReader questionReader;
 	private final LevelReader levelReader;
-	private final SseManager sseManager;
-	private final AlertStore alertStore;
 
 	@Transactional(readOnly = true)
 	public FindAllAnswerResponse findAllAnswer(Long questionId) {
@@ -83,7 +81,8 @@ public class AnswerService {
 
 		Answer answer = command.toEntity(question);
 
-		answerStore.store(answer);
+		Answer saveAnswer = answerStore.store(answer);
+
 		member.addExperience(ExperiencePolicy.MEMBER_DAILY_ATTENDED.getReward());
 		if (member.isExperienceExceed(member.getExperience())) {
 			member.updateExperience(member.getExperience() - member.getLevel().getLevelUpperLimit());
@@ -91,7 +90,7 @@ public class AnswerService {
 			member.updateLevel(nextLevel);
 		}
 
-		return answer.getId();
+		return saveAnswer.getId();
 	}
 
 	@Transactional

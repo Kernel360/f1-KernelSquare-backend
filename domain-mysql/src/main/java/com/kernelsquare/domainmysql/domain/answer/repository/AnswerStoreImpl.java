@@ -20,7 +20,7 @@ public class AnswerStoreImpl implements AnswerStore {
     }
 
     @Override
-    public void store(Answer answer) {
-        answerRepository.save(answer);
+    public Answer store(Answer answer) {
+        return answerRepository.save(answer);
     }
 }

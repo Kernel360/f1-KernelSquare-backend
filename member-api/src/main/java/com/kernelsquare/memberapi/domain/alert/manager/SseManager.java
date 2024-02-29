@@ -1,7 +1,6 @@
 package com.kernelsquare.memberapi.domain.alert.manager;
 
 import com.kernelsquare.domainmongodb.domain.alert.entity.Alert;
-import com.kernelsquare.domainmysql.domain.member.entity.Member;
 import com.kernelsquare.memberapi.domain.alert.handler.SseEmitterHandler;
 import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +19,6 @@ public class SseManager {
 
     /* 특정 클라이언트에게 메시지를 보내기 위한 메서드 */
     public void send(Alert alert) {
-        sseEmitterHandler.sendEmitter(Long.valueOf(alert.getRecipientId()), alert.getMessage(),
-            alert.getAlertType().getDescription());
+        sseEmitterHandler.sendEmitter(alert);
     }
 }

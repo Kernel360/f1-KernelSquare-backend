@@ -1,5 +1,7 @@
 package com.kernelsquare.memberapi.domain.alert.handler;
 
+import com.kernelsquare.domainmongodb.domain.alert.entity.Alert;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -9,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class SseEmitterHandler {
-    private static final Long DEFAULT_TIMEOUT = 60 * 1000L;
+    private static final Long DEFAULT_TIMEOUT = 60 * 60 * 1000L;
     private final ConcurrentHashMap<Long, SseEmitter> emitters = new ConcurrentHashMap<>();
 
     public void addEmitter(Long memberId, SseEmitter emitter) {
@@ -30,19 +32,22 @@ public class SseEmitterHandler {
         addEmitter(memberId, emitter);
 
         emitter.onCompletion(() -> deleteEmitter(memberId));
-        emitter.onTimeout(() -> deleteEmitter(memberId));
+        emitter.onTimeout(emitter::complete);
 
         return emitter;
     }
 
-    public void sendEmitter(Long memberId, Object message, String eventName) {
-        SseEmitter emitter = getEmitter(memberId);
+    public void sendEmitter(Alert alert) {
+        SseEmitter emitter = getEmitter(Long.valueOf(alert.getRecipientId()));
 
         if (Objects.nonNull(emitter)) {
             try {
-                emitter.send(SseEmitter.event().id(memberId.toString()).name(eventName).data(message));
+                emitter.send(SseEmitter.event()
+                    .id(alert.getRecipientId())
+                    .name(alert.getAlertType().getDescription())
+                    .data(alert, MediaType.APPLICATION_JSON));
             } catch (IOException e) {
-                deleteEmitter(memberId);
+                deleteEmitter(Long.valueOf(alert.getRecipientId()));
                 emitter.completeWithError(e);
             }
         }

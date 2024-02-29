@@ -8,6 +8,7 @@ import com.kernelsquare.domainmongodb.domain.alert.command.AlertCommand;
 import com.kernelsquare.memberapi.domain.alert.dto.AlertMessage;
 import com.kernelsquare.memberapi.domain.alert.manager.SseManager;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,6 +27,7 @@ public class AlertServiceImpl implements AlertService {
             .toList();
     }
 
+    @Async
     @Override
     public void storeAndSendAlert(AlertMessage alertMessage) {
         Alert alert = alertMessage.process();

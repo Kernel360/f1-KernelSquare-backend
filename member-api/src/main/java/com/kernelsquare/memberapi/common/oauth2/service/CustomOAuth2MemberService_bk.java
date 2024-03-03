@@ -1,12 +1,12 @@
-package com.kernelsquare.memberapi.common.oauth.service;
+package com.kernelsquare.memberapi.common.oauth2.service;
 
 import com.kernelsquare.core.type.SocialProvider;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
 import com.kernelsquare.domainmysql.domain.member.repository.MemberRepository;
 import com.kernelsquare.domainmysql.domain.social_login.entity.SocialLogin;
 import com.kernelsquare.domainmysql.domain.social_login.repository.SocialLoginRepository;
-import com.kernelsquare.memberapi.common.oauth.info.OAuth2UserInfo;
-import com.kernelsquare.memberapi.common.oauth.info.OAuth2UserInfoFactory;
+import com.kernelsquare.memberapi.common.oauth2.info.OAuth2UserInfo;
+import com.kernelsquare.memberapi.common.oauth2.info.OAuth2UserInfoFactory;
 import com.kernelsquare.memberapi.domain.auth.dto.MemberAdaptorInstance;
 import com.kernelsquare.memberapi.domain.auth.dto.MemberDetails;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class CustomOAuth2MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
+public class CustomOAuth2MemberService_bk implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final MemberRepository memberRepository;
     private final SocialLoginRepository socialLoginRepository;

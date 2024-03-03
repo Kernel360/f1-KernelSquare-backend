@@ -1,9 +1,8 @@
-package com.kernelsquare.memberapi.common.oauth;
+package com.kernelsquare.memberapi.common.oauth2;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;

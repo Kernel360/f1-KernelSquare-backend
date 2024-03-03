@@ -1,13 +1,10 @@
 package com.kernelsquare.memberapi.common.config;
 
-import com.kernelsquare.domainmysql.domain.member.repository.MemberRepository;
-import com.kernelsquare.domainmysql.domain.social_login.repository.SocialLoginRepository;
-import com.kernelsquare.memberapi.common.oauth.CustomInMemoryOAuth2AuthorizedClientService;
-import com.kernelsquare.memberapi.common.oauth.service.CustomOAuth2MemberService;
-import jakarta.annotation.PostConstruct;
+import com.kernelsquare.memberapi.common.oauth2.CustomInMemoryOAuth2AuthorizedClientService;
+import com.kernelsquare.memberapi.common.oauth2.handler.OAuth2LoginFailureHandler;
+import com.kernelsquare.memberapi.common.oauth2.service.CustomOAuth2MemberService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -16,12 +13,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService;
-import org.springframework.security.oauth2.client.JdbcOAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
 import org.springframework.security.web.SecurityFilterChain;
@@ -42,8 +36,8 @@ public class SecurityConfig {
 	private final TokenProvider tokenProvider;
 	private final JWTAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 	private final JWTAccessDeniedHandler jwtAccessDeniedHandler;
-	//	private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
-//	private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
+//	private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+	private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
 //	private final CustomInMemoryOAuth2AuthorizedClientService customInMemoryOAuth2AuthorizedClientService;
 	private final OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
 	private final CustomOAuth2MemberService customOAuth2MemberService;
@@ -124,6 +118,7 @@ public class SecurityConfig {
 			.requestMatchers(HttpMethod.GET, "/api/v1/coffeechat/posts/{postId}").permitAll()
 			.requestMatchers(HttpMethod.GET, "/api/v1/hashtags").permitAll()
 			.requestMatchers(HttpMethod.GET, "/api/v1/techs").permitAll()
+			.requestMatchers(HttpMethod.GET, "/login/oauth2").permitAll()
 
 			// 모든 권한에 대한 접근 허용
 			.requestMatchers(hasAnyAuthorityPatterns).authenticated()
@@ -168,9 +163,12 @@ public class SecurityConfig {
 
 		 http.oauth2Login(oAuth2LoginConfigurer ->
 		 		oAuth2LoginConfigurer
-						.authorizedClientService(customInMemoryOAuth2AuthorizedClientService)
-//		 			.successHandler(oAuth2LoginSuccessHandler)
-//		 			.failureHandler(oAuth2LoginFailureHandler)
+//					.authorizationEndpoint(config ->
+//							config
+//					.authorizationRequestRepository(httpCookieOAuth2AuthorizationRequestRepository))
+//					.authorizedClientService(customInMemoryOAuth2AuthorizedClientService)
+//		 			.successHandler(oAuth2LoginSuccessHandler) // 동의하고 계속하기 눌렀을 때 Handler 설정
+		 			.failureHandler(oAuth2LoginFailureHandler) // 소셜 로그인 실패 시 핸들러 설정
 		 			.userInfoEndpoint(userInfoEndpointConfigurer ->
 		 				userInfoEndpointConfigurer.userService(customOAuth2MemberService)));
 

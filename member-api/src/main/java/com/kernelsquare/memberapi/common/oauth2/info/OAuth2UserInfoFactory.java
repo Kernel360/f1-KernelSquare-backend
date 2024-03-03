@@ -1,7 +1,7 @@
-package com.kernelsquare.memberapi.common.oauth.info;
+package com.kernelsquare.memberapi.common.oauth2.info;
 
 import com.kernelsquare.core.type.SocialProvider;
-import com.kernelsquare.memberapi.common.oauth.info.impl.GithubOAuth2UserInfo;
+import com.kernelsquare.memberapi.common.oauth2.info.impl.GithubOAuth2UserInfo;
 
 import java.util.Map;
 

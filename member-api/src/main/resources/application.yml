@@ -58,7 +58,6 @@ spring:
             redirect-uri: http://localhost:8501/login/oauth2/code/github
             scope:
               - user:email
-            authorization-grant-type: client_credentials
 
   flyway:
     enabled: false

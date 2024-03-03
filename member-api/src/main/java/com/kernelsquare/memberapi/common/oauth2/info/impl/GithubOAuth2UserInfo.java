@@ -1,6 +1,6 @@
-package com.kernelsquare.memberapi.common.oauth.info.impl;
+package com.kernelsquare.memberapi.common.oauth2.info.impl;
 
-import com.kernelsquare.memberapi.common.oauth.info.OAuth2UserInfo;
+import com.kernelsquare.memberapi.common.oauth2.info.OAuth2UserInfo;
 
 import java.util.Map;
 

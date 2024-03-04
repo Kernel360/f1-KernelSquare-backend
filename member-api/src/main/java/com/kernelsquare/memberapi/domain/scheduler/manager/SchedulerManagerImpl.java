@@ -62,7 +62,7 @@ public class SchedulerManagerImpl implements ScheculerManager {
         questions.stream()
             .filter(question -> question.getCreatedDate().toLocalDate().isBefore(LocalDate.now().minusDays(7)))
             .forEach(question -> {
-                question.updateClosedStatus();
+                question.closeQuestion();
                 List<Answer> answers = answerReader.findAnswersTopThree(question.getId());
 
                 Long rankName = 1L;

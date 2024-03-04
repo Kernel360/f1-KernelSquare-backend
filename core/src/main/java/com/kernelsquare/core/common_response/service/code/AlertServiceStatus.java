@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum AlertServiceStatus implements ServiceStatus {
     // success
-    MY_ALERT_ALL_FOUND(6100);
+    MY_ALERT_ALL_FOUND(6140);
 
     private final Integer code;
 

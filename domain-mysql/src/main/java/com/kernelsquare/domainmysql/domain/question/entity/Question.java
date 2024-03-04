@@ -73,7 +73,7 @@ public class Question extends BaseEntity {
 		this.imageUrl = imageUrl;
 	}
 
-	public void updateClosedStatus() {
+	public void closeQuestion() {
 		this.closedStatus = true;
 	}
 

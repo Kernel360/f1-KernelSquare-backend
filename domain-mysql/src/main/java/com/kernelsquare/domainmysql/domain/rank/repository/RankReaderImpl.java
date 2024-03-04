@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class RankReaderImpl implements RankReader {
-    public final RankRepository repository;
+    public final RankRepository rankRepository;
 
     @Override
     public Rank findRank(Long name) {
-        return repository.findByName(name)
+        return rankRepository.findByName(name)
             .orElseThrow(() -> new BusinessException(RankErrorCode.RANK_NOT_FOUND));
     }
 }

@@ -36,10 +36,8 @@ public class Alert {
     @Getter
     @RequiredArgsConstructor
     public enum AlertType {
-        QUESTION_REPLY("question_reply"),
-        RANK_ANSWER("rank_answer");
-
-        private final String description;
+        QUESTION_REPLY,
+        RANK_ANSWER
     }
 
     @Builder

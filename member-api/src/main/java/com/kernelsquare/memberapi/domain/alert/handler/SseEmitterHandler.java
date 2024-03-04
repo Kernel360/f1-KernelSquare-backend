@@ -44,7 +44,7 @@ public class SseEmitterHandler {
             try {
                 emitter.send(SseEmitter.event()
                     .id(alert.getRecipientId())
-                    .name(alert.getAlertType().getDescription())
+                    .name(alert.getAlertType().name())
                     .data(alert, MediaType.APPLICATION_JSON));
             } catch (IOException e) {
                 deleteEmitter(Long.valueOf(alert.getRecipientId()));

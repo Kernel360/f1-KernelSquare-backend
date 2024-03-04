@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum RankServiceStatus implements ServiceStatus {
     //error
-    RANK_NOT_FOUND(2740);
+    RANK_NOT_FOUND(2700);
 
     private final Integer code;
 

@@ -32,6 +32,7 @@ public class AlertMessageMapper {
     }
 
     public RankAnswerAlertMessage of(Question question, Answer answer, Rank rank) {
+        Hibernate.initialize(answer.getMember());
         return RankAnswerAlertMessage.builder()
             .question(question)
             .answer(answer)

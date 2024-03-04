@@ -55,7 +55,7 @@ public class SchedulerManagerImpl implements ScheculerManager {
 
     @Override
     @Transactional
-    @Scheduled(cron = "0 0 2 * * *")
+    @Scheduled(cron = "0 0 17 * * *")
     public void rankAnswer() {
         List<Question> questions = questionReader.findClosedQuestions(false);
 

@@ -10,6 +10,8 @@ import com.kernelsquare.memberapi.domain.alert.manager.SseManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -27,6 +29,7 @@ public class AlertServiceImpl implements AlertService {
             .toList();
     }
 
+    @Async
     @Override
     public void storeAndSendAlert(AlertMessage alertMessage) {
         Alert alert = alertMessage.process();

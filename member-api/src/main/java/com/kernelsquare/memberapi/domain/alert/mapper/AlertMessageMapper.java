@@ -9,6 +9,7 @@ import com.kernelsquare.memberapi.domain.alert.dto.QuestionReplyAlertMessage;
 import com.kernelsquare.memberapi.domain.alert.dto.RankAnswerAlertMessage;
 import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,7 @@ public class AlertMessageMapper {
     public QuestionReplyAlertMessage of(Long questionId, MemberAdapter memberAdapter) {
         Question question = questionReader.findQuestion(questionId);
         Member recipient = question.getMember();
+        Hibernate.initialize(recipient.getNickname());
         Member sender = memberAdapter.getMember();
         return QuestionReplyAlertMessage.builder()
             .question(question)

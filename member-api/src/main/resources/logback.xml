@@ -27,12 +27,21 @@
             <pattern>${LOG_PATTERN}</pattern>
         </encoder>
 
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOG_PATH}/${TRACE_LOG_PATH}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <totalSizeCap>3GB</totalSizeCap>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
             <maxHistory>30</maxHistory>
-            <maxFileSize>10MB</maxFileSize>
+            <totalSizeCap>1GB</totalSizeCap>
         </rollingPolicy>
+
+<!--        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">-->
+<!--            <fileNamePattern>${LOG_PATH}/${TRACE_LOG_PATH}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>-->
+<!--            <totalSizeCap>3GB</totalSizeCap>-->
+<!--            <maxHistory>30</maxHistory>-->
+<!--            <maxFileSize>10MB</maxFileSize>-->
+<!--        </rollingPolicy>-->
 
     </appender>
 
@@ -48,12 +57,21 @@
             <pattern>${LOG_PATTERN}</pattern>
         </encoder>
 
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOG_PATH}/${DEBUG_LOG_PATH}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <totalSizeCap>3GB</totalSizeCap>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
             <maxHistory>30</maxHistory>
-            <maxFileSize>10MB</maxFileSize>
+            <totalSizeCap>1GB</totalSizeCap>
         </rollingPolicy>
+
+<!--        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">-->
+<!--            <fileNamePattern>${LOG_PATH}/${DEBUG_LOG_PATH}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>-->
+<!--            <totalSizeCap>3GB</totalSizeCap>-->
+<!--            <maxHistory>30</maxHistory>-->
+<!--            <maxFileSize>10MB</maxFileSize>-->
+<!--        </rollingPolicy>-->
 
     </appender>
 
@@ -69,12 +87,21 @@
             <pattern>${LOG_PATTERN}</pattern>
         </encoder>
 
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOG_PATH}/${INFO_LOG_PATH}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <totalSizeCap>3GB</totalSizeCap>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
             <maxHistory>30</maxHistory>
-            <maxFileSize>10MB</maxFileSize>
+            <totalSizeCap>1GB</totalSizeCap>
         </rollingPolicy>
+
+<!--        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">-->
+<!--            <fileNamePattern>${LOG_PATH}/${INFO_LOG_PATH}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>-->
+<!--            <totalSizeCap>3GB</totalSizeCap>-->
+<!--            <maxHistory>30</maxHistory>-->
+<!--            <maxFileSize>10MB</maxFileSize>-->
+<!--        </rollingPolicy>-->
 
     </appender>
 
@@ -90,12 +117,21 @@
             <pattern>${LOG_PATTERN}</pattern>
         </encoder>
 
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOG_PATH}/${WARN_LOG_PATH}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <totalSizeCap>3GB</totalSizeCap>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
             <maxHistory>30</maxHistory>
-            <maxFileSize>10MB</maxFileSize>
+            <totalSizeCap>1GB</totalSizeCap>
         </rollingPolicy>
+
+<!--        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">-->
+<!--            <fileNamePattern>${LOG_PATH}/${WARN_LOG_PATH}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>-->
+<!--            <totalSizeCap>3GB</totalSizeCap>-->
+<!--            <maxHistory>30</maxHistory>-->
+<!--            <maxFileSize>10MB</maxFileSize>-->
+<!--        </rollingPolicy>-->
 
     </appender>
 
@@ -111,12 +147,21 @@
             <pattern>${LOG_PATTERN}</pattern>
         </encoder>
 
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOG_PATH}/${ERROR_LOG_PATH}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <totalSizeCap>3GB</totalSizeCap>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
             <maxHistory>30</maxHistory>
-            <maxFileSize>10MB</maxFileSize>
+            <totalSizeCap>1GB</totalSizeCap>
         </rollingPolicy>
+
+<!--        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">-->
+<!--            <fileNamePattern>${LOG_PATH}/${ERROR_LOG_PATH}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>-->
+<!--            <totalSizeCap>3GB</totalSizeCap>-->
+<!--            <maxHistory>30</maxHistory>-->
+<!--            <maxFileSize>10MB</maxFileSize>-->
+<!--        </rollingPolicy>-->
 
     </appender>
 

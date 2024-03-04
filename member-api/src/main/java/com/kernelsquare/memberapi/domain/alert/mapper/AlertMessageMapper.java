@@ -10,17 +10,21 @@ import com.kernelsquare.memberapi.domain.alert.dto.RankAnswerAlertMessage;
 import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
 public class AlertMessageMapper {
     private final QuestionReader questionReader;
 
+    @Transactional(readOnly = true)
     public QuestionReplyAlertMessage of(Long questionId, MemberAdapter memberAdapter) {
         Question question = questionReader.findQuestion(questionId);
+        Member recipient = question.getMember();
         Member sender = memberAdapter.getMember();
         return QuestionReplyAlertMessage.builder()
             .question(question)
+            .recipient(recipient)
             .sender(sender)
             .build();
     }

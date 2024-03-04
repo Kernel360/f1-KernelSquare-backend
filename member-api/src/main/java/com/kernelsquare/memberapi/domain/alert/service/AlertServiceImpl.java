@@ -27,7 +27,6 @@ public class AlertServiceImpl implements AlertService {
             .toList();
     }
 
-    @Async
     @Override
     public void storeAndSendAlert(AlertMessage alertMessage) {
         Alert alert = alertMessage.process();

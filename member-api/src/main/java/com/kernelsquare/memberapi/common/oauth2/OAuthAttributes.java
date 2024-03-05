@@ -1,6 +1,7 @@
 package com.kernelsquare.memberapi.common.oauth2;
 
 import com.kernelsquare.core.type.SocialProvider;
+import com.kernelsquare.domainmysql.domain.level.entity.Level;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
 import com.kernelsquare.domainmysql.domain.social_login.entity.SocialLogin;
 import com.kernelsquare.memberapi.common.oauth2.info.OAuth2UserInfo;
@@ -83,10 +84,12 @@ public class OAuthAttributes {
     /**
      * of메소드로 OAuthAttributes 객체가 생성되어, 유저 정보들이 담긴 OAuth2UserInfo가 소셜 타입별로 주입된 상태
      */
-    public Member toEntity(OAuth2UserInfo oauth2UserInfo) {
+    public Member toEntity(OAuth2UserInfo oauth2UserInfo, Level level) {
         return Member.builder()
-                .nickname("테스트" + UUID.randomUUID().toString().replace("-", ""))
+//                .nickname("테스트" + UUID.randomUUID().toString().replace("-", ""))
+                .nickname(oauth2UserInfo.getEmail())
                 .email(oauth2UserInfo.getEmail())
+                .level(level)
                 .password("password")
                 .experience(0L)
                 .imageUrl("image_url")

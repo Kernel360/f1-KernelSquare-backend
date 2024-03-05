@@ -1,8 +1,18 @@
 package com.kernelsquare.memberapi.common.oauth2.service;
 
+import com.kernelsquare.core.common_response.error.code.AuthorityErrorCode;
+import com.kernelsquare.core.common_response.error.code.LevelErrorCode;
+import com.kernelsquare.core.common_response.error.exception.BusinessException;
+import com.kernelsquare.core.type.AuthorityType;
 import com.kernelsquare.core.type.SocialProvider;
+import com.kernelsquare.domainmysql.domain.authority.entity.Authority;
+import com.kernelsquare.domainmysql.domain.authority.repository.AuthorityRepository;
+import com.kernelsquare.domainmysql.domain.level.entity.Level;
+import com.kernelsquare.domainmysql.domain.level.repository.LevelRepository;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
 import com.kernelsquare.domainmysql.domain.member.repository.MemberRepository;
+import com.kernelsquare.domainmysql.domain.member_authority.entity.MemberAuthority;
+import com.kernelsquare.domainmysql.domain.member_authority.repository.MemberAuthorityRepository;
 import com.kernelsquare.domainmysql.domain.social_login.entity.SocialLogin;
 import com.kernelsquare.domainmysql.domain.social_login.repository.SocialLoginRepository;
 import com.kernelsquare.memberapi.common.oauth2.CustomOAuth2User;
@@ -10,6 +20,7 @@ import com.kernelsquare.memberapi.common.oauth2.OAuthAttributes;
 import com.kernelsquare.memberapi.common.oauth2.info.OAuth2UserInfo;
 import com.kernelsquare.memberapi.domain.auth.dto.MemberAdaptorInstance;
 import com.kernelsquare.memberapi.domain.auth.dto.MemberDetails;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,10 +31,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -32,12 +40,16 @@ public class CustomOAuth2MemberService implements OAuth2UserService<OAuth2UserRe
 
     private final MemberRepository memberRepository;
     private final SocialLoginRepository socialLoginRepository;
+    private final LevelRepository levelRepository;
+    private final AuthorityRepository authorityRepository;
+    private final MemberAuthorityRepository memberAuthorityRepository;
 
     private static final String NAVER = "naver";
     private static final String KAKAO = "kakao";
     private static final String GOOGLE = "google";
 
     @Override
+    @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         log.info("CustomOAuth2UserService.loadUser() 실행 - OAuth2 로그인 요청 진입");
 
@@ -61,7 +73,11 @@ public class CustomOAuth2MemberService implements OAuth2UserService<OAuth2UserRe
         // socialType에 따라 유저 정보를 통해 OAuthAttributes 객체 생성
         OAuthAttributes extractAttributes = OAuthAttributes.of(socialType, userNameAttributeName, attributes);
 
-        Member createdMember = getMember(extractAttributes, socialType); // getMember() 메소드로 User 객체 생성 후 반환
+        if (extractAttributes.getOauth2UserInfo().getEmail() == null) {
+            throw new RuntimeException("사용자 정보에 이메일이 없습니다.");
+        }
+
+        Member createdMember = getMember(extractAttributes, socialType); // getMember() 메소드로 Member 객체 생성 후 반환
 
         return MemberDetails.create(MemberAdaptorInstance.of(createdMember), attributes);
     }
@@ -80,32 +96,49 @@ public class CustomOAuth2MemberService implements OAuth2UserService<OAuth2UserRe
     }
 
     private Member getMember(OAuthAttributes attributes, SocialProvider socialType) {
-        Member findMember = memberRepository.findAllByEmail(attributes.getOauth2UserInfo().getId());
+        Boolean checkExistMember = memberRepository.existsByEmail(attributes.getOauth2UserInfo().getEmail());
+        Boolean checkExistSocialLogin = socialLoginRepository.existsByEmailAndSocialProvider(
+                attributes.getOauth2UserInfo().getEmail(), socialType);
 
-        if (findMember != null) {
-            Optional<SocialLogin> checkSocial = socialLoginRepository.findById(findMember.getId());
-            if (checkSocial.isPresent()) {
-                if (checkSocial.get().getSocialProvider() == socialType) {
-                    // 로그인
-                    return findMember;
-                }
-            }
-            // 추가 후 로그인
-            createSocial(attributes, socialType);
+        if (!checkExistMember) {
+            saveMemberWithSocial(attributes, socialType);
+            Member findMember = memberRepository.findByEmail(attributes.getOauth2UserInfo().getEmail())
+                    .orElseThrow(() -> new RuntimeException("소셜 회원가입 중 오류가 발생했습니다1."));
             return findMember;
         }
-        return saveMemberWithSocial(attributes, socialType);
+
+        if(!checkExistSocialLogin) {
+            // TODO social 만 추가 후 로그인
+            createSocial(attributes, socialType);
+            Member findMember = memberRepository.findByEmail(attributes.getOauth2UserInfo().getEmail())
+                    .orElseThrow(() -> new RuntimeException("소셜 회원가입 중 오류가 발생했습니다2."));
+            return findMember;
+        }
+
+        Member findMember = memberRepository.findByEmail(attributes.getOauth2UserInfo().getEmail())
+                .orElseThrow(() -> new RuntimeException("소셜 회원가입 중 오류가 발생했습니다3."));
+
+        return findMember;
     }
 
-//    private Member saveMember(OAuthAttributes attributes) {
-//        Member createdMember = attributes.toEntity(attributes.getOauth2UserInfo());
-//        return memberRepository.save(createdMember);
-//    }
-
     private Member saveMemberWithSocial(OAuthAttributes attributes, SocialProvider socialType) {
-        Member createdMember = attributes.toEntity(attributes.getOauth2UserInfo());
+        Level level = levelRepository.findByName(1L)
+                .orElseThrow(() -> new BusinessException(LevelErrorCode.LEVEL_NOT_FOUND));
+
+        Authority authority = authorityRepository.findAuthorityByAuthorityType(AuthorityType.ROLE_USER)
+                .orElseThrow(() -> new BusinessException(AuthorityErrorCode.AUTHORITY_NOT_FOUND));
+
+        Member createdMember = attributes.toEntity(attributes.getOauth2UserInfo(), level);
+        MemberAuthority memberAuthority = MemberAuthority.builder().member(createdMember).authority(authority).build();
+        memberAuthorityRepository.save(memberAuthority);
+
+        Member savedMember = memberRepository.save(createdMember);
+
+        List<MemberAuthority> authorities = List.of(memberAuthority);
+        savedMember.initAuthorities(authorities);
+
         createSocial(attributes, socialType);
-        return memberRepository.save(createdMember);
+        return savedMember;
     }
 
     private void createSocial(OAuthAttributes attributes, SocialProvider providerType) {

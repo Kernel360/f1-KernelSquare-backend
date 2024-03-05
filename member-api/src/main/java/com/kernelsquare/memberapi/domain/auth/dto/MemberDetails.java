@@ -21,7 +21,7 @@ import java.util.Map;
 @Getter
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class MemberDetails implements UserDetails, OAuth2User, OidcUser {
+public class MemberDetails implements UserDetails, OAuth2User {
     private final Member member;
     private final Level level;
     private final List<SimpleGrantedAuthority> authorities;
@@ -97,21 +97,6 @@ public class MemberDetails implements UserDetails, OAuth2User, OidcUser {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    @Override
-    public Map<String, Object> getClaims() {
-        return null;
-    }
-
-    @Override
-    public OidcUserInfo getUserInfo() {
-        return null;
-    }
-
-    @Override
-    public OidcIdToken getIdToken() {
-        return null;
     }
 
     @Override

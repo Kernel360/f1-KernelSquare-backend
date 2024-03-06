@@ -83,6 +83,10 @@ custom:
     image:
       baseUrl: ${BASE_URL}
 
+chatgpt:
+  rest-api-key: ${CHAT_GPT_API_KEY}
+  chat-api-url: https://api.openai.com/v1/chat/completions
+
 management:
   endpoints:
     web:

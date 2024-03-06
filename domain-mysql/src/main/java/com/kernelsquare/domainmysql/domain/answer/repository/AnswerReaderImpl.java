@@ -17,7 +17,7 @@ public class AnswerReaderImpl implements AnswerReader {
     }
 
     @Override
-    public List<Answer> findAnswersTopThree(Long questionId) {
+    public List<Answer> findAnswersTop3(Long questionId) {
         return answerRepository.findAnswersByQuestionIdSortedByVoteCount(questionId);
     }
 }

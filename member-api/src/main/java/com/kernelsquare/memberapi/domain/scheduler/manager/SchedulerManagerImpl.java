@@ -9,7 +9,8 @@ import com.kernelsquare.domainmysql.domain.question.entity.Question;
 import com.kernelsquare.domainmysql.domain.question.repository.QuestionReader;
 import com.kernelsquare.domainmysql.domain.rank.entity.Rank;
 import com.kernelsquare.domainmysql.domain.rank.repository.RankReader;
-import com.kernelsquare.memberapi.domain.alert.mapper.AlertMessageMapper;
+import com.kernelsquare.memberapi.domain.alert.dto.AlertDto;
+import com.kernelsquare.memberapi.domain.alert.mapper.AlertDtoMapper;
 import com.kernelsquare.memberapi.domain.alert.service.AlertService;
 import com.kernelsquare.memberapi.domain.coffeechat.dto.ChatMessageResponse;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,7 @@ public class SchedulerManagerImpl implements ScheculerManager {
     private final AnswerReader answerReader;
     private final RankReader rankReader;
     private final AlertService alertService;
-    private final AlertMessageMapper alertMessageMapper;
+    private final AlertDtoMapper alertDtoMapper;
 
     @Override
     @Transactional
@@ -63,7 +64,7 @@ public class SchedulerManagerImpl implements ScheculerManager {
             .filter(question -> question.getCreatedDate().toLocalDate().isBefore(LocalDate.now().minusDays(7)))
             .forEach(question -> {
                 question.closeQuestion();
-                List<Answer> answers = answerReader.findAnswersTopThree(question.getId());
+                List<Answer> answers = answerReader.findAnswersTop3(question.getId());
 
                 Long rankName = 1L;
 
@@ -71,7 +72,7 @@ public class SchedulerManagerImpl implements ScheculerManager {
                     Rank rank = rankReader.findRank(rankName);
                     answer.updateRank(rank);
 
-                    alertService.storeAndSendAlert(alertMessageMapper.of(question, answer, rank));
+                    alertService.storeAndSendAlert(alertDtoMapper.of(AlertDto.RankAnswerAlert.of(question, answer, rank)));
 
                     rankName += 1L;
                 }

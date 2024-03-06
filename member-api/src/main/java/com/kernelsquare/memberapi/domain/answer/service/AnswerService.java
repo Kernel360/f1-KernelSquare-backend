@@ -4,10 +4,9 @@ import com.kernelsquare.core.common_response.error.code.AnswerErrorCode;
 import com.kernelsquare.core.common_response.error.exception.BusinessException;
 import com.kernelsquare.core.util.ExperiencePolicy;
 import com.kernelsquare.core.util.ImageUtils;
-import com.kernelsquare.domainmongodb.domain.alert.entity.Alert;
-import com.kernelsquare.domainmongodb.domain.alert.repository.AlertStore;
 import com.kernelsquare.domainmysql.domain.answer.command.AnswerCommand;
 import com.kernelsquare.domainmysql.domain.answer.entity.Answer;
+import com.kernelsquare.domainmysql.domain.answer.info.AnswerInfo;
 import com.kernelsquare.domainmysql.domain.answer.repository.AnswerReader;
 import com.kernelsquare.domainmysql.domain.answer.repository.AnswerRepository;
 import com.kernelsquare.domainmysql.domain.answer.repository.AnswerStore;
@@ -18,7 +17,6 @@ import com.kernelsquare.domainmysql.domain.member_answer_vote.entity.MemberAnswe
 import com.kernelsquare.domainmysql.domain.member_answer_vote.repository.MemberAnswerVoteReader;
 import com.kernelsquare.domainmysql.domain.question.entity.Question;
 import com.kernelsquare.domainmysql.domain.question.repository.QuestionReader;
-import com.kernelsquare.memberapi.domain.alert.manager.SseManager;
 import com.kernelsquare.memberapi.domain.answer.dto.FindAllAnswerResponse;
 import com.kernelsquare.memberapi.domain.answer.dto.FindAnswerResponse;
 import com.kernelsquare.memberapi.domain.answer.dto.UpdateAnswerRequest;
@@ -72,7 +70,7 @@ public class AnswerService {
 	}
 
 	@Transactional
-	public Long createAnswer(AnswerCommand.CreateAnswer command) {
+	public AnswerInfo createAnswer(AnswerCommand.CreateAnswer command) {
 		Member member = command.author();
 
 		Question question = questionReader.findQuestion(command.questionId());
@@ -81,7 +79,7 @@ public class AnswerService {
 
 		Answer answer = command.toEntity(question);
 
-		Answer saveAnswer = answerStore.store(answer);
+		answerStore.store(answer);
 
 		member.addExperience(ExperiencePolicy.MEMBER_DAILY_ATTENDED.getReward());
 		if (member.isExperienceExceed(member.getExperience())) {
@@ -90,7 +88,7 @@ public class AnswerService {
 			member.updateLevel(nextLevel);
 		}
 
-		return saveAnswer.getId();
+		return AnswerInfo.from(question, member);
 	}
 
 	@Transactional

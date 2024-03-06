@@ -7,5 +7,5 @@ import java.util.List;
 public interface AnswerReader {
     List<Answer> findAnswers(Long questionId);
 
-    List<Answer> findAnswersTopThree(Long questionId);
+    List<Answer> findAnswersTop3(Long questionId);
 }

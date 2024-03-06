@@ -1,8 +1,11 @@
 package com.kernelsquare.memberapi.domain.alert.mapper;
 
-import com.kernelsquare.domainmongodb.domain.alert.info.AlertInfo;
 import com.kernelsquare.domainmongodb.domain.alert.command.AlertCommand;
+import com.kernelsquare.domainmongodb.domain.alert.info.AlertInfo;
+import com.kernelsquare.domainmysql.domain.answer.info.AnswerInfo;
 import com.kernelsquare.memberapi.domain.alert.dto.AlertDto;
+import com.kernelsquare.memberapi.domain.alert.dto.QuestionReplyAlertMessage;
+import com.kernelsquare.memberapi.domain.alert.dto.RankAnswerAlertMessage;
 import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
@@ -21,6 +24,10 @@ public interface AlertDtoMapper {
     default String mapMemberId(MemberAdapter memberAdapter) {
         return memberAdapter.getMember().getId().toString();
     }
+
+    QuestionReplyAlertMessage from(AnswerInfo answerInfo);
+
+    RankAnswerAlertMessage of(AlertDto.RankAnswerAlert rankAnswerAlert);
 
     AlertDto.FindAllResponse toFindAllResponse(AlertInfo alertInfo);
 }

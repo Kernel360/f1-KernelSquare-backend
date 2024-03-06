@@ -61,6 +61,11 @@ public class ReservationService {
 			throw new BusinessException(ReservationErrorCode.RESERVATION_AVAILABLE_TIME_PASSED);
 		}
 
+		// 예약하려는 시간이 현재 시간보다 이전인지 체크(이전이면 예외처리)
+		if (addReservationMemberRequest.reservationStartTime().isBefore(LocalDateTime.now())) {
+			throw new BusinessException(ReservationErrorCode.RESERVATION_AVAILABLE_TIME_PASSED);
+		}
+
 		List<Reservation> reservationList = reservationRepository.findAllByMemberId(
 			memberId);
 
@@ -84,7 +89,7 @@ public class ReservationService {
 
 		// 예약 중복 확인 체크하기
 		for (Reservation bookedReservation : reservationList) {
-			if (bookedReservation.getStartTime().equals(addReservationMemberRequest.startTime())) {
+			if (bookedReservation.getStartTime().equals(addReservationMemberRequest.reservationStartTime())) {
 				throw new BusinessException(ReservationErrorCode.DUPLICATE_RESERVATION_TIME);
 			}
 		}

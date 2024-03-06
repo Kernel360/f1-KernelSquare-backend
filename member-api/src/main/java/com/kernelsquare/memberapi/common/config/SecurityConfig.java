@@ -121,7 +121,8 @@ public class SecurityConfig {
 			.requestMatchers(HttpMethod.GET, "/api/v1/techs").permitAll()
 			.requestMatchers(HttpMethod.GET, "/login/oauth2/**").permitAll()
 			.requestMatchers(HttpMethod.GET, "/oauth2/**").permitAll()
-			.requestMatchers(HttpMethod.GET, "/favicon.ico").permitAll()
+			.requestMatchers(HttpMethod.GET, "/favicon.ico/**").permitAll()
+			.requestMatchers(HttpMethod.GET, "/api/v1/test").permitAll()
 
 			// 모든 권한에 대한 접근 허용
 			.requestMatchers(hasAnyAuthorityPatterns).authenticated()

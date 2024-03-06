@@ -24,10 +24,12 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
@@ -74,7 +76,7 @@ public class CustomOAuth2MemberService implements OAuth2UserService<OAuth2UserRe
         OAuthAttributes extractAttributes = OAuthAttributes.of(socialType, userNameAttributeName, attributes);
 
         if (extractAttributes.getOauth2UserInfo().getEmail() == null) {
-            throw new RuntimeException("사용자 정보에 이메일이 없습니다.");
+            throw new OAuth2AuthenticationException(new OAuth2Error("email_missing", "사용자 정보에 이메일이 없습니다.", null));
         }
 
         Member createdMember = getMember(extractAttributes, socialType); // getMember() 메소드로 Member 객체 생성 후 반환
@@ -121,7 +123,7 @@ public class CustomOAuth2MemberService implements OAuth2UserService<OAuth2UserRe
         return findMember;
     }
 
-    private Member saveMemberWithSocial(OAuthAttributes attributes, SocialProvider socialType) {
+    public Member saveMemberWithSocial(OAuthAttributes attributes, SocialProvider socialType) {
         Level level = levelRepository.findByName(1L)
                 .orElseThrow(() -> new BusinessException(LevelErrorCode.LEVEL_NOT_FOUND));
 

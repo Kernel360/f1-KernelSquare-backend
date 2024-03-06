@@ -110,4 +110,8 @@ public class MemberDetails implements UserDetails, OAuth2User {
             attributes
         );
     }
+
+    public String getEmail(){
+        return member.getEmail();
+    }
 }

@@ -2,6 +2,7 @@ package com.kernelsquare.memberapi.domain.auth.dto;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.kernelsquare.memberapi.domain.image.utils.ImageUtils;
 import com.kernelsquare.core.type.AuthorityType;
 import com.kernelsquare.domainmysql.domain.authority.entity.Authority;

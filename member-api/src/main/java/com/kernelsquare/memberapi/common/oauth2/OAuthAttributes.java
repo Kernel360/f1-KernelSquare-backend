@@ -3,7 +3,6 @@ package com.kernelsquare.memberapi.common.oauth2;
 import com.kernelsquare.core.type.SocialProvider;
 import com.kernelsquare.domainmysql.domain.level.entity.Level;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
-import com.kernelsquare.domainmysql.domain.social_login.entity.SocialLogin;
 import com.kernelsquare.memberapi.common.oauth2.info.OAuth2UserInfo;
 import com.kernelsquare.memberapi.common.oauth2.info.impl.GithubOAuth2UserInfo;
 import com.kernelsquare.memberapi.common.oauth2.info.impl.GoogleOAuth2UserInfo;
@@ -11,10 +10,13 @@ import com.kernelsquare.memberapi.common.oauth2.info.impl.KakaoOAuth2UserInfo;
 import com.kernelsquare.memberapi.common.oauth2.info.impl.NaverOAuth2UserInfo;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.security.core.userdetails.User;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * 각 소셜에서 받아오는 데이터가 다르므로
@@ -85,12 +87,13 @@ public class OAuthAttributes {
      * of메소드로 OAuthAttributes 객체가 생성되어, 유저 정보들이 담긴 OAuth2UserInfo가 소셜 타입별로 주입된 상태
      */
     public Member toEntity(OAuth2UserInfo oauth2UserInfo, Level level) {
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         return Member.builder()
 //                .nickname("테스트" + UUID.randomUUID().toString().replace("-", ""))
                 .nickname(oauth2UserInfo.getEmail())
                 .email(oauth2UserInfo.getEmail())
                 .level(level)
-                .password("password")
+                .password(passwordEncoder.encode("password"))
                 .experience(0L)
                 .imageUrl("image_url")
                 .introduction("introduction")

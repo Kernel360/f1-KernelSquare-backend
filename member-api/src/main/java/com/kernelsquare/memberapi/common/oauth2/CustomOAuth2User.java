@@ -1,5 +1,6 @@
 package com.kernelsquare.memberapi.common.oauth2;
 
+import com.kernelsquare.memberapi.domain.auth.dto.MemberDetails;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;

@@ -42,6 +42,7 @@ import com.kernelsquare.memberapi.domain.answer.dto.FindAllAnswerResponse;
 import com.kernelsquare.memberapi.domain.answer.dto.FindAnswerResponse;
 import com.kernelsquare.memberapi.domain.answer.dto.UpdateAnswerRequest;
 import com.kernelsquare.memberapi.domain.answer.service.AnswerService;
+import com.kernelsquare.memberapi.domain.chatgpt.service.ChatGptService;
 
 @DisplayName("답변 컨트롤러 단위 테스트")
 @WebMvcTest(AnswerController.class)
@@ -112,6 +113,8 @@ public class AnswerControllerTest {
 	private MockMvc mockMvc;
 	@MockBean
 	private AnswerService answerService;
+	@MockBean
+	private ChatGptService chatGptService;
 	private List<FindAnswerResponse> answerResponseList = new ArrayList<>();
 	private FindAllAnswerResponse answerResponseListDto;
 

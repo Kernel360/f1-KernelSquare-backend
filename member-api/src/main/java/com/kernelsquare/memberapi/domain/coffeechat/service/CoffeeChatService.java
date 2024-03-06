@@ -45,7 +45,6 @@ public class CoffeeChatService {
 	private final SimpMessageSendingOperations sendingOperations;
 	private final MongoChatMessageRepository mongoChatMessageRepository;
 	private final ReservationRepository reservationRepository;
-	private final KafkaAdmin kafkaAdmin;
 
 	private final ConcurrentHashMap<String, List<ChatRoomMember>> chatRoomMemberList = new ConcurrentHashMap<>();
 
@@ -82,13 +81,6 @@ public class CoffeeChatService {
 
 	public EnterCoffeeChatRoomResponse mentorEnter(EnterCoffeeChatRoomRequest enterCoffeeChatRoomRequest,
 		ChatRoom chatRoom, MemberAdapter memberAdapter) {
-
-		String topicName = "chat_" + chatRoom.getRoomKey();
-
-		AdminClient client = AdminClient.create(kafkaAdmin.getConfigurationProperties());
-		client.createTopics(Collections.singleton(new NewTopic(topicName, 1, (short) 1)));
-
-		client.close();
 
 		chatRoom.activateRoom(enterCoffeeChatRoomRequest.articleTitle());
 

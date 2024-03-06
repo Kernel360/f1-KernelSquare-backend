@@ -5,8 +5,11 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,6 +47,7 @@ public class ReservationArticleService {
 	private final ReservationRepository reservationRepository;
 	private final CoffeeChatRepository coffeeChatRepository;
 	private final HashtagRepository hashtagRepository;
+	private final KafkaAdmin kafkaAdmin;
 
 	@Transactional
 	public CreateReservationArticleResponse createReservationArticle(
@@ -86,6 +90,14 @@ public class ReservationArticleService {
 				.build();
 
 			coffeeChatRepository.save(chatroom);
+
+			String topicName = "chat_" + chatroom.getRoomKey();
+
+			AdminClient client = AdminClient.create(kafkaAdmin.getConfigurationProperties());
+			client.createTopics(Collections.singleton(new NewTopic(topicName, 1, (short) 1)));
+
+			client.close();
+
 			if (startTime.isAfter(dateTime)) {
 				startTime = dateTime;
 			}

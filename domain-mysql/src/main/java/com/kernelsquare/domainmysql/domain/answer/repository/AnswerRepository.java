@@ -20,4 +20,6 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
 	@Modifying
 	@Query("UPDATE Answer a SET a.voteCount = a.voteCount - 1 WHERE a.id = :answerId")
 	void downVoteAnswer(@Param("answerId") Long answerId);
+
+	Boolean existsByMemberNicknameAndQuestionId(String nickname, Long questionId);
 }

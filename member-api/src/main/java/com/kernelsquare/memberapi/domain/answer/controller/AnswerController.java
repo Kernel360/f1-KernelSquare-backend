@@ -12,12 +12,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kernelsquare.core.common_response.ApiResponse;
+import com.kernelsquare.core.common_response.ResponseEntityFactory;
 import com.kernelsquare.memberapi.domain.answer.dto.CreateAnswerRequest;
 import com.kernelsquare.memberapi.domain.answer.dto.FindAllAnswerResponse;
 import com.kernelsquare.memberapi.domain.answer.dto.UpdateAnswerRequest;
 import com.kernelsquare.memberapi.domain.answer.service.AnswerService;
-import com.kernelsquare.core.common_response.ApiResponse;
-import com.kernelsquare.core.common_response.ResponseEntityFactory;
+import com.kernelsquare.memberapi.domain.chatgpt.service.ChatGptService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 public class AnswerController {
 
 	private final AnswerService answerService;
+	private final ChatGptService chatGptService;
 
 	@GetMapping("/questions/{questionId}/answers")
 	public ResponseEntity<ApiResponse<FindAllAnswerResponse>> findAllAnswers(
@@ -43,6 +45,14 @@ public class AnswerController {
 	) {
 		answerService.createAnswer(createAnswerRequest, questionId);
 		return ResponseEntityFactory.toResponseEntity(ANSWER_CREATED);
+	}
+
+	@GetMapping("/questions/{questionId}/answer-bot")
+	public ResponseEntity<ApiResponse> createAnswerWithChatGpt(
+		@PathVariable Long questionId
+	) {
+		chatGptService.createChatGptAnswer(questionId);
+		return ResponseEntityFactory.toResponseEntity(AUTOMATED_ANSWER_CREATED);
 	}
 
 	@PutMapping("/questions/answers/{answerId}")

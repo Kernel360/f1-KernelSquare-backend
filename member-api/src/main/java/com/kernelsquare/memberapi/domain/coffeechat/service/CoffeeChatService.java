@@ -2,9 +2,13 @@ package com.kernelsquare.memberapi.domain.coffeechat.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.NewTopic;
+import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
@@ -41,6 +45,7 @@ public class CoffeeChatService {
 	private final SimpMessageSendingOperations sendingOperations;
 	private final MongoChatMessageRepository mongoChatMessageRepository;
 	private final ReservationRepository reservationRepository;
+	private final KafkaAdmin kafkaAdmin;
 
 	private final ConcurrentHashMap<String, List<ChatRoomMember>> chatRoomMemberList = new ConcurrentHashMap<>();
 
@@ -77,6 +82,14 @@ public class CoffeeChatService {
 
 	public EnterCoffeeChatRoomResponse mentorEnter(EnterCoffeeChatRoomRequest enterCoffeeChatRoomRequest,
 		ChatRoom chatRoom, MemberAdapter memberAdapter) {
+
+		String topicName = "chat_" + chatRoom.getRoomKey();
+
+		AdminClient client = AdminClient.create(kafkaAdmin.getConfigurationProperties());
+		client.createTopics(Collections.singleton(new NewTopic(topicName, 1, (short) 1)));
+
+		client.close();
+
 		chatRoom.activateRoom(enterCoffeeChatRoomRequest.articleTitle());
 
 		//TODO 중복 입장에 대한 정책이 정해지면 로직 구현

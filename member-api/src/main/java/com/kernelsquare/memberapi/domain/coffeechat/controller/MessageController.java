@@ -23,7 +23,7 @@ public class MessageController {
 			case EXPIRE -> {}
 			default -> throw new BusinessException(CoffeeChatErrorCode.MESSAGE_TYPE_NOT_VALID);
 		}
-		kafkaTemplate.send("chat_" + message.getRoomKey(), message);
+		kafkaTemplate.send("chat", message);
 	}
 }
 

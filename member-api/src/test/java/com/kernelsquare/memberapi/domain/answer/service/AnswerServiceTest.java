@@ -4,6 +4,7 @@ import com.kernelsquare.core.common_response.error.code.AnswerErrorCode;
 import com.kernelsquare.core.common_response.error.exception.BusinessException;
 import com.kernelsquare.domainmysql.domain.answer.command.AnswerCommand;
 import com.kernelsquare.domainmysql.domain.answer.entity.Answer;
+import com.kernelsquare.domainmysql.domain.answer.info.AnswerInfo;
 import com.kernelsquare.domainmysql.domain.answer.repository.AnswerReader;
 import com.kernelsquare.domainmysql.domain.answer.repository.AnswerRepository;
 import com.kernelsquare.domainmysql.domain.answer.repository.AnswerStore;
@@ -141,11 +142,15 @@ public class AnswerServiceTest {
 		doReturn(foundLevel).when(levelReader).findLevel(anyLong());
 
 		//when
-		Long saveAnswerId = answerService.createAnswer(command);
+		AnswerInfo answerInfo = answerService.createAnswer(command);
 
 
 		//then
-		assertThat(saveAnswerId).isEqualTo(foundAnswer.getId());
+		assertThat(answerInfo.getRecipientId()).isEqualTo(foundQuestion.getMember().getId().toString());
+		assertThat(answerInfo.getRecipient()).isEqualTo(foundQuestion.getMember().getNickname());
+		assertThat(answerInfo.getSenderId()).isEqualTo(foundAnswer.getMember().getId().toString());
+		assertThat(answerInfo.getSender()).isEqualTo(foundAnswer.getMember().getNickname());
+		assertThat(answerInfo.getQuestionTitle()).isEqualTo(foundQuestion.getTitle());
 
 		//verify
 		verify(questionReader, times(1)).findQuestion(anyLong());

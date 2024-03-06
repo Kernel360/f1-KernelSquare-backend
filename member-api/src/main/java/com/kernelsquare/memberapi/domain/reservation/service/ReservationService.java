@@ -44,11 +44,6 @@ public class ReservationService {
 		Reservation reservation = reservationRepository.findById(reservationId)
 			.orElseThrow(() -> new BusinessException(ReservationErrorCode.RESERVATION_NOT_FOUND));
 
-		//멘티가 1일 전에 예약 취소 불가
-		if (LocalDateTime.now().isAfter(reservation.getStartTime().minusDays(1))) {
-			throw new BusinessException(ReservationErrorCode.RESERVATION_CANCEL_DENIED_TIME_PASSED);
-		}
-
 		reservation.deleteMember();
 	}
 

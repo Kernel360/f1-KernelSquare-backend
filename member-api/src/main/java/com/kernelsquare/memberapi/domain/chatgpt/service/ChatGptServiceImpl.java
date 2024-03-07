@@ -60,7 +60,7 @@ public class ChatGptServiceImpl implements ChatGptService {
 
 		Answer answer = Answer.builder()
 			.question(question)
-			.imageUrl("")
+			.imageUrl(null)
 			.voteCount(0L)
 			.content(response)
 			.member(member)

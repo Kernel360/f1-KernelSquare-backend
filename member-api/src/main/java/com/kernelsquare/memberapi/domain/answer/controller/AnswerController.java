@@ -47,7 +47,7 @@ public class AnswerController {
 		return ResponseEntityFactory.toResponseEntity(ANSWER_CREATED);
 	}
 
-	@GetMapping("/questions/{questionId}/answer-bot")
+	@PostMapping("/questions/{questionId}/answer-bot")
 	public ResponseEntity<ApiResponse> createAnswerWithChatGpt(
 		@PathVariable Long questionId
 	) {

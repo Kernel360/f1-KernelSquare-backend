@@ -82,10 +82,8 @@ class CoffeeChatControllerTest {
 
 		MemberAdapter memberAdapter = new MemberAdapter(MemberAdaptorInstance.of(member));
 
-		ChatRoomMember chatRoomMember = ChatRoomMember.from(member);
-
 		EnterCoffeeChatRoomResponse enterCoffeeChatRoomResponse = EnterCoffeeChatRoomResponse.of(
-			enterCoffeeChatRoomRequest.articleTitle(), chatRoom, List.of(chatRoomMember));
+			enterCoffeeChatRoomRequest.articleTitle(), chatRoom);
 
 		given(coffeeChatService.enterCoffeeChatRoom(any(EnterCoffeeChatRoomRequest.class), any(MemberAdapter.class))).willReturn(
 			enterCoffeeChatRoomResponse);

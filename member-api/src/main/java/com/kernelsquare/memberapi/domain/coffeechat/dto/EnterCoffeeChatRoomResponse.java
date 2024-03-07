@@ -17,21 +17,17 @@ public record EnterCoffeeChatRoomResponse(
 
 	Boolean active,
 
-	Set<ChatRoomMember> memberList,
-
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = TimeResponseFormat.PATTERN)
 	LocalDateTime expirationTime
 ) {
 	public static EnterCoffeeChatRoomResponse of(
 		String articleTitle,
-		ChatRoom chatRoom,
-		Set<ChatRoomMember> chatRoomMemberList
+		ChatRoom chatRoom
 	) {
 		return EnterCoffeeChatRoomResponse.builder()
 			.articleTitle(articleTitle)
 			.roomKey(chatRoom.getRoomKey())
 			.active(chatRoom.getActive())
-			.memberList(chatRoomMemberList)
 			.expirationTime(chatRoom.getExpirationTime())
 			.build();
 	}

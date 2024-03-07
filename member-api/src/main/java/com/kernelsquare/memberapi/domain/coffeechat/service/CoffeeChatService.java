@@ -62,8 +62,7 @@ public class CoffeeChatService {
 
 		CoffeeChatValidation.validateDuplicateEntry(chatRoomMemberManager, sendingOperations, chatRoom, memberAdapter);
 
-		return EnterCoffeeChatRoomResponse.of(enterCoffeeChatRoomRequest.articleTitle(), chatRoom,
-            chatRoomMemberManager.getChatRoom(chatRoom.getRoomKey()));
+		return EnterCoffeeChatRoomResponse.of(enterCoffeeChatRoomRequest.articleTitle(), chatRoom);
 	}
 
 	public EnterCoffeeChatRoomResponse menteeEnter(EnterCoffeeChatRoomRequest enterCoffeeChatRoomRequest,
@@ -75,8 +74,7 @@ public class CoffeeChatService {
 
 		CoffeeChatValidation.validateDuplicateEntry(chatRoomMemberManager, sendingOperations, chatRoom, memberAdapter);
 
-		return EnterCoffeeChatRoomResponse.of(enterCoffeeChatRoomRequest.articleTitle(), chatRoom,
-                                                chatRoomMemberManager.getChatRoom(chatRoom.getRoomKey()));
+		return EnterCoffeeChatRoomResponse.of(enterCoffeeChatRoomRequest.articleTitle(), chatRoom);
 	}
 
 	public FindChatHistoryResponse findChatHistory(String roomKey) {

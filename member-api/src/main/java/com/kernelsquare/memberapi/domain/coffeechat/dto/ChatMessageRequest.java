@@ -35,4 +35,8 @@ public class ChatMessageRequest {
     public void setMessage(String message) {
         this.message = message;
     }
+
+    public void setMemberList(Set<ChatRoomMember> member) {
+        this.memberList = member;
+    }
 }

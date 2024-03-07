@@ -1,5 +1,6 @@
 package com.kernelsquare.memberapi.domain.scheduler.manager;
 
+import com.kernelsquare.core.constants.SystemConstants;
 import com.kernelsquare.core.type.MessageType;
 import com.kernelsquare.domainmysql.domain.answer.entity.Answer;
 import com.kernelsquare.domainmysql.domain.answer.repository.AnswerReader;
@@ -69,7 +70,7 @@ public class SchedulerManagerImpl implements ScheculerManager {
                 Long rankName = 1L;
 
                 for (Answer answer : answers) {
-                    if (answer.getMember().getNickname().equals("커널스퀘어 AI 인턴")) {
+                    if (answer.getMember().getNickname().equals(SystemConstants.ANSWER_BOT)) {
                         continue;
                     }
 

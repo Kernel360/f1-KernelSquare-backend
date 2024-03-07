@@ -7,7 +7,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.kernelsquare.core.util.ImageUtilsCore;
+import com.kernelsquare.core.util.ImageUtils;
 import com.kernelsquare.domainmysql.domain.question.entity.Question;
 
 import lombok.Builder;
@@ -59,7 +59,7 @@ public class ChatGptDto {
 								.type(requestContentType.IMAGE_URL.getDescription())
 								.text(null)
 								.imageUrl(ImageUrl.builder()
-									.url(ImageUtilsCore.makeImageUrl(question.getImageUrl()))
+									.url(ImageUtils.makeImageUrl(question.getImageUrl()))
 									.build())
 								.build()
 						))

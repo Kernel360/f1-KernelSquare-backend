@@ -23,4 +23,6 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
 
 	@Query("SELECT a FROM Answer a WHERE a.question.id = :questionId ORDER BY a.voteCount DESC, a.createdDate ASC LIMIT 3")
 	List<Answer> findAnswersByQuestionIdSortedByVoteCount(@Param("questionId") Long questionId);
+
+	Boolean existsByMemberNicknameAndQuestionId(String nickname, Long questionId);
 }

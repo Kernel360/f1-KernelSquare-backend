@@ -1,7 +1,38 @@
 package com.kernelsquare.memberapi.domain.answer.controller;
 
+import static com.kernelsquare.core.common_response.response.code.AnswerResponseCode.*;
+import static com.kernelsquare.memberapi.config.ApiDocumentUtils.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.kernelsquare.domainmysql.domain.answer.entity.Answer;
 import com.kernelsquare.domainmysql.domain.level.entity.Level;
@@ -16,41 +47,11 @@ import com.kernelsquare.memberapi.domain.answer.facade.AnswerFacade;
 import com.kernelsquare.memberapi.domain.answer.service.AnswerService;
 import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
 import com.kernelsquare.memberapi.domain.auth.dto.MemberAdaptorInstance;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
-import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.kernelsquare.core.common_response.response.code.AnswerResponseCode.*;
-import static com.kernelsquare.memberapi.config.ApiDocumentUtils.getDocumentRequest;
-import static com.kernelsquare.memberapi.config.ApiDocumentUtils.getDocumentResponse;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.kernelsquare.memberapi.domain.chatgpt.service.ChatGptService;
 
 @DisplayName("답변 컨트롤러 단위 테스트")
 @WebMvcTest(AnswerController.class)
+@Import(AnswerController.class)
 @AutoConfigureRestDocs(uriScheme = "https", uriHost = "docs.api.com")
 public class AnswerControllerTest {
 	private final Long testQuestionId = 1L;
@@ -112,6 +113,8 @@ public class AnswerControllerTest {
 	private MockMvc mockMvc;
 	@MockBean
 	private AnswerService answerService;
+	@MockBean
+	private ChatGptService chatGptService;
 	private List<FindAnswerResponse> answerResponseList = new ArrayList<>();
 	private FindAllAnswerResponse answerResponseListDto;
 	@MockBean
@@ -193,13 +196,14 @@ public class AnswerControllerTest {
 		doNothing().when(answerFacade).createAnswer(any(AnswerDto.CreateRequest.class), anyLong(), eq(memberAdapter));
 
 		//when
-		ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/questions/1/answers")
-			.with(csrf())
-			.with(user(memberAdapter))
-			.contentType(MediaType.APPLICATION_JSON)
-			.accept(MediaType.APPLICATION_JSON)
-			.characterEncoding("UTF-8")
-			.content(jsonRequest));
+		ResultActions resultActions = mockMvc.perform(
+			RestDocumentationRequestBuilders.post("/api/v1/questions/1/answers")
+				.with(csrf())
+				.with(user(memberAdapter))
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.content(jsonRequest));
 
 		//then
 		resultActions.andExpect(status().is(ANSWER_CREATED.getStatus().value()))
@@ -219,6 +223,7 @@ public class AnswerControllerTest {
 	@DisplayName("답변 수정 성공시, 200 OK, 메시지, 답변정보를 반환한다.")
 	void testUpdateAnswer() throws Exception {
 		//given
+		objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
 		String jsonRequest = objectMapper.writeValueAsString(updateAnswerRequest);
 
 		doNothing()

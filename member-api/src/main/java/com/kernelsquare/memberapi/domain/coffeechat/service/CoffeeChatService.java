@@ -2,9 +2,13 @@ package com.kernelsquare.memberapi.domain.coffeechat.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.NewTopic;
+import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
@@ -38,7 +42,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CoffeeChatService {
 	private final CoffeeChatRepository coffeeChatRepository;
-	private final SimpMessageSendingOperations sendingOperations;
 	private final MongoChatMessageRepository mongoChatMessageRepository;
 	private final ReservationRepository reservationRepository;
 
@@ -77,6 +80,7 @@ public class CoffeeChatService {
 
 	public EnterCoffeeChatRoomResponse mentorEnter(EnterCoffeeChatRoomRequest enterCoffeeChatRoomRequest,
 		ChatRoom chatRoom, MemberAdapter memberAdapter) {
+
 		chatRoom.activateRoom(enterCoffeeChatRoomRequest.articleTitle());
 
 		//TODO 중복 입장에 대한 정책이 정해지면 로직 구현
@@ -114,24 +118,5 @@ public class CoffeeChatService {
 			.toList();
 
 		return FindChatHistoryResponse.of(chatHistory);
-	}
-
-	@Transactional
-	@Scheduled(cron = "0 0/30 * * * *")
-	public void disableRoom() {
-		List<ChatRoom> chatRooms = coffeeChatRepository.findAllByActive(true);
-		chatRooms.forEach(chatRoom -> {
-			chatRoom.deactivateRoom();
-
-			ChatMessageResponse message = ChatMessageResponse.builder()
-				.type(MessageType.EXPIRE)
-				.roomKey(chatRoom.getRoomKey())
-				.sender("system")
-				.message("채팅방 사용 시간이 만료되었습니다.")
-				.sendTime(LocalDateTime.now())
-				.build();
-
-			sendingOperations.convertAndSend("/topic/chat/room/" + message.getRoomKey(), message);
-		});
 	}
 }

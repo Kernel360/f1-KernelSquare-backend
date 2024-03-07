@@ -24,12 +24,11 @@ class AnswerRequestDtoTest {
 	@DisplayName("답변 생성 시 내용에 비속어가 포함되어 있는 지 확인한다.")
 	void whenCreateAnswerContainsBadWord_thenValidationFails() throws Exception {
 		//given
-		CreateAnswerRequest createAnswerRequest = CreateAnswerRequest.builder()
-			.memberId(1L)
+		AnswerDto.CreateRequest request = AnswerDto.CreateRequest.builder()
 			.content("ㅅㅂ개짜증나진짜로어쩌라는거야")
 			.build();
 
-		Set<ConstraintViolation<CreateAnswerRequest>> violations = validator.validate(createAnswerRequest);
+		Set<ConstraintViolation<AnswerDto.CreateRequest>> violations = validator.validate(request);
 		Set<String> msgList = violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toSet());
 
 		//then
@@ -39,26 +38,25 @@ class AnswerRequestDtoTest {
 	@Test
 	@DisplayName("답변 생성 요청 검증 테스트 - NotNull, NotBlank")
 	void whenCreateAnswerIsNotBlank_thenValidationFails() {
-		CreateAnswerRequest createAnswerRequest = CreateAnswerRequest.builder()
+		AnswerDto.CreateRequest request = AnswerDto.CreateRequest.builder()
 			.content("")
 			.build();
 
-		Set<ConstraintViolation<CreateAnswerRequest>> violations = validator.validate(createAnswerRequest);
+		Set<ConstraintViolation<AnswerDto.CreateRequest>> violations = validator.validate(request);
 		Set<String> msgList = violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toSet());
 
 		//then
-		assertThat(msgList).isEqualTo(Set.of("회원 ID를 입력해 주세요.", "답변 내용을 입력해 주세요.", "답변 내용은 10자 이상 10000자 이하로 작성해 주세요."));
+		assertThat(msgList).isEqualTo(Set.of("답변 내용을 입력해 주세요.", "답변 내용은 10자 이상 10000자 이하로 작성해 주세요."));
 	}
 
 	@Test
 	@DisplayName("답변 생성 요청 검증 성공 테스트 - Size")
 	void whenCreateAnswerSizeExceedsLimit_thenValidationSucceeds() {
-		CreateAnswerRequest createAnswerRequest = CreateAnswerRequest.builder()
-				.memberId(1L)
+		AnswerDto.CreateRequest request = AnswerDto.CreateRequest.builder()
 				.content("a".repeat(10000))
 				.build();
 
-		Set<ConstraintViolation<CreateAnswerRequest>> violations = validator.validate(createAnswerRequest);
+		Set<ConstraintViolation<AnswerDto.CreateRequest>> violations = validator.validate(request);
 		Set<String> msgList = violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toSet());
 
 		assertThat(msgList).isEqualTo(Set.of());
@@ -67,12 +65,11 @@ class AnswerRequestDtoTest {
 	@Test
 	@DisplayName("답변 생성 요청 검증 실패 테스트 - MaxSize")
 	void whenCreateAnswerSizeExceedsMaxLimit_thenValidationFails() {
-		CreateAnswerRequest createAnswerRequest = CreateAnswerRequest.builder()
-				.memberId(1L)
+		AnswerDto.CreateRequest request = AnswerDto.CreateRequest.builder()
 				.content("a".repeat(10001))
 				.build();
 
-		Set<ConstraintViolation<CreateAnswerRequest>> violations = validator.validate(createAnswerRequest);
+		Set<ConstraintViolation<AnswerDto.CreateRequest>> violations = validator.validate(request);
 		Set<String> msgList = violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toSet());
 
 		assertThat(msgList).isEqualTo(Set.of("답변 내용은 10자 이상 10000자 이하로 작성해 주세요."));
@@ -81,12 +78,11 @@ class AnswerRequestDtoTest {
 	@Test
 	@DisplayName("답변 생성 요청 검증 실패 테스트 - MinSize")
 	void whenCreateAnswerSizeExceedsMinLimit_thenValidationFails() {
-		CreateAnswerRequest createAnswerRequest = CreateAnswerRequest.builder()
-				.memberId(1L)
+		AnswerDto.CreateRequest request = AnswerDto.CreateRequest.builder()
 				.content("a")
 				.build();
 
-		Set<ConstraintViolation<CreateAnswerRequest>> violations = validator.validate(createAnswerRequest);
+		Set<ConstraintViolation<AnswerDto.CreateRequest>> violations = validator.validate(request);
 		Set<String> msgList = violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toSet());
 
 		assertThat(msgList).isEqualTo(Set.of("답변 내용은 10자 이상 10000자 이하로 작성해 주세요."));

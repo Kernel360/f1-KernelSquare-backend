@@ -120,7 +120,7 @@ class ReservationServiceTest {
 			.builder()
 			.reservationId(1L)
 			.reservationArticleId(3L)
-			.startTime(LocalDateTime.now())
+			.reservationStartTime(LocalDateTime.now().plusSeconds(1L))
 			.build();
 
 		reservationList.add(newReservation);

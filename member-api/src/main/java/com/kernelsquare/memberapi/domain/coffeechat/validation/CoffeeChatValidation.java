@@ -15,6 +15,7 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 public class CoffeeChatValidation {
 
@@ -56,13 +57,13 @@ public class CoffeeChatValidation {
                                               ChatRoom chatRoom, MemberAdapter memberAdapter) {
         String roomKey = chatRoom.getRoomKey();
 
-        List<ChatRoomMember> chatMemberList = manager.getChatRoom(roomKey);
+        Set<ChatRoomMember> chatMemberSet = manager.getChatRoom(roomKey);
 
         Member member = memberAdapter.getMember();
 
-        List<Long> chatMemberIdList = chatMemberList.stream().map(ChatRoomMember::memberId).toList();
+        ChatRoomMember chatRoomMember = ChatRoomMember.from(member);
 
-        if (chatMemberIdList.contains(member.getId())) {
+        if (chatMemberSet.contains(chatRoomMember)) {
             manager.removeChatRoomMember(roomKey, member.getId());
 
             ChatMessageRequest message = ChatMessageRequest.builder()

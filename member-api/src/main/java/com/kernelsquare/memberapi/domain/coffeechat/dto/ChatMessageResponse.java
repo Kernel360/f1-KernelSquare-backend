@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Builder
@@ -33,7 +34,7 @@ public class ChatMessageResponse {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = TimeResponseFormat.PATTERN)
 	private LocalDateTime sendTime;
 
-	private List<ChatRoomMember> memberList;
+	private Set<ChatRoomMember> memberList;
 
 	public static ChatMessageResponse convertResponse(ChatMessageRequest chatMessageRequest) {
 		return ChatMessageResponse.builder()

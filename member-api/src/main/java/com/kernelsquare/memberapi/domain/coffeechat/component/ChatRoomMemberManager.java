@@ -8,33 +8,33 @@ import com.kernelsquare.memberapi.domain.coffeechat.dto.ChatRoomMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 @Component
 @RequiredArgsConstructor
 public class ChatRoomMemberManager {
     private final MemberRepository memberRepository;
-    private final ConcurrentHashMap<String, List<ChatRoomMember>> chatRoomMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, CopyOnWriteArraySet<ChatRoomMember>> chatRoomMap = new ConcurrentHashMap<>();
 
     public void addChatRoom(String roomKey) {
-        chatRoomMap.computeIfAbsent(roomKey, k -> new ArrayList<>());
+        chatRoomMap.computeIfAbsent(roomKey, k -> new CopyOnWriteArraySet<>());
     }
 
     public void addChatMember(String roomKey, Long memberId) {
         Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new BusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
 
-        chatRoomMap.computeIfAbsent(roomKey, k -> new ArrayList<>()).add(ChatRoomMember.from(member));
+        chatRoomMap.computeIfAbsent(roomKey, k -> new CopyOnWriteArraySet<>()).add(ChatRoomMember.from(member));
     }
 
-    public List<ChatRoomMember> getChatRoom(String roomKey) {
-        return chatRoomMap.getOrDefault(roomKey, new ArrayList<>());
+    public Set<ChatRoomMember> getChatRoom(String roomKey) {
+        return chatRoomMap.getOrDefault(roomKey, new CopyOnWriteArraySet<>());
     }
 
     public void removeChatRoomMember(String roomKey, Long memberId) {
-        List<ChatRoomMember> chatRoomMemberList = getChatRoom(roomKey);
+        Set<ChatRoomMember> chatRoomMemberList = getChatRoom(roomKey);
 
         ChatRoomMember member = chatRoomMemberList.stream()
             .filter(chatRoomMember -> chatRoomMember.memberId().equals(memberId))
@@ -45,7 +45,7 @@ public class ChatRoomMemberManager {
     }
 
     public Integer countChatRoomMember(String roomKey) {
-        List<ChatRoomMember> chatRoomMemberList = getChatRoom(roomKey);
+        Set<ChatRoomMember> chatRoomMemberList = getChatRoom(roomKey);
 
         return chatRoomMemberList.size();
     }

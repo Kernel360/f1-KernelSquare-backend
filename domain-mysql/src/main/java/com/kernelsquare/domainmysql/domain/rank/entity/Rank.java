@@ -19,6 +19,9 @@ public class Rank {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(nullable = false, unique = true, name = "name", columnDefinition = "smallint")
+	private Long name;
+
 	@Column(nullable = false, name = "image_url", columnDefinition = "varchar(100)")
 	private String image_url;
 }

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class MessageController {
-	private final KafkaTemplate<String, ChatMessageRequest> kafkaTemplate;
+	private final KafkaTemplate<String, Object> kafkaTemplate;
 
 	@MessageMapping("/chat/message")
 	public void messageHandler(ChatMessageRequest message) {
@@ -23,7 +23,6 @@ public class MessageController {
 			case EXPIRE -> {}
 			default -> throw new BusinessException(CoffeeChatErrorCode.MESSAGE_TYPE_NOT_VALID);
 		}
-		kafkaTemplate.send("chat_" + message.getRoomKey(), message);
+		kafkaTemplate.send("chat", message);
 	}
 }
-

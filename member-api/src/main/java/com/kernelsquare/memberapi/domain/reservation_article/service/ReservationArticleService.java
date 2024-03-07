@@ -1,15 +1,5 @@
 package com.kernelsquare.memberapi.domain.reservation_article.service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.kernelsquare.core.common_response.error.code.ReservationArticleErrorCode;
 import com.kernelsquare.core.common_response.error.exception.BusinessException;
 import com.kernelsquare.core.dto.PageResponse;
@@ -28,13 +18,17 @@ import com.kernelsquare.memberapi.domain.hashtag.dto.FindHashtagResponse;
 import com.kernelsquare.memberapi.domain.hashtag.dto.UpdateHashtagRequest;
 import com.kernelsquare.memberapi.domain.reservation.dto.FindReservationResponse;
 import com.kernelsquare.memberapi.domain.reservation.dto.UpdateReservationRequest;
-import com.kernelsquare.memberapi.domain.reservation_article.dto.CreateReservationArticleRequest;
-import com.kernelsquare.memberapi.domain.reservation_article.dto.CreateReservationArticleResponse;
-import com.kernelsquare.memberapi.domain.reservation_article.dto.FindAllReservationArticleResponse;
-import com.kernelsquare.memberapi.domain.reservation_article.dto.FindReservationArticleResponse;
-import com.kernelsquare.memberapi.domain.reservation_article.dto.UpdateReservationArticleRequest;
-
+import com.kernelsquare.memberapi.domain.reservation_article.dto.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -86,6 +80,7 @@ public class ReservationArticleService {
 				.build();
 
 			coffeeChatRepository.save(chatroom);
+
 			if (startTime.isAfter(dateTime)) {
 				startTime = dateTime;
 			}

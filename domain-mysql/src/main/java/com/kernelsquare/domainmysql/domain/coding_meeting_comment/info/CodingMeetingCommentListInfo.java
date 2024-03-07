@@ -1,6 +1,6 @@
 package com.kernelsquare.domainmysql.domain.coding_meeting_comment.info;
 
-import com.kernelsquare.core.util.ImageUtilsCore;
+import com.kernelsquare.core.util.ImageUtils;
 import com.kernelsquare.domainmysql.domain.coding_meeting_comment.entity.CodingMeetingComment;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,8 +23,8 @@ public class CodingMeetingCommentListInfo {
         this.memberId = codingMeetingComment.getMember().getId();
         this.memberLevel = codingMeetingComment.getMember().getLevel().getName();
         this.memberNickname = codingMeetingComment.getMember().getNickname();
-        this.memberProfileUrl = ImageUtilsCore.makeImageUrl(codingMeetingComment.getMember().getImageUrl());
-        this.memberLevelImageUrl = ImageUtilsCore.makeImageUrl(codingMeetingComment.getMember().getLevel().getImageUrl());
+        this.memberProfileUrl = ImageUtils.makeImageUrl(codingMeetingComment.getMember().getImageUrl());
+        this.memberLevelImageUrl = ImageUtils.makeImageUrl(codingMeetingComment.getMember().getLevel().getImageUrl());
         this.createdDate = codingMeetingComment.getCreatedDate();
         this.codingMeetingCommentToken = codingMeetingComment.getCodingMeetingCommentToken();
         this.codingMeetingCommentContent = codingMeetingComment.getCodingMeetingCommentContent();

@@ -42,7 +42,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CoffeeChatService {
 	private final CoffeeChatRepository coffeeChatRepository;
-	private final SimpMessageSendingOperations sendingOperations;
 	private final MongoChatMessageRepository mongoChatMessageRepository;
 	private final ReservationRepository reservationRepository;
 
@@ -119,24 +118,5 @@ public class CoffeeChatService {
 			.toList();
 
 		return FindChatHistoryResponse.of(chatHistory);
-	}
-
-	@Transactional
-	@Scheduled(cron = "0 0/30 * * * *")
-	public void disableRoom() {
-		List<ChatRoom> chatRooms = coffeeChatRepository.findAllByActive(true);
-		chatRooms.forEach(chatRoom -> {
-			chatRoom.deactivateRoom();
-
-			ChatMessageResponse message = ChatMessageResponse.builder()
-				.type(MessageType.EXPIRE)
-				.roomKey(chatRoom.getRoomKey())
-				.sender("system")
-				.message("채팅방 사용 시간이 만료되었습니다.")
-				.sendTime(LocalDateTime.now())
-				.build();
-
-			sendingOperations.convertAndSend("/topic/chat/room/" + message.getRoomKey(), message);
-		});
 	}
 }

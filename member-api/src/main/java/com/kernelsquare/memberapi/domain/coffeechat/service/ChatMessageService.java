@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class KafkaService {
+public class ChatMessageService {
 	private final SimpMessageSendingOperations sendingOperations;
 	private final MongoChatMessageRepository mongoChatMessageRepository;
 

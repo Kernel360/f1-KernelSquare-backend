@@ -38,7 +38,7 @@ public class SecurityConfig {
 		"/actuator/**",
 
 		// 소켓 통신의 임시 화면을 사용하기 위해 관련 경로는 permitAll
-		"/screen/**",
+		"/chat/**",
 		"/kernel-square/**",
 		"/topic/chat/room",
 		"/app/chat/message",
@@ -50,7 +50,8 @@ public class SecurityConfig {
 
 	private final String[] hasAnyAuthorityPatterns = new String[] {
 		"/api/v1/images",
-		"/api/v1/coffeechat/reservations"
+		"/api/v1/coffeechat/reservations",
+		"/api/v1/alerts/**",
 	};
 
 	private final String[] hasRoleUserPatterns = new String[] {

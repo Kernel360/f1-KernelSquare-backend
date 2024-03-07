@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class MessageController {
-	private final KafkaTemplate<String, ChatMessageRequest> kafkaTemplate;
+	private final KafkaTemplate<String, Object> kafkaTemplate;
 
 	@MessageMapping("/chat/message")
 	public void messageHandler(ChatMessageRequest message) {
@@ -26,4 +26,3 @@ public class MessageController {
 		kafkaTemplate.send("chat", message);
 	}
 }
-

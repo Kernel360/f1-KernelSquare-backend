@@ -2,19 +2,15 @@ package com.kernelsquare.memberapi.domain.coffeechat.validation;
 
 import com.kernelsquare.core.common_response.error.code.CoffeeChatErrorCode;
 import com.kernelsquare.core.common_response.error.exception.BusinessException;
-import com.kernelsquare.core.type.MessageType;
 import com.kernelsquare.core.type.ReservationMemberType;
 import com.kernelsquare.domainmysql.domain.coffeechat.entity.ChatRoom;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
 import com.kernelsquare.domainmysql.domain.reservation.entity.Reservation;
 import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
 import com.kernelsquare.memberapi.domain.coffeechat.component.ChatRoomMemberManager;
-import com.kernelsquare.memberapi.domain.coffeechat.dto.ChatMessageRequest;
 import com.kernelsquare.memberapi.domain.coffeechat.dto.ChatRoomMember;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
 public class CoffeeChatValidation {
@@ -53,7 +49,7 @@ public class CoffeeChatValidation {
         return  ReservationMemberType.OTHER;
     }
 
-    public static void validateDuplicateEntry(ChatRoomMemberManager manager, SimpMessageSendingOperations sendingOperations,
+    public static Boolean validateDuplicateEntry(ChatRoomMemberManager manager,
                                               ChatRoom chatRoom, MemberAdapter memberAdapter) {
         String roomKey = chatRoom.getRoomKey();
 
@@ -64,21 +60,10 @@ public class CoffeeChatValidation {
         ChatRoomMember chatRoomMember = ChatRoomMember.from(member);
 
         if (chatMemberSet.contains(chatRoomMember)) {
-            manager.removeChatRoomMember(roomKey, member.getId());
-
-            ChatMessageRequest message = ChatMessageRequest.builder()
-                .type(MessageType.LEAVE)
-                .roomKey(roomKey)
-                .senderId(member.getId())
-                .sender(member.getNickname())
-                .senderImageUrl(member.getImageUrl())
-                .message("")
-                .sendTime(LocalDateTime.now())
-                .memberList(manager.getChatRoom(roomKey))
-                .build();
-
-            sendingOperations.convertAndSend("/app/chat/message", message);
+            return Boolean.TRUE;
         }
+
+        return Boolean.FALSE;
     }
 
     public static void validateChatRoomCapacity(ChatRoomMemberManager manager, ChatRoom chatRoom) {

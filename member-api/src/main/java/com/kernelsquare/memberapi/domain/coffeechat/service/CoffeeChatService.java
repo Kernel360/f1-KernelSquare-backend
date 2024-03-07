@@ -3,31 +3,30 @@ package com.kernelsquare.memberapi.domain.coffeechat.service;
 import com.kernelsquare.core.common_response.error.code.CoffeeChatErrorCode;
 import com.kernelsquare.core.common_response.error.code.ReservationErrorCode;
 import com.kernelsquare.core.common_response.error.exception.BusinessException;
+import com.kernelsquare.core.type.MessageType;
 import com.kernelsquare.domainmongodb.domain.coffeechat.repository.MongoChatMessageRepository;
 import com.kernelsquare.domainmysql.domain.coffeechat.entity.ChatRoom;
 import com.kernelsquare.domainmysql.domain.reservation.entity.Reservation;
 import com.kernelsquare.domainmysql.domain.reservation.repository.ReservationRepository;
 import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
 import com.kernelsquare.memberapi.domain.coffeechat.component.ChatRoomMemberManager;
-import com.kernelsquare.memberapi.domain.coffeechat.dto.EnterCoffeeChatRoomRequest;
-import com.kernelsquare.memberapi.domain.coffeechat.dto.EnterCoffeeChatRoomResponse;
-import com.kernelsquare.memberapi.domain.coffeechat.dto.FindChatHistoryResponse;
-import com.kernelsquare.memberapi.domain.coffeechat.dto.FindMongoChatMessage;
+import com.kernelsquare.memberapi.domain.coffeechat.dto.*;
 import com.kernelsquare.memberapi.domain.coffeechat.validation.CoffeeChatValidation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class CoffeeChatService {
-	private final SimpMessageSendingOperations sendingOperations;
 	private final MongoChatMessageRepository mongoChatMessageRepository;
 	private final ReservationRepository reservationRepository;
 	private final ChatRoomMemberManager chatRoomMemberManager;
+	private final KafkaTemplate<String, Object> kafkaTemplate;
 
 	@Transactional
 	public EnterCoffeeChatRoomResponse enterCoffeeChatRoom(EnterCoffeeChatRoomRequest enterCoffeeChatRoomRequest,
@@ -60,7 +59,22 @@ public class CoffeeChatService {
 
 		CoffeeChatValidation.validateChatRoomCapacity(chatRoomMemberManager, chatRoom);
 
-		CoffeeChatValidation.validateDuplicateEntry(chatRoomMemberManager, sendingOperations, chatRoom, memberAdapter);
+		if (Boolean.TRUE.equals(CoffeeChatValidation.validateDuplicateEntry(chatRoomMemberManager, chatRoom, memberAdapter))) {
+			ChatRoomMember chatRoomMember = chatRoomMemberManager.removeChatRoomMember(chatRoom.getRoomKey(), memberAdapter.getMember().getId());
+
+			ChatMessageRequest message = ChatMessageRequest.builder()
+				.type(MessageType.LEAVE)
+				.roomKey(chatRoom.getRoomKey())
+				.senderId(chatRoomMember.memberId())
+				.sender(chatRoomMember.nickname())
+				.senderImageUrl(chatRoomMember.memberImageUrl())
+				.message(chatRoomMember.nickname() + "님이 퇴장하였습니다.")
+				.sendTime(LocalDateTime.now())
+				.memberList(chatRoomMemberManager.getChatRoom(chatRoom.getRoomKey()))
+				.build();
+
+			kafkaTemplate.send("chat", message);
+		}
 
 		return EnterCoffeeChatRoomResponse.of(enterCoffeeChatRoomRequest.articleTitle(), chatRoom);
 	}
@@ -72,7 +86,22 @@ public class CoffeeChatService {
 
 		CoffeeChatValidation.validateChatRoomCapacity(chatRoomMemberManager, chatRoom);
 
-		CoffeeChatValidation.validateDuplicateEntry(chatRoomMemberManager, sendingOperations, chatRoom, memberAdapter);
+		if (Boolean.TRUE.equals(CoffeeChatValidation.validateDuplicateEntry(chatRoomMemberManager, chatRoom, memberAdapter))) {
+			ChatRoomMember chatRoomMember = chatRoomMemberManager.removeChatRoomMember(chatRoom.getRoomKey(), memberAdapter.getMember().getId());
+
+			ChatMessageRequest message = ChatMessageRequest.builder()
+				.type(MessageType.LEAVE)
+				.roomKey(chatRoom.getRoomKey())
+				.senderId(chatRoomMember.memberId())
+				.sender(chatRoomMember.nickname())
+				.senderImageUrl(chatRoomMember.memberImageUrl())
+				.message(chatRoomMember.nickname() + "님이 퇴장하였습니다.")
+				.sendTime(LocalDateTime.now())
+				.memberList(chatRoomMemberManager.getChatRoom(chatRoom.getRoomKey()))
+				.build();
+
+			kafkaTemplate.send("chat", message);
+		}
 
 		return EnterCoffeeChatRoomResponse.of(enterCoffeeChatRoomRequest.articleTitle(), chatRoom);
 	}

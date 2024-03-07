@@ -26,6 +26,7 @@ public class MessageController {
 			case CODE -> {}
 			case LEAVE -> {
 				message.setMessage(message.getSender() + "님이 퇴장하였습니다.");
+				chatRoomMemberManager.removeChatRoomMember(message.getRoomKey(), message.getSenderId());
 				message.setMemberList(chatRoomMemberManager.getChatRoom(message.getRoomKey()));
 			}
 			case EXPIRE -> {}

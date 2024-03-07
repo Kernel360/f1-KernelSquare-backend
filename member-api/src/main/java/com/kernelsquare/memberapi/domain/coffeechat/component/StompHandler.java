@@ -30,7 +30,6 @@ public class StompHandler implements ChannelInterceptor {
 
         switch (command) {
             case SUBSCRIBE -> handleSubscribeEvent(message);
-            case DISCONNECT -> handleDisconnectEvent(message);
             default -> {}
         }
     }
@@ -42,14 +41,5 @@ public class StompHandler implements ChannelInterceptor {
         Long memberId = parser.getMemberId();
 
         chatRoomMemberManager.addChatMember(roomKey, memberId);
-    }
-
-    private void handleDisconnectEvent(Message message) {
-        StompMessageParser parser = new StompMessageParser(message);
-
-        String roomKey = parser.getRoomKey();
-        Long memberId = parser.getMemberId();
-
-        chatRoomMemberManager.removeChatRoomMember(roomKey, memberId);
     }
 }

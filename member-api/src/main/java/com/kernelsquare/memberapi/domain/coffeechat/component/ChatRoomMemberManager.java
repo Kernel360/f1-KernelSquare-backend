@@ -33,15 +33,16 @@ public class ChatRoomMemberManager {
         return chatRoomMap.getOrDefault(roomKey, new CopyOnWriteArraySet<>());
     }
 
-    public void removeChatRoomMember(String roomKey, Long memberId) {
+    public ChatRoomMember removeChatRoomMember(String roomKey, Long memberId) {
         Set<ChatRoomMember> chatRoomMemberList = getChatRoom(roomKey);
 
-        ChatRoomMember member = chatRoomMemberList.stream()
-            .filter(chatRoomMember -> chatRoomMember.memberId().equals(memberId))
-            .findFirst()
-            .orElseThrow(() -> new BusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
+        ChatRoomMember chatRoomMember = ChatRoomMember.builder()
+            .memberId(memberId)
+            .build();
 
-        chatRoomMemberList.remove(member);
+        chatRoomMemberList.remove(chatRoomMember);
+
+        return chatRoomMember;
     }
 
     public Integer countChatRoomMember(String roomKey) {

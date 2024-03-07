@@ -16,11 +16,11 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class KafkaService {
+public class ChatMessageService {
 	private final SimpMessageSendingOperations sendingOperations;
 	private final MongoChatMessageRepository mongoChatMessageRepository;
 
-	@KafkaListener(topicPattern = "chat_.*", groupId = "coffeechat")
+	@KafkaListener(topics = "chat", groupId = "coffeechat")
 	public void sendMessage(ChatMessageRequest requestMessage) {
 		try {
 			MongoChatMessage recordMessage = ChatMessageConverter.toMongoChatMessage(requestMessage);

@@ -30,6 +30,9 @@ public class Logging {
 	private void controller() {
 	}
 
+	@Pointcut("@annotation(org.springframework.scheduling.annotation.Async)")
+	public void async() {}
+
 	@AfterThrowing(pointcut = "service() || component()", throwing = "exception")
 	private void logException(
 		JoinPoint joinPoint,
@@ -43,7 +46,7 @@ public class Logging {
 			MDC.get(TRACE_ID_NAME), methodName, exceptionName, exceptionMessage, args);
 	}
 
-	@Around("controller()")
+	@Around("controller() || async()")
 	private Object log(
 		ProceedingJoinPoint joinPoint
 	) throws Throwable {

@@ -8,7 +8,7 @@ import com.kernelsquare.core.constants.TimeResponseFormat;
 import com.kernelsquare.domainmysql.domain.hashtag.entity.Hashtag;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
 import com.kernelsquare.domainmysql.domain.reservation_article.entity.ReservationArticle;
-import com.kernelsquare.memberapi.domain.image.utils.ImageUtils;
+import com.kernelsquare.core.util.ImageUtils;
 
 public record FindAllReservationArticleResponse(
 	Long articleId,

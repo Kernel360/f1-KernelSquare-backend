@@ -1,5 +1,6 @@
 package com.kernelsquare.memberapi.common.config;
 
+import com.kernelsquare.memberapi.domain.coffeechat.dto.ChatMessageRequest;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.context.annotation.Bean;
@@ -17,21 +18,22 @@ import java.util.Map;
 @EnableKafka
 public class KafkaConsumerConfig {
 	@Bean
-	public ConsumerFactory<String, Object> consumerFactory() {
+	public ConsumerFactory<String, ChatMessageRequest> consumerFactory() {
 		Map<String, Object> config = new HashMap<>();
 
 		config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-		config.put(ConsumerConfig.GROUP_ID_CONFIG, "kernelsquare");
+		config.put(ConsumerConfig.GROUP_ID_CONFIG, "coffeechat");
 		config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
 		config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
 		config.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
+		config.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
 
 		return new DefaultKafkaConsumerFactory<>(config);
 	}
 
 	@Bean
-	public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory() {
-		ConcurrentKafkaListenerContainerFactory<String, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
+	public ConcurrentKafkaListenerContainerFactory<String, ChatMessageRequest> kafkaListenerContainerFactory() {
+		ConcurrentKafkaListenerContainerFactory<String, ChatMessageRequest> factory = new ConcurrentKafkaListenerContainerFactory<>();
 		factory.setConsumerFactory(consumerFactory());
 		return factory;
 	}

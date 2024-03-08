@@ -56,7 +56,7 @@ public class QuestionController {
 
 	@GetMapping("/questions")
 	public ResponseEntity<ApiResponse<PageResponse<FindQuestionResponse>>> findAllQuestions(
-		@PageableDefault(page = 0, size = 5, sort = "id", direction = Sort.Direction.DESC)
+		@PageableDefault(page = 0, size = 5, sort = "createdDate", direction = Sort.Direction.DESC)
 		Pageable pageable
 	) {
 		PageResponse<FindQuestionResponse> pageResponse = questionService.findAllQuestions(pageable);

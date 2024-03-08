@@ -1,6 +1,5 @@
 package com.kernelsquare.memberapi.domain.scheduler.manager;
 
-import com.kernelsquare.core.constants.SystemConstants;
 import com.kernelsquare.core.type.MessageType;
 import com.kernelsquare.domainmysql.domain.answer.entity.Answer;
 import com.kernelsquare.domainmysql.domain.answer.repository.AnswerReader;

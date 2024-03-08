@@ -40,7 +40,7 @@ public class CodingMeetingReaderImpl implements CodingMeetingReader{
 
     private Long isMemberIdNotNull(Long memberId) {
         if (Objects.isNull(memberId)) {
-            throw new BusinessException(CodingMeetingErrorCode.MEMBER_ID_ISNULL);
+            throw new BusinessException(CodingMeetingErrorCode.MEMBER_ID_IS_NULL);
         }
         return memberId;
     }

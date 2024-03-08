@@ -75,7 +75,7 @@ public class CodingMeeting extends BaseEntity {
             LocalDateTime codingMeetingEndTime,
             Long codingMeetingMemberUpperLimit,
             Member member
-            ) {
+    ) {
 
         if (StringUtils.isBlank(codingMeetingTitle))
             throw new InvalidParamException("CodingMeeting.codingMeetingTitle");
@@ -111,12 +111,6 @@ public class CodingMeeting extends BaseEntity {
     public void close() {
         this.codingMeetingClosed = true;
     }
-
-//    public List<String> getCodingMeetingHashtagStringList() {
-//        return codingMeetingHashtags.stream().map(
-//                CodingMeetingHashtag::getCodingMeetingHashtagContent
-//        ).toList();
-//    }
 
     public List<String> getCodingMeetingHashtagStringList() {
         return Optional.ofNullable(codingMeetingHashtags)

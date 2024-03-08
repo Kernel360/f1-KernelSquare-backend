@@ -13,7 +13,7 @@ public enum CodingMeetingErrorCode implements ErrorCode {
             "진행중인 모각코가 이미 존재합니다."),
     FILTER_PARAMETER_NOT_VALID(HttpStatus.BAD_REQUEST, CodingMeetingServiceStatus.FILTER_PARAMETER_NOT_VALID,
             "유효하지 않은 필터 파라미터 입니다."),
-    MEMBER_ID_ISNULL(HttpStatus.BAD_REQUEST, CodingMeetingServiceStatus.MEMBER_ID_ISNULL,
+    MEMBER_ID_IS_NULL(HttpStatus.BAD_REQUEST, CodingMeetingServiceStatus.MEMBER_ID_IS_NULL,
             "회원의 ID가 존재하지 않습니다.");
 
     private final HttpStatus httpStatus;

@@ -1,30 +1,29 @@
 package com.kernelsquare.adminapi.domain.auth.service;
 
-import java.util.List;
-
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.kernelsquare.adminapi.domain.auth.dto.LoginRequest;
 import com.kernelsquare.adminapi.domain.auth.dto.SignUpRequest;
 import com.kernelsquare.adminapi.domain.auth.dto.SignUpResponse;
+import com.kernelsquare.adminapi.domain.auth.validation.AuthValidation;
 import com.kernelsquare.core.common_response.error.code.AuthErrorCode;
 import com.kernelsquare.core.common_response.error.code.AuthorityErrorCode;
 import com.kernelsquare.core.common_response.error.code.LevelErrorCode;
 import com.kernelsquare.core.common_response.error.exception.BusinessException;
 import com.kernelsquare.core.type.AuthorityType;
-import com.kernelsquare.core.util.ExperiencePolicy;
 import com.kernelsquare.domainmysql.domain.authority.entity.Authority;
 import com.kernelsquare.domainmysql.domain.authority.repository.AuthorityRepository;
 import com.kernelsquare.domainmysql.domain.level.entity.Level;
 import com.kernelsquare.domainmysql.domain.level.repository.LevelRepository;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
+import com.kernelsquare.domainmysql.domain.member.repository.MemberReader;
 import com.kernelsquare.domainmysql.domain.member.repository.MemberRepository;
 import com.kernelsquare.domainmysql.domain.member_authority.entity.MemberAuthority;
 import com.kernelsquare.domainmysql.domain.member_authority.repository.MemberAuthorityRepository;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -34,21 +33,16 @@ public class AuthService {
 	private final MemberAuthorityRepository memberAuthorityRepository;
 	private final AuthorityRepository authorityRepository;
 	private final LevelRepository levelRepository;
+	private final MemberReader memberReader;
 
 	@Transactional
 	public Member login(final LoginRequest loginRequest) {
-		Member findMember = memberRepository.findByEmail(loginRequest.email())
-			.orElseThrow(() -> new BusinessException(AuthErrorCode.INVALID_ACCOUNT));
-		if (!passwordEncoder.matches(loginRequest.password(), findMember.getPassword())) {
-			throw new BusinessException(AuthErrorCode.INVALID_PASSWORD);
-		}
-		findMember.addExperience(ExperiencePolicy.MEMBER_DAILY_ATTENDED.getReward());
-		if (findMember.isExperienceExceed(findMember.getExperience())) {
-			findMember.updateExperience(findMember.getExperience() - findMember.getLevel().getLevelUpperLimit());
-			Level nextLevel = levelRepository.findByName(findMember.getLevel().getName() + 1)
-				.orElseThrow(() -> new BusinessException(LevelErrorCode.LEVEL_NOT_FOUND));
-			findMember.updateLevel(nextLevel);
-		}
+		Member findMember = memberReader.findMember(loginRequest.email());
+
+		AuthValidation.validatePassword(passwordEncoder, loginRequest.password(), findMember.getPassword());
+
+		AuthValidation.validateAdminAuthority(findMember);
+
 		return findMember;
 	}
 

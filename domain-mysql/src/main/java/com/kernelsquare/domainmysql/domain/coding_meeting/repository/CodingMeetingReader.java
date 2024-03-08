@@ -7,5 +7,5 @@ import org.springframework.data.domain.Pageable;
 
 public interface CodingMeetingReader {
     CodingMeeting findCodingMeeting(String codingMeetingToken);
-    Page<CodingMeeting> findAllCodingMeeting(Pageable pageable, String filterParameter);
+    Page<CodingMeeting> findAllCodingMeeting(Pageable pageable, String filterParameter, Long memberId);
 }

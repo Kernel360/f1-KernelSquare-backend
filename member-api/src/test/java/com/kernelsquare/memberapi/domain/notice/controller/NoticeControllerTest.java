@@ -150,7 +150,7 @@ public class NoticeControllerTest {
 				responseFields(fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"),
 					fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 상태 코드"),
 					fieldWithPath("data.pagination.total_page").type(JsonFieldType.NUMBER).description("총 페이지 수"),
-					fieldWithPath("data.pagination.pageable").type(JsonFieldType.NUMBER).description("pageable"),
+					fieldWithPath("data.pagination.pageable").type(JsonFieldType.NUMBER).description("페이지 당 항목 수"),
 					fieldWithPath("data.pagination.is_end").type(JsonFieldType.BOOLEAN).description("마지막 페이지 여부"),
 					fieldWithPath("data.list[0].notice_title").type(JsonFieldType.STRING).description("공지 제목"),
 					fieldWithPath("data.list[0].notice_token").type(JsonFieldType.STRING).description("공지 토큰"),

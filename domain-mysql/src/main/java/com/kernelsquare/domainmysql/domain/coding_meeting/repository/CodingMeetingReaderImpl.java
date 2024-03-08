@@ -24,15 +24,24 @@ public class CodingMeetingReaderImpl implements CodingMeetingReader{
     }
 
     @Override
-    public Page<CodingMeeting> findAllCodingMeeting(Pageable pageable, String filterParameter) {
+    public Page<CodingMeeting> findAllCodingMeeting(Pageable pageable, String filterParameter, Long memberId) {
         if (Objects.equals(filterParameter, CodingMeetingReadType.ALL.getParameter())) {
             return codingMeetingRepository.findAll(pageable);
         } else if (Objects.equals(filterParameter, CodingMeetingReadType.OPEN.getParameter())) {
             return codingMeetingRepository.findAllByCodingMeetingClosedIsFalse(pageable);
         } else if (Objects.equals(filterParameter, CodingMeetingReadType.CLOSED.getParameter())) {
             return codingMeetingRepository.findAllByCodingMeetingClosedIsTrue(pageable);
+        } else if (Objects.equals(filterParameter, CodingMeetingReadType.OWNED.getParameter())) {
+            return codingMeetingRepository.findAllByMemberId(pageable, isMemberIdNotNull(memberId));
         } else {
             throw new BusinessException(CodingMeetingErrorCode.FILTER_PARAMETER_NOT_VALID);
         }
+    }
+
+    private Long isMemberIdNotNull(Long memberId) {
+        if (Objects.isNull(memberId)) {
+            throw new BusinessException(CodingMeetingErrorCode.MEMBER_ID_ISNULL);
+        }
+        return memberId;
     }
 }

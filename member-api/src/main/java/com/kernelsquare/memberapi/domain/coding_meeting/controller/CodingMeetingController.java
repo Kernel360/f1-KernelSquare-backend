@@ -24,7 +24,7 @@ public class CodingMeetingController {
     private final CodingMeetingFacade codingMeetingFacade;
 
     @PostMapping("/coding-meetings")
-    public ResponseEntity<ApiResponse<CodingMeetingDto.CreateResponse>> createNotice(
+    public ResponseEntity<ApiResponse<CodingMeetingDto.CreateResponse>> createCodingMeeting(
         @Valid @RequestBody CodingMeetingDto.CreateRequest request,
         @AuthenticationPrincipal MemberAdapter memberAdapter) {
         CodingMeetingDto.CreateResponse findResponse = codingMeetingFacade.createCodingMeeting(request, memberAdapter.getMember().getId());
@@ -43,8 +43,10 @@ public class CodingMeetingController {
         @PageableDefault(page = 0, size = 10, sort = "createdDate", direction = Sort.Direction.DESC)
         Pageable pageable,
         @RequestParam(defaultValue = "all")
-        String filter) {
-        PageResponse pageResponse = codingMeetingFacade.findAllCodingMeeting(pageable, filter);
+        String filter,
+        @AuthenticationPrincipal(expression = "#this == 'anonymousUser' ? null : #this")
+        MemberAdapter memberAdapter) {
+        PageResponse pageResponse = codingMeetingFacade.findAllCodingMeeting(pageable, filter, memberAdapter);
         return ResponseEntityFactory.toResponseEntity(CODING_MEETING_ALL_FOUND, pageResponse);
     }
 

@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum CodingMeetingReadType {
-    ALL("all"), OPEN("open"), CLOSED("closed");
+    ALL("all"), OPEN("open"), CLOSED("closed"), OWNED("owned");
 
     private final String parameter;
 

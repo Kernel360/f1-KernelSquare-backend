@@ -21,8 +21,9 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
 	@Query("UPDATE Answer a SET a.voteCount = a.voteCount - 1 WHERE a.id = :answerId")
 	void downVoteAnswer(@Param("answerId") Long answerId);
 
-	@Query("SELECT a FROM Answer a WHERE a.question.id = :questionId ORDER BY a.voteCount DESC, a.createdDate ASC LIMIT 3")
-	List<Answer> findAnswersByQuestionIdSortedByVoteCount(@Param("questionId") Long questionId);
+	@Query("SELECT a FROM Answer a WHERE a.question.id = :questionId AND a.member.nickname <> :answerBot " +
+		"ORDER BY a.voteCount DESC, a.createdDate ASC LIMIT 3")
+	List<Answer> findAnswersByQuestionIdSortedByVoteCount(@Param("questionId") Long questionId, @Param("answerBot") String answerBot);
 
 	Boolean existsByMemberNicknameAndQuestionId(String nickname, Long questionId);
 }

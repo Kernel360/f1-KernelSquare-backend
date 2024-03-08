@@ -113,6 +113,7 @@ public class ReservationArticleService {
 		}
 
 		saveReservationArticle.addStartTime(startTime);
+		saveReservationArticle.addEndTime(endTime);
 
 		return CreateReservationArticleResponse.from(saveReservationArticle);
 	}
@@ -135,13 +136,18 @@ public class ReservationArticleService {
 
 		List<FindAllReservationArticleResponse> responsePages = pages.getContent().stream()
 			.map(article -> {
-				Boolean articleStatus = canIReservation(article.getStartTime());
-				Long fullCheck = reservationRepository.countByReservationArticleIdAndMemberIdIsNull(article.getId());
+				Long coffeeChatCount = reservationArticleRepository.countAllByMemberIdAndEndTimeBefore(article.getMember().getId(),
+					LocalDateTime.now());
+				Long availableReservationCount = reservationRepository.countByReservationArticleIdAndMemberIdIsNull(article.getId());
+				Long totalReservationCount = reservationRepository.countAllByReservationArticleId(article.getId());
+				Boolean articleStatus = checkIfReservationWithinTheAvailablePeriod(article.getStartTime());
 				return FindAllReservationArticleResponse.of(
 					article.getMember(),
 					article,
 					articleStatus,
-					fullCheck
+					coffeeChatCount,
+					availableReservationCount
+					,totalReservationCount
 				);
 			})
 			.toList();
@@ -149,7 +155,7 @@ public class ReservationArticleService {
 		return PageResponse.of(pagination, responsePages);
 	}
 
-	private Boolean canIReservation(LocalDateTime startTime) {
+	private Boolean checkIfReservationWithinTheAvailablePeriod(LocalDateTime startTime) {
 		boolean check = false;
 		LocalDateTime currentTime = LocalDateTime.now();
 

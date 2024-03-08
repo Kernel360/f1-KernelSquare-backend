@@ -10,6 +10,9 @@ import com.kernelsquare.domainmysql.domain.member.entity.Member;
 import com.kernelsquare.domainmysql.domain.reservation_article.entity.ReservationArticle;
 import com.kernelsquare.core.util.ImageUtils;
 
+import lombok.Builder;
+
+@Builder
 public record FindAllReservationArticleResponse(
 	Long articleId,
 	Long memberId,
@@ -18,32 +21,42 @@ public record FindAllReservationArticleResponse(
 	Long level,
 	String levelImageUrl,
 	String title,
+	String introduction,
 	List<String> hashTagList,
+	Long coffeeChatCount,
+	Long availableReservationCount,
+	Long totalReservationCount,
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = TimeResponseFormat.PATTERN)
 	LocalDateTime createdDate,
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = TimeResponseFormat.PATTERN)
 	LocalDateTime modifiedDate,
-	Boolean articleStatus,
-	Long fullCheck
+	Boolean articleStatus
 ) {
 	public static FindAllReservationArticleResponse of(
 		Member member,
 		ReservationArticle article,
 		Boolean articleStatus,
-		Long fullCheck) {
-		return new FindAllReservationArticleResponse(
-			article.getId(),
-			member.getId(),
-			member.getNickname(),
-			ImageUtils.makeImageUrl(member.getImageUrl()),
-			member.getLevel().getName(),
-			ImageUtils.makeImageUrl(member.getLevel().getImageUrl()),
-			article.getTitle(),
-			article.getHashtagList().stream().map(Hashtag::getContent).toList(),
-			article.getCreatedDate(),
-			article.getModifiedDate(),
-			articleStatus,
-			fullCheck
-		);
+		Long coffeeChatCount,
+		Long availableReservationCount,
+		Long totalReservationCount
+	) {
+		return FindAllReservationArticleResponse
+			.builder()
+			.articleId(article.getId())
+			.memberId(member.getId())
+			.nickname(member.getNickname())
+			.memberImageUrl(ImageUtils.makeImageUrl(member.getImageUrl()))
+			.level(member.getLevel().getName())
+			.levelImageUrl(ImageUtils.makeImageUrl(member.getLevel().getImageUrl()))
+			.title(article.getTitle())
+			.introduction(article.getIntroduction())
+			.hashTagList(article.getHashtagList().stream().map(Hashtag::getContent).toList())
+			.coffeeChatCount(coffeeChatCount)
+			.availableReservationCount(availableReservationCount)
+			.totalReservationCount(totalReservationCount)
+			.createdDate(article.getCreatedDate())
+			.modifiedDate(article.getModifiedDate())
+			.articleStatus(articleStatus)
+			.build();
 	}
 }

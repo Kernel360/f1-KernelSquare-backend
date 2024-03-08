@@ -2,22 +2,12 @@ package com.kernelsquare.domainmysql.domain.question.entity;
 
 import java.util.List;
 
+import com.kernelsquare.domainmysql.domain.answer.entity.Answer;
 import com.kernelsquare.domainmysql.domain.base.BaseEntity;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
 import com.kernelsquare.domainmysql.domain.question_tech_stack.entity.QuestionTechStack;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.ConstraintMode;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.ForeignKey;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -53,6 +43,9 @@ public class Question extends BaseEntity {
 
 	@OneToMany(mappedBy = "question")
 	private List<QuestionTechStack> techStackList;
+
+	@OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE)
+	private List<Answer> asnwerList;
 
 	@Builder
 	public Question(Long id, String title, String content, String imageUrl, Long viewCount, Boolean closedStatus,

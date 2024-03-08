@@ -45,7 +45,7 @@ public class Question extends BaseEntity {
 	private List<QuestionTechStack> techStackList;
 
 	@OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE)
-	private List<Answer> asnwerList;
+	private List<Answer> answerList;
 
 	@Builder
 	public Question(Long id, String title, String content, String imageUrl, Long viewCount, Boolean closedStatus,

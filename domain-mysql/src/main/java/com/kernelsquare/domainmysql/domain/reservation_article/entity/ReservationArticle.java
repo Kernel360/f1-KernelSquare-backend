@@ -3,6 +3,8 @@ package com.kernelsquare.domainmysql.domain.reservation_article.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 import com.kernelsquare.domainmysql.domain.base.BaseEntity;
 import com.kernelsquare.domainmysql.domain.hashtag.entity.Hashtag;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
@@ -23,6 +25,7 @@ import lombok.NoArgsConstructor;
 @Entity(name = "ReservationArticle")
 @Table(name = "reservation_article")
 @Getter
+@DynamicUpdate
 @NoArgsConstructor
 public class ReservationArticle extends BaseEntity {
 	@Id
@@ -64,9 +67,10 @@ public class ReservationArticle extends BaseEntity {
 		this.endTime = endTime;
 	}
 
-	public void update(String title, String content) {
+	public void update(String title, String content, String introduction) {
 		this.title = title;
 		this.content = content;
+		this.introduction = introduction;
 	}
 
 	public void addStartTime(LocalDateTime startTime) {

@@ -39,21 +39,29 @@ public class ReservationArticle extends BaseEntity {
 	@Column(nullable = false, name = "content", columnDefinition = "text")
 	private String content;
 
+	@Column(nullable = false, name = "introduction", columnDefinition = "varchar(200)")
+	private String introduction;
+
 	@Column(nullable = false, name = "start_time", columnDefinition = "datetime")
 	private LocalDateTime startTime;
+
+	@Column(nullable = false, name = "end_time", columnDefinition = "datetime")
+	private LocalDateTime endTime;
 
 	@OneToMany(mappedBy = "reservationArticle")
 	private List<Hashtag> hashtagList;
 
 	@Builder
-	public ReservationArticle(Long id, Member member, String title, String content,
-		List<Hashtag> hashtagList, LocalDateTime startTime) {
+	public ReservationArticle(Long id, Member member, String title, String content, String introduction,
+		List<Hashtag> hashtagList, LocalDateTime startTime, LocalDateTime endTime) {
 		this.id = id;
 		this.member = member;
 		this.title = title;
 		this.content = content;
+		this.introduction = introduction;
 		this.hashtagList = hashtagList;
 		this.startTime = startTime;
+		this.endTime = endTime;
 	}
 
 	public void update(String title, String content) {
@@ -63,5 +71,9 @@ public class ReservationArticle extends BaseEntity {
 
 	public void addStartTime(LocalDateTime startTime) {
 		this.startTime = startTime;
+	}
+
+	public void addEndTime(LocalDateTime startTime) {
+		this.endTime = endTime;
 	}
 }

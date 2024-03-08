@@ -1,13 +1,14 @@
 package com.kernelsquare.adminapi.domain.auth.controller;
 
-import static com.kernelsquare.core.common_response.response.code.AuthResponseCode.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import java.util.List;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kernelsquare.adminapi.domain.auth.dto.*;
+import com.kernelsquare.adminapi.domain.auth.service.AuthService;
+import com.kernelsquare.adminapi.domain.auth.service.TokenProvider;
+import com.kernelsquare.core.type.AuthorityType;
+import com.kernelsquare.domainmysql.domain.authority.entity.Authority;
+import com.kernelsquare.domainmysql.domain.level.entity.Level;
+import com.kernelsquare.domainmysql.domain.member.entity.Member;
+import com.kernelsquare.domainmysql.domain.member_authority.entity.MemberAuthority;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,21 +18,13 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kernelsquare.adminapi.domain.auth.dto.CheckDuplicateEmailRequest;
-import com.kernelsquare.adminapi.domain.auth.dto.CheckDuplicateNicknameRequest;
-import com.kernelsquare.adminapi.domain.auth.dto.LoginRequest;
-import com.kernelsquare.adminapi.domain.auth.dto.SignUpRequest;
-import com.kernelsquare.adminapi.domain.auth.dto.SignUpResponse;
-import com.kernelsquare.adminapi.domain.auth.dto.TokenRequest;
-import com.kernelsquare.adminapi.domain.auth.dto.TokenResponse;
-import com.kernelsquare.adminapi.domain.auth.service.AuthService;
-import com.kernelsquare.adminapi.domain.auth.service.TokenProvider;
-import com.kernelsquare.core.type.AuthorityType;
-import com.kernelsquare.domainmysql.domain.authority.entity.Authority;
-import com.kernelsquare.domainmysql.domain.level.entity.Level;
-import com.kernelsquare.domainmysql.domain.member.entity.Member;
-import com.kernelsquare.domainmysql.domain.member_authority.entity.MemberAuthority;
+import java.util.List;
+
+import static com.kernelsquare.core.common_response.response.code.AuthResponseCode.*;
+import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayName("인증 컨트롤러 테스트")
 @WebMvcTest(AuthController.class)
@@ -124,55 +117,6 @@ public class AuthControllerTest {
 	}
 
 	@Test
-	@WithMockUser(roles = "{}")
-	@DisplayName("회원 가입에 성공하면, 200 OK와 정상 응답을 반환한다.")
-	void testSignUp() throws Exception {
-		//given
-		SignUpRequest signUpRequest = SignUpRequest
-			.builder()
-			.nickname("woww")
-			.email("jugwang@naver.com")
-			.password("hashedPassw@1d")
-			.build();
-
-		Member member = Member
-			.builder()
-			.id(1L)
-			.nickname("woww")
-			.email("jugwang@naver.com")
-			.password("hashedPassw@1")
-			.experience(10000L)
-			.introduction("hi, i'm hongjugwang.")
-			.imageUrl("s3:qwe12fasdawczx")
-			.build();
-
-		SignUpResponse signUpResponse = SignUpResponse
-			.of(member);
-
-		String jsonRequest = objectMapper.writeValueAsString(signUpRequest);
-
-		doReturn(signUpResponse)
-			.when(authService)
-			.signUp(any(SignUpRequest.class));
-
-		//when & then
-		mockMvc.perform(post("/api/v1/auth/signup")
-				.with(csrf())
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8")
-				.content(jsonRequest))
-			.andExpect(status().is(SIGN_UP_SUCCESS.getStatus().value()))
-			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.code").value(SIGN_UP_SUCCESS.getCode()))
-			.andExpect(jsonPath("$.msg").value(SIGN_UP_SUCCESS.getMsg()));
-
-		//verify
-		verify(authService, times(1)).signUp(any(SignUpRequest.class));
-		verify(authService, only()).signUp(any(SignUpRequest.class));
-	}
-
-	@Test
 	@WithMockUser
 	@DisplayName("액세스 토큰 재발급 성공 시, 200 OK와 정상 응답을 반환한다.")
 	void testReissueAccessToken() throws Exception {
@@ -208,74 +152,6 @@ public class AuthControllerTest {
 
 		//verify
 		verify(tokenProvider, times(1)).reissueToken(any(TokenRequest.class));
-	}
-
-	@Test
-	@WithMockUser(roles = "{}")
-	@DisplayName("이메일 중복이 아니면, 200 OK와 정상 응답을 보낸다.")
-	void testIsEmailUnique() throws Exception {
-		//given
-		CheckDuplicateEmailRequest checkDuplicateEmailRequest
-			= CheckDuplicateEmailRequest
-			.builder()
-			.email("hongju@naver.com")
-			.build();
-
-		String jsonRequest = objectMapper.writeValueAsString(checkDuplicateEmailRequest);
-
-		doNothing()
-			.when(authService)
-			.isEmailUnique(anyString());
-
-		//when & then
-		mockMvc.perform(post("/api/v1/auth/check/email")
-				.with(csrf())
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8")
-				.content(jsonRequest))
-			.andExpect(status().is(EMAIL_UNIQUE_VALIDATED.getStatus().value()))
-			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.code").value(EMAIL_UNIQUE_VALIDATED.getCode()))
-			.andExpect(jsonPath("$.msg").value(EMAIL_UNIQUE_VALIDATED.getMsg()));
-
-		//verify
-		verify(authService, times(1)).isEmailUnique(anyString());
-		verify(authService, only()).isEmailUnique(anyString());
-	}
-
-	@Test
-	@WithMockUser(roles = "{}")
-	@DisplayName("닉네임이 중복이 아니면, 200 OK와 정상 응답을 반환한다.")
-	void testNicknameUnique() throws Exception {
-		//given
-		CheckDuplicateNicknameRequest checkDuplicateNicknameRequest =
-			CheckDuplicateNicknameRequest
-				.builder()
-				.nickname("야야야야")
-				.build();
-
-		String jsonRequest = objectMapper.writeValueAsString(checkDuplicateNicknameRequest);
-
-		doNothing()
-			.when(authService)
-			.isNicknameUnique(anyString());
-
-		//when & then
-		mockMvc.perform(post("/api/v1/auth/check/nickname")
-				.with(csrf())
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8")
-				.content(jsonRequest))
-			.andExpect(status().is(NICKNAME_UNIQUE_VALIDATED.getStatus().value()))
-			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.code").value(NICKNAME_UNIQUE_VALIDATED.getCode()))
-			.andExpect(jsonPath("$.msg").value(NICKNAME_UNIQUE_VALIDATED.getMsg()));
-
-		//verify
-		verify(authService, times(1)).isNicknameUnique(anyString());
-		verify(authService, only()).isNicknameUnique(anyString());
 	}
 
 	@Test

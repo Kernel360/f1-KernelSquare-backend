@@ -70,10 +70,6 @@ public class SchedulerManagerImpl implements ScheculerManager {
                 Long rankName = 1L;
 
                 for (Answer answer : answers) {
-                    if (answer.getMember().getNickname().equals(SystemConstants.ANSWER_BOT)) {
-                        continue;
-                    }
-
                     Rank rank = rankReader.findRank(rankName);
                     answer.updateRank(rank);
 

@@ -4,6 +4,7 @@ import static com.kernelsquare.core.common_response.response.code.CodingMeetingR
 
 import com.kernelsquare.core.common_response.ApiResponse;
 import com.kernelsquare.core.common_response.ResponseEntityFactory;
+import com.kernelsquare.core.constants.SpeLConstants;
 import com.kernelsquare.core.dto.PageResponse;
 import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
 import com.kernelsquare.memberapi.domain.coding_meeting.dto.CodingMeetingDto;
@@ -44,7 +45,7 @@ public class CodingMeetingController {
         Pageable pageable,
         @RequestParam(defaultValue = "all")
         String filter,
-        @AuthenticationPrincipal(expression = "#this == 'anonymousUser' ? null : #this")
+        @AuthenticationPrincipal(expression = SpeLConstants.ANONYMOUS_NULL)
         MemberAdapter memberAdapter) {
         PageResponse pageResponse = codingMeetingFacade.findAllCodingMeeting(pageable, filter, memberAdapter);
         return ResponseEntityFactory.toResponseEntity(CODING_MEETING_ALL_FOUND, pageResponse);

@@ -37,7 +37,8 @@ public class Alert {
     @RequiredArgsConstructor
     public enum AlertType {
         QUESTION_REPLY,
-        RANK_ANSWER
+        RANK_ANSWER,
+        COFFEE_CHAT_REQUEST
     }
 
     @Builder

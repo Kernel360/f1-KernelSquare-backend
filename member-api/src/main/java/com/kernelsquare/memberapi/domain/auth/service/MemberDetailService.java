@@ -20,7 +20,6 @@ public class MemberDetailService implements UserDetailsService {
 	@Override
 	@Transactional(readOnly = true)
 	public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
-		memberReader.findMember(Long.parseLong(username));
 		Member member = memberReader.findMember(Long.parseLong(username));
 
 		Hibernate.initialize(member.getLevel());

@@ -8,8 +8,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import com.kernelsquare.core.common_response.error.code.ReservationArticleErrorCode;
-import com.kernelsquare.core.common_response.error.exception.BusinessException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,6 +19,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import com.kernelsquare.core.common_response.error.code.ReservationArticleErrorCode;
+import com.kernelsquare.core.common_response.error.exception.BusinessException;
 import com.kernelsquare.core.dto.PageResponse;
 import com.kernelsquare.core.type.AuthorityType;
 import com.kernelsquare.domainmysql.domain.authority.entity.Authority;
@@ -96,9 +96,9 @@ class ReservationArticleServiceTest {
 
 	private Reservation createTestReservationStartTime(ChatRoom chatRoom, LocalDateTime startTime) {
 		return Reservation.builder()
-				.chatRoom(chatRoom)
-				.startTime(startTime)
-				.build();
+			.chatRoom(chatRoom)
+			.startTime(startTime)
+			.build();
 	}
 
 	private Member createTestMember() {
@@ -158,12 +158,14 @@ class ReservationArticleServiceTest {
 		CreateReservationArticleRequest createReservationArticleRequest =
 			new CreateReservationArticleRequest(member.getId(), reservationArticle.getTitle(),
 				reservationArticle.getContent(),
+				reservationArticle.getIntroduction(),
 				List.of(hashtag.getContent()),
 				List.of(LocalDateTime.now().plusDays(7), LocalDateTime.now().plusDays(8)));
 
 		given(memberRepository.findById(anyLong())).willReturn(Optional.ofNullable(member));
-		given(reservationRepository.existsByMemberIdAndEndTimeAfter(eq(member.getId()), any(LocalDateTime.class))).willReturn(
-				false
+		given(reservationRepository.existsByMemberIdAndEndTimeAfter(eq(member.getId()),
+			any(LocalDateTime.class))).willReturn(
+			false
 		);
 		given(reservationArticleRepository.save(any(ReservationArticle.class))).willReturn(reservationArticle);
 
@@ -202,14 +204,15 @@ class ReservationArticleServiceTest {
 		Hashtag hashtag = createTestHashtag();
 
 		CreateReservationArticleRequest createReservationArticleRequest =
-				new CreateReservationArticleRequest(member.getId(), reservationArticle.getTitle(),
-						reservationArticle.getContent(),
-						List.of(hashtag.getContent()),
-						List.of(LocalDateTime.now().plusDays(40L), LocalDateTime.now().plusDays(41L)));
+			new CreateReservationArticleRequest(member.getId(), reservationArticle.getTitle(),
+				reservationArticle.getContent(),
+				reservationArticle.getIntroduction(),
+				List.of(hashtag.getContent()),
+				List.of(LocalDateTime.now().plusDays(40L), LocalDateTime.now().plusDays(41L)));
 
 		given(memberRepository.findById(anyLong())).willReturn(Optional.ofNullable(member));
 		given(reservationRepository.existsByMemberIdAndEndTimeAfter(anyLong(), any(LocalDateTime.class))).willReturn(
-				false
+			false
 		);
 		given(reservationArticleRepository.save(any(ReservationArticle.class))).willReturn(reservationArticle);
 
@@ -217,10 +220,10 @@ class ReservationArticleServiceTest {
 
 		// Then
 		assertThatThrownBy(() ->
-				reservationArticleService.createReservationArticle(createReservationArticleRequest))
-				.isExactlyInstanceOf(BusinessException.class)
-				.extracting("errorCode")
-				.isEqualTo(ReservationArticleErrorCode.RESERVATION_PERIOD_LIMIT);
+			reservationArticleService.createReservationArticle(createReservationArticleRequest))
+			.isExactlyInstanceOf(BusinessException.class)
+			.extracting("errorCode")
+			.isEqualTo(ReservationArticleErrorCode.RESERVATION_PERIOD_LIMIT);
 
 		// Verify
 		verify(memberRepository, times(1)).findById(anyLong());
@@ -249,14 +252,15 @@ class ReservationArticleServiceTest {
 		Hashtag hashtag = createTestHashtag();
 
 		CreateReservationArticleRequest createReservationArticleRequest =
-				new CreateReservationArticleRequest(member.getId(), reservationArticle.getTitle(),
-						reservationArticle.getContent(),
-						List.of(hashtag.getContent()),
-						List.of(LocalDateTime.now().plusDays(7L), LocalDateTime.now().plusDays(11L).plusMinutes(30L)));
+			new CreateReservationArticleRequest(member.getId(), reservationArticle.getTitle(),
+				reservationArticle.getContent(),
+				reservationArticle.getIntroduction(),
+				List.of(hashtag.getContent()),
+				List.of(LocalDateTime.now().plusDays(7L), LocalDateTime.now().plusDays(11L).plusMinutes(30L)));
 
 		given(memberRepository.findById(anyLong())).willReturn(Optional.ofNullable(member));
 		given(reservationRepository.existsByMemberIdAndEndTimeAfter(anyLong(), any(LocalDateTime.class))).willReturn(
-				false
+			false
 		);
 		given(reservationArticleRepository.save(any(ReservationArticle.class))).willReturn(reservationArticle);
 
@@ -264,17 +268,16 @@ class ReservationArticleServiceTest {
 
 		// Then
 		assertThatThrownBy(() ->
-				reservationArticleService.createReservationArticle(createReservationArticleRequest))
-				.isExactlyInstanceOf(BusinessException.class)
-				.extracting("errorCode")
-				.isEqualTo(ReservationArticleErrorCode.RESERVATION_TIME_LIMIT);
+			reservationArticleService.createReservationArticle(createReservationArticleRequest))
+			.isExactlyInstanceOf(BusinessException.class)
+			.extracting("errorCode")
+			.isEqualTo(ReservationArticleErrorCode.RESERVATION_TIME_LIMIT);
 
 		// Verify
 		verify(memberRepository, times(1)).findById(anyLong());
 		verify(reservationRepository, times(1)).existsByMemberIdAndEndTimeAfter(anyLong(), any(LocalDateTime.class));
 		verify(reservationArticleRepository, times(1)).save(any(ReservationArticle.class));
 	}
-
 
 	@Test
 	@DisplayName("모든 예약창 조회 테스트")

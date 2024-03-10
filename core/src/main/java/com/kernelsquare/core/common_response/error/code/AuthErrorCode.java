@@ -16,7 +16,7 @@ public enum AuthErrorCode implements ErrorCode {
 	UNAUTHORIZED_ACCESS(HttpStatus.NOT_FOUND, AuthServiceStatus.UNAUTHORIZED_ACCESS, "접근 권한이 없습니다."),
 	UNAUTHENTICATED(HttpStatus.UNAUTHORIZED, AuthServiceStatus.UNAUTHENTICATED, "해당 기능은 로그인이 필요합니다."),
 	NO_EMAIL_INFO(HttpStatus.BAD_REQUEST, AuthServiceStatus.NO_EMAIL_INFO, "이메일 정보가 없습니다."),
-	SOCIAL_TYPE_MISMATCH(HttpStatus.BAD_REQUEST, AuthServiceStatus.SOCIAL_TYPE_MISMATCH, "이메일 정보가 없습니다.");
+	SOCIAL_TYPE_MISMATCH(HttpStatus.BAD_REQUEST, AuthServiceStatus.SOCIAL_TYPE_MISMATCH, "등록되지 않은 소셜타입 입니다.");
 
 	private final HttpStatus httpStatus;
 	private final ServiceStatus serviceStatus;

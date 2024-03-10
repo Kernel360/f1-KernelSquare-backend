@@ -1,13 +1,26 @@
 package com.kernelsquare.memberapi.domain.answer.service;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
+import com.kernelsquare.core.common_response.error.code.AnswerErrorCode;
+import com.kernelsquare.core.common_response.error.exception.BusinessException;
+import com.kernelsquare.domainmysql.domain.answer.command.AnswerCommand;
+import com.kernelsquare.domainmysql.domain.answer.entity.Answer;
+import com.kernelsquare.domainmysql.domain.answer.info.AnswerInfo;
+import com.kernelsquare.domainmysql.domain.answer.repository.AnswerReader;
+import com.kernelsquare.domainmysql.domain.answer.repository.AnswerRepository;
+import com.kernelsquare.domainmysql.domain.answer.repository.AnswerStore;
+import com.kernelsquare.domainmysql.domain.level.entity.Level;
+import com.kernelsquare.domainmysql.domain.level.repository.LevelReader;
+import com.kernelsquare.domainmysql.domain.level.repository.LevelRepository;
+import com.kernelsquare.domainmysql.domain.member.entity.Member;
+import com.kernelsquare.domainmysql.domain.member.repository.MemberRepository;
+import com.kernelsquare.domainmysql.domain.member_answer_vote.entity.MemberAnswerVote;
+import com.kernelsquare.domainmysql.domain.member_answer_vote.repository.MemberAnswerVoteReader;
+import com.kernelsquare.domainmysql.domain.member_answer_vote.repository.MemberAnswerVoteRepository;
+import com.kernelsquare.domainmysql.domain.question.entity.Question;
+import com.kernelsquare.domainmysql.domain.question.repository.QuestionReader;
+import com.kernelsquare.domainmysql.domain.question.repository.QuestionRepository;
+import com.kernelsquare.memberapi.domain.answer.dto.FindAllAnswerResponse;
+import com.kernelsquare.memberapi.domain.answer.dto.UpdateAnswerRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,21 +34,14 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.kernelsquare.memberapi.domain.answer.dto.CreateAnswerRequest;
-import com.kernelsquare.memberapi.domain.answer.dto.FindAllAnswerResponse;
-import com.kernelsquare.memberapi.domain.answer.dto.UpdateAnswerRequest;
-import com.kernelsquare.core.common_response.error.code.AnswerErrorCode;
-import com.kernelsquare.core.common_response.error.exception.BusinessException;
-import com.kernelsquare.domainmysql.domain.answer.entity.Answer;
-import com.kernelsquare.domainmysql.domain.answer.repository.AnswerRepository;
-import com.kernelsquare.domainmysql.domain.level.entity.Level;
-import com.kernelsquare.domainmysql.domain.level.repository.LevelRepository;
-import com.kernelsquare.domainmysql.domain.member.entity.Member;
-import com.kernelsquare.domainmysql.domain.member.repository.MemberRepository;
-import com.kernelsquare.domainmysql.domain.member_answer_vote.entity.MemberAnswerVote;
-import com.kernelsquare.domainmysql.domain.member_answer_vote.repository.MemberAnswerVoteRepository;
-import com.kernelsquare.domainmysql.domain.question.entity.Question;
-import com.kernelsquare.domainmysql.domain.question.repository.QuestionRepository;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.*;
 
 @DisplayName("답변 서비스 통합 테스트")
 @ExtendWith(MockitoExtension.class)
@@ -43,15 +49,17 @@ public class AnswerServiceTest {
 	@InjectMocks
 	private AnswerService answerService;
 	@Mock
-	private LevelRepository levelRepository;
-	@Mock
 	private AnswerRepository answerRepository;
 	@Mock
-	private MemberRepository memberRepository;
+	private QuestionReader questionReader;
 	@Mock
-	private QuestionRepository questionRepository;
+	private AnswerStore answerStore;
 	@Mock
-	private MemberAnswerVoteRepository memberAnswerVoteRepository;
+	private LevelReader levelReader;
+	@Mock
+	private MemberAnswerVoteReader memberAnswerVoteReader;
+	@Mock
+	private AnswerReader answerReader;
 
 	private Member member;
 
@@ -80,11 +88,11 @@ public class AnswerServiceTest {
 		testVotes.add(memberAnswerVote);
 
 		doReturn(testAnswers)
-			.when(answerRepository)
-			.findAnswersByQuestionIdSortedByCreationDate(anyLong());
+			.when(answerReader)
+			.findAnswers(anyLong());
 
 		doReturn(testVotes)
-			.when(memberAnswerVoteRepository)
+			.when(memberAnswerVoteReader)
 			.findAllByMemberId(anyLong());
 
 		//when
@@ -94,9 +102,9 @@ public class AnswerServiceTest {
 		assertThat(testAnswers.size()).isEqualTo(newAnswerList.answerResponses().size());
 
 		//verify
-		verify(answerRepository, times(1)).findAnswersByQuestionIdSortedByCreationDate(anyLong());
-		verify(answerRepository, only()).findAnswersByQuestionIdSortedByCreationDate(anyLong());
-		verify(memberAnswerVoteRepository, only()).findAllByMemberId(anyLong());
+		verify(answerReader, times(1)).findAnswers(anyLong());
+		verify(answerReader, only()).findAnswers(anyLong());
+		verify(memberAnswerVoteReader, only()).findAllByMemberId(anyLong());
 	}
 
 	@Test
@@ -113,65 +121,41 @@ public class AnswerServiceTest {
 		member = createTestMember(memberId);
 
 		Question foundQuestion = createTestQuestion();
-		Optional<Question> optionalFoundQuestion = Optional.of(foundQuestion);
 
 		Level foundLevel = createTestLevel(0L, 1L);
-		Optional<Level> optionalFoundLevel = Optional.of(foundLevel);
 
 		Member foundMember = createTestMember(foundMemberId);
 		foundMember.updateLevel(foundLevel);
-		Optional<Member> optionalFoundMember = Optional.of(foundMember);
 
 		Answer foundAnswer = createTestAnswer(foundTestAnswerId, 1L, foundMember, foundQuestion);
-		Optional<Answer> optionalFoundAnswer = Optional.of(foundAnswer);
 
-		CreateAnswerRequest createAnswerRequest = CreateAnswerRequest
-			.builder()
-			.memberId(foundMemberId)
+		AnswerCommand.CreateAnswer command = AnswerCommand.CreateAnswer.builder()
+			.questionId(foundQuestionId)
 			.content(foundAnswer.getContent())
 			.imageUrl(foundAnswer.getImageUrl())
+			.author(foundMember)
 			.build();
 
-		doReturn(CreateAnswerRequest.toEntity(
-			createAnswerRequest,
-			foundQuestion,
-			foundMember))
-			.when(answerRepository)
-			.save(any(Answer.class));
 
-		doReturn(optionalFoundMember)
-			.when(memberRepository)
-			.findById(anyLong());
-
-		doReturn(optionalFoundQuestion)
-			.when(questionRepository)
-			.findById(anyLong());
-
-		doReturn(optionalFoundAnswer)
-			.when(answerRepository)
-			.findById(anyLong());
-
-		doReturn(optionalFoundLevel)
-			.when(levelRepository)
-			.findByName(anyLong());
+		doReturn(foundQuestion).when(questionReader).findQuestion(anyLong());
+		doReturn(foundAnswer).when(answerStore).store(any(Answer.class));
+		doReturn(foundLevel).when(levelReader).findLevel(anyLong());
 
 		//when
-		Long newCreatedAnswerId = answerService.createAnswer(createAnswerRequest, foundQuestionId);
-		Optional<Answer> optionalTestAnswer = answerRepository.findById(foundTestAnswerId);
+		AnswerInfo answerInfo = answerService.createAnswer(command);
+
 
 		//then
-		assertThat(optionalTestAnswer.get().getContent()).isEqualTo(createAnswerRequest.content());
-		assertThat(optionalTestAnswer.get().getMember().getId()).isEqualTo(createAnswerRequest.memberId());
-		assertThat(optionalTestAnswer.get().getImageUrl()).isEqualTo(createAnswerRequest.imageUrl());
+		assertThat(answerInfo.getRecipientId()).isEqualTo(foundQuestion.getMember().getId().toString());
+		assertThat(answerInfo.getRecipient()).isEqualTo(foundQuestion.getMember().getNickname());
+		assertThat(answerInfo.getSenderId()).isEqualTo(foundAnswer.getMember().getId().toString());
+		assertThat(answerInfo.getSender()).isEqualTo(foundAnswer.getMember().getNickname());
+		assertThat(answerInfo.getQuestionTitle()).isEqualTo(foundQuestion.getTitle());
 
 		//verify
-		verify(answerRepository, times(1)).save(any(Answer.class));
-		verify(memberRepository, times(1)).findById(anyLong());
-		verify(memberRepository, only()).findById(anyLong());
-		verify(questionRepository, times(1)).findById(anyLong());
-		verify(questionRepository, only()).findById(anyLong());
-		verify(answerRepository, times(1)).findById(anyLong());
-		verify(levelRepository, times(1)).findByName(anyLong());
+		verify(questionReader, times(1)).findQuestion(anyLong());
+		verify(answerStore, times(1)).store(any(Answer.class));
+		verify(levelReader, times(1)).findLevel(anyLong());
 	}
 
 	@Test

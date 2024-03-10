@@ -1,6 +1,7 @@
 package com.kernelsquare.memberapi.domain.coffeechat.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.kernelsquare.core.constants.TimeResponseFormat;
 import com.kernelsquare.domainmysql.domain.coffeechat.entity.ChatRoom;
 import lombok.Builder;
 
@@ -17,7 +18,7 @@ public record EnterCoffeeChatRoomResponse(
 
 	List<ChatRoomMember> memberList,
 
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = TimeResponseFormat.PATTERN)
 	LocalDateTime expirationTime
 ) {
 	public static EnterCoffeeChatRoomResponse of(

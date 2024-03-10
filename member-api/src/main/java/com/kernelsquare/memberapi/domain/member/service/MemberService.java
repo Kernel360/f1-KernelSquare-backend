@@ -8,7 +8,7 @@ import com.kernelsquare.core.common_response.error.code.MemberErrorCode;
 import com.kernelsquare.core.common_response.error.exception.BusinessException;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
 import com.kernelsquare.domainmysql.domain.member.repository.MemberRepository;
-import com.kernelsquare.memberapi.domain.image.utils.ImageUtils;
+import com.kernelsquare.core.util.ImageUtils;
 import com.kernelsquare.memberapi.domain.member.dto.FindMemberResponse;
 import com.kernelsquare.memberapi.domain.member.dto.UpdateMemberIntroductionRequest;
 import com.kernelsquare.memberapi.domain.member.dto.UpdateMemberProfileRequest;

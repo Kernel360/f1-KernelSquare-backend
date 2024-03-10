@@ -9,7 +9,7 @@ import com.kernelsquare.domainmysql.domain.member.entity.Member;
 public interface MemberRepository extends JpaRepository<Member, Long> {
 	Optional<Member> findByEmail(String email);
 
-	Member findAllByEmail(String email);
+	Optional<Member> findByNickname(String nickname);
 
 	Boolean existsByEmail(String email);
 

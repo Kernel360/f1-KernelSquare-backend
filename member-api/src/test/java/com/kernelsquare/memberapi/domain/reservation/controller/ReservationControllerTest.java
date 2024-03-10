@@ -193,7 +193,7 @@ class ReservationControllerTest {
 			.reservationArticleId(1L)
 			.reservationId(1L)
 			.memberId(1L)
-			.startTime(LocalDateTime.now())
+			.reservationStartTime(LocalDateTime.now())
 			.build();
 
 		AddReservationMemberResponse addReservationMemberResponse = AddReservationMemberResponse
@@ -245,7 +245,7 @@ class ReservationControllerTest {
 					fieldWithPath("reservation_id").type(JsonFieldType.NUMBER).description("예약 아이디"),
 					fieldWithPath("member_id").type(JsonFieldType.NUMBER).description("회원 아이디"),
 					//todo : 시작 시간 type 확인 -> ARRAY 맞음?
-					fieldWithPath("start_time").type(JsonFieldType.ARRAY).description("시작 시간")
+					fieldWithPath("reservation_start_time").type(JsonFieldType.ARRAY).description("시작 시간")
 				),
 				responseFields(
 					fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"),

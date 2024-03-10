@@ -44,11 +44,6 @@ public class ReservationService {
 		Reservation reservation = reservationRepository.findById(reservationId)
 			.orElseThrow(() -> new BusinessException(ReservationErrorCode.RESERVATION_NOT_FOUND));
 
-		//멘티가 1일 전에 예약 취소 불가
-		if (LocalDateTime.now().isAfter(reservation.getStartTime().minusDays(1))) {
-			throw new BusinessException(ReservationErrorCode.RESERVATION_CANCEL_DENIED_TIME_PASSED);
-		}
-
 		reservation.deleteMember();
 	}
 
@@ -63,6 +58,11 @@ public class ReservationService {
 		// 해당 예약 게시글의 예약 가능 시간이 초과되지 않았는 지 확인
 		if (!reservationArticle.getStartTime().minusDays(7L).isBefore(LocalDateTime.now())
 			&& !reservationArticle.getStartTime().minusDays(1L).isAfter(LocalDateTime.now())) {
+			throw new BusinessException(ReservationErrorCode.RESERVATION_AVAILABLE_TIME_PASSED);
+		}
+
+		// 예약하려는 시간이 현재 시간보다 이전인지 체크(이전이면 예외처리)
+		if (addReservationMemberRequest.reservationStartTime().isBefore(LocalDateTime.now())) {
 			throw new BusinessException(ReservationErrorCode.RESERVATION_AVAILABLE_TIME_PASSED);
 		}
 
@@ -89,7 +89,7 @@ public class ReservationService {
 
 		// 예약 중복 확인 체크하기
 		for (Reservation bookedReservation : reservationList) {
-			if (bookedReservation.getStartTime().equals(addReservationMemberRequest.startTime())) {
+			if (bookedReservation.getStartTime().equals(addReservationMemberRequest.reservationStartTime())) {
 				throw new BusinessException(ReservationErrorCode.DUPLICATE_RESERVATION_TIME);
 			}
 		}

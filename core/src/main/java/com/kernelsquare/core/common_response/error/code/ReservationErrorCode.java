@@ -10,8 +10,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum ReservationErrorCode implements ErrorCode {
 	RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, ReservationServiceStatus.RESERVATION_NOT_FOUND, "존재하지 않는 예약입니다."),
-	RESERVATION_CANCEL_DENIED_TIME_PASSED(HttpStatus.BAD_REQUEST,
-		ReservationServiceStatus.RESERVATION_CANCEL_DENIED_TIME_PASSED, "예약 취소 가능 시간이 지났습니다."),
 	RESERVATION_LIMIT_EXCEED(HttpStatus.CONFLICT, ReservationServiceStatus.RESERVATION_LIMIT_EXCEED,
 		"예약 가능한 게시글 제한 개수를 넘었습니다."),
 	MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, ReservationServiceStatus.MEMBER_NOT_FOUND,

@@ -4,6 +4,7 @@ import com.kernelsquare.core.type.AuthorityType;
 import com.kernelsquare.domainmysql.domain.authority.entity.Authority;
 import com.kernelsquare.domainmysql.domain.level.entity.Level;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
+import com.kernelsquare.domainmysql.domain.member.repository.MemberReader;
 import com.kernelsquare.domainmysql.domain.member.repository.MemberRepository;
 import com.kernelsquare.domainmysql.domain.member_authority.entity.MemberAuthority;
 import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
@@ -27,7 +28,7 @@ public class MemberDetailServiceTest {
 	@InjectMocks
 	private MemberDetailService memberDetailService;
 	@Mock
-	private MemberRepository memberRepository;
+	private MemberReader memberReader;
 
 	@Test
 	@DisplayName("회원 권한 주입 테스트")
@@ -63,16 +64,14 @@ public class MemberDetailServiceTest {
 
 		member.initAuthorities(memberAuthorities);
 
-		Optional<Member> optionalMember = Optional.of(member);
-
 		List<SimpleGrantedAuthority> authorities = member.getAuthorities().stream()
 			.map(MemberAuthority::getAuthority)
 			.map(auth -> new SimpleGrantedAuthority(auth.getAuthorityType().getDescription()))
 			.toList();
 
-		doReturn(optionalMember)
-			.when(memberRepository)
-			.findById(anyLong());
+		doReturn(member)
+			.when(memberReader)
+			.findMember(anyLong());
 
 		//when
 		MemberAdapter memberAdapter = (MemberAdapter) memberDetailService.loadUserByUsername(String.valueOf(member.getId()));
@@ -83,7 +82,7 @@ public class MemberDetailServiceTest {
 		assertThat(memberAdapter.getAuthorities()).isEqualTo(authorities);
 
 		//verify
-		verify(memberRepository, only()).findById(anyLong());
-		verify(memberRepository, times(1)).findById(anyLong());
+		verify(memberReader, only()).findMember(anyLong());
+		verify(memberReader, times(1)).findMember(anyLong());
 	}
 }

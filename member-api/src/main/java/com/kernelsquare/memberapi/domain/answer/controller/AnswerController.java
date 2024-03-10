@@ -1,26 +1,22 @@
 package com.kernelsquare.memberapi.domain.answer.controller;
 
-import static com.kernelsquare.core.common_response.response.code.AnswerResponseCode.*;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.kernelsquare.memberapi.domain.answer.dto.CreateAnswerRequest;
-import com.kernelsquare.memberapi.domain.answer.dto.FindAllAnswerResponse;
-import com.kernelsquare.memberapi.domain.answer.dto.UpdateAnswerRequest;
-import com.kernelsquare.memberapi.domain.answer.service.AnswerService;
 import com.kernelsquare.core.common_response.ApiResponse;
 import com.kernelsquare.core.common_response.ResponseEntityFactory;
+import com.kernelsquare.memberapi.domain.answer.dto.AnswerDto;
+import com.kernelsquare.memberapi.domain.answer.dto.FindAllAnswerResponse;
+import com.kernelsquare.memberapi.domain.answer.dto.UpdateAnswerRequest;
+import com.kernelsquare.memberapi.domain.answer.facade.AnswerFacade;
+import com.kernelsquare.memberapi.domain.answer.service.AnswerService;
+import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
+import com.kernelsquare.memberapi.domain.chatgpt.service.ChatGptService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import static com.kernelsquare.core.common_response.response.code.AnswerResponseCode.*;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -28,6 +24,8 @@ import lombok.RequiredArgsConstructor;
 public class AnswerController {
 
 	private final AnswerService answerService;
+	private final AnswerFacade answerFacade;
+	private final ChatGptService chatGptService;
 
 	@GetMapping("/questions/{questionId}/answers")
 	public ResponseEntity<ApiResponse<FindAllAnswerResponse>> findAllAnswers(
@@ -38,11 +36,21 @@ public class AnswerController {
 
 	@PostMapping("/questions/{questionId}/answers")
 	public ResponseEntity<ApiResponse> createAnswer(
-		@Valid @RequestBody CreateAnswerRequest createAnswerRequest,
+		@Valid @RequestBody AnswerDto.CreateRequest request,
+		@PathVariable Long questionId,
+		@AuthenticationPrincipal MemberAdapter memberAdapter
+	) {
+		answerFacade.createAnswer(request, questionId, memberAdapter);
+
+		return ResponseEntityFactory.toResponseEntity(ANSWER_CREATED);
+	}
+
+	@PostMapping("/questions/{questionId}/answer-bot")
+	public ResponseEntity<ApiResponse> createAnswerWithChatGpt(
 		@PathVariable Long questionId
 	) {
-		answerService.createAnswer(createAnswerRequest, questionId);
-		return ResponseEntityFactory.toResponseEntity(ANSWER_CREATED);
+		chatGptService.createChatGptAnswer(questionId);
+		return ResponseEntityFactory.toResponseEntity(AUTOMATED_ANSWER_CREATED);
 	}
 
 	@PutMapping("/questions/answers/{answerId}")

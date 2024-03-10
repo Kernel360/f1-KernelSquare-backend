@@ -1,7 +1,8 @@
 package com.kernelsquare.memberapi.domain.coffeechat.dto;
 
+
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
-import com.kernelsquare.memberapi.domain.image.utils.ImageUtils;
+import com.kernelsquare.core.util.ImageUtils;
 import lombok.Builder;
 
 @Builder

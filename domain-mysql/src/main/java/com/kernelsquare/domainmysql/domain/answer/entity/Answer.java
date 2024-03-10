@@ -76,4 +76,8 @@ public class Answer extends BaseEntity {
 		this.content = content;
 		this.imageUrl = imageUrl;
 	}
+
+	public void updateRank(Rank rank) {
+		this.rank = rank;
+	}
 }

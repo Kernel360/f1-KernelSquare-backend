@@ -49,7 +49,7 @@ public class SecurityConfig {
 		"/actuator/**",
 
 		// 소켓 통신의 임시 화면을 사용하기 위해 관련 경로는 permitAll
-		"/screen/**",
+		"/chat/**",
 		"/kernel-square/**",
 		"/topic/chat/room",
 		"/app/chat/message",
@@ -61,7 +61,8 @@ public class SecurityConfig {
 
 	private final String[] hasAnyAuthorityPatterns = new String[] {
 		"/api/v1/images",
-		"/api/v1/coffeechat/reservations"
+		"/api/v1/coffeechat/reservations",
+		"/api/v1/alerts/**",
 	};
 
 	private final String[] hasRoleUserPatterns = new String[] {
@@ -72,7 +73,8 @@ public class SecurityConfig {
 		"/api/v1/questions/answers/{answerId}/vote",
 		"/api/v1/coffeechat/reservations/book",
 		"/api/v1/coffeechat/reservations/{reservationId}",
-		"/api/v1/notices/**"
+		"/api/v1/notices/**",
+		"/api/v1/questions/{questionId}/answer-bot"
 	};
 
 	private final String[] hasRoleAdminPatterns = new String[] {
@@ -107,16 +109,22 @@ public class SecurityConfig {
 			.requestMatchers(HttpMethod.GET, "/api/v1/coffeechat/posts/{postId}").permitAll()
 			.requestMatchers(HttpMethod.GET, "/api/v1/hashtags").permitAll()
 			.requestMatchers(HttpMethod.GET, "/api/v1/techs").permitAll()
+                               
 			.requestMatchers(HttpMethod.GET, "/login/oauth2/**").permitAll()
 			.requestMatchers(HttpMethod.GET, "/oauth2/**").permitAll()
 			.requestMatchers(HttpMethod.GET, "/favicon.ico/**").permitAll()
 			// 백엔드 임시 테스트 창
 			.requestMatchers(HttpMethod.GET, "/api/v1/test").permitAll()
 
+			.requestMatchers(HttpMethod.GET, "/api/v1/coding-meetings").permitAll()
+			.requestMatchers(HttpMethod.GET, "/api/v1/coding-meetings/{codingMeetingToken}").permitAll()
+			.requestMatchers(HttpMethod.GET, "/api/v1/coding-meeting-comments/{codingMeetingToken}").permitAll()
+
 			// 모든 권한에 대한 접근 허용
 			.requestMatchers(hasAnyAuthorityPatterns).authenticated()
 			.requestMatchers(HttpMethod.GET, "/api/v1/members/{memberId}").authenticated()
 			.requestMatchers(HttpMethod.GET, "/api/v1/coffeechat/rooms/{roomKey}").authenticated()
+			.requestMatchers(HttpMethod.POST, "/api/v1/coffeechat/request/{memberId}").authenticated()
 
 			// ROLE_USER 권한 필요
 			.requestMatchers(hasRoleUserPatterns).permitAll()
@@ -128,6 +136,12 @@ public class SecurityConfig {
 			.requestMatchers(HttpMethod.PUT, "/api/v1/questions/{questionId}").hasRole("USER")
 			.requestMatchers(HttpMethod.DELETE, "/api/v1/questions/{questionId}").hasRole("USER")
 			.requestMatchers(HttpMethod.POST, "/api/v1/questions/{questionId}/answers").hasRole("USER")
+			.requestMatchers(HttpMethod.POST, "/api/v1/coding-meetings").hasRole("USER")
+			.requestMatchers(HttpMethod.PUT, "/api/v1/coding-meetings/**").hasRole("USER")
+			.requestMatchers(HttpMethod.DELETE, "/api/v1/coding-meetings/{codingMeetingToken}").hasRole("USER")
+			.requestMatchers(HttpMethod.POST, "/api/v1/coding-meeting-comments").hasRole("USER")
+			.requestMatchers(HttpMethod.PUT, "/api/v1/coding-meeting-comments/{codingMeetingCommentToken}").hasRole("USER")
+			.requestMatchers(HttpMethod.DELETE, "/api/v1/coding-meeting-comments/{codingMeetingCommentToken}").hasRole("USER")
 
 			// ROLE_MENTOR 권한 필요
 			.requestMatchers(HttpMethod.POST, "/api/v1/coffeechat/posts").hasRole("MENTOR")

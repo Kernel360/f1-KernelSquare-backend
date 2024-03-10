@@ -9,9 +9,3 @@ CREATE TABLE `chat_room` (
     `active` tinyint DEFAULT 0,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-INSERT INTO chat_room (created_date, id, room_key, modified_date, room_name, active)
-VALUES (now(), 1, 'test_room_key', now(), null, 0);
-
-INSERT INTO chat_room (created_date, id, room_key, modified_date, room_name, active)
-VALUES (now(), 2, 'test_room_key', now(), null, 0);

@@ -3,6 +3,8 @@ package com.kernelsquare.adminapi.domain.notice.dto;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.kernelsquare.core.constants.TimeResponseFormat;
+import com.kernelsquare.core.validation.annotations.EnumValue;
 import com.kernelsquare.domainmysql.domain.notice.entity.Notice;
 
 import jakarta.validation.constraints.NotBlank;
@@ -20,8 +22,8 @@ public class NoticeDto {
 		@Size(min = 10, max = 10000, message = "공지 내용은 10자 이상 1000자 이하로 작성해 주세요")
 		String noticeContent,
 
-		// @EnumValue(enumClass = Notice.NoticeCategory.class, message = "유효한 카테고리를 선택해주세요")
-		Notice.NoticeCategory noticeCategory
+		@EnumValue(enumClass = Notice.NoticeCategory.class, message = "유효한 카테고리를 선택해주세요")
+		String noticeCategory
 	) {
 	}
 
@@ -65,9 +67,9 @@ public class NoticeDto {
 		String noticeToken,
 		String noticeContent,
 		Notice.NoticeCategory noticeCategory,
-		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = TimeResponseFormat.PATTERN)
 		LocalDateTime createdDate,
-		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = TimeResponseFormat.PATTERN)
 		LocalDateTime modifiedDate
 	) {
 	}
@@ -77,9 +79,9 @@ public class NoticeDto {
 		String noticeTitle,
 		String noticeToken,
 		Notice.NoticeCategory noticeCategory,
-		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = TimeResponseFormat.PATTERN)
 		LocalDateTime createdDate,
-		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = TimeResponseFormat.PATTERN)
 		LocalDateTime modifiedDate
 	) {
 	}

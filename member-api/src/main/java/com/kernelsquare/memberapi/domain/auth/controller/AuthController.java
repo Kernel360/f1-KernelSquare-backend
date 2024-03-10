@@ -1,5 +1,6 @@
 package com.kernelsquare.memberapi.domain.auth.controller;
 
+
 import static com.kernelsquare.core.common_response.response.code.AuthResponseCode.*;
 
 import jakarta.servlet.http.Cookie;
@@ -13,18 +14,18 @@ import com.kernelsquare.core.common_response.ApiResponse;
 import com.kernelsquare.core.common_response.ResponseEntityFactory;
 import com.kernelsquare.core.validation.ValidationSequence;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
-import com.kernelsquare.memberapi.domain.auth.dto.CheckDuplicateEmailRequest;
-import com.kernelsquare.memberapi.domain.auth.dto.CheckDuplicateNicknameRequest;
-import com.kernelsquare.memberapi.domain.auth.dto.LoginRequest;
-import com.kernelsquare.memberapi.domain.auth.dto.LoginResponse;
-import com.kernelsquare.memberapi.domain.auth.dto.SignUpRequest;
-import com.kernelsquare.memberapi.domain.auth.dto.SignUpResponse;
-import com.kernelsquare.memberapi.domain.auth.dto.TokenRequest;
-import com.kernelsquare.memberapi.domain.auth.dto.TokenResponse;
+import com.kernelsquare.memberapi.domain.auth.dto.*;
 import com.kernelsquare.memberapi.domain.auth.service.AuthService;
 import com.kernelsquare.memberapi.domain.auth.service.TokenProvider;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import static com.kernelsquare.core.common_response.response.code.AuthResponseCode.*;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -39,6 +40,7 @@ public class AuthController {
 		Member member = authService.login(loginRequest);
 		TokenResponse tokenResponse = tokenProvider.createToken(member, loginRequest);
 		LoginResponse loginResponse = LoginResponse.of(member, tokenResponse);
+
 		return ResponseEntityFactory.toResponseEntity(LOGIN_SUCCESS, loginResponse);
 	}
 

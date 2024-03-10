@@ -1,6 +1,5 @@
 package com.kernelsquare.memberapi.common.config;
 
-import com.kernelsquare.memberapi.common.oauth2.CustomInMemoryOAuth2AuthorizedClientService;
 import com.kernelsquare.memberapi.common.oauth2.handler.OAuth2LoginFailureHandler;
 import com.kernelsquare.memberapi.common.oauth2.handler.OAuth2LoginSuccessHandler;
 import com.kernelsquare.memberapi.common.oauth2.service.CustomOAuth2MemberService;
@@ -15,7 +14,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
@@ -25,7 +23,6 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import com.kernelsquare.memberapi.common.filter.JWTSettingFilter;
 import com.kernelsquare.memberapi.common.jwt.JWTAccessDeniedHandler;
 import com.kernelsquare.memberapi.common.jwt.JWTAuthenticationEntryPoint;
-import com.kernelsquare.memberapi.domain.auth.service.TokenProvider;
 
 import lombok.RequiredArgsConstructor;
 
@@ -34,17 +31,14 @@ import lombok.RequiredArgsConstructor;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-	private final TokenProvider tokenProvider;
 	private final JWTAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 	private final JWTAccessDeniedHandler jwtAccessDeniedHandler;
 	private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 	private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
-//	private final CustomInMemoryOAuth2AuthorizedClientService customInMemoryOAuth2AuthorizedClientService;
-	private final OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
 	private final CustomOAuth2MemberService customOAuth2MemberService;
 	private final ClientRegistrationRepository clientRegistrationRepository;
 	private final OAuth2AuthorizedClientRepository oAuth2AuthorizedClientRepository;
-	private final CustomInMemoryOAuth2AuthorizedClientService customInMemoryOAuth2AuthorizedClientService;
+	private final JWTSettingFilter jwtSettingFilter;
 
 	private final String[] permitAllPatterns = new String[] {
 		"/api/v1/auth/check/email",
@@ -91,12 +85,6 @@ public class SecurityConfig {
 		return new BCryptPasswordEncoder();
 	}
 
-//	@Bean
-//	public OAuth2AuthorizedClientService authorizedClientService() {
-//		return new CustomInMemoryOAuth2AuthorizedClientService();
-//	}
-
-
     @Bean
     public OAuth2AuthorizedClientManager oAuth2AuthorizedClientManager() {
         return new DefaultOAuth2AuthorizedClientManager(clientRegistrationRepository, oAuth2AuthorizedClientRepository);
@@ -122,6 +110,7 @@ public class SecurityConfig {
 			.requestMatchers(HttpMethod.GET, "/login/oauth2/**").permitAll()
 			.requestMatchers(HttpMethod.GET, "/oauth2/**").permitAll()
 			.requestMatchers(HttpMethod.GET, "/favicon.ico/**").permitAll()
+			// 백엔드 임시 테스트 창
 			.requestMatchers(HttpMethod.GET, "/api/v1/test").permitAll()
 
 			// 모든 권한에 대한 접근 허용
@@ -155,7 +144,7 @@ public class SecurityConfig {
 			.requestMatchers(HttpMethod.DELETE, "/api/v1/hashtags/{hashtagId}").hasRole("ADMIN")
 		);
 
-		http.addFilterBefore(new JWTSettingFilter(tokenProvider), BasicAuthenticationFilter.class);
+		http.addFilterBefore(jwtSettingFilter, BasicAuthenticationFilter.class);
 
 		http.exceptionHandling(exceptionHandlingConfigurer -> exceptionHandlingConfigurer
 			.authenticationEntryPoint(jwtAuthenticationEntryPoint)
@@ -167,12 +156,8 @@ public class SecurityConfig {
 
 		 http.oauth2Login(oAuth2LoginConfigurer ->
 		 		oAuth2LoginConfigurer
-//					.authorizationEndpoint(config ->
-//							config
-//					.authorizationRequestRepository(httpCookieOAuth2AuthorizationRequestRepository))
-//					.authorizedClientService(customInMemoryOAuth2AuthorizedClientService)
-		 			.successHandler(oAuth2LoginSuccessHandler) // 동의하고 계속하기 눌렀을 때 Handler 설정
-		 			.failureHandler(oAuth2LoginFailureHandler) // 소셜 로그인 실패 시 핸들러 설정
+		 			.successHandler(oAuth2LoginSuccessHandler)
+		 			.failureHandler(oAuth2LoginFailureHandler)
 		 			.userInfoEndpoint(userInfoEndpointConfigurer ->
 		 				userInfoEndpointConfigurer.userService(customOAuth2MemberService)));
 

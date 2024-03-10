@@ -1,9 +1,20 @@
 package com.kernelsquare.memberapi.common.filter;
 
 import java.io.IOException;
+import java.security.Key;
 
+import com.kernelsquare.core.common_response.error.exception.BusinessException;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -17,8 +28,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
+import static com.kernelsquare.core.common_response.error.code.TokenErrorCode.*;
+import static com.kernelsquare.core.common_response.error.code.TokenErrorCode.WRONG_TOKEN;
+
+@Component
 @RequiredArgsConstructor
-public class JWTSettingFilter extends OncePerRequestFilter {
+public class JWTSettingFilter extends OncePerRequestFilter implements InitializingBean {
 	private final TokenProvider tokenProvider;
 
 	@Override

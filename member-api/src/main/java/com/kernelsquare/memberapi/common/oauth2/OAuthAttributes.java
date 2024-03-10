@@ -87,16 +87,17 @@ public class OAuthAttributes {
      * of메소드로 OAuthAttributes 객체가 생성되어, 유저 정보들이 담긴 OAuth2UserInfo가 소셜 타입별로 주입된 상태
      */
     public Member toEntity(OAuth2UserInfo oauth2UserInfo, Level level) {
+        String email = oauth2UserInfo.getEmail();
+        String truncatedEmail = email.length() > 20 ? email.substring(0, 20) : email;
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         return Member.builder()
-//                .nickname("테스트" + UUID.randomUUID().toString().replace("-", ""))
-                .nickname(oauth2UserInfo.getEmail())
+                .nickname(truncatedEmail)
                 .email(oauth2UserInfo.getEmail())
                 .level(level)
                 .password(passwordEncoder.encode("password"))
                 .experience(0L)
-                .imageUrl("image_url")
-                .introduction("introduction")
+                .imageUrl(null)
+                .introduction("")
                 .build();
     }
 }

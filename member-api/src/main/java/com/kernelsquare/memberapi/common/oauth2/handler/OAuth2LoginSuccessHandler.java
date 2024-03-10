@@ -2,116 +2,84 @@ package com.kernelsquare.memberapi.common.oauth2.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import com.kernelsquare.core.common_response.ApiResponse;
-import com.kernelsquare.core.common_response.ResponseEntityFactory;
+import com.kernelsquare.core.common_response.error.code.LevelErrorCode;
+import com.kernelsquare.core.common_response.error.code.MemberErrorCode;
+import com.kernelsquare.core.common_response.error.exception.BusinessException;
+import com.kernelsquare.core.util.ExperiencePolicy;
+import com.kernelsquare.domainmysql.domain.level.entity.Level;
+import com.kernelsquare.domainmysql.domain.level.repository.LevelRepository;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
-import com.kernelsquare.memberapi.common.oauth2.CustomOAuth2User;
+import com.kernelsquare.domainmysql.domain.member.repository.MemberRepository;
+import com.kernelsquare.domainmysql.domain.member_authority.entity.MemberAuthority;
+import com.kernelsquare.domainmysql.domain.member_authority.repository.MemberAuthorityRepository;
 import com.kernelsquare.memberapi.domain.auth.dto.LoginRequest;
 import com.kernelsquare.memberapi.domain.auth.dto.LoginResponse;
 import com.kernelsquare.memberapi.domain.auth.dto.MemberDetails;
 import com.kernelsquare.memberapi.domain.auth.dto.TokenResponse;
-import com.kernelsquare.memberapi.domain.auth.service.AuthService;
 import com.kernelsquare.memberapi.domain.auth.service.TokenProvider;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.HtmlUtils;
 
 import java.io.IOException;
 import java.util.Base64;
-import java.util.stream.Collectors;
+import java.util.List;
 
-import static com.kernelsquare.core.common_response.response.code.AuthResponseCode.LOGIN_SUCCESS;
-
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
+    private final MemberRepository memberRepository;
+    private final LevelRepository levelRepository;
+    private final TokenProvider tokenProvider;
+    private final MemberAuthorityRepository memberAuthorityRepository;
 
     @Override
+    @Transactional
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-        log.info("OAuth2 Login 성공!");
 
         MemberDetails oAuth2User = (MemberDetails) authentication.getPrincipal();
-
-//        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-//        String email = userDetails.getUsername();
         String email = oAuth2User.getEmail();
-        log.info("사용자 이메일: {}", email);
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new BusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
 
-        String url = "http://localhost:8501/api/v1/auth/login";
+        List<MemberAuthority> memberAuthorities = memberAuthorityRepository.findAllByMember(member);
 
-        // 로그인 요청 생성
-        LoginRequest loginRequest = new LoginRequest(email, "password");
 
-        // ObjectMapper를 생성하고 snake case 설정
+        LoginRequest loginRequest = LoginRequest.builder()
+                .email(email)
+                .password("password")
+                .build();
+
+        TokenResponse tokenResponse = tokenProvider.createToken(member, loginRequest);
+
+        LoginResponse loginResponse = LoginResponse.of(member, tokenResponse, memberAuthorities);
+
+        member.addExperience(ExperiencePolicy.MEMBER_DAILY_ATTENDED.getReward());
+        if (member.isExperienceExceed(member.getExperience())) {
+            member.updateExperience(member.getExperience() - member.getLevel().getLevelUpperLimit());
+            Level nextLevel = levelRepository.findByName(member.getLevel().getName() + 1)
+                    .orElseThrow(() -> new BusinessException(LevelErrorCode.LEVEL_NOT_FOUND));
+            member.updateLevel(nextLevel);
+        }
+
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
 
-        // RestTemplate 생성 및 ObjectMapper 설정
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.getMessageConverters().forEach(converter -> {
-            if (converter instanceof MappingJackson2HttpMessageConverter) {
-                ((MappingJackson2HttpMessageConverter) converter).setObjectMapper(objectMapper);
-            }
-        });
-
-        // POST 요청 보내고 응답 받기
-        ResponseEntity<ApiResponse<LoginResponse>> responseEntity = restTemplate.exchange(
-                url,
-                HttpMethod.POST,
-                new HttpEntity<>(loginRequest),
-                new ParameterizedTypeReference<>() {
-                }
-        );
-        log.info("1번 추출중: {}", responseEntity);
-
-        // 응답 객체 추출
-        ApiResponse<LoginResponse> apiResponse = responseEntity.getBody();
-        log.info("2번 추출중: {}", apiResponse);
-
-        // TODO 쿠키 인코딩 방법
-        // JSON 데이터를 Base64로 인코딩
-        String json = new ObjectMapper().writeValueAsString(apiResponse);
+        String json = new ObjectMapper().writeValueAsString(loginResponse);
         String encodedJson = Base64.getEncoder().encodeToString(json.getBytes());
-        log.info("json : {}", json);
 
-    // 쿠키에 Base64로 인코딩된 JSON 데이터 추가
         Cookie cookie = new Cookie("loginResponse", encodedJson);
-        cookie.setMaxAge(3600); // 쿠키 유지 시간 (초 단위)
-        cookie.setPath("/"); // 쿠키의 유효 범위 설정
+        cookie.setMaxAge(600);
+        cookie.setPath("/");
         response.addCookie(cookie);
-        log.info("Cookie : {}", encodedJson);
 
-        // 로그인 후 리다이렉트
-        response.sendRedirect("/api/v1/test");
-
-
-        // TODO 세션 방법
-//        response.setStatus(responseEntity.getStatusCodeValue());
-//        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-//        response.getWriter().write(new ObjectMapper().writeValueAsString(apiResponse));
-
-//        // 세션에 JSON 데이터 추가
-//        HttpSession session = request.getSession(); // 세션 가져오기
-//        session.setAttribute("loginResponse", apiResponse); // 세션에 데이터 저장
-//        log.info("Session : {}", session.getAttribute("loginResponse"));
-//
-//        // 세션 유지 시간 설정 (예: 1시간)
-//        session.setMaxInactiveInterval(3600);
+        // develop
+        response.sendRedirect("http://localhost:3000/oauth/github");
+        // main
+//        response.sendRedirect("https://kernelsquare.live/oauth/github");
     }
 }

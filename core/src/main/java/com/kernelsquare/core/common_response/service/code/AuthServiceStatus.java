@@ -11,6 +11,7 @@ public enum AuthServiceStatus implements ServiceStatus {
 	ALREADY_SAVED_EMAIL(1103),
 	UNAUTHORIZED_ACCESS(1104),
 	UNAUTHENTICATED(1105),
+	NO_EMAIL_INFO(1106),
 
 	//success
 	LOGIN_SUCCESS(1140),

@@ -12,6 +12,7 @@ public enum AuthServiceStatus implements ServiceStatus {
 	UNAUTHORIZED_ACCESS(1104),
 	UNAUTHENTICATED(1105),
 	NO_EMAIL_INFO(1106),
+	SOCIAL_TYPE_MISMATCH(1107),
 
 	//success
 	LOGIN_SUCCESS(1140),

@@ -10,15 +10,9 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 @Configuration
 @RequiredArgsConstructor
 public class OAuth2Config {
-    private final ClientRegistrationRepository clientRegistrationRepository;
 
     @Bean
     public OAuth2UserService oAuth2UserService() {
         return new DefaultOAuth2UserService();
     }
-
-//    @Bean
-//    public OAuth2AuthorizedClientService oAuth2AuthorizedClientService() {
-//        return new JdbcOAuth2AuthorizedClientService();
-//    }
 }

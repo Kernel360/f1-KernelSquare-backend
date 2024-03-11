@@ -36,13 +36,6 @@ public class SecurityConfig {
 		"/api/v1/auth/login",
 		"/actuator",
 		"/actuator/**",
-
-		// 소켓 통신의 임시 화면을 사용하기 위해 관련 경로는 permitAll
-		"/screen/**",
-		"/kernel-square/**",
-		"/topic/chat/room",
-		"/app/chat/message",
-		"/webjars/**",
 	};
 
 	private final String[] hasAnyAuthorityPatterns = new String[] {
@@ -60,7 +53,8 @@ public class SecurityConfig {
 	private final String[] hasRoleAdminPatterns = new String[] {
 		"/api/v1/techs/{techStackId}",
 		"/api/v1/levels/**",
-		"/api/v1/notices/**"
+		"/api/v1/notices/**",
+		"/api/v1/members/role"
 	};
 
 	@Bean
@@ -125,12 +119,6 @@ public class SecurityConfig {
 			sessionManagementConfigurer
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-		// http.oauth2Login(oAuth2LoginConfigurer ->
-		// 		oAuth2LoginConfigurer
-		// 			.successHandler(oAuth2LoginSuccessHandler)
-		// 			.failureHandler(oAuth2LoginFailureHandler)
-		// 			.userInfoEndpoint(userInfoEndpointConfigurer ->
-		// 				userInfoEndpointConfigurer.userService(customOAuth2MemberService)))
 		http.logout(Customizer.withDefaults());
 
 		return http.build();

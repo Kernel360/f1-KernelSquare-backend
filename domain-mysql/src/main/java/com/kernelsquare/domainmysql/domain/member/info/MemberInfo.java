@@ -24,7 +24,7 @@ public class MemberInfo {
         this.level = member.getLevel().getName();
     }
 
-    public static MemberInfo of(Member member) {
+    public static MemberInfo from(Member member) {
         return MemberInfo.builder()
             .member(member)
             .build();

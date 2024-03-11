@@ -5,12 +5,11 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.kernelsquare.adminapi.domain.auth.dto.MemberAdapter;
 import com.kernelsquare.adminapi.domain.auth.dto.MemberAdaptorInstance;
-import com.kernelsquare.adminapi.domain.member.dto.FindMemberResponse;
 import com.kernelsquare.adminapi.domain.member.dto.MemberDto;
 import com.kernelsquare.adminapi.domain.member.facade.MemberFacade;
-import com.kernelsquare.adminapi.domain.member.service.MemberService;
 import com.kernelsquare.core.common_response.error.exception.BusinessException;
 import com.kernelsquare.core.type.AuthorityType;
+import com.kernelsquare.core.util.ImageUtils;
 import com.kernelsquare.domainmysql.domain.authority.entity.Authority;
 import com.kernelsquare.domainmysql.domain.level.entity.Level;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
@@ -50,8 +49,6 @@ public class MemberControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 	@MockBean
-	private MemberService memberService;
-	@MockBean
 	private MemberFacade memberFacade;
 
 	private ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule())
@@ -82,7 +79,7 @@ public class MemberControllerTest {
 	void testFindMemberDoNotExist() throws Exception {
 		//given
 		doThrow(new BusinessException(MEMBER_NOT_FOUND))
-			.when(memberService)
+			.when(memberFacade)
 			.findMember(anyLong());
 
 		//when & then
@@ -97,7 +94,7 @@ public class MemberControllerTest {
 			.andExpect(jsonPath("$.msg").value(MEMBER_NOT_FOUND.getMsg()));
 
 		//verify
-		verify(memberService, times(1)).findMember(anyLong());
+		verify(memberFacade, times(1)).findMember(anyLong());
 	}
 
 	@Test
@@ -105,8 +102,17 @@ public class MemberControllerTest {
 	@DisplayName("회원 정보 조회 시, 200 OK, 메시지, 회원정보를 반환한다.")
 	void testFindMember() throws Exception {
 		//given
-		doReturn(FindMemberResponse.from(testMember))
-			.when(memberService)
+		MemberDto.FindResponse response = MemberDto.FindResponse.builder()
+			.memberId(testMemberId)
+			.experience(testMember.getExperience())
+			.imageUrl(ImageUtils.makeImageUrl(testMember.getImageUrl()))
+			.introduction(testMember.getIntroduction())
+			.nickname(testMember.getNickname())
+			.level(testMember.getLevel().getName())
+			.build();
+
+		doReturn(response)
+			.when(memberFacade)
 			.findMember(anyLong());
 
 		//when & then
@@ -121,7 +127,7 @@ public class MemberControllerTest {
 			.andExpect(jsonPath("$.msg").value(MEMBER_FOUND.getMsg()));
 
 		//verify
-		verify(memberService, times(1)).findMember(anyLong());
+		verify(memberFacade, times(1)).findMember(anyLong());
 	}
 
 	@Test
@@ -130,7 +136,7 @@ public class MemberControllerTest {
 	void testDeleteMember() throws Exception {
 		//given
 		doNothing()
-			.when(memberService)
+			.when(memberFacade)
 			.deleteMember(anyLong());
 
 		//when & then
@@ -145,7 +151,7 @@ public class MemberControllerTest {
 			.andExpect(jsonPath("$.msg").value(MEMBER_DELETED.getMsg()));
 
 		//verify
-		verify(memberService, times(1)).deleteMember(anyLong());
+		verify(memberFacade, times(1)).deleteMember(anyLong());
 	}
 
 	@Test

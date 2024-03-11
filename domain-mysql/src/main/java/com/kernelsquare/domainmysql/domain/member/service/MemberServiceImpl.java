@@ -30,7 +30,7 @@ public class MemberServiceImpl implements MemberService {
     @Transactional(readOnly = true)
     public MemberInfo findMember(Long memberId) {
         Member member = memberReader.findMember(memberId);
-        return MemberInfo.of(member);
+        return MemberInfo.from(member);
     }
 
     @Override

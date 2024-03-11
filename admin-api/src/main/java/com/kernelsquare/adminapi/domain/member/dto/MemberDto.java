@@ -11,6 +11,6 @@ public class MemberDto {
         @NotNull(message = "변경시키고자 하는 회원 ID는 필수 입력사항입니다.")
         Long memberId,
         @EnumValue(enumClass = AuthorityType.class, message = "유효한 회원 권한을 선택해주세요.")
-        AuthorityType authorityType
+        String authorityType
     ) {}
 }

@@ -1,10 +1,12 @@
 package com.kernelsquare.adminapi.domain.member.service;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
-import java.util.Optional;
-
+import com.kernelsquare.adminapi.domain.member.dto.FindMemberResponse;
+import com.kernelsquare.core.common_response.error.code.MemberErrorCode;
+import com.kernelsquare.core.common_response.error.exception.BusinessException;
+import com.kernelsquare.domainmysql.domain.level.entity.Level;
+import com.kernelsquare.domainmysql.domain.member.entity.Member;
+import com.kernelsquare.domainmysql.domain.member.repository.MemberReader;
+import com.kernelsquare.domainmysql.domain.member.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,12 +14,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.kernelsquare.adminapi.domain.member.dto.FindMemberResponse;
-import com.kernelsquare.core.common_response.error.code.MemberErrorCode;
-import com.kernelsquare.core.common_response.error.exception.BusinessException;
-import com.kernelsquare.domainmysql.domain.level.entity.Level;
-import com.kernelsquare.domainmysql.domain.member.entity.Member;
-import com.kernelsquare.domainmysql.domain.member.repository.MemberRepository;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.*;
 
 @DisplayName("회원 서비스 통합 테스트")
 @ExtendWith(MockitoExtension.class)
@@ -26,6 +25,8 @@ public class MemberServiceTest {
 	private MemberService memberService;
 	@Mock
 	private MemberRepository memberRepository;
+	@Mock
+	private MemberReader memberReader;
 
 	@Test
 	@DisplayName("회원 정보 조회 테스트")
@@ -50,11 +51,10 @@ public class MemberServiceTest {
 			.imageUrl("s3:qwe12fasdawczx")
 			.level(level)
 			.build();
-		Optional<Member> optionalMember = Optional.of(member);
 
-		doReturn(optionalMember)
-			.when(memberRepository)
-			.findById(anyLong());
+		doReturn(member)
+			.when(memberReader)
+			.findMember(anyLong());
 
 		//when
 		FindMemberResponse findMemberResponse = memberService.findMember(testMemberId);
@@ -68,7 +68,7 @@ public class MemberServiceTest {
 		assertThat(findMemberResponse.memberId()).isEqualTo(testMemberId);
 
 		//verify
-		verify(memberRepository, times(1)).findById(anyLong());
+		verify(memberReader, times(1)).findMember(anyLong());
 	}
 
 	@Test

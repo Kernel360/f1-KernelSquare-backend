@@ -28,7 +28,7 @@ public class ValueOfEnumValidator implements ConstraintValidator<EnumValue, Stri
 			return true;
 		}
 
-		return acceptedValues.contains(value.toString());
+		return acceptedValues.contains(value);
 	}
 
 	private String getDescription(Enum<?> enumValue) {

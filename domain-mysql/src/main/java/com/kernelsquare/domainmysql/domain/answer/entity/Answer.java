@@ -40,7 +40,7 @@ public class Answer extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "image_url", columnDefinition = "varchar(100)")
+	@Column(name = "image_url", columnDefinition = "varchar(1000)")
 	private String imageUrl;
 
 	@ManyToOne(fetch = FetchType.LAZY)

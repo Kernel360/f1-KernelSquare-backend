@@ -22,8 +22,8 @@ public class NoticeFacade {
 	private final NoticeService noticeService;
 	private final NoticeDtoMapper noticeDtoMapper;
 
-	public NoticeDto.FindResponse findNotice(NoticeDto.FindRequest request) {
-		NoticeInfo noticeInfo = noticeService.findNotice(request.noticeToken());
+	public NoticeDto.FindResponse findNotice(String request) {
+		NoticeInfo noticeInfo = noticeService.findNotice(request);
 		return noticeDtoMapper.toSingleResponse(noticeInfo);
 	}
 

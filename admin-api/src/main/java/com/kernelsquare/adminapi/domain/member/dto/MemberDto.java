@@ -13,4 +13,14 @@ public class MemberDto {
         @EnumValue(enumClass = AuthorityType.class, message = "유효한 회원 권한을 선택해주세요.")
         String authorityType
     ) {}
+
+    @Builder
+    public record FindResponse(
+        Long memberId,
+        String nickname,
+        Long experience,
+        String introduction,
+        String imageUrl,
+        Long level
+    ) {}
 }

@@ -35,7 +35,7 @@ public class NoticeController {
 	}
 
 
-	@GetMapping("/notices/all")
+	@GetMapping("/notices")
 	public ResponseEntity<ApiResponse<PageResponse<NoticeDto.FindAllResponse>>> findAllNotices
 		(@PageableDefault(page = 0, size = 5, sort = "createdDate", direction = Sort.Direction.DESC)
 		Pageable pageable) {

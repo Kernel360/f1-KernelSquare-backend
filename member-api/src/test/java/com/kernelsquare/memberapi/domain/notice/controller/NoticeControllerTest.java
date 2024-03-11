@@ -124,7 +124,7 @@ public class NoticeControllerTest {
 		String jsonRequest = objectMapper.writeValueAsString(pageable);
 
 		//when
-		ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/notices/all")
+		ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/notices")
 			.with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
 			.accept(MediaType.APPLICATION_JSON)

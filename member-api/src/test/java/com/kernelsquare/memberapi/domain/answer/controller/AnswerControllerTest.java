@@ -171,6 +171,8 @@ public class AnswerControllerTest {
 					fieldWithPath("data.answer_responses[].content").type(JsonFieldType.STRING).description("내용"),
 					fieldWithPath("data.answer_responses[].rank_image_url").type(JsonFieldType.STRING)
 						.description("랭크 이미지 주소"),
+					fieldWithPath("data.answer_responses[].rank_name").type(JsonFieldType.NUMBER)
+						.description("랭크 명"),
 					fieldWithPath("data.answer_responses[].member_image_url").type(JsonFieldType.STRING).description(
 						"회원 프로필 사진 주소"),
 					fieldWithPath("data.answer_responses[].author_level").type(JsonFieldType.NUMBER)

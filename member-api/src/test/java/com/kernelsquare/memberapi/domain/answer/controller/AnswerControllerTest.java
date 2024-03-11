@@ -98,6 +98,7 @@ public class AnswerControllerTest {
 		testAnswer.getMember().getId(),
 		testQuestion.getId(),
 		testAnswer.getContent(),
+		1L,
 		"s3:RankURL",
 		testMember.getImageUrl(),
 		testMember.getNickname(),

@@ -7,6 +7,7 @@ import com.kernelsquare.core.constants.TimeResponseFormat;
 import com.kernelsquare.core.util.ImageUtils;
 import com.kernelsquare.domainmysql.domain.answer.entity.Answer;
 
+import com.kernelsquare.domainmysql.domain.rank.entity.Rank;
 import lombok.Builder;
 
 @Builder
@@ -15,6 +16,7 @@ public record FindAnswerResponse(
 	Long answerMemberId,
 	Long questionId,
 	String content,
+	Long rankName,
 	String rankImageUrl,
 	String memberImageUrl,
 	String memberNickname,
@@ -27,14 +29,15 @@ public record FindAnswerResponse(
 	Long voteCount,
 	Long voteStatus
 ) {
-	public static FindAnswerResponse from(Answer answer, String rankImageUrl, Long authorLevel, Long voteStatus) {
+	public static FindAnswerResponse from(Answer answer, Long authorLevel, Long voteStatus) {
 		return FindAnswerResponse
 			.builder()
 			.answerId(answer.getId())
 			.answerMemberId(answer.getMember().getId())
 			.questionId(answer.getQuestion().getId())
 			.content(answer.getContent())
-			.rankImageUrl(ImageUtils.makeImageUrl(rankImageUrl))
+			.rankName(answer.getNullableRankName())
+			.rankImageUrl(ImageUtils.makeImageUrl(answer.getNullableRankImageUrl()))
 			.memberImageUrl(ImageUtils.makeImageUrl(answer.getMember().getImageUrl()))
 			.memberNickname(answer.getMember().getNickname())
 			.authorLevel(authorLevel)

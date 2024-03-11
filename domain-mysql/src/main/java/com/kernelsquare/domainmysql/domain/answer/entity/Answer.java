@@ -2,7 +2,9 @@ package com.kernelsquare.domainmysql.domain.answer.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+import com.kernelsquare.core.constants.DefaultRankConstants;
 import org.hibernate.annotations.DynamicUpdate;
 
 import com.kernelsquare.domainmysql.domain.base.BaseEntity;
@@ -79,5 +81,19 @@ public class Answer extends BaseEntity {
 
 	public void updateRank(Rank rank) {
 		this.rank = rank;
+	}
+
+	public String getNullableRankImageUrl() {
+		if (Objects.isNull(rank)) {
+			return DefaultRankConstants.RANK_IMAGE_URL;
+		}
+		return rank.getImage_url();
+	}
+
+	public Long getNullableRankName() {
+		if (Objects.isNull(rank)) {
+			return DefaultRankConstants.RANK_NAME;
+		}
+		return rank.getName();
 	}
 }

@@ -13,15 +13,15 @@ public record AddReservationMemberRequest(
 	Long reservationArticleId,
 	Long reservationId,
 	Long memberId,
-	LocalDateTime startTime
+	LocalDateTime reservationStartTime
 ) {
 
 	public static Reservation toEntity(AddReservationMemberRequest addReservationMemberRequest,
 		ReservationArticle reservationArticle,
 		ChatRoom chatRoom) {
 		return Reservation.builder()
-			.startTime(addReservationMemberRequest.startTime())
-			.endTime(addReservationMemberRequest.startTime().plusMinutes(30L))
+			.startTime(addReservationMemberRequest.reservationStartTime())
+			.endTime(addReservationMemberRequest.reservationStartTime().plusMinutes(30L))
 			.reservationArticle(reservationArticle)
 			.chatRoom(chatRoom)
 			.build();

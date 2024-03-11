@@ -52,6 +52,7 @@ spring:
   flyway:
     enabled: false
     baseline-on-migrate: true
+    out-of-order: true
 
   # ====> 소켓 통신의 임시 화면을 위함, 정식 화면이 생기면 삭제 할 것 !!
   devtools:
@@ -82,6 +83,10 @@ custom:
   domain:
     image:
       baseUrl: ${BASE_URL}
+
+chatgpt:
+  rest-api-key: ${CHAT_GPT_API_KEY}
+  chat-api-url: https://api.openai.com/v1/chat/completions
 
 management:
   endpoints:

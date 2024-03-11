@@ -22,7 +22,7 @@ public class CodingMeetingCommentController {
     private final CodingMeetingCommentFacade codingMeetingCommentFacade;
 
     @PostMapping("coding-meeting-comments")
-    public ResponseEntity<ApiResponse> createNotice(
+    public ResponseEntity<ApiResponse> createCodingMeetingComment(
         @Valid @RequestBody CodingMeetingCommentDto.CreateRequest request,
         @AuthenticationPrincipal MemberAdapter memberAdapter) {
         codingMeetingCommentFacade.createCodingMeetingComment(request, memberAdapter.getMember().getId());

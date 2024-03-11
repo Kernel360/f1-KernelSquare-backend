@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 public enum ReservationServiceStatus implements ServiceStatus {
 	//error
 	RESERVATION_NOT_FOUND(3401),
-	RESERVATION_CANCEL_DENIED_TIME_PASSED(3402),
 	RESERVATION_LIMIT_EXCEED(3403),
 	MEMBER_NOT_FOUND(3404),
 	CHAT_ROOM_NOT_FOUND(3405),

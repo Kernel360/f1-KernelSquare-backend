@@ -8,7 +8,7 @@ import com.kernelsquare.core.constants.TimeResponseFormat;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
 import com.kernelsquare.domainmysql.domain.reservation_article.entity.ReservationArticle;
 import com.kernelsquare.memberapi.domain.hashtag.dto.FindHashtagResponse;
-import com.kernelsquare.memberapi.domain.image.utils.ImageUtils;
+import com.kernelsquare.core.util.ImageUtils;
 import com.kernelsquare.memberapi.domain.reservation.dto.FindReservationResponse;
 
 public record FindReservationArticleResponse(

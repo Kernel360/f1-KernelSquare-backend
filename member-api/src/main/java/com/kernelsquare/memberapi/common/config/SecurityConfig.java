@@ -38,7 +38,7 @@ public class SecurityConfig {
 		"/actuator/**",
 
 		// 소켓 통신의 임시 화면을 사용하기 위해 관련 경로는 permitAll
-		"/screen/**",
+		"/chat/**",
 		"/kernel-square/**",
 		"/topic/chat/room",
 		"/app/chat/message",
@@ -50,7 +50,8 @@ public class SecurityConfig {
 
 	private final String[] hasAnyAuthorityPatterns = new String[] {
 		"/api/v1/images",
-		"/api/v1/coffeechat/reservations"
+		"/api/v1/coffeechat/reservations",
+		"/api/v1/alerts/**",
 	};
 
 	private final String[] hasRoleUserPatterns = new String[] {
@@ -61,7 +62,8 @@ public class SecurityConfig {
 		"/api/v1/questions/answers/{answerId}/vote",
 		"/api/v1/coffeechat/reservations/book",
 		"/api/v1/coffeechat/reservations/{reservationId}",
-		"/api/v1/notices/**"
+		"/api/v1/notices/**",
+		"/api/v1/questions/{questionId}/answer-bot"
 	};
 
 	private final String[] hasRoleAdminPatterns = new String[] {
@@ -99,6 +101,7 @@ public class SecurityConfig {
 			.requestMatchers(hasAnyAuthorityPatterns).authenticated()
 			.requestMatchers(HttpMethod.GET, "/api/v1/members/{memberId}").authenticated()
 			.requestMatchers(HttpMethod.GET, "/api/v1/coffeechat/rooms/{roomKey}").authenticated()
+			.requestMatchers(HttpMethod.POST, "/api/v1/coffeechat/request/{memberId}").authenticated()
 
 			// ROLE_USER 권한 필요
 			.requestMatchers(hasRoleUserPatterns).permitAll()

@@ -8,6 +8,8 @@ public enum CodingMeetingServiceStatus implements ServiceStatus {
     CODING_MEETING_NOT_FOUND(5100),
     CODING_MEETING_ALREADY_EXIST(5101),
     FILTER_PARAMETER_NOT_VALID(5102),
+    MEMBER_ID_IS_NULL(5103),
+
     //success
     CODING_MEETING_FOUND(5140),
     CODING_MEETING_ALL_FOUND(5141),

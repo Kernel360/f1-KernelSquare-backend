@@ -1,46 +1,37 @@
 package com.kernelsquare.memberapi.domain.coffeechat.service;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
-import org.springframework.scheduling.annotation.Scheduled;
+import com.kernelsquare.core.common_response.error.code.CoffeeChatErrorCode;
+import com.kernelsquare.core.common_response.error.code.ReservationErrorCode;
+import com.kernelsquare.core.common_response.error.exception.BusinessException;
+import com.kernelsquare.domainmongodb.domain.coffeechat.repository.MongoChatMessageRepository;
+import com.kernelsquare.domainmysql.domain.coffeechat.command.CoffeeChatCommand;
+import com.kernelsquare.domainmysql.domain.coffeechat.entity.ChatRoom;
+import com.kernelsquare.domainmysql.domain.coffeechat.info.CoffeeChatInfo;
+import com.kernelsquare.domainmysql.domain.coffeechat.repository.CoffeeChatRepository;
+import com.kernelsquare.domainmysql.domain.member.entity.Member;
+import com.kernelsquare.domainmysql.domain.member.repository.MemberReader;
+import com.kernelsquare.domainmysql.domain.reservation.entity.Reservation;
+import com.kernelsquare.domainmysql.domain.reservation.repository.ReservationRepository;
+import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
+import com.kernelsquare.memberapi.domain.coffeechat.dto.*;
+import com.kernelsquare.memberapi.domain.coffeechat.validation.CoffeeChatValidation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.kernelsquare.core.common_response.error.code.CoffeeChatErrorCode;
-import com.kernelsquare.core.common_response.error.code.ReservationErrorCode;
-import com.kernelsquare.core.common_response.error.exception.BusinessException;
-import com.kernelsquare.core.type.MessageType;
-import com.kernelsquare.domainmongodb.domain.coffeechat.repository.MongoChatMessageRepository;
-import com.kernelsquare.domainmysql.domain.coffeechat.entity.ChatRoom;
-import com.kernelsquare.domainmysql.domain.coffeechat.repository.CoffeeChatRepository;
-import com.kernelsquare.domainmysql.domain.reservation.entity.Reservation;
-import com.kernelsquare.domainmysql.domain.reservation.repository.ReservationRepository;
-import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
-import com.kernelsquare.memberapi.domain.coffeechat.dto.ChatMessageResponse;
-import com.kernelsquare.memberapi.domain.coffeechat.dto.ChatRoomMember;
-import com.kernelsquare.memberapi.domain.coffeechat.dto.CreateCoffeeChatRoomRequest;
-import com.kernelsquare.memberapi.domain.coffeechat.dto.CreateCoffeeChatRoomResponse;
-import com.kernelsquare.memberapi.domain.coffeechat.dto.EnterCoffeeChatRoomRequest;
-import com.kernelsquare.memberapi.domain.coffeechat.dto.EnterCoffeeChatRoomResponse;
-import com.kernelsquare.memberapi.domain.coffeechat.dto.FindChatHistoryResponse;
-import com.kernelsquare.memberapi.domain.coffeechat.dto.FindMongoChatMessage;
-import com.kernelsquare.memberapi.domain.coffeechat.validation.CoffeeChatValidation;
-
-import lombok.RequiredArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
 public class CoffeeChatService {
 	private final CoffeeChatRepository coffeeChatRepository;
-	private final SimpMessageSendingOperations sendingOperations;
 	private final MongoChatMessageRepository mongoChatMessageRepository;
 	private final ReservationRepository reservationRepository;
+	private final MemberReader memberReader;
 
 	private final ConcurrentHashMap<String, List<ChatRoomMember>> chatRoomMemberList = new ConcurrentHashMap<>();
 
@@ -77,6 +68,7 @@ public class CoffeeChatService {
 
 	public EnterCoffeeChatRoomResponse mentorEnter(EnterCoffeeChatRoomRequest enterCoffeeChatRoomRequest,
 		ChatRoom chatRoom, MemberAdapter memberAdapter) {
+
 		chatRoom.activateRoom(enterCoffeeChatRoomRequest.articleTitle());
 
 		//TODO 중복 입장에 대한 정책이 정해지면 로직 구현
@@ -116,22 +108,13 @@ public class CoffeeChatService {
 		return FindChatHistoryResponse.of(chatHistory);
 	}
 
-	@Transactional
-	@Scheduled(cron = "0 0/30 * * * *")
-	public void disableRoom() {
-		List<ChatRoom> chatRooms = coffeeChatRepository.findAllByActive(true);
-		chatRooms.forEach(chatRoom -> {
-			chatRoom.deactivateRoom();
+	@Transactional(readOnly = true)
+	public CoffeeChatInfo coffeeChatRequest(CoffeeChatCommand.RequestCommand command) {
+		Member recipient = memberReader.findMember(command.recipientId());
+		Member sender = command.sender();
 
-			ChatMessageResponse message = ChatMessageResponse.builder()
-				.type(MessageType.EXPIRE)
-				.roomKey(chatRoom.getRoomKey())
-				.sender("system")
-				.message("채팅방 사용 시간이 만료되었습니다.")
-				.sendTime(LocalDateTime.now())
-				.build();
+		CoffeeChatValidation.validateCoffeeChatRequest(sender, recipient);
 
-			sendingOperations.convertAndSend("/topic/chat/room/" + message.getRoomKey(), message);
-		});
+		return CoffeeChatInfo.of(sender,recipient);
 	}
 }

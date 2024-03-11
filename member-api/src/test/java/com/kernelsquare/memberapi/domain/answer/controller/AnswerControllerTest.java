@@ -31,17 +31,23 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.kernelsquare.domainmysql.domain.answer.entity.Answer;
 import com.kernelsquare.domainmysql.domain.level.entity.Level;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
 import com.kernelsquare.domainmysql.domain.member_answer_vote.entity.MemberAnswerVote;
 import com.kernelsquare.domainmysql.domain.question.entity.Question;
-import com.kernelsquare.memberapi.domain.answer.dto.CreateAnswerRequest;
+import com.kernelsquare.memberapi.domain.answer.dto.AnswerDto;
 import com.kernelsquare.memberapi.domain.answer.dto.FindAllAnswerResponse;
 import com.kernelsquare.memberapi.domain.answer.dto.FindAnswerResponse;
 import com.kernelsquare.memberapi.domain.answer.dto.UpdateAnswerRequest;
+import com.kernelsquare.memberapi.domain.answer.facade.AnswerFacade;
 import com.kernelsquare.memberapi.domain.answer.service.AnswerService;
+import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
+import com.kernelsquare.memberapi.domain.auth.dto.MemberAdaptorInstance;
+import com.kernelsquare.memberapi.domain.chatgpt.service.ChatGptService;
 
 @DisplayName("답변 컨트롤러 단위 테스트")
 @WebMvcTest(AnswerController.class)
@@ -49,9 +55,9 @@ import com.kernelsquare.memberapi.domain.answer.service.AnswerService;
 @AutoConfigureRestDocs(uriScheme = "https", uriHost = "docs.api.com")
 public class AnswerControllerTest {
 	private final Long testQuestionId = 1L;
-	private final ObjectMapper objectMapper = new ObjectMapper();
 	private final Question testQuestion = Question
 		.builder()
+		.id(testQuestionId)
 		.title("Test Question")
 		.content("Test Content")
 		.imageUrl("S3:TestImage")
@@ -59,6 +65,7 @@ public class AnswerControllerTest {
 		.build();
 	private final Member testMember = Member
 		.builder()
+		.id(1L)
 		.nickname("hongjugwang")
 		.email("jugwang@naver.com")
 		.password("hashedPassword")
@@ -73,6 +80,7 @@ public class AnswerControllerTest {
 		.build();
 	private final Answer testAnswer = Answer
 		.builder()
+		.id(1L)
 		.content("Test Answer Content")
 		.voteCount(10L)
 		.imageUrl("s3:AnswerImageURL")
@@ -87,6 +95,7 @@ public class AnswerControllerTest {
 		.build();
 	private final FindAnswerResponse findAnswerResponse = new FindAnswerResponse(
 		testAnswer.getId(),
+		testAnswer.getMember().getId(),
 		testQuestion.getId(),
 		testAnswer.getContent(),
 		"s3:RankURL",
@@ -95,15 +104,11 @@ public class AnswerControllerTest {
 		testMember.getLevel().getName(),
 		testAnswer.getImageUrl(),
 		LocalDateTime.now(),
-		null,
+		LocalDateTime.now(),
 		testAnswer.getVoteCount(),
 		Long.valueOf(testMemberAnswerVote.getStatus())
 	);
-	private final CreateAnswerRequest createAnswerRequest = new CreateAnswerRequest(
-		1L,
-		"Test Content",
-		"Test Image Url"
-	);
+
 	private final UpdateAnswerRequest updateAnswerRequest = new UpdateAnswerRequest(
 		"Test Updated Content",
 		"Test Updated Image Url"
@@ -112,8 +117,14 @@ public class AnswerControllerTest {
 	private MockMvc mockMvc;
 	@MockBean
 	private AnswerService answerService;
+	@MockBean
+	private ChatGptService chatGptService;
 	private List<FindAnswerResponse> answerResponseList = new ArrayList<>();
 	private FindAllAnswerResponse answerResponseListDto;
+	@MockBean
+	private AnswerFacade answerFacade;
+	private ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule())
+		.setPropertyNamingStrategy(PropertyNamingStrategies.SnakeCaseStrategy.INSTANCE);
 
 	@Test
 	@WithMockUser
@@ -147,26 +158,32 @@ public class AnswerControllerTest {
 				responseFields(
 					fieldWithPath("data").description("응답"),
 					fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"),
-					fieldWithPath("code").description("The status code of the response."),
-					fieldWithPath("data.answer_responses").description("Array containing answer responses."),
-					fieldWithPath("data.answer_responses[].answer_id").description("The answer ID."),
-					fieldWithPath("data.answer_responses[].question_id").description("The question ID."),
-					fieldWithPath("data.answer_responses[].content").description("The content of the answer."),
-					fieldWithPath("data.answer_responses[].rank_image_url").description("The URL of the rank image."),
-					fieldWithPath("data.answer_responses[].member_image_url").description(
-						"The URL of the member image."),
-					fieldWithPath("data.answer_responses[].created_by").description("The username of the creator."),
-					fieldWithPath("data.answer_responses[].author_level").description("The author level."),
-					fieldWithPath("data.answer_responses[].answer_image_url").description(
-						"The URL of the answer image."),
-					fieldWithPath("data.answer_responses[].created_date").description(
-						"The creation date of the answer."),
-					fieldWithPath("data.answer_responses[].modified_date").description(
-						"The modification date of the answer."),
-					fieldWithPath("data.answer_responses[].vote_count").description(
-						"The number of votes for the answer."),
-					fieldWithPath("data.answer_responses[].vote_status").description(
-						"The vote status of the answer."))));
+					fieldWithPath("code").type(JsonFieldType.NUMBER).description("커스텀 응답 코드"),
+					fieldWithPath("data.answer_responses").type(JsonFieldType.ARRAY).description("답변 리스트"),
+					fieldWithPath("data.answer_responses[].answer_id").type(JsonFieldType.NUMBER).description("답변 아이디"),
+					fieldWithPath("data.answer_responses[].answer_member_id").type(JsonFieldType.NUMBER)
+						.description("답변 작성자 아이디"),
+					fieldWithPath("data.answer_responses[].member_nickname").type(JsonFieldType.STRING)
+						.description("응답 메시지"),
+					fieldWithPath("data.answer_responses[].question_id").type(JsonFieldType.NUMBER)
+						.description("질문 아이디"),
+					fieldWithPath("data.answer_responses[].content").type(JsonFieldType.STRING).description("내용"),
+					fieldWithPath("data.answer_responses[].rank_image_url").type(JsonFieldType.STRING)
+						.description("랭크 이미지 주소"),
+					fieldWithPath("data.answer_responses[].member_image_url").type(JsonFieldType.STRING).description(
+						"회원 프로필 사진 주소"),
+					fieldWithPath("data.answer_responses[].author_level").type(JsonFieldType.NUMBER)
+						.description("답변 작성자 레벨"),
+					fieldWithPath("data.answer_responses[].answer_image_url").type(JsonFieldType.STRING).description(
+						"답변 이미지 주소"),
+					fieldWithPath("data.answer_responses[].created_date").type(JsonFieldType.STRING).description(
+						"답변 생성일"),
+					fieldWithPath("data.answer_responses[].modified_date").type(JsonFieldType.STRING).description(
+						"답변 수정일"),
+					fieldWithPath("data.answer_responses[].vote_count").type(JsonFieldType.NUMBER)
+						.description("답변 투표수"),
+					fieldWithPath("data.answer_responses[].vote_status").type(JsonFieldType.NUMBER).description(
+						"투표 상태"))));
 
 		//verify
 		verify(answerService, times(1)).findAllAnswer(testQuestionId);
@@ -177,23 +194,38 @@ public class AnswerControllerTest {
 	@DisplayName("답변 생성 성공시, 200 OK, 메시지를 반환한다.")
 	void testCreateAnswer() throws Exception {
 		//given
-		objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
-		String jsonRequest = objectMapper.writeValueAsString(createAnswerRequest);
+		AnswerDto.CreateRequest request = AnswerDto.CreateRequest.builder()
+			.content("테스트 답변입니다~~~~~")
+			.imageUrl("s3/answer/absoluteImageUrl.png")
+			.build();
 
-		//when & then
-		mockMvc.perform(post("/api/v1/questions/" + testQuestionId + "/answers")
+		MemberAdapter memberAdapter = new MemberAdapter(MemberAdaptorInstance.of(testMember));
+
+		String jsonRequest = objectMapper.writeValueAsString(request);
+
+		doNothing().when(answerFacade).createAnswer(any(AnswerDto.CreateRequest.class), anyLong(), eq(memberAdapter));
+
+		//when
+		ResultActions resultActions = mockMvc.perform(
+			RestDocumentationRequestBuilders.post("/api/v1/questions/1/answers")
 				.with(csrf())
+				.with(user(memberAdapter))
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
-				.content(jsonRequest))
-			.andExpect(status().is(ANSWER_CREATED.getStatus().value()))
+				.content(jsonRequest));
+
+		//then
+		resultActions.andExpect(status().is(ANSWER_CREATED.getStatus().value()))
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.code").value(ANSWER_CREATED.getCode()))
-			.andExpect(jsonPath("$.msg").value(ANSWER_CREATED.getMsg()));
+			.andDo(document("answer-created", getDocumentRequest(), getDocumentResponse(),
+				requestFields(fieldWithPath("content").type(JsonFieldType.STRING).description("답변 내용"),
+					fieldWithPath("image_url").type(JsonFieldType.STRING).description("답변 이미지")),
+				responseFields(fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 상태 코드"),
+					fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"))));
 
 		//verify
-		verify(answerService, times(1)).createAnswer(createAnswerRequest, testQuestionId);
+		verify(answerFacade, times(1)).createAnswer(any(AnswerDto.CreateRequest.class), anyLong(), eq(memberAdapter));
 	}
 
 	@Test

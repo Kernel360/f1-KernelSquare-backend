@@ -216,4 +216,91 @@ public class MemberControllerTest {
 		//verify
 		verify(memberFacade, times(1)).updateMemberAuthority(any(MemberDto.UpdateAuthorityRequest.class));
 	}
+
+	@Test
+	@WithMockUser
+	@DisplayName("회원 닉네임 수정 성공 시, 200 OK와 메시지를 반환한다.")
+	void testUpdateMemberNickname() throws Exception {
+		//given
+		Level level = Level.builder()
+			.id(1L)
+			.imageUrl("s3:/level/asdsadasd")
+			.name(1L)
+			.levelUpperLimit(200L)
+			.build();
+
+		Member member = Member.builder()
+			.id(1L)
+			.nickname("machine")
+			.email("awdag@nsavasc.om")
+			.password("hashed")
+			.experience(1200L)
+			.introduction("basfas")
+			.authorities(List.of(
+				MemberAuthority.builder()
+					.member(Member.builder().build())
+					.authority(Authority.builder().authorityType(AuthorityType.ROLE_USER).build())
+					.build()))
+			.imageUrl("agawsc")
+			.level(level)
+			.build();
+
+		MemberAdapter memberAdapter = new MemberAdapter(MemberAdaptorInstance.of(member));
+
+		MemberDto.UpdateNicknameRequest request = MemberDto.UpdateNicknameRequest.builder()
+			.memberId(member.getId())
+			.nickname("하이연")
+			.build();
+
+		MemberDto.FindResponse response = MemberDto.FindResponse.builder()
+			.nickname(member.getNickname())
+			.memberId(member.getId())
+			.level(member.getLevel().getName())
+			.experience(member.getExperience())
+			.imageUrl(ImageUtils.makeImageUrl(member.getImageUrl()))
+			.introduction(member.getIntroduction())
+			.build();
+
+		doReturn(response)
+			.when(memberFacade)
+			.updateMemberNickname(any(MemberDto.UpdateNicknameRequest.class));
+
+		String jsonRequest = objectMapper.writeValueAsString(request);
+
+		//when
+		ResultActions resultActions = mockMvc.perform(
+			RestDocumentationRequestBuilders.put("/api/v1/members/nick")
+				.with(csrf())
+				.with(user(memberAdapter))
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.content(jsonRequest));
+
+		//then
+		resultActions
+			.andExpect(status().is(MEMBER_NICKNAME_UPDATED.getStatus().value()))
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andDo(document("member-nickname-update",
+				getDocumentRequest(),
+				getDocumentResponse(),
+				requestFields(
+					fieldWithPath("member_id").type(JsonFieldType.NUMBER).description("회원 id"),
+					fieldWithPath("nickname").type(JsonFieldType.STRING).description("회원 닉네임")
+				),
+				responseFields(
+					fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 상태 코드"),
+					fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"),
+					fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답"),
+					fieldWithPath("data.member_id").type(JsonFieldType.NUMBER).description("회원 id"),
+					fieldWithPath("data.nickname").type(JsonFieldType.STRING).description("회원 닉네임"),
+					fieldWithPath("data.experience").type(JsonFieldType.NUMBER).description("회원 경험지"),
+					fieldWithPath("data.introduction").type(JsonFieldType.STRING).description("회원 자기소개"),
+					fieldWithPath("data.image_url").type(JsonFieldType.STRING).description("회원 프로필 이미지"),
+					fieldWithPath("data.level").type(JsonFieldType.NUMBER).description("회원 레벨")
+				)));
+
+		//verify
+		verify(memberFacade, times(1)).updateMemberNickname(any(MemberDto.UpdateNicknameRequest.class));
+	}
 }

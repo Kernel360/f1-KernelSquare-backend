@@ -61,4 +61,48 @@ public class MemberRequestDtoTest {
         //then
         assertThat(msgList).isEqualTo(Set.of());
     }
+
+    @Test
+    @DisplayName("회원 닉네임 수정 요청 검증 실패 테스트 - NotNull")
+    void whenUpdateMemberNicknameIsNull_thenValidationFails() {
+        MemberDto.UpdateNicknameRequest request = MemberDto.UpdateNicknameRequest.builder()
+            .nickname("하이연")
+            .build();
+
+        Set<ConstraintViolation<MemberDto.UpdateNicknameRequest>> violations = validator.validate(request);
+        Set<String> msgList = violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toSet());
+
+        //then
+        assertThat(msgList).isEqualTo(Set.of("변경시키고자 하는 회원 ID는 필수 입력사항입니다."));
+    }
+
+    @Test
+    @DisplayName("회원 닉네임 수정 요청 검증 실패 테스트 - NotBlank")
+    void whenUpdateMemberNicknameIsBlank_thenValidationFails() {
+        MemberDto.UpdateNicknameRequest request = MemberDto.UpdateNicknameRequest.builder()
+            .memberId(4L)
+            .nickname("   ")
+            .build();
+
+        Set<ConstraintViolation<MemberDto.UpdateNicknameRequest>> violations = validator.validate(request);
+        Set<String> msgList = violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toSet());
+
+        //then
+        assertThat(msgList).isEqualTo(Set.of("변경시키고자 하는 회원 닉네임은 필수 입력사항입니다."));
+    }
+
+    @Test
+    @DisplayName("회원 닉네임 수정 요청 검증 성공 테스트")
+    void whenUpdateMemberNicknameIsNotNullAndNotBlank_thenValidationSucceeds() {
+        MemberDto.UpdateNicknameRequest request = MemberDto.UpdateNicknameRequest.builder()
+            .memberId(4L)
+            .nickname("하이연")
+            .build();
+
+        Set<ConstraintViolation<MemberDto.UpdateNicknameRequest>> violations = validator.validate(request);
+        Set<String> msgList = violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toSet());
+
+        //then
+        assertThat(msgList).isEqualTo(Set.of());
+    }
 }

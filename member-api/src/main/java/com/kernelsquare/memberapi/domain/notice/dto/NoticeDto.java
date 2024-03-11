@@ -10,12 +10,6 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 
 public class NoticeDto {
-	@Builder
-	public record FindRequest(
-		@NotBlank(message = "공지 토큰은 필수 입력 값입니다.")
-		String noticeToken
-	) {
-	}
 
 	@Builder
 	public record FindResponse(

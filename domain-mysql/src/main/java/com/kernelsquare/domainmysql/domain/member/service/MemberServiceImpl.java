@@ -65,7 +65,7 @@ public class MemberServiceImpl implements MemberService {
         return MemberInfo.from(member);
     }
 
-    public List<MemberAuthority> createAuthorities(Member member, AuthorityType authorityType
+    private List<MemberAuthority> createAuthorities(Member member, AuthorityType authorityType
         , Authority roleUser, Authority roleMentor, Authority roleAdmin) {
         switch (authorityType) {
             case AuthorityType.ROLE_USER -> {

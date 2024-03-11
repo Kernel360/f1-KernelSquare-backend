@@ -9,4 +9,6 @@ public interface MemberService {
     void deleteMember(Long memberId);
 
     void updateMemberAuthority(MemberCommand.UpdateAuthorityCommand command);
+
+    MemberInfo updateMemberNickname(MemberCommand.UpdateNicknameCommand command);
 }

@@ -61,6 +61,10 @@ public class Member extends BaseEntity {
 	@OneToMany(mappedBy = "member")
 	private List<MemberAuthority> authorities = new ArrayList<>();
 
+	public void updateNickname(String nickname) {
+		this.nickname = nickname;
+	}
+
 	public void updateIntroduction(String introduction) {
 		this.introduction = introduction;
 	}

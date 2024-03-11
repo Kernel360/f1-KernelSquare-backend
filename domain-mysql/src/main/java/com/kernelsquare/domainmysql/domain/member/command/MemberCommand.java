@@ -9,4 +9,10 @@ public class MemberCommand {
         Long memberId,
         AuthorityType authorityType
     ) {}
+
+    @Builder
+    public record UpdateNicknameCommand(
+        Long memberId,
+        String nickname
+    ) {}
 }

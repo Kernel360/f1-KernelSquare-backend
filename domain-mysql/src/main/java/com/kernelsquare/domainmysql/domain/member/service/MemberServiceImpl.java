@@ -57,6 +57,14 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
+    @Override
+    @Transactional
+    public MemberInfo updateMemberNickname(MemberCommand.UpdateNicknameCommand command) {
+        Member member = memberReader.findMember(command.memberId());
+        member.updateNickname(command.nickname());
+        return MemberInfo.from(member);
+    }
+
     public List<MemberAuthority> createAuthorities(Member member, AuthorityType authorityType
         , Authority roleUser, Authority roleMentor, Authority roleAdmin) {
         switch (authorityType) {

@@ -37,4 +37,14 @@ public class MemberController {
 
 		return ResponseEntityFactory.toResponseEntity(MEMBER_AUTHORITY_UPDATED);
 	}
+
+	@PutMapping("/members/nick")
+	public ResponseEntity<ApiResponse<MemberDto.FindResponse>> updateMemberNickname(
+		@RequestBody
+		MemberDto.UpdateNicknameRequest request
+	) {
+		MemberDto.FindResponse response = memberFacade.updateMemberNickname(request);
+
+		return ResponseEntityFactory.toResponseEntity(MEMBER_NICKNAME_UPDATED, response);
+	}
 }

@@ -25,4 +25,9 @@ public class MemberFacade {
     public void updateMemberAuthority(MemberDto.UpdateAuthorityRequest request) {
          memberService.updateMemberAuthority(memberDtoMapper.toCommand(request));
     }
+
+    public MemberDto.FindResponse updateMemberNickname(MemberDto.UpdateNicknameRequest request) {
+        MemberInfo memberInfo = memberService.updateMemberNickname(memberDtoMapper.toCommand(request));
+        return memberDtoMapper.toFindResponse(memberInfo);
+    }
 }

@@ -16,6 +16,8 @@ import org.mapstruct.ReportingPolicy;
 public interface MemberDtoMapper {
     MemberCommand.UpdateAuthorityCommand toCommand(MemberDto.UpdateAuthorityRequest request);
 
+    MemberCommand.UpdateNicknameCommand toCommand(MemberDto.UpdateNicknameRequest request);
+
     @Mapping(target = "memberId", source = "id")
     MemberDto.FindResponse toFindResponse(MemberInfo memberInfo);
 }

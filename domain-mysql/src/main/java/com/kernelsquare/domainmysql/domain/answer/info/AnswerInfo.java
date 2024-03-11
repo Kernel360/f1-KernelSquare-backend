@@ -1,6 +1,5 @@
 package com.kernelsquare.domainmysql.domain.answer.info;
 
-import com.kernelsquare.domainmysql.domain.answer.entity.Answer;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
 import com.kernelsquare.domainmysql.domain.question.entity.Question;
 import lombok.Builder;

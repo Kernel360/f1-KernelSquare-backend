@@ -21,7 +21,11 @@ public enum CoffeeChatErrorCode implements ErrorCode {
 	CHAT_MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, CoffeeChatServiceStatus.CHAT_MEMBER_NOT_FOUND, "채팅방 멤버 목록에 존재하지 않는 멤버"),
 	MESSAGE_COMMAND_NOT_VALID(HttpStatus.BAD_REQUEST, CoffeeChatServiceStatus.MESSAGE_COMMAND_NOT_VALID, "유효하지 않는 메시지 Command"),
 	MESSAGE_DESTINATION_NOT_VALID(HttpStatus.BAD_REQUEST, CoffeeChatServiceStatus.MESSAGE_DESTINATION_NOT_VALID, "유효하지 않는 메시지 Destination"),
-	MESSAGE_NATIVEHEADER_NOT_FOUND(HttpStatus.BAD_REQUEST, CoffeeChatServiceStatus.MESSAGE_NATIVEHEADER_NOT_FOUND, "유효하지 않는 NativeHeader"),;
+	MESSAGE_NATIVEHEADER_NOT_FOUND(HttpStatus.BAD_REQUEST, CoffeeChatServiceStatus.MESSAGE_NATIVEHEADER_NOT_FOUND, "유효하지 않는 NativeHeader"),
+	COFFEE_CHAT_SELF_REQUEST_IMPOSSIBLE(HttpStatus.BAD_REQUEST, CoffeeChatServiceStatus.COFFEE_CHAT_SELF_REQUEST_IMPOSSIBLE,
+		"본인에게 커피챗 요청할 수 없습니다."),
+	COFFEE_CHAT_REQUEST_NOT_VALID(HttpStatus.BAD_REQUEST, CoffeeChatServiceStatus.COFFEE_CHAT_REQUEST_NOT_VALID,
+		"유효한 커피챗 요청이 아닙니다.");
 
 	private final HttpStatus httpStatus;
 	private final ServiceStatus serviceStatus;

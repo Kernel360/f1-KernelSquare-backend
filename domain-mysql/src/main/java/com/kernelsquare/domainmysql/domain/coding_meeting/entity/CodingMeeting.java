@@ -15,8 +15,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Entity(name = "CodingMeeting")
 @Table(name = "coding_meeting")
@@ -73,7 +75,7 @@ public class CodingMeeting extends BaseEntity {
             LocalDateTime codingMeetingEndTime,
             Long codingMeetingMemberUpperLimit,
             Member member
-            ) {
+    ) {
 
         if (StringUtils.isBlank(codingMeetingTitle))
             throw new InvalidParamException("CodingMeeting.codingMeetingTitle");
@@ -111,8 +113,10 @@ public class CodingMeeting extends BaseEntity {
     }
 
     public List<String> getCodingMeetingHashtagStringList() {
-        return codingMeetingHashtags.stream().map(
-                CodingMeetingHashtag::getCodingMeetingHashtagContent
-        ).toList();
+        return Optional.ofNullable(codingMeetingHashtags)
+                .map(hashTag -> hashTag.stream()
+                        .map(CodingMeetingHashtag::getCodingMeetingHashtagContent)
+                        .toList())
+                .orElse(Collections.emptyList());
     }
 }

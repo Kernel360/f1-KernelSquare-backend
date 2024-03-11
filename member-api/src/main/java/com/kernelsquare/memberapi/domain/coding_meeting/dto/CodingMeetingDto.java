@@ -16,7 +16,7 @@ public class CodingMeetingDto {
     @Builder
     public record CreateRequest(
             @NotBlank(message = "모각코 제목은 필수 입력사항입니다.")
-            @Size(min = 5, max = 100, message = "모각코 모집글 제목은 100자 이하로 작성이 가능합니다.")
+            @Size(min = 5, max = 100, message = "모각코 모집글 제목은 5자 이상 100자 이하로 작성이 가능합니다.")
             String codingMeetingTitle,
             @NotBlank(message = "모각코 위치 ID는 필수 입력사항입니다.")
             String codingMeetingLocationId,
@@ -33,7 +33,7 @@ public class CodingMeetingDto {
             LocalDateTime codingMeetingEndTime,
             List<String> codingMeetingHashtags,
             @NotBlank(message = "모각코 게시글 내용은 필수 입력사항입니다.")
-            @Size(min = 10, max = 10000, message = "모각코 모집글 내용은 10000자 이하로 작성이 가능합니다.")
+            @Size(min = 10, max = 10000, message = "모각코 모집글 내용은 10자 이상 10000자 이하로 작성이 가능합니다.")
             String codingMeetingContent
             ) {
     }
@@ -47,7 +47,7 @@ public class CodingMeetingDto {
     @Builder
     public record UpdateRequest(
             @NotBlank(message = "모각코 제목은 필수 입력사항입니다.")
-            @Size(min = 5, max = 100, message = "모각코 모집글 제목은 100자 이하로 작성이 가능합니다.")
+            @Size(min = 5, max = 100, message = "모각코 모집글 제목은 5자 이상 100자 이하로 작성이 가능합니다.")
             String codingMeetingTitle,
             @NotBlank(message = "모각코 위치 ID는 필수 입력사항입니다.")
             String codingMeetingLocationId,
@@ -64,7 +64,7 @@ public class CodingMeetingDto {
             LocalDateTime codingMeetingEndTime,
             List<String> codingMeetingHashtags,
             @NotBlank(message = "모각코 게시글 내용은 필수 입력사항입니다.")
-            @Size(min = 10, max = 10000, message = "모각코 모집글 내용은 10000자 이하로 작성이 가능합니다.")
+            @Size(min = 10, max = 10000, message = "모각코 모집글 내용은 10자 이상 10000자 이하로 작성이 가능합니다.")
             String codingMeetingContent
     ) {
     }

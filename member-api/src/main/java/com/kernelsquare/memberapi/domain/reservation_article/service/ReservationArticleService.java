@@ -1,5 +1,21 @@
 package com.kernelsquare.memberapi.domain.reservation_article.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.PriorityQueue;
+import java.util.UUID;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.kernelsquare.core.common_response.error.code.ReservationArticleErrorCode;
 import com.kernelsquare.core.common_response.error.exception.BusinessException;
 import com.kernelsquare.core.dto.PageResponse;
@@ -18,17 +34,13 @@ import com.kernelsquare.memberapi.domain.hashtag.dto.FindHashtagResponse;
 import com.kernelsquare.memberapi.domain.hashtag.dto.UpdateHashtagRequest;
 import com.kernelsquare.memberapi.domain.reservation.dto.FindReservationResponse;
 import com.kernelsquare.memberapi.domain.reservation.dto.UpdateReservationRequest;
-import com.kernelsquare.memberapi.domain.reservation_article.dto.*;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import com.kernelsquare.memberapi.domain.reservation_article.dto.CreateReservationArticleRequest;
+import com.kernelsquare.memberapi.domain.reservation_article.dto.CreateReservationArticleResponse;
+import com.kernelsquare.memberapi.domain.reservation_article.dto.FindAllReservationArticleResponse;
+import com.kernelsquare.memberapi.domain.reservation_article.dto.FindReservationArticleResponse;
+import com.kernelsquare.memberapi.domain.reservation_article.dto.UpdateReservationArticleRequest;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -50,8 +62,8 @@ public class ReservationArticleService {
 
 		// 예약창이 있는 경우 생성 불가 (1인 1예약창 정책)
 		if (reservationRepository.existsByMemberIdAndEndTimeAfter(
-				member.getId(),
-				LocalDateTime.now()
+			member.getId(),
+			LocalDateTime.now()
 		)) {
 			throw new BusinessException(ReservationArticleErrorCode.TOO_MANY_RESERVATION_ARTICLE);
 		}
@@ -108,11 +120,12 @@ public class ReservationArticleService {
 
 		// 예약 생성 기한 체크 로직 (7일 이후, 한달 이전)
 		if (!(startTime.isAfter(currentDateTime.plusDays(6)) && startTime.isBefore(
-				currentDateTime.plusMonths(1)))) {
+			currentDateTime.plusMonths(1)))) {
 			throw new BusinessException(ReservationArticleErrorCode.RESERVATION_PERIOD_LIMIT);
 		}
 
 		saveReservationArticle.addStartTime(startTime);
+		saveReservationArticle.addEndTime(endTime);
 
 		return CreateReservationArticleResponse.from(saveReservationArticle);
 	}
@@ -135,13 +148,20 @@ public class ReservationArticleService {
 
 		List<FindAllReservationArticleResponse> responsePages = pages.getContent().stream()
 			.map(article -> {
-				Boolean articleStatus = canIReservation(article.getStartTime());
-				Long fullCheck = reservationRepository.countByReservationArticleIdAndMemberIdIsNull(article.getId());
+				Long coffeeChatCount = reservationArticleRepository.countAllByMemberIdAndEndTimeBefore(
+					article.getMember().getId(),
+					LocalDateTime.now());
+				Long availableReservationCount = reservationRepository.countByReservationArticleIdAndMemberIdIsNull(
+					article.getId());
+				Long totalReservationCount = reservationRepository.countAllByReservationArticleId(article.getId());
+				Boolean articleStatus = checkIfReservationWithinTheAvailablePeriod(article.getStartTime());
 				return FindAllReservationArticleResponse.of(
 					article.getMember(),
 					article,
 					articleStatus,
-					fullCheck
+					coffeeChatCount,
+					availableReservationCount
+					, totalReservationCount
 				);
 			})
 			.toList();
@@ -149,7 +169,7 @@ public class ReservationArticleService {
 		return PageResponse.of(pagination, responsePages);
 	}
 
-	private Boolean canIReservation(LocalDateTime startTime) {
+	private Boolean checkIfReservationWithinTheAvailablePeriod(LocalDateTime startTime) {
 		boolean check = false;
 		LocalDateTime currentTime = LocalDateTime.now();
 
@@ -193,7 +213,8 @@ public class ReservationArticleService {
 		}
 
 		// 제목이나 내용은 ReservationArticle 의 update 로 변경
-		reservationArticle.update(updateReservationArticleRequest.title(), updateReservationArticleRequest.content());
+		reservationArticle.update(updateReservationArticleRequest.title(), updateReservationArticleRequest.content(),
+			updateReservationArticleRequest.introduction());
 
 		// changehashtags 가 존재한다면 아래 로직
 		if (updateReservationArticleRequest.changeHashtags() != null) {
@@ -318,7 +339,7 @@ public class ReservationArticleService {
 			}
 		}
 	}
-	
+
 	@Transactional
 	public void deleteReservationArticle(Long postId) {
 		ReservationArticle reservationArticle = reservationArticleRepository.findById(postId)

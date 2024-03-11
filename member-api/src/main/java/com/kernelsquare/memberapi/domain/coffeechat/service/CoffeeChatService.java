@@ -5,7 +5,11 @@ import com.kernelsquare.core.common_response.error.code.ReservationErrorCode;
 import com.kernelsquare.core.common_response.error.exception.BusinessException;
 import com.kernelsquare.core.type.MessageType;
 import com.kernelsquare.domainmongodb.domain.coffeechat.repository.MongoChatMessageRepository;
+import com.kernelsquare.domainmysql.domain.coffeechat.command.CoffeeChatCommand;
 import com.kernelsquare.domainmysql.domain.coffeechat.entity.ChatRoom;
+import com.kernelsquare.domainmysql.domain.coffeechat.info.CoffeeChatInfo;
+import com.kernelsquare.domainmysql.domain.member.entity.Member;
+import com.kernelsquare.domainmysql.domain.member.repository.MemberReader;
 import com.kernelsquare.domainmysql.domain.reservation.entity.Reservation;
 import com.kernelsquare.domainmysql.domain.reservation.repository.ReservationRepository;
 import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
@@ -25,6 +29,7 @@ import java.util.List;
 public class CoffeeChatService {
 	private final MongoChatMessageRepository mongoChatMessageRepository;
 	private final ReservationRepository reservationRepository;
+    private final MemberReader memberReader;
 	private final ChatRoomMemberManager chatRoomMemberManager;
 	private final KafkaTemplate<String, Object> kafkaTemplate;
 
@@ -112,5 +117,15 @@ public class CoffeeChatService {
 			.toList();
 
 		return FindChatHistoryResponse.of(chatHistory);
+	}
+
+	@Transactional(readOnly = true)
+	public CoffeeChatInfo coffeeChatRequest(CoffeeChatCommand.RequestCommand command) {
+		Member recipient = memberReader.findMember(command.recipientId());
+		Member sender = command.sender();
+
+		CoffeeChatValidation.validateCoffeeChatRequest(sender, recipient);
+
+		return CoffeeChatInfo.of(sender,recipient);
 	}
 }

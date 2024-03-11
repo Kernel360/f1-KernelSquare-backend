@@ -8,6 +8,8 @@ import com.kernelsquare.memberapi.domain.answer.dto.UpdateAnswerRequest;
 import com.kernelsquare.memberapi.domain.answer.facade.AnswerFacade;
 import com.kernelsquare.memberapi.domain.answer.service.AnswerService;
 import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
+import com.kernelsquare.memberapi.domain.chatgpt.service.ChatGptService;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +22,13 @@ import static com.kernelsquare.core.common_response.response.code.AnswerResponse
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class AnswerController {
+
 	private final AnswerService answerService;
 	private final AnswerFacade answerFacade;
+	private final ChatGptService chatGptService;
 
 	@GetMapping("/questions/{questionId}/answers")
-	public ResponseEntity<ApiResponse<FindAllAnswerResponse>> findAllAnswers(
+	public ResponseEntity<ApiResponse<FindAllAnswerResponse>> findAllAnswer(
 		@PathVariable("questionId") Long questionId) {
 		FindAllAnswerResponse findAllAnswerResponse = answerService.findAllAnswer(questionId);
 		return ResponseEntityFactory.toResponseEntity(ANSWERS_ALL_FOUND, findAllAnswerResponse);
@@ -39,6 +43,14 @@ public class AnswerController {
 		answerFacade.createAnswer(request, questionId, memberAdapter);
 
 		return ResponseEntityFactory.toResponseEntity(ANSWER_CREATED);
+	}
+
+	@PostMapping("/questions/{questionId}/answer-bot")
+	public ResponseEntity<ApiResponse> createAnswerWithChatGpt(
+		@PathVariable Long questionId
+	) {
+		chatGptService.createChatGptAnswer(questionId);
+		return ResponseEntityFactory.toResponseEntity(AUTOMATED_ANSWER_CREATED);
 	}
 
 	@PutMapping("/questions/answers/{answerId}")

@@ -32,6 +32,7 @@ spring:
   flyway:
     enabled: true
     baseline-on-migrate: true
+    out-of-order: true
 
 logging.level:
   org.hibernate.SQL: debug

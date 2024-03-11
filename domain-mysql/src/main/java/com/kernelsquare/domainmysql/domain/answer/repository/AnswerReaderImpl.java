@@ -1,5 +1,6 @@
 package com.kernelsquare.domainmysql.domain.answer.repository;
 
+import com.kernelsquare.core.constants.SystemConstants;
 import com.kernelsquare.domainmysql.domain.answer.entity.Answer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,6 @@ public class AnswerReaderImpl implements AnswerReader {
 
     @Override
     public List<Answer> findAnswersTop3(Long questionId) {
-        return answerRepository.findAnswersByQuestionIdSortedByVoteCount(questionId);
+        return answerRepository.findAnswersByQuestionIdSortedByVoteCount(questionId, SystemConstants.ANSWER_BOT);
     }
 }

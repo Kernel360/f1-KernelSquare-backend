@@ -1,47 +1,61 @@
 package com.kernelsquare.memberapi.domain.coffeechat.controller;
 
-import static com.kernelsquare.core.common_response.response.code.CoffeeChatResponseCode.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.kernelsquare.core.type.AuthorityType;
 import com.kernelsquare.domainmongodb.domain.coffeechat.entity.MongoChatMessage;
 import com.kernelsquare.domainmongodb.domain.coffeechat.entity.MongoMessageType;
 import com.kernelsquare.domainmysql.domain.authority.entity.Authority;
+import com.kernelsquare.domainmysql.domain.coffeechat.entity.ChatRoom;
 import com.kernelsquare.domainmysql.domain.level.entity.Level;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
 import com.kernelsquare.domainmysql.domain.member_authority.entity.MemberAuthority;
 import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
 import com.kernelsquare.memberapi.domain.auth.dto.MemberAdaptorInstance;
 import com.kernelsquare.memberapi.domain.coffeechat.dto.*;
+import com.kernelsquare.memberapi.domain.coffeechat.facade.CoffeeChatFacade;
+import com.kernelsquare.memberapi.domain.coffeechat.service.CoffeeChatService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import com.kernelsquare.memberapi.domain.coffeechat.service.CoffeeChatService;
-import com.kernelsquare.domainmysql.domain.coffeechat.entity.ChatRoom;
+import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.List;
 import java.util.stream.Stream;
 
+import static com.kernelsquare.core.common_response.response.code.CoffeeChatResponseCode.*;
+import static com.kernelsquare.memberapi.config.ApiDocumentUtils.getDocumentResponse;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 @DisplayName("채팅 컨트롤러 통합 테스트")
 @WithMockUser
 @WebMvcTest(CoffeeChatController.class)
+@AutoConfigureRestDocs(uriScheme = "https", uriHost = "docs.api.com")
 class CoffeeChatControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 	@MockBean
 	private CoffeeChatService coffeeChatService;
+	@MockBean
+	private CoffeeChatFacade coffeeChatFacade;
 
 	private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -133,5 +147,54 @@ class CoffeeChatControllerTest {
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 			.andExpect(jsonPath("$.code").value(CHAT_HISTORY_FOUND.getCode()))
 			.andExpect(jsonPath("$.msg").value(CHAT_HISTORY_FOUND.getMsg()));
+	}
+
+	@Test
+	@DisplayName("커피챗 요청 성공시 200 OK와 메시지를 반환한다.")
+	void testRequestCoffeeChat() throws Exception {
+		//given
+		Member member = Member.builder()
+			.id(1L)
+			.nickname("machine")
+			.email("awdag@nsavasc.om")
+			.password("hashed")
+			.experience(1200L)
+			.introduction("basfas")
+			.authorities(List.of(
+				MemberAuthority.builder()
+					.member(Member.builder().build())
+					.authority(Authority.builder().authorityType(AuthorityType.ROLE_USER).build())
+					.build()))
+			.imageUrl("agawsc")
+			.build();
+
+		MemberAdapter memberAdapter = new MemberAdapter(MemberAdaptorInstance.of(member));
+
+		doNothing()
+			.when(coffeeChatFacade)
+			.sendCoffeeChatRequest(any(MemberAdapter.class), anyLong());
+
+		//when
+		ResultActions resultActions = mockMvc.perform(
+			RestDocumentationRequestBuilders.post("/api/v1/coffeechat/request/1")
+				.with(csrf())
+				.with(user(memberAdapter))
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8"));
+
+		//then
+		resultActions
+			.andExpect(status().is(COFFEE_CHAT_REQUEST_FINISHED.getStatus().value()))
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andDo(document("coffeechat-request",
+				getDocumentResponse(),
+				responseFields(
+					fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 상태 코드"),
+					fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지")
+				)));
+
+		//verify
+		verify(coffeeChatFacade, times(1)).sendCoffeeChatRequest(any(MemberAdapter.class), anyLong());
 	}
 }

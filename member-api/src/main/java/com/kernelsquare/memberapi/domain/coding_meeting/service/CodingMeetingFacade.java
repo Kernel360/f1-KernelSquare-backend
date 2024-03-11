@@ -2,6 +2,7 @@ package com.kernelsquare.memberapi.domain.coding_meeting.service;
 import com.kernelsquare.core.dto.PageResponse;
 import com.kernelsquare.domainmysql.domain.coding_meeting.info.CodingMeetingInfo;
 import com.kernelsquare.domainmysql.domain.coding_meeting.service.CodingMeetingService;
+import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
 import com.kernelsquare.memberapi.domain.coding_meeting.dto.CodingMeetingDto;
 import com.kernelsquare.memberapi.domain.coding_meeting.mapper.CodingMeetingDtoMapper;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -27,12 +29,19 @@ public class CodingMeetingFacade {
         return codingMeetingDtoMapper.toFindResponse(codingMeetingInfo);
     }
 
-    public PageResponse findAllCodingMeeting(Pageable pageable, String filterParameter) {
-        Page<CodingMeetingInfo.ListInfo> allCodingMeetingInfo = codingMeetingService.findAllCodingMeeting(pageable, filterParameter);
+    public PageResponse findAllCodingMeeting(Pageable pageable, String filterParameter, MemberAdapter memberAdapter) {
+        Page<CodingMeetingInfo.ListInfo> allCodingMeetingInfo = codingMeetingService.findAllCodingMeeting(pageable, filterParameter, getMemberId(memberAdapter));
         List<CodingMeetingDto.FindAllResponse> findAllResponses = allCodingMeetingInfo.getContent().stream()
                 .map(info -> codingMeetingDtoMapper.toFindAllResponse(info))
                 .toList();
         return PageResponse.of(pageable, allCodingMeetingInfo, findAllResponses);
+    }
+
+    private Long getMemberId(MemberAdapter memberAdapter) {
+        if (Objects.isNull(memberAdapter)) {
+            return null;
+        }
+        return memberAdapter.getMember().getId();
     }
 
     public void updateCodingMeeting(CodingMeetingDto.UpdateRequest request, String codingMeetingToken) {

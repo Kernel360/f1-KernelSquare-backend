@@ -57,6 +57,7 @@ public class AnswerControllerTest {
 	private final Long testQuestionId = 1L;
 	private final Question testQuestion = Question
 		.builder()
+		.id(testQuestionId)
 		.title("Test Question")
 		.content("Test Content")
 		.imageUrl("S3:TestImage")
@@ -64,6 +65,7 @@ public class AnswerControllerTest {
 		.build();
 	private final Member testMember = Member
 		.builder()
+		.id(1L)
 		.nickname("hongjugwang")
 		.email("jugwang@naver.com")
 		.password("hashedPassword")
@@ -78,6 +80,7 @@ public class AnswerControllerTest {
 		.build();
 	private final Answer testAnswer = Answer
 		.builder()
+		.id(1L)
 		.content("Test Answer Content")
 		.voteCount(10L)
 		.imageUrl("s3:AnswerImageURL")
@@ -92,6 +95,7 @@ public class AnswerControllerTest {
 		.build();
 	private final FindAnswerResponse findAnswerResponse = new FindAnswerResponse(
 		testAnswer.getId(),
+		testAnswer.getMember().getId(),
 		testQuestion.getId(),
 		testAnswer.getContent(),
 		"s3:RankURL",
@@ -100,7 +104,7 @@ public class AnswerControllerTest {
 		testMember.getLevel().getName(),
 		testAnswer.getImageUrl(),
 		LocalDateTime.now(),
-		null,
+		LocalDateTime.now(),
 		testAnswer.getVoteCount(),
 		Long.valueOf(testMemberAnswerVote.getStatus())
 	);
@@ -154,26 +158,32 @@ public class AnswerControllerTest {
 				responseFields(
 					fieldWithPath("data").description("응답"),
 					fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"),
-					fieldWithPath("code").description("The status code of the response."),
-					fieldWithPath("data.answer_responses").description("Array containing answer responses."),
-					fieldWithPath("data.answer_responses[].answer_id").description("The answer ID."),
-					fieldWithPath("data.answer_responses[].question_id").description("The question ID."),
-					fieldWithPath("data.answer_responses[].content").description("The content of the answer."),
-					fieldWithPath("data.answer_responses[].rank_image_url").description("The URL of the rank image."),
-					fieldWithPath("data.answer_responses[].member_image_url").description(
-						"The URL of the member image."),
-					fieldWithPath("data.answer_responses[].created_by").description("The username of the creator."),
-					fieldWithPath("data.answer_responses[].author_level").description("The author level."),
-					fieldWithPath("data.answer_responses[].answer_image_url").description(
-						"The URL of the answer image."),
-					fieldWithPath("data.answer_responses[].created_date").description(
-						"The creation date of the answer."),
-					fieldWithPath("data.answer_responses[].modified_date").description(
-						"The modification date of the answer."),
-					fieldWithPath("data.answer_responses[].vote_count").description(
-						"The number of votes for the answer."),
-					fieldWithPath("data.answer_responses[].vote_status").description(
-						"The vote status of the answer."))));
+					fieldWithPath("code").type(JsonFieldType.NUMBER).description("커스텀 응답 코드"),
+					fieldWithPath("data.answer_responses").type(JsonFieldType.ARRAY).description("답변 리스트"),
+					fieldWithPath("data.answer_responses[].answer_id").type(JsonFieldType.NUMBER).description("답변 아이디"),
+					fieldWithPath("data.answer_responses[].answer_member_id").type(JsonFieldType.NUMBER)
+						.description("답변 작성자 아이디"),
+					fieldWithPath("data.answer_responses[].member_nickname").type(JsonFieldType.STRING)
+						.description("응답 메시지"),
+					fieldWithPath("data.answer_responses[].question_id").type(JsonFieldType.NUMBER)
+						.description("질문 아이디"),
+					fieldWithPath("data.answer_responses[].content").type(JsonFieldType.STRING).description("내용"),
+					fieldWithPath("data.answer_responses[].rank_image_url").type(JsonFieldType.STRING)
+						.description("랭크 이미지 주소"),
+					fieldWithPath("data.answer_responses[].member_image_url").type(JsonFieldType.STRING).description(
+						"회원 프로필 사진 주소"),
+					fieldWithPath("data.answer_responses[].author_level").type(JsonFieldType.NUMBER)
+						.description("답변 작성자 레벨"),
+					fieldWithPath("data.answer_responses[].answer_image_url").type(JsonFieldType.STRING).description(
+						"답변 이미지 주소"),
+					fieldWithPath("data.answer_responses[].created_date").type(JsonFieldType.STRING).description(
+						"답변 생성일"),
+					fieldWithPath("data.answer_responses[].modified_date").type(JsonFieldType.STRING).description(
+						"답변 수정일"),
+					fieldWithPath("data.answer_responses[].vote_count").type(JsonFieldType.NUMBER)
+						.description("답변 투표수"),
+					fieldWithPath("data.answer_responses[].vote_status").type(JsonFieldType.NUMBER).description(
+						"투표 상태"))));
 
 		//verify
 		verify(answerService, times(1)).findAllAnswer(testQuestionId);

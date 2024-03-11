@@ -28,7 +28,7 @@ public class AnswerController {
 	private final ChatGptService chatGptService;
 
 	@GetMapping("/questions/{questionId}/answers")
-	public ResponseEntity<ApiResponse<FindAllAnswerResponse>> findAllAnswers(
+	public ResponseEntity<ApiResponse<FindAllAnswerResponse>> findAllAnswer(
 		@PathVariable("questionId") Long questionId) {
 		FindAllAnswerResponse findAllAnswerResponse = answerService.findAllAnswer(questionId);
 		return ResponseEntityFactory.toResponseEntity(ANSWERS_ALL_FOUND, findAllAnswerResponse);

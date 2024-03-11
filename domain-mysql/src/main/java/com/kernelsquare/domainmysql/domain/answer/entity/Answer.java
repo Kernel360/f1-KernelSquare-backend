@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.kernelsquare.core.constants.DefaultRankConstants;
 import org.hibernate.annotations.DynamicUpdate;
 
 import com.kernelsquare.domainmysql.domain.base.BaseEntity;
@@ -85,14 +84,14 @@ public class Answer extends BaseEntity {
 
 	public String getNullableRankImageUrl() {
 		if (Objects.isNull(rank)) {
-			return DefaultRankConstants.RANK_IMAGE_URL;
+			return null;
 		}
 		return rank.getImage_url();
 	}
 
 	public Long getNullableRankName() {
 		if (Objects.isNull(rank)) {
-			return DefaultRankConstants.RANK_NAME;
+			return null;
 		}
 		return rank.getName();
 	}

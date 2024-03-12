@@ -15,7 +15,7 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 
-@DisplayName("Answer 도메인 요청 Dto 종합 테스트")
+@DisplayName("Answer 도메인 요청 Dto 단위 테스트")
 class AnswerRequestDtoTest {
 	ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 	Validator validator = factory.getValidator();

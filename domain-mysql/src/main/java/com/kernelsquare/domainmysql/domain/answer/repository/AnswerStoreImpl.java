@@ -23,4 +23,9 @@ public class AnswerStoreImpl implements AnswerStore {
     public Answer store(Answer answer) {
         return answerRepository.save(answer);
     }
+
+    @Override
+    public void delete(Long answerId) {
+        answerRepository.deleteById(answerId);
+    }
 }

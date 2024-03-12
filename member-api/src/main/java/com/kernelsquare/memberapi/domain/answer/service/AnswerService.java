@@ -1,14 +1,11 @@
 package com.kernelsquare.memberapi.domain.answer.service;
 
-import com.kernelsquare.core.common_response.error.code.AnswerErrorCode;
-import com.kernelsquare.core.common_response.error.exception.BusinessException;
 import com.kernelsquare.core.util.ExperiencePolicy;
 import com.kernelsquare.core.util.ImageUtils;
 import com.kernelsquare.domainmysql.domain.answer.command.AnswerCommand;
 import com.kernelsquare.domainmysql.domain.answer.entity.Answer;
 import com.kernelsquare.domainmysql.domain.answer.info.AnswerInfo;
 import com.kernelsquare.domainmysql.domain.answer.repository.AnswerReader;
-import com.kernelsquare.domainmysql.domain.answer.repository.AnswerRepository;
 import com.kernelsquare.domainmysql.domain.answer.repository.AnswerStore;
 import com.kernelsquare.domainmysql.domain.level.entity.Level;
 import com.kernelsquare.domainmysql.domain.level.repository.LevelReader;
@@ -21,6 +18,7 @@ import com.kernelsquare.memberapi.domain.answer.dto.FindAllAnswerResponse;
 import com.kernelsquare.memberapi.domain.answer.dto.FindAnswerResponse;
 import com.kernelsquare.memberapi.domain.answer.dto.UpdateAnswerRequest;
 import com.kernelsquare.memberapi.domain.answer.validation.AnswerValidation;
+import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -34,7 +32,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class AnswerService {
-	private final AnswerRepository answerRepository;
 	private final MemberAnswerVoteReader memberAnswerVoteReader;
 	private final AnswerReader answerReader;
 	private final AnswerStore answerStore;
@@ -92,15 +89,20 @@ public class AnswerService {
 	}
 
 	@Transactional
-	public void updateAnswer(UpdateAnswerRequest updateAnswerRequest, Long answerId) {
-		Answer answer = answerRepository.findById(answerId)
-			.orElseThrow(() -> new BusinessException(AnswerErrorCode.ANSWER_NOT_FOUND));
+	public void updateAnswer(UpdateAnswerRequest updateAnswerRequest, Long answerId, MemberAdapter memberAdapter) {
+		Answer answer = answerReader.findAnswer(answerId);
+
+		AnswerValidation.validateUpdatePermission(memberAdapter, answer);
 
 		answer.update(updateAnswerRequest.content(), ImageUtils.parseFilePath(updateAnswerRequest.imageUrl()));
 	}
 
 	@Transactional
-	public void deleteAnswer(Long answerId) {
-		answerRepository.deleteById(answerId);
+	public void deleteAnswer(Long answerId, MemberAdapter memberAdapter) {
+		Answer answer = answerReader.findAnswer(answerId);
+
+		AnswerValidation.validateDeletePermission(memberAdapter, answer);
+
+		answerStore.delete(answerId);
 	}
 }

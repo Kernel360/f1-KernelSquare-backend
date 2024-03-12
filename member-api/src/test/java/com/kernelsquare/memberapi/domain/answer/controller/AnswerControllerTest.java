@@ -233,16 +233,19 @@ public class AnswerControllerTest {
 	@DisplayName("답변 수정 성공시, 200 OK, 메시지, 답변정보를 반환한다.")
 	void testUpdateAnswer() throws Exception {
 		//given
+		MemberAdapter memberAdapter = new MemberAdapter(MemberAdaptorInstance.of(testMember));
+
 		objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
 		String jsonRequest = objectMapper.writeValueAsString(updateAnswerRequest);
 
 		doNothing()
 			.when(answerService)
-			.updateAnswer(any(UpdateAnswerRequest.class), anyLong());
+			.updateAnswer(any(UpdateAnswerRequest.class), anyLong(), any(MemberAdapter.class));
 
 		//when & then
 		mockMvc.perform(put("/api/v1/questions/answers/" + testQuestionId)
 				.with(csrf())
+				.with(user(memberAdapter))
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
@@ -253,7 +256,7 @@ public class AnswerControllerTest {
 			.andExpect(jsonPath("$.msg").value(ANSWER_UPDATED.getMsg()));
 
 		//verify
-		verify(answerService, times(1)).updateAnswer(updateAnswerRequest, testQuestionId);
+		verify(answerService, times(1)).updateAnswer(any(UpdateAnswerRequest.class), anyLong(), any(MemberAdapter.class));
 	}
 
 	@Test
@@ -261,13 +264,16 @@ public class AnswerControllerTest {
 	@DisplayName("답변 삭제 성공시, 200 OK, 메시지, 답변정보를 반환한다.")
 	void testDeleteAnswer() throws Exception {
 		//given
+		MemberAdapter memberAdapter = new MemberAdapter(MemberAdaptorInstance.of(testMember));
+
 		doNothing()
 			.when(answerService)
-			.deleteAnswer(anyLong());
+			.deleteAnswer(anyLong(), any(MemberAdapter.class));
 
 		//when & then
 		mockMvc.perform(delete("/api/v1/questions/answers/" + testQuestionId)
 				.with(csrf())
+				.with(user(memberAdapter))
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8"))
@@ -277,6 +283,6 @@ public class AnswerControllerTest {
 			.andExpect(jsonPath("$.msg").value(ANSWER_DELETED.getMsg()));
 
 		//verify
-		verify(answerService, times(1)).deleteAnswer(testQuestionId);
+		verify(answerService, times(1)).deleteAnswer(anyLong(), any(MemberAdapter.class));
 	}
 }

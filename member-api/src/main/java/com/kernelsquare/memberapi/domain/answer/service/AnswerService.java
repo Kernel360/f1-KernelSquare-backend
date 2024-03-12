@@ -52,17 +52,16 @@ public class AnswerService {
 			List<Answer> answerList = answerReader.findAnswers(questionId);
 			for (Answer answer : answerList) {
 				if (voteStatusMap.containsKey(answer.getId())) {
-					result.add(FindAnswerResponse.from(answer, answer.getMember().getLevel().getName(),
-						Long.valueOf(voteStatusMap.get(answer.getId()))));
+					result.add(FindAnswerResponse.from(answer, Long.valueOf(voteStatusMap.get(answer.getId()))));
 				} else {
-					result.add(FindAnswerResponse.from(answer, null, Long.valueOf("0")));
+					result.add(FindAnswerResponse.from(answer, Long.valueOf("0")));
 				}
 			}
 			return FindAllAnswerResponse.from(result);
 		}
 		List<Answer> answerList = answerReader.findAnswers(questionId);
 		for (Answer answer : answerList) {
-			result.add(FindAnswerResponse.from(answer, null, Long.valueOf("0")));
+			result.add(FindAnswerResponse.from(answer, Long.valueOf("0")));
 		}
 		return FindAllAnswerResponse.from(result);
 	}

@@ -106,7 +106,7 @@ public class NoticeControllerTest {
 	@DisplayName("단일 공지 조회 성공시 200 OK와 성공 응답을 반환한다.")
 	void testFindNotice() throws Exception {
 		//given
-		NoticeDto.FindRequest request = NoticeDto.FindRequest.builder().noticeToken("ntc_dwadwada").build();
+		String noticeToken = "ntc_d21awdawegaef";
 
 		NoticeDto.FindResponse response = NoticeDto.FindResponse.builder()
 			.noticeTitle("환불 관련 공지입니다.")
@@ -117,22 +117,18 @@ public class NoticeControllerTest {
 			.modifiedDate(LocalDateTime.now())
 			.build();
 
-		String jsonRequest = objectMapper.writeValueAsString(request);
-
-		doReturn(response).when(noticeFacade).findNotice(any(NoticeDto.FindRequest.class));
+		doReturn(response).when(noticeFacade).findNotice(anyString());
 
 		//when
-		ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/notices")
+		ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/notices/" + noticeToken)
 			.with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
 			.accept(MediaType.APPLICATION_JSON)
-			.characterEncoding("UTF-8")
-			.content(jsonRequest));
+			.characterEncoding("UTF-8"));
 
 		//then
 		resultActions.andExpect(status().is(NOTICE_FOUND.getStatus().value()))
-			.andDo(document("notice-found", getDocumentRequest(), getDocumentResponse(),
-				requestFields(fieldWithPath("notice_token").type(JsonFieldType.STRING).description("공지 토큰")),
+			.andDo(document("notice-found", getDocumentResponse(),
 				responseFields(fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"),
 					fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 상태 코드"),
 					fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답"),
@@ -144,7 +140,7 @@ public class NoticeControllerTest {
 					fieldWithPath("data.modified_date").type(JsonFieldType.STRING).description("수정 시간"))));
 
 		//verify
-		verify(noticeFacade, times(1)).findNotice(any(NoticeDto.FindRequest.class));
+		verify(noticeFacade, times(1)).findNotice(anyString());
 	}
 
 	@Test
@@ -263,7 +259,7 @@ public class NoticeControllerTest {
 		String jsonRequest = objectMapper.writeValueAsString(pageable);
 
 		//when
-		ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/notices/all")
+		ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/notices")
 			.with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
 			.accept(MediaType.APPLICATION_JSON)

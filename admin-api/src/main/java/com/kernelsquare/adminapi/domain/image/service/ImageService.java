@@ -1,24 +1,22 @@
 package com.kernelsquare.adminapi.domain.image.service;
 
-import java.io.IOException;
-import java.util.List;
-
-import com.kernelsquare.core.util.ImageUtils;
-import com.kernelsquare.domainmysql.domain.image.ImageCommand;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.DeleteObjectRequest;
-import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.*;
 import com.kernelsquare.adminapi.domain.image.dto.ImageCategory;
 import com.kernelsquare.adminapi.domain.image.dto.UploadImageResponse;
 import com.kernelsquare.core.common_response.error.code.CategoryErrorCode;
 import com.kernelsquare.core.common_response.error.code.ImageErrorCode;
 import com.kernelsquare.core.common_response.error.exception.BusinessException;
-
+import com.kernelsquare.core.util.ImageUtils;
+import com.kernelsquare.domainmysql.domain.image.command.ImageCommand;
+import com.kernelsquare.domainmysql.domain.image.info.ImageInfo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +32,7 @@ public class ImageService {
 
 		validateFileExists(multipartFile);
 
-		String filePath = ImageUtils.makeFilePath(category, multipartFile);
+		String filePath = ImageUtils.makeFilePath(category);
 
 		ObjectMetadata metadata = new ObjectMetadata();
 		metadata.setContentType(multipartFile.getContentType());
@@ -71,7 +69,24 @@ public class ImageService {
 	}
 
 	public ImageInfo findAllImages(ImageCommand.FindAllImages command) {
+		String prefix = command.createdDate() + "/";
 
-		return null;
+		ListObjectsV2Request listObjectsV2Request = new ListObjectsV2Request()
+			.withBucketName(bucket)
+			.withPrefix(prefix);
+
+		ListObjectsV2Result listObjectsV2Result = amazonS3Client.listObjectsV2(listObjectsV2Request);
+
+		List<S3ObjectSummary> objectSummaries = listObjectsV2Result.getObjectSummaries();
+
+		List<String> imageList = objectSummaries.stream()
+			.map(objectSummary -> {
+				String key = objectSummary.getKey();
+				S3Object object = amazonS3Client.getObject(bucket, key);
+				return ImageUtils.makeImageUrl(object.getKey());
+			})
+			.toList();
+
+		return ImageInfo.from(imageList);
 	}
 }

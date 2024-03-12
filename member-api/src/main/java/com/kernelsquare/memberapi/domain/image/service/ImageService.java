@@ -30,7 +30,7 @@ public class ImageService {
 
 		ImageValidation.validateFileExtension(multipartFile);
 
-		String filePath = ImageUtils.makeFilePath(category, multipartFile);
+		String filePath = ImageUtils.makeFilePath(category);
 
 		ObjectMetadata metadata = new ObjectMetadata();
 		metadata.setContentType(multipartFile.getContentType());

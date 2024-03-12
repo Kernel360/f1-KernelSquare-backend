@@ -12,7 +12,8 @@ public enum ImageServiceStatus implements ServiceStatus {
 
 	//success
 	IMAGE_UPLOAD_COMPLETED(2440),
-	IMAGE_DELETED(2441);
+	IMAGE_DELETED(2441),
+	IMAGE_ALL_FOUND(2442);
 
 	private final Integer code;
 

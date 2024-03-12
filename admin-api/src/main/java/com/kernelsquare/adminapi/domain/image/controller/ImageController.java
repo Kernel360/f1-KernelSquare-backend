@@ -4,6 +4,7 @@ import static com.kernelsquare.core.common_response.response.code.ImageResponseC
 
 import com.kernelsquare.adminapi.domain.image.dto.ImageDto;
 import com.kernelsquare.adminapi.domain.image.facade.ImageFacade;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,6 +46,7 @@ public class ImageController {
 
 	@GetMapping("/images")
 	public ResponseEntity<ApiResponse<ImageDto.FindAllResponse>> findAllImages(
+		@Valid
 		@RequestBody
 		ImageDto.FindAllRequest request
 	) {

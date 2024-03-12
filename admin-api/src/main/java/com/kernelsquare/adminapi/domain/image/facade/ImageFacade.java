@@ -3,6 +3,7 @@ package com.kernelsquare.adminapi.domain.image.facade;
 import com.kernelsquare.adminapi.domain.image.dto.ImageDto;
 import com.kernelsquare.adminapi.domain.image.mapper.ImageDtoMapper;
 import com.kernelsquare.adminapi.domain.image.service.ImageService;
+import com.kernelsquare.domainmysql.domain.image.info.ImageInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

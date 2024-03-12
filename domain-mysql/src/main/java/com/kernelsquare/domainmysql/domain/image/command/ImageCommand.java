@@ -1,12 +1,10 @@
-package com.kernelsquare.domainmysql.domain.image;
+package com.kernelsquare.domainmysql.domain.image.command;
 
 import lombok.Builder;
-
-import java.time.LocalDate;
 
 public class ImageCommand {
     @Builder
     public record FindAllImages(
-        LocalDate createdDate
+        String createdDate
     ) {}
 }

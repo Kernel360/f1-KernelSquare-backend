@@ -20,7 +20,7 @@ public class ImageUtils {
 	}
 
 	// 클라이언트에게 받은 이미지 파일을 받아서 s3에 저장할 file path를 만듦
-	public static String makeFilePath(String category, MultipartFile multipartFile) {
+	public static String makeFilePath(String category) {
 		LocalDate currentDate = LocalDate.now();
 
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
@@ -29,7 +29,7 @@ public class ImageUtils {
 
 		UUID uuid = UUID.randomUUID();
 
-		return formattedDate + "/" + category + "/" + uuid + multipartFile.getOriginalFilename();
+		return formattedDate + "/" + category + "/" + uuid;
 	}
 
 	public static String parseFilePath(String url) {

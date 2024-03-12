@@ -3,6 +3,7 @@ package com.kernelsquare.memberapi.common.config;
 import com.kernelsquare.memberapi.common.oauth2.handler.OAuth2LoginFailureHandler;
 import com.kernelsquare.memberapi.common.oauth2.handler.OAuth2LoginSuccessHandler;
 import com.kernelsquare.memberapi.common.oauth2.service.CustomOAuth2MemberService;
+import com.kernelsquare.memberapi.domain.auth.service.TokenProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -13,10 +14,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizedClientManager;
-import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
@@ -36,9 +33,7 @@ public class SecurityConfig {
 	private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 	private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
 	private final CustomOAuth2MemberService customOAuth2MemberService;
-	private final ClientRegistrationRepository clientRegistrationRepository;
-	private final OAuth2AuthorizedClientRepository oAuth2AuthorizedClientRepository;
-	private final JWTSettingFilter jwtSettingFilter;
+	private final TokenProvider tokenProvider;
 
 	private final String[] permitAllPatterns = new String[] {
 		"/api/v1/auth/check/email",
@@ -82,15 +77,11 @@ public class SecurityConfig {
 		"/api/v1/levels/**"
 	};
 
+
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-
-    @Bean
-    public OAuth2AuthorizedClientManager oAuth2AuthorizedClientManager() {
-        return new DefaultOAuth2AuthorizedClientManager(clientRegistrationRepository, oAuth2AuthorizedClientRepository);
-    }
 
 	//todo : filter 설정 추가하기
 	@Bean
@@ -158,7 +149,7 @@ public class SecurityConfig {
 			.requestMatchers(HttpMethod.DELETE, "/api/v1/hashtags/{hashtagId}").hasRole("ADMIN")
 		);
 
-		http.addFilterBefore(jwtSettingFilter, BasicAuthenticationFilter.class);
+		http.addFilterBefore(new JWTSettingFilter(tokenProvider), BasicAuthenticationFilter.class);
 
 		http.exceptionHandling(exceptionHandlingConfigurer -> exceptionHandlingConfigurer
 			.authenticationEntryPoint(jwtAuthenticationEntryPoint)

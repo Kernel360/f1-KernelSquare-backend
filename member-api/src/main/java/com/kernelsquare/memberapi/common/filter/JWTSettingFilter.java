@@ -31,9 +31,8 @@ import lombok.RequiredArgsConstructor;
 import static com.kernelsquare.core.common_response.error.code.TokenErrorCode.*;
 import static com.kernelsquare.core.common_response.error.code.TokenErrorCode.WRONG_TOKEN;
 
-@Component
 @RequiredArgsConstructor
-public class JWTSettingFilter extends OncePerRequestFilter implements InitializingBean {
+public class JWTSettingFilter extends OncePerRequestFilter {
 	private final TokenProvider tokenProvider;
 
 	@Override

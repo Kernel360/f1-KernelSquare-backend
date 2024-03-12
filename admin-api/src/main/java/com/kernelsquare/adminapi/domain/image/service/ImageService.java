@@ -3,6 +3,8 @@ package com.kernelsquare.adminapi.domain.image.service;
 import java.io.IOException;
 import java.util.List;
 
+import com.kernelsquare.core.util.ImageUtils;
+import com.kernelsquare.domainmysql.domain.image.ImageCommand;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,7 +14,6 @@ import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.kernelsquare.adminapi.domain.image.dto.ImageCategory;
 import com.kernelsquare.adminapi.domain.image.dto.UploadImageResponse;
-import com.kernelsquare.adminapi.domain.image.utils.ImageUtils;
 import com.kernelsquare.core.common_response.error.code.CategoryErrorCode;
 import com.kernelsquare.core.common_response.error.code.ImageErrorCode;
 import com.kernelsquare.core.common_response.error.exception.BusinessException;
@@ -67,5 +68,10 @@ public class ImageService {
 		if (!CATEGORYLIST.contains(category)) {
 			throw new BusinessException(CategoryErrorCode.CATEGORY_NOT_VALID);
 		}
+	}
+
+	public ImageInfo findAllImages(ImageCommand.FindAllImages command) {
+
+		return null;
 	}
 }

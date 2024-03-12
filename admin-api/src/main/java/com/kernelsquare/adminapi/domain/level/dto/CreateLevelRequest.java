@@ -1,6 +1,6 @@
 package com.kernelsquare.adminapi.domain.level.dto;
 
-import com.kernelsquare.adminapi.domain.image.utils.ImageUtils;
+import com.kernelsquare.core.util.ImageUtils;
 import com.kernelsquare.domainmysql.domain.level.entity.Level;
 
 import jakarta.validation.constraints.NotBlank;

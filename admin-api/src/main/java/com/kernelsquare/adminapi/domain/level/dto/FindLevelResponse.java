@@ -1,6 +1,6 @@
 package com.kernelsquare.adminapi.domain.level.dto;
 
-import com.kernelsquare.adminapi.domain.image.utils.ImageUtils;
+import com.kernelsquare.core.util.ImageUtils;
 import com.kernelsquare.domainmysql.domain.level.entity.Level;
 
 public record FindLevelResponse(Long id, Long name, String imageUrl, Long leveUpperLimit) {

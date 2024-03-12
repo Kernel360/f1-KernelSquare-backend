@@ -3,7 +3,7 @@ package com.kernelsquare.adminapi.domain.question.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.kernelsquare.adminapi.domain.image.utils.ImageUtils;
+import com.kernelsquare.core.util.ImageUtils;
 import com.kernelsquare.domainmysql.domain.level.entity.Level;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
 import com.kernelsquare.domainmysql.domain.question.entity.Question;

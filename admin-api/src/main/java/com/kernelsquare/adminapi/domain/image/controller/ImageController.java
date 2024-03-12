@@ -2,13 +2,10 @@ package com.kernelsquare.adminapi.domain.image.controller;
 
 import static com.kernelsquare.core.common_response.response.code.ImageResponseCode.*;
 
+import com.kernelsquare.adminapi.domain.image.dto.ImageDto;
+import com.kernelsquare.adminapi.domain.image.facade.ImageFacade;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kernelsquare.adminapi.domain.image.dto.UploadImageResponse;
@@ -23,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ImageController {
 	private final ImageService imageService;
+	private final ImageFacade imageFacade;
 
 	@PostMapping("/images")
 	public ResponseEntity<ApiResponse<UploadImageResponse>> uploadImage(
@@ -43,5 +41,14 @@ public class ImageController {
 		imageService.deleteImage(imageUrl);
 
 		return ResponseEntityFactory.toResponseEntity(IMAGE_DELETED);
+	}
+
+	@GetMapping("/images")
+	public ResponseEntity<ApiResponse<ImageDto.FindAllResponse>> findAllImages(
+		@RequestBody
+		ImageDto.FindAllRequest request
+	) {
+		ImageDto.FindAllResponse response = imageFacade.findAllImages(request);
+		return ResponseEntityFactory.toResponseEntity(IMAGE_ALL_FOUND, response);
 	}
 }

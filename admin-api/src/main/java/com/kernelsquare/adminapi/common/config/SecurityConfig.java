@@ -45,10 +45,6 @@ public class SecurityConfig {
 		"/webjars/**",
 	};
 
-	private final String[] hasAnyAuthorityPatterns = new String[] {
-		"/api/v1/images"
-	};
-
 	private final String[] hasRoleUserPatterns = new String[] {
 		"/api/v1/auth/reissue",
 		"/api/v1/auth/logout",
@@ -60,7 +56,8 @@ public class SecurityConfig {
 	private final String[] hasRoleAdminPatterns = new String[] {
 		"/api/v1/techs/{techStackId}",
 		"/api/v1/levels/**",
-		"/api/v1/notices/**"
+		"/api/v1/notices/**",
+		"/api/v1/images",
 	};
 
 	@Bean
@@ -85,7 +82,6 @@ public class SecurityConfig {
 			.requestMatchers(HttpMethod.GET, "/api/v1/hashtags").permitAll()
 
 			// 모든 권한에 대한 접근 허용
-			.requestMatchers(hasAnyAuthorityPatterns).authenticated()
 			.requestMatchers(HttpMethod.GET, "/api/v1/members/{memberId}").authenticated()
 			.requestMatchers(HttpMethod.GET, "/api/v1/techs").authenticated()
 

@@ -1,6 +1,6 @@
 package com.kernelsquare.adminapi.domain.member.dto;
 
-import com.kernelsquare.adminapi.domain.image.utils.ImageUtils;
+import com.kernelsquare.core.util.ImageUtils;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
 
 import lombok.Builder;

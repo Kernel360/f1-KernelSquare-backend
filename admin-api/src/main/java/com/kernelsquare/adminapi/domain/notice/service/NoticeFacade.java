@@ -49,8 +49,8 @@ public class NoticeFacade {
 		noticeService.deleteNotice(request.noticeToken());
 	}
 
-	public NoticeDto.FindResponse findNotice(NoticeDto.FindRequest request) {
-		NoticeInfo noticeInfo = noticeService.findNotice(request.noticeToken());
+	public NoticeDto.FindResponse findNotice(String noticeToken) {
+		NoticeInfo noticeInfo = noticeService.findNotice(noticeToken);
 		return noticeDtoMapper.toSingleResponse(noticeInfo);
 	}
 

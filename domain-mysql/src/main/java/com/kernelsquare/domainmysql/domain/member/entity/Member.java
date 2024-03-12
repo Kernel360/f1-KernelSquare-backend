@@ -48,7 +48,7 @@ public class Member extends BaseEntity {
 	@Column(nullable = false, name = "experience", columnDefinition = "bigint")
 	private Long experience;
 
-	@Column(name = "image_url", columnDefinition = "varchar(100)")
+	@Column(name = "image_url", columnDefinition = "varchar(1000)")
 	private String imageUrl;
 
 	@Column(name = "introduction", columnDefinition = "text")

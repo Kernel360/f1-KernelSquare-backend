@@ -2,6 +2,7 @@ package com.kernelsquare.domainmysql.domain.answer.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -38,7 +39,7 @@ public class Answer extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "image_url", columnDefinition = "varchar(100)")
+	@Column(name = "image_url", columnDefinition = "varchar(1000)")
 	private String imageUrl;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -79,5 +80,19 @@ public class Answer extends BaseEntity {
 
 	public void updateRank(Rank rank) {
 		this.rank = rank;
+	}
+
+	public String getNullableRankImageUrl() {
+		if (Objects.isNull(rank)) {
+			return null;
+		}
+		return rank.getImage_url();
+	}
+
+	public Long getNullableRankName() {
+		if (Objects.isNull(rank)) {
+			return null;
+		}
+		return rank.getName();
 	}
 }

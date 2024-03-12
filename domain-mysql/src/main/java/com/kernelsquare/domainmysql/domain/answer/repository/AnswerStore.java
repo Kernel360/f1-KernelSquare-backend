@@ -8,4 +8,6 @@ public interface AnswerStore {
     void downVote(Long answerId);
 
     Answer store(Answer answer);
+
+    void delete(Long answerId);
 }

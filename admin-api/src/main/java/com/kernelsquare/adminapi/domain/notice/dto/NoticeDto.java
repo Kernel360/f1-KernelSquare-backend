@@ -28,13 +28,6 @@ public class NoticeDto {
 	}
 
 	@Builder
-	public record FindRequest(
-		@NotBlank(message = "공지 토큰은 필수 입력 값입니다.")
-		String noticeToken
-	) {
-	}
-
-	@Builder
 	public record UpdateRequest(
 		@NotBlank(message = "공지 제목은 필수 입력사항입니다.")
 		@Size(min = 5, max = 50, message = "공지 제목 길이는 5자 이상 50자 이하로 작성해 주세요")

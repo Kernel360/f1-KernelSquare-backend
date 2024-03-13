@@ -8,5 +8,8 @@ import com.kernelsquare.domainmysql.domain.member_authority.entity.MemberAuthori
 import java.util.List;
 
 public interface MemberAuthorityRepository extends JpaRepository<MemberAuthority, Long> {
+  
     List<MemberAuthority> findAllByMember(Member member);
+  
+    void deleteAllByMemberId(Long memberId);
 }

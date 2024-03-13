@@ -28,7 +28,7 @@ public class AnswerController {
 	private final ChatGptService chatGptService;
 
 	@GetMapping("/questions/{questionId}/answers")
-	public ResponseEntity<ApiResponse<FindAllAnswerResponse>> findAllAnswers(
+	public ResponseEntity<ApiResponse<FindAllAnswerResponse>> findAllAnswer(
 		@PathVariable("questionId") Long questionId) {
 		FindAllAnswerResponse findAllAnswerResponse = answerService.findAllAnswer(questionId);
 		return ResponseEntityFactory.toResponseEntity(ANSWERS_ALL_FOUND, findAllAnswerResponse);
@@ -56,17 +56,19 @@ public class AnswerController {
 	@PutMapping("/questions/answers/{answerId}")
 	public ResponseEntity<ApiResponse> updateAnswer(
 		@Valid @RequestBody UpdateAnswerRequest updateAnswerRequest,
-		@PathVariable Long answerId
+		@PathVariable Long answerId,
+		@AuthenticationPrincipal MemberAdapter memberAdapter
 	) {
-		answerService.updateAnswer(updateAnswerRequest, answerId);
+		answerService.updateAnswer(updateAnswerRequest, answerId, memberAdapter);
 		return ResponseEntityFactory.toResponseEntity(ANSWER_UPDATED);
 	}
 
 	@DeleteMapping("/questions/answers/{answerId}")
 	public ResponseEntity<ApiResponse> deleteAnswer(
-		@PathVariable Long answerId
+		@PathVariable Long answerId,
+		@AuthenticationPrincipal MemberAdapter memberAdapter
 	) {
-		answerService.deleteAnswer(answerId);
+		answerService.deleteAnswer(answerId, memberAdapter);
 		return ResponseEntityFactory.toResponseEntity(ANSWER_DELETED);
 	}
 }

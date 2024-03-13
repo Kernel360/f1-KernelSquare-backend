@@ -118,7 +118,7 @@ public class SecurityConfig {
 			.requestMatchers(HttpMethod.POST, "/api/v1/coffeechat/request/{memberId}").authenticated()
 
 			// ROLE_USER 권한 필요
-			.requestMatchers(hasRoleUserPatterns).permitAll()
+			.requestMatchers(hasRoleUserPatterns).hasRole("USER")
 			.requestMatchers(HttpMethod.DELETE, "/api/v1/members/{memberId}").hasRole("USER")
 			.requestMatchers(HttpMethod.PUT, "/api/v1/members/{memberId}/profile").hasRole("USER")
 			.requestMatchers(HttpMethod.PUT, "/api/v1/members/{memberId}/password").hasRole("USER")

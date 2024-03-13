@@ -1,7 +1,5 @@
 package com.kernelsquare.memberapi.domain.answer.service;
 
-import com.kernelsquare.core.common_response.error.code.AnswerErrorCode;
-import com.kernelsquare.core.common_response.error.exception.BusinessException;
 import com.kernelsquare.domainmysql.domain.answer.command.AnswerCommand;
 import com.kernelsquare.domainmysql.domain.answer.entity.Answer;
 import com.kernelsquare.domainmysql.domain.answer.info.AnswerInfo;
@@ -10,17 +8,15 @@ import com.kernelsquare.domainmysql.domain.answer.repository.AnswerRepository;
 import com.kernelsquare.domainmysql.domain.answer.repository.AnswerStore;
 import com.kernelsquare.domainmysql.domain.level.entity.Level;
 import com.kernelsquare.domainmysql.domain.level.repository.LevelReader;
-import com.kernelsquare.domainmysql.domain.level.repository.LevelRepository;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
-import com.kernelsquare.domainmysql.domain.member.repository.MemberRepository;
 import com.kernelsquare.domainmysql.domain.member_answer_vote.entity.MemberAnswerVote;
 import com.kernelsquare.domainmysql.domain.member_answer_vote.repository.MemberAnswerVoteReader;
-import com.kernelsquare.domainmysql.domain.member_answer_vote.repository.MemberAnswerVoteRepository;
 import com.kernelsquare.domainmysql.domain.question.entity.Question;
 import com.kernelsquare.domainmysql.domain.question.repository.QuestionReader;
-import com.kernelsquare.domainmysql.domain.question.repository.QuestionRepository;
 import com.kernelsquare.memberapi.domain.answer.dto.FindAllAnswerResponse;
 import com.kernelsquare.memberapi.domain.answer.dto.UpdateAnswerRequest;
+import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
+import com.kernelsquare.memberapi.domain.auth.dto.MemberAdaptorInstance;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,10 +33,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.*;
 
 @DisplayName("답변 서비스 통합 테스트")
@@ -48,8 +42,6 @@ import static org.mockito.BDDMockito.*;
 public class AnswerServiceTest {
 	@InjectMocks
 	private AnswerService answerService;
-	@Mock
-	private AnswerRepository answerRepository;
 	@Mock
 	private QuestionReader questionReader;
 	@Mock
@@ -169,42 +161,27 @@ public class AnswerServiceTest {
 		Member member = createTestMember(memberId);
 		Question question = createTestQuestion();
 		Answer foundAnswer = createTestAnswer(testAnswerId, 1L, member, question);
-		Optional<Answer> optionalFoundAnswer = Optional.of(foundAnswer);
 
 		UpdateAnswerRequest updateAnswerRequest = new UpdateAnswerRequest(
 			"Test Updated Content",
 			"Test Updated Image URL"
 		);
 
-		Answer updatedAnswer = Answer.builder()
-			.member(member)
-			.question(question)
-			.imageUrl(updateAnswerRequest.imageUrl())
-			.content(updateAnswerRequest.content())
-			.voteCount(foundAnswer.getVoteCount())
-			.build();
+		doReturn(foundAnswer)
+			.when(answerReader)
+			.findAnswer(anyLong());
 
-		Optional<Answer> optionalUpdatedAnswer = Optional.of(updatedAnswer);
-
-		doReturn(optionalFoundAnswer)
-			.when(answerRepository)
-			.findById(anyLong());
+		MemberAdapter memberAdapter = new MemberAdapter(MemberAdaptorInstance.of(member));
 
 		//when
-		answerService.updateAnswer(updateAnswerRequest, testAnswerId);
-
-		doReturn(optionalUpdatedAnswer)
-			.when(answerRepository)
-			.findById(anyLong());
-
-		Optional<Answer> optionalTestAnswer = answerRepository.findById(testAnswerId);
+		answerService.updateAnswer(updateAnswerRequest, testAnswerId, memberAdapter);
 
 		//then
-		assertThat(optionalTestAnswer.get().getContent()).isEqualTo(updateAnswerRequest.content());
-		assertThat(optionalTestAnswer.get().getImageUrl()).isEqualTo(updateAnswerRequest.imageUrl());
+		assertThat(foundAnswer.getContent()).isEqualTo(updateAnswerRequest.content());
+		assertThat(foundAnswer.getImageUrl()).isEqualTo(updateAnswerRequest.imageUrl());
 
 		//verify
-		verify(answerRepository, times(2)).findById(anyLong());
+		verify(answerReader, times(1)).findAnswer(anyLong());
 	}
 
 	@Test
@@ -218,24 +195,24 @@ public class AnswerServiceTest {
 		Member member = createTestMember(memberId);
 		Question question = createTestQuestion();
 
-		doNothing()
-			.when(answerRepository)
-			.deleteById(anyLong());
+		Answer foundAnswer = createTestAnswer(testAnswerId, 1L, member, question);
 
-		doThrow(new BusinessException(AnswerErrorCode.ANSWER_NOT_FOUND))
-			.when(answerRepository)
-			.findById(anyLong());
+		doNothing()
+			.when(answerStore)
+			.delete(anyLong());
+
+		doReturn(foundAnswer)
+			.when(answerReader)
+			.findAnswer(anyLong());
+
+		MemberAdapter memberAdapter = new MemberAdapter(MemberAdaptorInstance.of(member));
 
 		//when
-		answerService.deleteAnswer(testAnswerId);
-
-		//then
-		assertThatThrownBy(() -> answerRepository.findById(anyLong()))
-			.isExactlyInstanceOf(BusinessException.class);
+		answerService.deleteAnswer(testAnswerId, memberAdapter);
 
 		//verify
-		verify(answerRepository, times(1)).deleteById(anyLong());
-		verify(answerRepository, times(1)).findById(anyLong());
+		verify(answerStore, times(1)).delete(anyLong());
+		verify(answerReader, times(1)).findAnswer(anyLong());
 	}
 
 	private Question createTestQuestion() {

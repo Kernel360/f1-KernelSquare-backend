@@ -54,6 +54,7 @@ class ReservationArticleControllerTest {
 		return ReservationArticle.builder()
 			.id(id)
 			.title("testplz")
+			.introduction("dawfgawgawgawgawg")
 			.content("ahahahahahhhh")
 			.build();
 	}
@@ -96,6 +97,7 @@ class ReservationArticleControllerTest {
 		CreateReservationArticleRequest createReservationArticleRequest =
 			new CreateReservationArticleRequest(member.getId(), reservationArticle.getTitle(),
 				reservationArticle.getContent(),
+				reservationArticle.getIntroduction(),
 				List.of(hashtag.getContent()), List.of(LocalDateTime.now(), LocalDateTime.now().plusDays(2)));
 
 		objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
@@ -161,9 +163,9 @@ class ReservationArticleControllerTest {
 			.build();
 
 		FindAllReservationArticleResponse findAllReservationArticleResponse1 = FindAllReservationArticleResponse.of(
-			member, reservationArticle1, true, 1L);
+			member, reservationArticle1, true, 1L, 1L, 1L);
 		FindAllReservationArticleResponse findAllReservationArticleResponse2 = FindAllReservationArticleResponse.of(
-			member, reservationArticle2, false, 0L);
+			member, reservationArticle2, false, 0L, 1L, 1L);
 
 		List<FindAllReservationArticleResponse> responsePages = List.of(findAllReservationArticleResponse1,
 			findAllReservationArticleResponse2);

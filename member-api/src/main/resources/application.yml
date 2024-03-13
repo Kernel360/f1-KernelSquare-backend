@@ -1,4 +1,27 @@
 spring:
+  profiles:
+    active: local
+    group:
+      local: common, local-db
+      prod1: common, prod-db, prod1-server
+      prod2: common, prod-db, prod2-server
+
+server:
+  env: blue
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: common
+
+  # file upload max size (파일 업로드 크기 설정)
+  servlet:
+    multipart:
+      max-file-size: 3MB
+      max-request-size: 3MB
+
   datasource:
     url: ${LOCAL_DB_URL}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -12,12 +35,11 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        show_sql: true
 
     database: mysql
 
     database-platform: org.hibernate.dialect.MySQL8Dialect
-
-  #    show-sql: true
 
   jackson:
     property-naming-strategy: SNAKE_CASE
@@ -26,13 +48,6 @@ spring:
     serialization:
       fail-on-empty-beans: false
   # <====
-
-  # file upload max size (파일 업로드 크기 설정)
-  servlet:
-    multipart:
-      max-file-size: 3MB
-      max-request-size: 3MB
-
 
   redis:
     serialization:
@@ -98,8 +113,29 @@ management:
     web:
       exposure:
         include: prometheus, health, info, metrics
-#  observations:
-#    key-values:
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: prod1-server
+
+serverName: kernelsquare-prod1
+
+dbInfo: rds
+
 server:
   port: 8501
-#      application: KS_SingleModule  #태그
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: prod2-server
+
+serverName: kernelsquare-prod2
+
+server:
+  port: 8502

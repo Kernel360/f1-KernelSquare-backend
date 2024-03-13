@@ -36,6 +36,8 @@ public class SecurityConfig {
 		"/api/v1/auth/login",
 		"/actuator",
 		"/actuator/**",
+		"/get-server-information",
+		"/environment",
 
 		// 소켓 통신의 임시 화면을 사용하기 위해 관련 경로는 permitAll
 		"/chat/**",

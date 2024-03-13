@@ -37,6 +37,8 @@ spring:
   redis:
     serialization:
       class-property-type-name: RefreshToken.class
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
 
   data:
     mongodb:
@@ -78,6 +80,9 @@ cloud:
     credentials:
       accessKey: ${AWS_ACCESS_KEY}
       secretKey: ${AWS_ACCESS_SECRET}
+
+kafka:
+  url: ${KAFKA_URL}
 
 custom:
   domain:

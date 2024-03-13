@@ -27,7 +27,7 @@ public class CodingMeetingCommentDto {
     public record CreateRequest(
        String codingMeetingToken,
        @NotBlank(message = "모각코 댓글 내용은 필수 입력사항입니다.")
-       @Size(min = 10, max = 10000, message = "모각코 댓글 내용은 10자 이상 10000자 이하로 작성이 가능합니다.")
+       @Size(max = 300, message = "모각코 댓글 내용은 300자 이하로 작성이 가능합니다.")
        String codingMeetingCommentContent
     ) {
     }
@@ -35,7 +35,7 @@ public class CodingMeetingCommentDto {
     @Builder
     public record UpdateRequest(
        @NotBlank(message = "모각코 댓글 내용은 필수 입력사항입니다.")
-       @Size(min = 10, max = 10000, message = "모각코 댓글 내용은 10자 이상 10000자 이하로 작성이 가능합니다.")
+       @Size(max = 300, message = "모각코 댓글 내용은 300자 이하로 작성이 가능합니다.")
        String codingMeetingCommentContent
     ) {
     }

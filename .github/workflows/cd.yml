@@ -22,6 +22,57 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
+      - name: Set up admin-api application.yml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./admin-api/src/main/resources/application.yml
+        env:
+          spring.datasource.url: ${{ secrets.LOCAL_DB_URL }}
+          spring.datasource.username: ${{ secrets.LOCAL_DB_HOST }}
+          spring.datasource.password: ${{ secrets.LOCAL_DB_PASSWORD }}
+          spring.security.jwt.secret: ${{ secrets.JWT_SECRET_KEY }}
+          cloud.aws.s3.bucket: ${{ secrets.S3_BUCKET_NAME }}
+          cloud.aws.region.static: ${{ secrets.S3_REGION }}
+          cloud.aws.credentials.accessKey: ${{ secrets.AWS_ACCESS_KEY }}
+          cloud.aws.credentials.secretKey: ${{ secrets.AWS_ACCESS_SECRET }}
+          custom.domain.image.baseUrl: ${{ secrets.BASE_URL }}
+
+      - name: Set up member-api application.yml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./member-api/src/main/resources/application.yml
+        env:
+          spring.datasource.url: ${{ secrets.LOCAL_DB_URL }}
+          spring.datasource.username: ${{ secrets.LOCAL_DB_HOST }}
+          spring.datasource.password: ${{ secrets.LOCAL_DB_PASSWORD }}
+          spring.redis.host: ${{ secrets.REDIS_HOST }}
+          spring.redis.port: ${{ secrets.REDIS_PORT }}
+          spring.data.mongodb.uri: ${{ secrets.MONGO_URI }}
+          spring.security.jwt.secret: ${{ secrets.JWT_SECRET_KEY }}
+          cloud.aws.s3.bucket: ${{ secrets.S3_BUCKET_NAME }}
+          cloud.aws.region.static: ${{ secrets.S3_REGION }}
+          cloud.aws.credentials.accessKey: ${{ secrets.AWS_ACCESS_KEY }}
+          cloud.aws.credentials.secretKey: ${{ secrets.AWS_ACCESS_SECRET }}
+          kafka.url: ${{ secrets.KAFKA_URL }}
+          custom.domain.image.baseUrl: ${{ secrets.BASE_URL }}
+          chatgpt.rest-api-key: ${{ secrets.CHAT_GPT_API_KEY }}
+
+      - name: Set up domain-mysql application.yml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./domain-mysql/src/main/resources/application.yml
+        env:
+          spring.datasource.url: ${{ secrets.LOCAL_DB_URL }}
+          spring.datasource.username: ${{ secrets.LOCAL_DB_HOST }}
+          spring.datasource.password: ${{ secrets.LOCAL_DB_PASSWORD }}
+
+      - name: Set up domain-mongodb application.yml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./domain-mongodb/src/main/resources/application.yml
+        env:
+          spring.data.mongodb.uri: ${{ secrets.MONGO_URI }}
+
       - name: Build with Gradle
         run : |
           cd member-api

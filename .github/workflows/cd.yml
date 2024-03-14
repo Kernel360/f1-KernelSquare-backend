@@ -117,24 +117,24 @@ jobs:
         run: |
           echo "AWS_DEFAULT_REGION=ap-northeast-2" >> $GITHUB_ENV
 
-#      # AWS 설정
-#      - name: Configure AWS credentials
-#        uses: aws-actions/configure-aws-credentials@v1
-#        with:
-#          # 아이엠 키 설정, 인바운드 룰 수정을 위해 설정합니다.
-#          # IAM 설정하실 때, AWSEC2FullAccess 권한을 부여해주세요.
-#          # 더 자세한 사항은 제 블로그 이전 Github Actions 게시물을 참고해주세요.
-#          aws-access-key-id: ${{ secrets.AWS_IAM_ACCESS_KEY_ID }}
-#          aws-secret-access-key: ${{ secrets.AWS_IAM_SECRET_KEY }}
-#          aws-region: ${{ env.AWS_DEFAULT_REGION }}
-#
-#      # 깃허브 액션의 아이피를 인바운드 룰에 임시 등록
-#      - name: Add Github Actions IP to Security group
-#        run: |
-#          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
-#          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8000 --cidr ${{ steps.ip.outputs.ipv4 }}/32
-#          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8501 --cidr ${{ steps.ip.outputs.ipv4 }}/32
-#          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8502 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+      # AWS 설정
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          # 아이엠 키 설정, 인바운드 룰 수정을 위해 설정합니다.
+          # IAM 설정하실 때, AWSEC2FullAccess 권한을 부여해주세요.
+          # 더 자세한 사항은 제 블로그 이전 Github Actions 게시물을 참고해주세요.
+          aws-access-key-id: ${{ secrets.AWS_IAM_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_IAM_SECRET_KEY }}
+          aws-region: ${{ env.AWS_DEFAULT_REGION }}
+
+      # 깃허브 액션의 아이피를 인바운드 룰에 임시 등록
+      - name: Add Github Actions IP to Security group
+        run: |
+          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8000 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8501 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8502 --cidr ${{ steps.ip.outputs.ipv4 }}/32
 
       # 블루/그린 헬스체크로 변수 초기화
       - name: Blue/Green health check
@@ -191,21 +191,25 @@ jobs:
             sudo docker-compose up -d
         if: ${{ env.TARGET_UPSTREAM == 'green' }}
 
-      - name: Check the deployed prod1 service URL
-        uses: jtalk/url-health-check-action@v3
-        with:
-          url: http://${{ env.STOPPED_IP }}:8501/environment
-          # 총 5번 하는데, 15초의 간격을 두고함. 이때까지 응답이 정상이 아니라면 배포 실패
-          max-attempts: 5 # Optional, defaults to 1
-          retry-delay: 15s # Optional, only applicable to max-attempts > 1
+#      - name: Check the deployed prod1 service URL
+#        uses: jtalk/url-health-check-action@v3
+#        with:
+#          url: http://${{ env.STOPPED_IP }}:8501/environment
+#          # 총 5번 하는데, 15초의 간격을 두고함. 이때까지 응답이 정상이 아니라면 배포 실패
+#          max-attempts: 5 # Optional, defaults to 1
+#          retry-delay: 15s # Optional, only applicable to max-attempts > 1
+#
+#      - name: Check the deployed prod2 service URL
+#        uses: jtalk/url-health-check-action@v3
+#        with:
+#          url: http://${{ env.STOPPED_IP }}:8502/environment
+#          # 총 5번 하는데, 15초의 간격을 두고함. 이때까지 응답이 정상이 아니라면 배포 실패
+#          max-attempts: 5 # Optional, defaults to 1
+#          retry-delay: 15s # Optional, only applicable to max-attempts > 1
 
-      - name: Check the deployed prod2 service URL
-        uses: jtalk/url-health-check-action@v3
-        with:
-          url: http://${{ env.STOPPED_IP }}:8502/environment
-          # 총 5번 하는데, 15초의 간격을 두고함. 이때까지 응답이 정상이 아니라면 배포 실패
-          max-attempts: 5 # Optional, defaults to 1
-          retry-delay: 15s # Optional, only applicable to max-attempts > 1
+      - run: |
+          CURRENT_UPSTREAM=$(curl --fail -sv --retry 5 --retry-delay 15 --retry-connrefused https://${{ env.STOPPED_IP }}:8501/environment)
+          echo $CURRENT_UPSTREAM
 
       # 엔진엑스의 프록시 변경
       - name: Change nginx upstream

@@ -1,9 +1,8 @@
 FROM openjdk:21-jdk
 
-ARG JAR_FILE
 ARG PROFILES
 ARG ENV
 
-COPY ${JAR_FILE} app.jar
+COPY member-api/build/libs/member-api-0.0.1-SNAPSHOT.jar app.jar
 
 ENTRYPOINT ["java", "-Dspring.profiles.active=${PROFILES}", "-Dserver.env=${ENV}", "-jar", "/app.jar"]

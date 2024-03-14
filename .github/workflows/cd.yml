@@ -111,8 +111,8 @@ jobs:
           key: ${{ secrets.BLUE_SSH_KEY }}
           script_stop: true
           script: |
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/kernelsquare
-            docker-compose up -d
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/kernelsquare
+            sudo docker-compose up -d
         if: ${{ env.TARGET_UPSTREAM == 'blue' }}
 
       - name: Execute Server Docker compose
@@ -123,8 +123,8 @@ jobs:
           key: ${{ secrets.GREEN_SSH_KEY }}
           script_stop: true
           script: |
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/kernelsquare
-            docker-compose up -d
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/kernelsquare
+            sudo docker-compose up -d
         if: ${{ env.TARGET_UPSTREAM == 'green' }}
 
       - name: Check the deployed prod1 service URL

@@ -14,7 +14,7 @@ public class ServerController {
     private String serverName;
     @Value("${:domain-mysql.dbInfo}")
     private String dbInfo;
-    @Value("${:member-api.server.env}")
+    @Value("${server.env}")
     private String env;
     private Integer visitedCount = 0;
 

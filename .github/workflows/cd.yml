@@ -16,6 +16,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+#      - run: touch ./domain-mysql/src/main/resources/application.yml
+      - run: echo "${{ secrets.APPLICATION }}" > ./domain-mysql/src/main/resources/application.yml
+      - uses: actions/upload-artifact@v2
+        with:
+          name: application.ymld
+          path: ./domain-mysql/src/main/resources/application.yml
+
       - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
@@ -57,14 +64,14 @@ jobs:
           custom.domain.image.baseUrl: ${{ secrets.BASE_URL }}
           chatgpt.rest-api-key: ${{ secrets.CHAT_GPT_API_KEY }}
 
-      - name: Set up domain-mysql application.yml
-        uses: microsoft/variable-substitution@v1
-        with:
-          files: ./domain-mysql/src/main/resources/application.yml
-        env:
-          spring.datasource.url: ${{ secrets.LOCAL_DB_URL }}
-          spring.datasource.username: ${{ secrets.LOCAL_DB_HOST }}
-          spring.datasource.password: ${{ secrets.LOCAL_DB_PASSWORD }}
+#      - name: Set up domain-mysql application.yml
+#        uses: microsoft/variable-substitution@v1
+#        with:
+#          files: ./domain-mysql/src/main/resources/application.yml
+#        env:
+#          spring.datasource.url: ${{ secrets.LOCAL_DB_URL }}
+#          spring.datasource.username: ${{ secrets.LOCAL_DB_HOST }}
+#          spring.datasource.password: ${{ secrets.LOCAL_DB_PASSWORD }}
 
       - name: Set up domain-mongodb application.yml
         uses: microsoft/variable-substitution@v1

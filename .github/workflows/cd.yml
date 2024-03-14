@@ -85,7 +85,7 @@ jobs:
         # STOPPED_IP : 만약 환경이 blue라면 멈춰있는 green의 prod1 ip가 들어감.
         # TARGET_UPSTREAM : 바꿀 env
         run: |
-          CURRENT_UPSTREAM=$(curl -s "http://${{ secrets.NGINX_IP }}/environment")
+          CURRENT_UPSTREAM=$(curl -s "https://${{ secrets.NGINX_IP }}/environment")
           echo $CURRENT_UPSTREAM
           if [ $CURRENT_UPSTREAM = "blue" ]; then
             echo "CURRENT_IP=${{ secrets.BLUE_IP }}" >> $GITHUB_ENV

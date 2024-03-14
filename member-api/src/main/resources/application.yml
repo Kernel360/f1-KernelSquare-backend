@@ -7,7 +7,8 @@ spring:
       prod2: common, prod-db, prod2-server
 
 server:
-  env: blue
+  env: develop
+  port: 8501
 
 ---
 

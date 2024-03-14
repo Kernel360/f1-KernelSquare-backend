@@ -1,0 +1,196 @@
+name: kernelsquare prod deploy
+
+on:
+  pull_request:
+    types:
+      - closed
+
+permissions:
+  contents: read
+
+jobs:
+  if-merge:
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Build with Gradle
+        run : |
+          cd member-api
+          ./gradlew clean build -x test
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build Docker
+        run : docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/kernelsquare ./member-api
+
+      - name: Docker push
+        run : docker push ${{ secrets.DOCKERHUB_USERNAME }}/kernelsquare:latest
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      # 깃허브 액션 러너의 아이피를 얻어온다.
+      - name: Get Github action IP
+        id: ip
+        uses: haythem/public-ip@v1.2
+
+      # 환경변수 설정.
+      - name: Setting environment variables
+        run: |
+          echo "AWS_DEFAULT_REGION=ap-northeast-2" >> $GITHUB_ENV
+
+#      # AWS 설정
+#      - name: Configure AWS credentials
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          # 아이엠 키 설정, 인바운드 룰 수정을 위해 설정합니다.
+#          # IAM 설정하실 때, AWSEC2FullAccess 권한을 부여해주세요.
+#          # 더 자세한 사항은 제 블로그 이전 Github Actions 게시물을 참고해주세요.
+#          aws-access-key-id: ${{ secrets.AWS_IAM_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_IAM_SECRET_KEY }}
+#          aws-region: ${{ env.AWS_DEFAULT_REGION }}
+#
+#      # 깃허브 액션의 아이피를 인바운드 룰에 임시 등록
+#      - name: Add Github Actions IP to Security group
+#        run: |
+#          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+#          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8000 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+#          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8501 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+#          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8502 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+
+      # 블루/그린 헬스체크로 변수 초기화
+      - name: Blue/Green health check
+        run: |
+          echo "INSTANCE_ENV=$(curl -s "http://${{ secrets.NGINX_IP }}/environment")" >> $GITHUB_ENV
+
+      # 헬스 체크를 통한 인스턴스 체크, 어떤 환경이 운영중인가?
+      - name: Set target ip
+        # prod1, prod2 둘 다 검사해야 하지만, 현재는 prod1만 검사
+        # CURRENT_UPSTREAM : env로 요청 보내서 blue 인지, green인지 알아옴. 이걸 curl로 해서 변수로 만든다. 즉 blue,green,오류 중에 하나
+        # CURRENT_IP : 만약 환경이 blue라면 blue 인스턴스의 prod1의 ip(111.111.111.111:8080)가 들어감
+        # STOPPED_IP : 만약 환경이 blue라면 멈춰있는 green의 prod1 ip가 들어감.
+        # TARGET_UPSTREAM : 바꿀 env
+        run: |
+          CURRENT_UPSTREAM=$(curl -s "http://${{ secrets.NGINX_IP }}/environment")
+          echo $CURRENT_UPSTREAM
+          if [ $CURRENT_UPSTREAM = "blue" ]; then
+            echo "CURRENT_IP=${{ secrets.BLUE_IP }}" >> $GITHUB_ENV
+            echo "STOPPED_IP=${{ secrets.GREEN_IP }}" >> $GITHUB_ENV
+            echo "TARGET_UPSTREAM=green" >> $GITHUB_ENV
+            echo "blue"
+          elif [ $CURRENT_UPSTREAM = "green" ]; then
+            echo "CURRENT_IP=${{ secrets.GREEN_IP }}" >> $GITHUB_ENV
+            echo "STOPPED_IP=${{ secrets.BLUE_IP }}" >> $GITHUB_ENV
+            echo "TARGET_UPSTREAM=blue" >> $GITHUB_ENV
+            echo "green"
+          else
+            echo "error"
+            exit 1
+          fi
+
+      # 멈춰있는 서버에 있는 도커 컴포즈 실행, 혹시 실행되고 있는 인스턴스가 있을 수 있으므로, 추후에 중단하는 작업도 추가해야함.
+      - name: Execute Server Docker compose
+        uses: appleboy/ssh-action@master
+        with:
+          username: ${{ secrets.SSH_USER }}
+          host: ${{ env.STOPPED_IP }}
+          key: ${{ secrets.BLUE_SSH_KEY }}
+          script_stop: true
+          script: |
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/kernelsquare
+            docker-compose up -d
+        if: ${{ env.STOPPED_IP == secrets.BLUE_IP }}
+
+      - name: Execute Server Docker compose
+        uses: appleboy/ssh-action@master
+        with:
+          username: ${{ secrets.SSH_USER }}
+          host: ${{ env.STOPPED_IP }}
+          key: ${{ secrets.GREEN_SSH_KEY }}
+          script_stop: true
+          script: |
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/kernelsquare
+            docker-compose up -d
+        if: ${{ env.STOPPED_IP != secrets.BLUE_IP }}
+
+      - name: Check the deployed prod1 service URL
+        uses: jtalk/url-health-check-action@v3
+        with:
+          url: http://${{ env.STOPPED_IP }}:8501/environment
+          # 총 5번 하는데, 15초의 간격을 두고함. 이때까지 응답이 정상이 아니라면 배포 실패
+          max-attempts: 5 # Optional, defaults to 1
+          retry-delay: 15s # Optional, only applicable to max-attempts > 1
+
+      - name: Check the deployed prod2 service URL
+        uses: jtalk/url-health-check-action@v3
+        with:
+          url: http://${{ env.STOPPED_IP }}:8502/environment
+          # 총 5번 하는데, 15초의 간격을 두고함. 이때까지 응답이 정상이 아니라면 배포 실패
+          max-attempts: 5 # Optional, defaults to 1
+          retry-delay: 15s # Optional, only applicable to max-attempts > 1
+
+      # 엔진엑스의 프록시 변경
+      - name: Change nginx upstream
+        uses: appleboy/ssh-action@master
+        with:
+          username: ${{ secrets.SSH_USER }}
+          host: ${{ secrets.NGINX_IP }}
+          key: ${{ secrets.NGINX_SSH_KEY }}
+          script_stop: true
+          # 도커로 들어가서 service_env를 바꿔주고 reload
+          # 여기서 -i가 아닌 -it로 진행하면 오류가 발생하고, -c가 없으면 도커가 아닌 호스트에서 경로를 찾는다. 주의
+          script: |
+            sudo docker exec -i webserver bash -c 'echo "set \$service_env ${{ env.TARGET_UPSTREAM }};" > /etc/nginx/conf.d/service-env.inc && nginx -s reload'
+
+      # 기존 인스턴스 중단
+      - name: Terminate prev instance
+        uses: appleboy/ssh-action@master
+        with:
+          username: ${{ secrets.SSH_USER }}
+          host: ${{ env.CURRENT_IP }}
+          key: ${{ secrets.BLUE_SSH_KEY }}
+          script_stop: true
+          script: |
+            docker stop prod1
+            docker stop prod2
+            docker rm prod1
+            docker rm prod2
+        if: ${{ env.STOPPED_IP == secrets.BLUE_IP }}
+
+      # 기존 인스턴스 중단
+      - name: Terminate prev instance
+        uses: appleboy/ssh-action@master
+        with:
+          username: ${{ secrets.SSH_USER }}
+          host: ${{ env.CURRENT_IP }}
+          key: ${{ secrets.GREEN_SSH_KEY }}
+          script_stop: true
+          script: |
+            docker stop prod1
+            docker stop prod2
+            docker rm prod1
+            docker rm prod2
+        if: ${{ env.STOPPED_IP != secrets.BLUE_IP }}
+
+#      # 깃허브 러너 아이피를 인바운드 룰에서 제거
+#      - name: Remove Github Actions IP from security group
+#        # if: always()를 해놓으면 무조건 실행됨. 따라서 위에서 deploy가 실패해도 인바운드 룰로 열어놨던 ip를 모두 닫음.
+#        if: always()
+#        run: |
+#          aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+#          aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 80 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+#          aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8080 --cidr ${{ steps.ip.outputs.ipv4 }}/32

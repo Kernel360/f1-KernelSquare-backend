@@ -40,7 +40,7 @@ jobs:
         run : docker push ${{ secrets.DOCKERHUB_USERNAME }}/kernelsquare:latest
 
   deploy:
-    needs: build
+    needs: if-merge
     runs-on: ubuntu-latest
     steps:
       # 깃허브 액션 러너의 아이피를 얻어온다.

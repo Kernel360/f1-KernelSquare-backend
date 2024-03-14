@@ -22,6 +22,6 @@ public class Rank {
 	@Column(nullable = false, unique = true, name = "name", columnDefinition = "smallint")
 	private Long name;
 
-	@Column(nullable = false, name = "image_url", columnDefinition = "varchar(100)")
+	@Column(nullable = false, name = "image_url", columnDefinition = "varchar(1000)")
 	private String image_url;
 }

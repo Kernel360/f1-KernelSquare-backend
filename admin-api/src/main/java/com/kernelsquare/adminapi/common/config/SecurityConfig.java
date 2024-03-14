@@ -30,19 +30,9 @@ public class SecurityConfig {
 	private final JWTAccessDeniedHandler jwtAccessDeniedHandler;
 
 	private final String[] permitAllPatterns = new String[] {
-		"/api/v1/auth/check/email",
-		"/api/v1/auth/check/nickname",
-		"/api/v1/auth/signup",
 		"/api/v1/auth/login",
 		"/actuator",
 		"/actuator/**",
-
-		// 소켓 통신의 임시 화면을 사용하기 위해 관련 경로는 permitAll
-		"/screen/**",
-		"/kernel-square/**",
-		"/topic/chat/room",
-		"/app/chat/message",
-		"/webjars/**",
 	};
 
 	private final String[] hasAnyAuthorityPatterns = new String[] {
@@ -60,7 +50,8 @@ public class SecurityConfig {
 	private final String[] hasRoleAdminPatterns = new String[] {
 		"/api/v1/techs/{techStackId}",
 		"/api/v1/levels/**",
-		"/api/v1/notices/**"
+		"/api/v1/notices/**",
+		"/api/v1/members/**"
 	};
 
 	@Bean
@@ -86,15 +77,10 @@ public class SecurityConfig {
 
 			// 모든 권한에 대한 접근 허용
 			.requestMatchers(hasAnyAuthorityPatterns).authenticated()
-			.requestMatchers(HttpMethod.GET, "/api/v1/members/{memberId}").authenticated()
 			.requestMatchers(HttpMethod.GET, "/api/v1/techs").authenticated()
 
 			// ROLE_USER 권한 필요
 			.requestMatchers(hasRoleUserPatterns).hasRole("USER")
-			.requestMatchers(HttpMethod.DELETE, "/api/v1/members/{memberId}").hasRole("USER")
-			.requestMatchers(HttpMethod.PUT, "/api/v1/members/{memberId}/profile").hasRole("USER")
-			.requestMatchers(HttpMethod.PUT, "/api/v1/members/{memberId}/password").hasRole("USER")
-			.requestMatchers(HttpMethod.PUT, "/api/v1/members/{memberId}/introduction").hasRole("USER")
 			.requestMatchers(HttpMethod.POST, "/api/v1/questions/**").hasRole("USER")
 			.requestMatchers(HttpMethod.PUT, "/api/v1/questions/{questionId}").hasRole("USER")
 			.requestMatchers(HttpMethod.DELETE, "/api/v1/questions/{questionId}").hasRole("USER")
@@ -125,12 +111,6 @@ public class SecurityConfig {
 			sessionManagementConfigurer
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-		// http.oauth2Login(oAuth2LoginConfigurer ->
-		// 		oAuth2LoginConfigurer
-		// 			.successHandler(oAuth2LoginSuccessHandler)
-		// 			.failureHandler(oAuth2LoginFailureHandler)
-		// 			.userInfoEndpoint(userInfoEndpointConfigurer ->
-		// 				userInfoEndpointConfigurer.userService(customOAuth2MemberService)))
 		http.logout(Customizer.withDefaults());
 
 		return http.build();

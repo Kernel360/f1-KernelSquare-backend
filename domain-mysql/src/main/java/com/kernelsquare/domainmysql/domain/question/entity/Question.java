@@ -28,7 +28,7 @@ public class Question extends BaseEntity {
 	@Column(nullable = false, name = "content", columnDefinition = "text")
 	private String content;
 
-	@Column(name = "image_url", columnDefinition = "varchar(100)")
+	@Column(name = "image_url", columnDefinition = "varchar(1000)")
 	private String imageUrl;
 
 	@Column(name = "view_count", columnDefinition = "bigint")

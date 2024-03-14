@@ -10,11 +10,11 @@ import java.util.Map;
 
 @RestController
 public class ServerController {
-    @Value("${serverName}") // application.yml의 값들을 매핑시킴
+    @Value("${:member-api.serverName}") // application.yml의 값들을 매핑시킴
     private String serverName;
     @Value("${:domain-mysql.dbInfo}")
     private String dbInfo;
-    @Value("${server.env}")
+    @Value("${:member-api.server.env}")
     private String env;
     private Integer visitedCount = 0;
 

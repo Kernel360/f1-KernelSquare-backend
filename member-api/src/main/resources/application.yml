@@ -10,6 +10,10 @@ server:
   env: develop
   port: 8501
 
+dbInfo: rds
+
+serverName: kernelsquare-develop
+
 ---
 
 spring:
@@ -137,6 +141,8 @@ spring:
       on-profile: prod2-server
 
 serverName: kernelsquare-prod2
+
+dbInfo: rds
 
 server:
   port: 8502

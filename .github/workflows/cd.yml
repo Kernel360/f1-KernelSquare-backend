@@ -75,7 +75,7 @@ jobs:
       # 블루/그린 헬스체크로 변수 초기화
       - name: Blue/Green health check
         run: |
-          echo "INSTANCE_ENV=$(curl -s "http://${{ secrets.NGINX_IP }}/environment")" >> $GITHUB_ENV
+          echo "INSTANCE_ENV=$(curl -s "https://${{ secrets.NGINX_IP }}/environment")" >> $GITHUB_ENV
 
       # 헬스 체크를 통한 인스턴스 체크, 어떤 환경이 운영중인가?
       - name: Set target ip

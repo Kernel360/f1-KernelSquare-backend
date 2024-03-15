@@ -194,13 +194,13 @@ jobs:
             sudo docker-compose up -d
         if: ${{ env.TARGET_UPSTREAM == 'green' }}
 
-#      - name: Check the deployed prod1 service URL
-#        uses: jtalk/url-health-check-action@v3
-#        with:
-#          url: http://${{ env.STOPPED_IP }}:8501/environment
-#          # 총 5번 하는데, 15초의 간격을 두고함. 이때까지 응답이 정상이 아니라면 배포 실패
-#          max-attempts: 5 # Optional, defaults to 1
-#          retry-delay: 15s # Optional, only applicable to max-attempts > 1
+      - name: Check the deployed prod1 service URL
+        uses: jtalk/url-health-check-action@v3
+        with:
+          url: http://${{ env.STOPPED_IP }}:8501/environment
+          # 총 5번 하는데, 15초의 간격을 두고함. 이때까지 응답이 정상이 아니라면 배포 실패
+          max-attempts: 5 # Optional, defaults to 1
+          retry-delay: 30s # Optional, only applicable to max-attempts > 1
 #
 #      - name: Check the deployed prod2 service URL
 #        uses: jtalk/url-health-check-action@v3

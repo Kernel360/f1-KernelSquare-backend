@@ -20,13 +20,13 @@ jobs:
       - run: echo "${{ secrets.APPLICATION }}" > ./domain-mysql/src/main/resources/application.yml
       - uses: actions/upload-artifact@v2
         with:
-          name: application.ymld
+          name: application.yml
           path: ./domain-mysql/src/main/resources/application.yml
 
       - run: echo "${{ secrets.MEMBER_APPLICATION }}" > ./member-api/src/main/resources/application.yml
       - uses: actions/upload-artifact@v2
         with:
-          name: application.ymld
+          name: application.yml
           path: ./member-api/src/main/resources/application.yml
 
       - name: Set up JDK 21
@@ -139,7 +139,7 @@ jobs:
       # 블루/그린 헬스체크로 변수 초기화
       - name: Blue/Green health check
         run: |
-          echo "INSTANCE_ENV=$(curl -s "https://${{ secrets.NGINX_IP }}/environment")" >> $GITHUB_ENV
+          echo "INSTANCE_ENV=$(curl -s "http://${{ secrets.NGINX_IP }}/environment")" >> $GITHUB_ENV
 
       # 헬스 체크를 통한 인스턴스 체크, 어떤 환경이 운영중인가?
       - name: Set target ip
@@ -149,7 +149,7 @@ jobs:
         # STOPPED_IP : 만약 환경이 blue라면 멈춰있는 green의 prod1 ip가 들어감.
         # TARGET_UPSTREAM : 바꿀 env
         run: |
-          CURRENT_UPSTREAM=$(curl -s "https://${{ secrets.NGINX_IP }}/environment")
+          CURRENT_UPSTREAM=$(curl -s "http://${{ secrets.NGINX_IP }}/environment")
           echo $CURRENT_UPSTREAM
           if [ $CURRENT_UPSTREAM = "blue" ]; then
             echo "CURRENT_IP=${{ secrets.BLUE_IP }}" >> $GITHUB_ENV
@@ -191,13 +191,13 @@ jobs:
             sudo docker-compose up -d
         if: ${{ env.TARGET_UPSTREAM == 'green' }}
 
-#      - name: Check the deployed prod1 service URL
-#        uses: jtalk/url-health-check-action@v3
-#        with:
-#          url: http://${{ env.STOPPED_IP }}:8501/environment
-#          # 총 5번 하는데, 15초의 간격을 두고함. 이때까지 응답이 정상이 아니라면 배포 실패
-#          max-attempts: 5 # Optional, defaults to 1
-#          retry-delay: 15s # Optional, only applicable to max-attempts > 1
+      - name: Check the deployed prod1 service URL
+        uses: jtalk/url-health-check-action@v3
+        with:
+          url: http://${{ env.STOPPED_IP }}:8501/environment
+          # 총 5번 하는데, 15초의 간격을 두고함. 이때까지 응답이 정상이 아니라면 배포 실패
+          max-attempts: 5 # Optional, defaults to 1
+          retry-delay: 15s # Optional, only applicable to max-attempts > 1
 #
 #      - name: Check the deployed prod2 service URL
 #        uses: jtalk/url-health-check-action@v3
@@ -207,9 +207,9 @@ jobs:
 #          max-attempts: 5 # Optional, defaults to 1
 #          retry-delay: 15s # Optional, only applicable to max-attempts > 1
 
-      - run: |
-          CURRENT_UPSTREAM=$(curl --fail -sv --retry 5 --retry-delay 15 --retry-connrefused http://${{ env.STOPPED_IP }}:8501/environment)
-          echo $CURRENT_UPSTREAM
+#      - run: |
+#          CURRENT_UPSTREAM=$(curl --fail -sv --retry 5 --retry-delay 15 --retry-connrefused http://${{ env.STOPPED_IP }}:8501/environment)
+#          echo $CURRENT_UPSTREAM
 
       # 엔진엑스의 프록시 변경
       - name: Change nginx upstream

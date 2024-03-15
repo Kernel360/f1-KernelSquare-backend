@@ -54,15 +54,13 @@ spring:
       fail-on-empty-beans: false
   # <====
 
-  redis:
-    serialization:
-      class-property-type-name: RefreshToken.class
-    host: ${REDIS_HOST}
-    port: ${REDIS_PORT}
-
   data:
     mongodb:
       uri: ${MONGO_URI}
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+
 
   security:
     jwt:

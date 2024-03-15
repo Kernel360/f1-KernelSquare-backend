@@ -1,6 +1,7 @@
 package com.kernelsquare.memberapi.domain.auth.service;
 
 import static com.kernelsquare.core.common_response.error.code.TokenErrorCode.*;
+import static com.kernelsquare.core.constants.SystemConstants.REFRESH_TOKEN_KEY;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -14,8 +15,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -64,9 +67,15 @@ public class TokenProvider implements InitializingBean {
 	@Value("${spring.security.jwt.refresh-token-validity-in-seconds}")
 	private long refreshTokenValidityInSeconds;
 
-	private final RedisTemplate<Long, RefreshToken> redisTemplate;
+	private final RedisTemplate<String, Object> redisTemplate;
 	private final AuthenticationManagerBuilder authenticationManagerBuilder;
 	private final MemberDetailService memberDetailService;
+	private HashOperations<String, Long, RefreshToken> hashOperations;
+
+	@PostConstruct
+	private void init() {
+		hashOperations = redisTemplate.opsForHash();
+	}
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -77,7 +86,8 @@ public class TokenProvider implements InitializingBean {
 	public void logout(TokenRequest tokenRequest) {
 		RefreshToken refreshToken = toRefreshToken(
 			new String(Base64.getDecoder().decode(tokenRequest.refreshToken()), StandardCharsets.UTF_8));
-		redisTemplate.opsForValue().getOperations().delete(refreshToken.getMemberId());
+//		redisTemplate.opsForValue().getOperations().delete(refreshToken.getMemberId());
+		hashOperations.delete(REFRESH_TOKEN_KEY, refreshToken.getMemberId());
 	}
 
 	public TokenResponse createToken(Member member, LoginRequest loginRequest) {
@@ -120,7 +130,8 @@ public class TokenProvider implements InitializingBean {
 			.memberId(Long.parseLong(sub))
 			.build();
 
-		redisTemplate.opsForValue().set(refreshToken.getMemberId(), refreshToken);
+//		redisTemplate.opsForValue().set(refreshToken.getMemberId(), refreshToken);
+		hashOperations.put(REFRESH_TOKEN_KEY, refreshToken.getMemberId(), refreshToken);
 
 		return Encoders.BASE64.encode(toJsonString(refreshToken).getBytes());
 	}
@@ -200,7 +211,8 @@ public class TokenProvider implements InitializingBean {
 	public TokenResponse reissueToken(TokenRequest tokenRequest) {
 		Claims claims = parseClaims(tokenRequest.accessToken());
 		String findIdByAccessToken = parseClaims(tokenRequest.accessToken()).getSubject();
-		RefreshToken refreshToken = redisTemplate.opsForValue().get(Long.parseLong(findIdByAccessToken));
+//		RefreshToken refreshToken = redisTemplate.opsForValue().get(Long.parseLong(findIdByAccessToken));
+		RefreshToken refreshToken = hashOperations.get(REFRESH_TOKEN_KEY, Long.parseLong(findIdByAccessToken));
 
 		validateReissueToken(refreshToken, findIdByAccessToken);
 
@@ -215,7 +227,8 @@ public class TokenProvider implements InitializingBean {
 	 **/
 	private void validateReissueToken(RefreshToken refreshToken, String accessTokenId) {
 		if (!refreshToken.getExpirationDate().isAfter(LocalDateTime.now())) {
-			redisTemplate.opsForValue().getOperations().delete(refreshToken.getMemberId());
+//			redisTemplate.opsForValue().getOperations().delete(refreshToken.getMemberId());
+			hashOperations.delete(REFRESH_TOKEN_KEY, refreshToken.getMemberId());
 			throw new BusinessException(EXPIRED_LOGIN_INFO);
 		}
 		if (!accessTokenId.equals(String.valueOf(refreshToken.getMemberId()))) {

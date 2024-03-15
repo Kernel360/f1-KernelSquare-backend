@@ -219,7 +219,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           username: ${{ secrets.SSH_USER }}
-          host: ${{ secrets.NGINX_IP }}
+          host: ${{ secrets.NGINX_HOST }}
           key: ${{ secrets.NGINX_SSH_KEY }}
           script_stop: true
           # 도커로 들어가서 service_env를 바꿔주고 reload

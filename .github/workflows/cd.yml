@@ -234,7 +234,8 @@ jobs:
         with:
           username: ${{ secrets.SSH_USER }}
           host: ${{ env.CURRENT_IP }}
-          key: ${{ secrets.BLUE_SSH_KEY }}
+#          key: ${{ secrets.BLUE_SSH_KEY }}
+          password: ${{ secrets.SSH_PASSWORD }}
           script_stop: true
           script: |
             docker stop prod1

@@ -128,13 +128,13 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_IAM_SECRET_KEY }}
           aws-region: ${{ env.AWS_DEFAULT_REGION }}
 
-#      # 깃허브 액션의 아이피를 인바운드 룰에 임시 등록
-#      - name: Add Github Actions IP to Security group
-#        run: |
-#          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
-#          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8000 --cidr ${{ steps.ip.outputs.ipv4 }}/32
-#          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8501 --cidr ${{ steps.ip.outputs.ipv4 }}/32
-#          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8502 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+      # 깃허브 액션의 아이피를 인바운드 룰에 임시 등록
+      - name: Add Github Actions IP to Security group
+        run: |
+          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8000 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8501 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8502 --cidr ${{ steps.ip.outputs.ipv4 }}/32
 
       # 블루/그린 헬스체크로 변수 초기화
       - name: Blue/Green health check
@@ -254,11 +254,11 @@ jobs:
             docker rm prod2
         if: ${{ env.TARGET_UPSTREAM == 'green' }}
 
-#      # 깃허브 러너 아이피를 인바운드 룰에서 제거
-#      - name: Remove Github Actions IP from security group
-#        # if: always()를 해놓으면 무조건 실행됨. 따라서 위에서 deploy가 실패해도 인바운드 룰로 열어놨던 ip를 모두 닫음.
-#        if: always()
-#        run: |
-#          aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
-#          aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 80 --cidr ${{ steps.ip.outputs.ipv4 }}/32
-#          aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8080 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+      # 깃허브 러너 아이피를 인바운드 룰에서 제거
+      - name: Remove Github Actions IP from security group
+        # if: always()를 해놓으면 무조건 실행됨. 따라서 위에서 deploy가 실패해도 인바운드 룰로 열어놨던 ip를 모두 닫음.
+        if: always()
+        run: |
+          aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+          aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 80 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+          aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8080 --cidr ${{ steps.ip.outputs.ipv4 }}/32

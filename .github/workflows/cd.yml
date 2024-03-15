@@ -211,8 +211,8 @@ jobs:
 #          retry-delay: 15s # Optional, only applicable to max-attempts > 1
 
 #      - run: |
-#          CURRENT_UPSTREAM=$(curl --fail -sv --retry 5 --retry-delay 15 --retry-connrefused http://${{ env.STOPPED_IP }}:8501/environment)
-#          echo $CURRENT_UPSTREAM
+#          TARGET=$(curl --fail -sv --retry 5 --retry-delay 15 --retry-connrefused http://${{ env.STOPPED_IP }}:8501/environment)
+#          echo $TARGET
 
       # 엔진엑스의 프록시 변경
       - name: Change nginx upstream
@@ -220,7 +220,8 @@ jobs:
         with:
           username: ${{ secrets.SSH_USER }}
           host: ${{ secrets.NGINX_HOST }}
-          key: ${{ secrets.NGINX_SSH_KEY }}
+#          key: ${{ secrets.NGINX_SSH_KEY }}
+          password: ${{ secrets.SSH_PASSWORD }}
           script_stop: true
           # 도커로 들어가서 service_env를 바꿔주고 reload
           # 여기서 -i가 아닌 -it로 진행하면 오류가 발생하고, -c가 없으면 도커가 아닌 호스트에서 경로를 찾는다. 주의
@@ -240,7 +241,7 @@ jobs:
             docker stop prod2
             docker rm prod1
             docker rm prod2
-        if: ${{ env.TARGET_UPSTREAM == 'blue' }}
+        if: ${{ env.TARGET_UPSTREAM == 'green' }}
 
       # 기존 인스턴스 중단
       - name: Terminate prev instance
@@ -255,7 +256,7 @@ jobs:
             docker stop prod2
             docker rm prod1
             docker rm prod2
-        if: ${{ env.TARGET_UPSTREAM == 'green' }}
+        if: ${{ env.TARGET_UPSTREAM == 'blue' }}
 
       # 깃허브 러너 아이피를 인바운드 룰에서 제거
       - name: Remove Github Actions IP from security group

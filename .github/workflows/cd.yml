@@ -137,7 +137,6 @@ jobs:
           aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8000 --cidr ${{ steps.ip.outputs.ipv4 }}/32
           aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8501 --cidr ${{ steps.ip.outputs.ipv4 }}/32
           aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8502 --cidr ${{ steps.ip.outputs.ipv4 }}/32
-          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 4444 --cidr ${{ steps.ip.outputs.ipv4 }}/32
 
       # 블루/그린 헬스체크로 변수 초기화
       - name: Blue/Green health check
@@ -175,7 +174,8 @@ jobs:
         with:
           username: ${{ secrets.SSH_USER }}
           host: ${{ env.STOPPED_IP }}
-          key: ${{ secrets.BLUE_SSH_KEY }}
+#          key: ${{ secrets.BLUE_SSH_KEY }}
+          password: ${{ secrets.SSH_PASSWORD }}
           script_stop: true
           script: |
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/kernelsquare

@@ -132,9 +132,12 @@ jobs:
       - name: Add Github Actions IP to Security group
         run: |
           aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 80 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 443 --cidr ${{ steps.ip.outputs.ipv4 }}/32
           aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8000 --cidr ${{ steps.ip.outputs.ipv4 }}/32
           aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8501 --cidr ${{ steps.ip.outputs.ipv4 }}/32
           aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8502 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 4444 --cidr ${{ steps.ip.outputs.ipv4 }}/32
 
       # 블루/그린 헬스체크로 변수 초기화
       - name: Blue/Green health check
@@ -261,4 +264,7 @@ jobs:
         run: |
           aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
           aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 80 --cidr ${{ steps.ip.outputs.ipv4 }}/32
-          aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8080 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+          aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 443 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+          aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8000 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+          aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8501 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+          aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8502 --cidr ${{ steps.ip.outputs.ipv4 }}/32

@@ -238,10 +238,10 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           script_stop: true
           script: |
-            docker stop prod1
-            docker stop prod2
-            docker rm prod1
-            docker rm prod2
+            sudo docker stop prod1
+            sudo docker stop prod2
+            sudo docker rm prod1
+            sudo docker rm prod2
         if: ${{ env.TARGET_UPSTREAM == 'green' }}
 
       # 기존 인스턴스 중단
@@ -253,10 +253,10 @@ jobs:
           key: ${{ secrets.GREEN_SSH_KEY }}
           script_stop: true
           script: |
-            docker stop prod1
-            docker stop prod2
-            docker rm prod1
-            docker rm prod2
+            sudo docker stop prod1
+            sudo docker stop prod2
+            sudo docker rm prod1
+            sudo docker rm prod2
         if: ${{ env.TARGET_UPSTREAM == 'blue' }}
 
       # 깃허브 러너 아이피를 인바운드 룰에서 제거

@@ -1,5 +1,9 @@
 package com.kernelsquare.memberapi.common.config;
 
+import com.kernelsquare.memberapi.common.oauth2.handler.OAuth2LoginFailureHandler;
+import com.kernelsquare.memberapi.common.oauth2.handler.OAuth2LoginSuccessHandler;
+import com.kernelsquare.memberapi.common.oauth2.service.CustomOAuth2MemberService;
+import com.kernelsquare.memberapi.domain.auth.service.TokenProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -16,7 +20,6 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import com.kernelsquare.memberapi.common.filter.JWTSettingFilter;
 import com.kernelsquare.memberapi.common.jwt.JWTAccessDeniedHandler;
 import com.kernelsquare.memberapi.common.jwt.JWTAuthenticationEntryPoint;
-import com.kernelsquare.memberapi.domain.auth.service.TokenProvider;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,9 +28,12 @@ import lombok.RequiredArgsConstructor;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-	private final TokenProvider tokenProvider;
 	private final JWTAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 	private final JWTAccessDeniedHandler jwtAccessDeniedHandler;
+	private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+	private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
+	private final CustomOAuth2MemberService customOAuth2MemberService;
+	private final TokenProvider tokenProvider;
 
 	private final String[] permitAllPatterns = new String[] {
 		"/api/v1/auth/check/email",
@@ -73,6 +79,7 @@ public class SecurityConfig {
 		"/api/v1/levels/**"
 	};
 
+
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
@@ -95,6 +102,13 @@ public class SecurityConfig {
 			.requestMatchers(HttpMethod.GET, "/api/v1/coffeechat/posts/{postId}").permitAll()
 			.requestMatchers(HttpMethod.GET, "/api/v1/hashtags").permitAll()
 			.requestMatchers(HttpMethod.GET, "/api/v1/techs").permitAll()
+                               
+			.requestMatchers(HttpMethod.GET, "/login/oauth2/**").permitAll()
+			.requestMatchers(HttpMethod.GET, "/oauth2/**").permitAll()
+			.requestMatchers(HttpMethod.GET, "/favicon.ico/**").permitAll()
+			// 백엔드 임시 테스트 창
+			.requestMatchers(HttpMethod.GET, "/api/v1/test").permitAll()
+
 			.requestMatchers(HttpMethod.GET, "/api/v1/coding-meetings").permitAll()
 			.requestMatchers(HttpMethod.GET, "/api/v1/coding-meetings/{codingMeetingToken}").permitAll()
 			.requestMatchers(HttpMethod.GET, "/api/v1/coding-meeting-comments/{codingMeetingToken}").permitAll()
@@ -147,12 +161,13 @@ public class SecurityConfig {
 			sessionManagementConfigurer
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-		// http.oauth2Login(oAuth2LoginConfigurer ->
-		// 		oAuth2LoginConfigurer
-		// 			.successHandler(oAuth2LoginSuccessHandler)
-		// 			.failureHandler(oAuth2LoginFailureHandler)
-		// 			.userInfoEndpoint(userInfoEndpointConfigurer ->
-		// 				userInfoEndpointConfigurer.userService(customOAuth2MemberService)))
+		 http.oauth2Login(oAuth2LoginConfigurer ->
+		 		oAuth2LoginConfigurer
+		 			.successHandler(oAuth2LoginSuccessHandler)
+		 			.failureHandler(oAuth2LoginFailureHandler)
+		 			.userInfoEndpoint(userInfoEndpointConfigurer ->
+		 				userInfoEndpointConfigurer.userService(customOAuth2MemberService)));
+
 		http.logout(Customizer.withDefaults());
 
 		return http.build();

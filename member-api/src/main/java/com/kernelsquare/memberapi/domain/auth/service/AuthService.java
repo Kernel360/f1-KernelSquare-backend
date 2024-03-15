@@ -2,6 +2,7 @@ package com.kernelsquare.memberapi.domain.auth.service;
 
 import java.util.List;
 
+import com.kernelsquare.domainmysql.domain.social_login.repository.SocialLoginRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

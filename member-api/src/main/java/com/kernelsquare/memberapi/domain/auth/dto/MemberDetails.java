@@ -2,25 +2,48 @@ package com.kernelsquare.memberapi.domain.auth.dto;
 
 import com.kernelsquare.domainmysql.domain.level.entity.Level;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.oidc.OidcIdToken;
+import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 @Getter
-public class MemberDetails implements UserDetails {
+@AllArgsConstructor
+@RequiredArgsConstructor
+public class MemberDetails implements UserDetails, OAuth2User {
     private final Member member;
     private final Level level;
     private final List<SimpleGrantedAuthority> authorities;
+    private Map<String, Object> attributes;
 
     /* 일반 로그인 */
     public MemberDetails(MemberAdaptorInstance memberInstance) {
         this.member = memberInstance.member();
         this.level = memberInstance.level();
         this.authorities = memberInstance.authorities();
+    }
+
+    public MemberDetails(MemberAdaptorInstance memberInstance, Map<String, Object> attributes) {
+        this.member = memberInstance.member();
+        this.level = memberInstance.level();
+        this.authorities = memberInstance.authorities();
+        this.attributes = attributes;
+    }
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return attributes;
     }
 
     @Override
@@ -74,5 +97,21 @@ public class MemberDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public String getName() {
+        return String.valueOf(member.getId());
+    }
+
+    public static MemberDetails create(MemberAdaptorInstance member, Map<String, Object> attributes) {
+        return new MemberDetails(
+            member,
+            attributes
+        );
+    }
+
+    public String getEmail(){
+        return member.getEmail();
     }
 }

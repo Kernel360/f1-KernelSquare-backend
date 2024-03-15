@@ -208,7 +208,7 @@ jobs:
 #          retry-delay: 15s # Optional, only applicable to max-attempts > 1
 
       - run: |
-          CURRENT_UPSTREAM=$(curl --fail -sv --retry 5 --retry-delay 15 --retry-connrefused https://${{ env.STOPPED_IP }}:8501/environment)
+          CURRENT_UPSTREAM=$(curl --fail -sv --retry 5 --retry-delay 15 --retry-connrefused http://${{ env.STOPPED_IP }}:8501/environment)
           echo $CURRENT_UPSTREAM
 
       # 엔진엑스의 프록시 변경

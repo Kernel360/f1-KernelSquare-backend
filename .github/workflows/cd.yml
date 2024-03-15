@@ -128,18 +128,18 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_IAM_SECRET_KEY }}
           aws-region: ${{ env.AWS_DEFAULT_REGION }}
 
-      # 깃허브 액션의 아이피를 인바운드 룰에 임시 등록
-      - name: Add Github Actions IP to Security group
-        run: |
-          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
-          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8000 --cidr ${{ steps.ip.outputs.ipv4 }}/32
-          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8501 --cidr ${{ steps.ip.outputs.ipv4 }}/32
-          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8502 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+#      # 깃허브 액션의 아이피를 인바운드 룰에 임시 등록
+#      - name: Add Github Actions IP to Security group
+#        run: |
+#          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+#          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8000 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+#          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8501 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+#          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8502 --cidr ${{ steps.ip.outputs.ipv4 }}/32
 
       # 블루/그린 헬스체크로 변수 초기화
       - name: Blue/Green health check
         run: |
-          echo "INSTANCE_ENV=$(curl -s "http://${{ secrets.NGINX_IP }}/environment")" >> $GITHUB_ENV
+          echo "INSTANCE_ENV=$(curl -s "https://${{ secrets.NGINX_IP }}/environment")" >> $GITHUB_ENV
 
       # 헬스 체크를 통한 인스턴스 체크, 어떤 환경이 운영중인가?
       - name: Set target ip
@@ -149,7 +149,7 @@ jobs:
         # STOPPED_IP : 만약 환경이 blue라면 멈춰있는 green의 prod1 ip가 들어감.
         # TARGET_UPSTREAM : 바꿀 env
         run: |
-          CURRENT_UPSTREAM=$(curl -s "http://${{ secrets.NGINX_IP }}/environment")
+          CURRENT_UPSTREAM=$(curl -s "https://${{ secrets.NGINX_IP }}/environment")
           echo $CURRENT_UPSTREAM
           if [ $CURRENT_UPSTREAM = "blue" ]; then
             echo "CURRENT_IP=${{ secrets.BLUE_IP }}" >> $GITHUB_ENV
@@ -254,11 +254,11 @@ jobs:
             docker rm prod2
         if: ${{ env.TARGET_UPSTREAM == 'green' }}
 
-      # 깃허브 러너 아이피를 인바운드 룰에서 제거
-      - name: Remove Github Actions IP from security group
-        # if: always()를 해놓으면 무조건 실행됨. 따라서 위에서 deploy가 실패해도 인바운드 룰로 열어놨던 ip를 모두 닫음.
-        if: always()
-        run: |
-          aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
-          aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 80 --cidr ${{ steps.ip.outputs.ipv4 }}/32
-          aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8080 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+#      # 깃허브 러너 아이피를 인바운드 룰에서 제거
+#      - name: Remove Github Actions IP from security group
+#        # if: always()를 해놓으면 무조건 실행됨. 따라서 위에서 deploy가 실패해도 인바운드 룰로 열어놨던 ip를 모두 닫음.
+#        if: always()
+#        run: |
+#          aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+#          aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 80 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+#          aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8080 --cidr ${{ steps.ip.outputs.ipv4 }}/32

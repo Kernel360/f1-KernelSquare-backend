@@ -128,7 +128,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: prometheus, health, info, metrics
+        include: prometheus, health, info, metrics, tempo
 
 ---
 

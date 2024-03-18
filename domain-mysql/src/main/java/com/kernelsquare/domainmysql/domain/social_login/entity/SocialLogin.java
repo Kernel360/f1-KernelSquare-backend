@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -30,4 +31,12 @@ public class SocialLogin extends BaseEntity {
 	@Enumerated(value = EnumType.STRING)
 	@Column(nullable = false, name = "social_provider", columnDefinition = "varchar(40)")
 	private SocialProvider socialProvider;
+
+
+	@Builder
+	public SocialLogin(Long id, String email, SocialProvider socialProvider) {
+		this.id = id;
+		this.email = email;
+		this.socialProvider = socialProvider;
+	}
 }

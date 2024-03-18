@@ -6,7 +6,13 @@ import static org.mockito.BDDMockito.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import com.kernelsquare.domainmysql.domain.question.dto.FindAllQuestions;
+import com.kernelsquare.domainmysql.domain.question.repository.QuestionReader;
+import com.kernelsquare.domainmysql.domain.question_tech_stack.entity.QuestionTechStack;
+import com.kernelsquare.domainmysql.domain.tech_stack.entity.TechStack;
+import com.kernelsquare.memberapi.domain.question.dto.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,10 +25,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import com.kernelsquare.memberapi.domain.question.dto.CreateQuestionRequest;
-import com.kernelsquare.memberapi.domain.question.dto.CreateQuestionResponse;
-import com.kernelsquare.memberapi.domain.question.dto.FindQuestionResponse;
-import com.kernelsquare.memberapi.domain.question.dto.UpdateQuestionRequest;
 import com.kernelsquare.core.dto.PageResponse;
 import com.kernelsquare.domainmysql.domain.level.entity.Level;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
@@ -42,6 +44,8 @@ class QuestionServiceTest {
 	private MemberRepository memberRepository;
 	@Mock
 	private QuestionTechStackRepository questionTechStackRepository;
+	@Mock
+	private QuestionReader questionReader;
 
 	private Member member;
 	private Level level;
@@ -78,6 +82,24 @@ class QuestionServiceTest {
 			.name(6L)
 			.imageUrl("1.jpg")
 			.levelUpperLimit(500L)
+			.build();
+	}
+
+	private FindAllQuestions createFindAllQuestions(Question question) {
+		return FindAllQuestions.builder()
+			.id(question.getId())
+			.title(question.getTitle())
+			.imageUrl(question.getImageUrl())
+			.viewCount(question.getViewCount())
+			.closedStatus(question.getClosedStatus())
+			.memberId(question.getMember().getId())
+			.nickname(question.getMember().getNickname())
+			.memberImageUrl(question.getMember().getImageUrl())
+			.level(question.getMember().getLevel().getName())
+			.levelImageUrl(question.getMember().getLevel().getImageUrl())
+			.createdDate(question.getCreatedDate())
+			.modifiedDate(question.getModifiedDate())
+			.skills(question.getTechStackList().stream().map(QuestionTechStack::getTechStack).map(TechStack::getSkill).collect(Collectors.joining(",")))
 			.build();
 	}
 
@@ -151,16 +173,18 @@ class QuestionServiceTest {
 		//given
 		Question question1 = createTestQuestion(1L);
 		Question question2 = createTestQuestion(2L);
-		List<Question> questions = List.of(question1, question2);
+
+		FindAllQuestions findAllQuestions1 = createFindAllQuestions(question1);
+		FindAllQuestions findAllQuestions2 = createFindAllQuestions(question2);
+
+		List<FindAllQuestions> questions = List.of(findAllQuestions1, findAllQuestions2);
 
 		Pageable pageable = PageRequest.of(0, 2);
-		Page<Question> pages = new PageImpl<>(questions, pageable, questions.size());
+		Page<FindAllQuestions> pages = new PageImpl<>(questions, pageable, questions.size());
 
-		given(questionRepository.findById(question1.getId())).willReturn(Optional.of(question1));
-
-		given(questionRepository.findById(question2.getId())).willReturn(Optional.of(question2));
-
-		given(questionRepository.findAll(any(PageRequest.class))).willReturn(pages);
+		doReturn(pages)
+			.when(questionReader)
+			.findAllQuestions(any(Pageable.class));
 
 		Integer currentPage = pageable.getPageNumber() + 1;
 
@@ -170,7 +194,7 @@ class QuestionServiceTest {
 			totalPages += 1;
 
 		//when
-		PageResponse<FindQuestionResponse> pageResponse = questionService.findAllQuestions(pageable);
+		PageResponse<QuestionDto.FindAllResponse> pageResponse = questionService.findAllQuestions(pageable);
 
 		//then
 		assertThat(pageResponse).isNotNull();
@@ -180,7 +204,7 @@ class QuestionServiceTest {
 		assertThat(pageResponse.list()).isNotNull();
 
 		//verify
-		verify(questionRepository, times(1)).findAll(any(PageRequest.class));
+		verify(questionReader, times(1)).findAllQuestions(any(Pageable.class));
 	}
 
 	@Test

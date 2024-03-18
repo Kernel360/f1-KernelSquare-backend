@@ -1,31 +1,25 @@
 package com.kernelsquare.domainmysql.domain.search.repository;
 
-import java.util.List;
-
-import com.kernelsquare.domainmysql.domain.tech_stack.entity.QTechStack;
-import com.kernelsquare.domainmysql.domain.tech_stack.entity.TechStack;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
-import org.springframework.data.support.PageableExecutionUtils;
-import org.springframework.stereotype.Repository;
-
 import com.kernelsquare.domainmysql.domain.question.entity.QQuestion;
 import com.kernelsquare.domainmysql.domain.question.entity.Question;
 import com.kernelsquare.domainmysql.domain.question_tech_stack.entity.QQuestionTechStack;
+import com.kernelsquare.domainmysql.domain.tech_stack.entity.QTechStack;
+import com.kernelsquare.domainmysql.domain.tech_stack.entity.TechStack;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
-
-public class SearchRepositoryImpl extends QuerydslRepositorySupport implements SearchRepository {
+@RequiredArgsConstructor
+public class SearchRepositoryImpl implements SearchRepository {
 	private final JPAQueryFactory queryFactory;
-
-	public SearchRepositoryImpl(JPAQueryFactory queryFactory) {
-		super(Question.class);
-		this.queryFactory = queryFactory;
-	}
 
 	@Override
 	public Page<Question> searchQuestionsByKeyword(Pageable pageable, String keyword) {

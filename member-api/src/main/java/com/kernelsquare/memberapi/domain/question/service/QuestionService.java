@@ -1,13 +1,5 @@
 package com.kernelsquare.memberapi.domain.question.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.kernelsquare.core.common_response.error.code.LevelErrorCode;
 import com.kernelsquare.core.common_response.error.code.MemberErrorCode;
 import com.kernelsquare.core.common_response.error.code.QuestionErrorCode;
@@ -15,23 +7,28 @@ import com.kernelsquare.core.common_response.error.exception.BusinessException;
 import com.kernelsquare.core.dto.PageResponse;
 import com.kernelsquare.core.dto.Pagination;
 import com.kernelsquare.core.util.ExperiencePolicy;
+import com.kernelsquare.core.util.ImageUtils;
 import com.kernelsquare.domainmysql.domain.level.entity.Level;
 import com.kernelsquare.domainmysql.domain.level.repository.LevelRepository;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
 import com.kernelsquare.domainmysql.domain.member.repository.MemberRepository;
+import com.kernelsquare.domainmysql.domain.question.dto.FindAllQuestions;
 import com.kernelsquare.domainmysql.domain.question.entity.Question;
+import com.kernelsquare.domainmysql.domain.question.repository.QuestionReader;
 import com.kernelsquare.domainmysql.domain.question.repository.QuestionRepository;
 import com.kernelsquare.domainmysql.domain.question_tech_stack.entity.QuestionTechStack;
 import com.kernelsquare.domainmysql.domain.question_tech_stack.repository.QuestionTechStackRepository;
 import com.kernelsquare.domainmysql.domain.tech_stack.entity.TechStack;
 import com.kernelsquare.domainmysql.domain.tech_stack.repository.TechStackRepository;
-import com.kernelsquare.core.util.ImageUtils;
-import com.kernelsquare.memberapi.domain.question.dto.CreateQuestionRequest;
-import com.kernelsquare.memberapi.domain.question.dto.CreateQuestionResponse;
-import com.kernelsquare.memberapi.domain.question.dto.FindQuestionResponse;
-import com.kernelsquare.memberapi.domain.question.dto.UpdateQuestionRequest;
-
+import com.kernelsquare.memberapi.domain.question.dto.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +38,7 @@ public class QuestionService {
 	private final TechStackRepository techStackRepository;
 	private final QuestionTechStackRepository questionTechStackRepository;
 	private final LevelRepository levelRepository;
+	private final QuestionReader questionReader;
 
 	@Transactional
 	public CreateQuestionResponse createQuestion(CreateQuestionRequest createQuestionRequest) {
@@ -78,13 +76,13 @@ public class QuestionService {
 	}
 
 	@Transactional(readOnly = true)
-	public PageResponse<FindQuestionResponse> findAllQuestions(Pageable pageable) {
+	public PageResponse<QuestionDto.FindAllResponse> findAllQuestions(Pageable pageable) {
 
 		Integer currentPage = pageable.getPageNumber() + 1;
 
-		Page<Question> pages = questionRepository.findAll(pageable);
+		Page<FindAllQuestions> QuestionPages = questionReader.findAllQuestions(pageable);
 
-		Integer totalPages = pages.getTotalPages();
+		Integer totalPages = QuestionPages.getTotalPages();
 
 		if (totalPages == 0)
 			totalPages += 1;
@@ -93,14 +91,13 @@ public class QuestionService {
 			throw new BusinessException(QuestionErrorCode.PAGE_NOT_FOUND);
 		}
 
-		Pagination pagination = Pagination.toEntity(totalPages, pages.getSize(), currentPage.equals(totalPages));
+		Pagination pagination = Pagination.toEntity(totalPages, QuestionPages.getSize(), currentPage.equals(totalPages));
 
-		List<FindQuestionResponse> responsePages = pages.getContent().stream()
-			.map(Question::getId)
-			.map(this::findQuestion)
+		List<QuestionDto.FindAllResponse> QuestionPagesResponse = QuestionPages.getContent().stream()
+			.map(QuestionDto.FindAllResponse::of)
 			.toList();
 
-		return PageResponse.of(pagination, responsePages);
+		return PageResponse.of(pagination, QuestionPagesResponse);
 	}
 
 	@Transactional

@@ -8,7 +8,9 @@ import com.kernelsquare.domainmysql.domain.question.entity.Question;
 import com.kernelsquare.domainmysql.domain.question_tech_stack.entity.QuestionTechStack;
 
 import lombok.Builder;
+import lombok.Getter;
 
+@Getter
 public class QuestionInfo {
 	private final Long id;
 	private final String title;

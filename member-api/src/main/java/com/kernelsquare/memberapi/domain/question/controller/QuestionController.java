@@ -1,31 +1,19 @@
 package com.kernelsquare.memberapi.domain.question.controller;
 
-import static com.kernelsquare.core.common_response.response.code.QuestionResponseCode.*;
-
+import com.kernelsquare.core.common_response.ApiResponse;
+import com.kernelsquare.core.common_response.ResponseEntityFactory;
+import com.kernelsquare.core.dto.PageResponse;
+import com.kernelsquare.memberapi.domain.question.dto.*;
+import com.kernelsquare.memberapi.domain.question.service.QuestionService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.kernelsquare.core.common_response.ApiResponse;
-import com.kernelsquare.core.common_response.ResponseEntityFactory;
-import com.kernelsquare.core.dto.PageResponse;
-import com.kernelsquare.memberapi.domain.question.dto.CreateQuestionRequest;
-import com.kernelsquare.memberapi.domain.question.dto.CreateQuestionResponse;
-import com.kernelsquare.memberapi.domain.question.dto.FindQuestionResponse;
-import com.kernelsquare.memberapi.domain.question.dto.UpdateQuestionRequest;
-import com.kernelsquare.memberapi.domain.question.service.QuestionService;
-
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import static com.kernelsquare.core.common_response.response.code.QuestionResponseCode.*;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -55,11 +43,11 @@ public class QuestionController {
 	}
 
 	@GetMapping("/questions")
-	public ResponseEntity<ApiResponse<PageResponse<FindQuestionResponse>>> findAllQuestions(
+	public ResponseEntity<ApiResponse<PageResponse<QuestionDto.FindAllResponse>>> findAllQuestions(
 		@PageableDefault(page = 0, size = 10, sort = "createdDate", direction = Sort.Direction.DESC)
 		Pageable pageable
 	) {
-		PageResponse<FindQuestionResponse> pageResponse = questionService.findAllQuestions(pageable);
+		PageResponse<QuestionDto.FindAllResponse> pageResponse = questionService.findAllQuestions(pageable);
 
 		return ResponseEntityFactory.toResponseEntity(QUESTION_ALL_FOUND, pageResponse);
 	}

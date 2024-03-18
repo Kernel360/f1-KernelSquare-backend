@@ -73,8 +73,8 @@ spring:
       client:
         registration:
           github:
-            client-id: ${GITHUB_SOCIAL_CLIENT_ID}
-            client-secret: ${GITHUB_SOCIAL_CLIENT_SECRET}
+            client-id: ${SOCIAL_GITHUB_CLIENT_ID}
+            client-secret: ${SOCIAL_GITHUB_CLIENT_SECRET}
             redirect-uri: http://localhost:8501/login/oauth2/code/github
             scope:
               - user:email
@@ -126,7 +126,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: prometheus, health, info, metrics
+        include: prometheus, health, info, metrics, tempo
 
 ---
 

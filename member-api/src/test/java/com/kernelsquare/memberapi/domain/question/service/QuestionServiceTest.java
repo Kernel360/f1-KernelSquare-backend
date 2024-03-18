@@ -99,7 +99,10 @@ class QuestionServiceTest {
 			.levelImageUrl(question.getMember().getLevel().getImageUrl())
 			.createdDate(question.getCreatedDate())
 			.modifiedDate(question.getModifiedDate())
-			.skills(question.getTechStackList().stream().map(QuestionTechStack::getTechStack).map(TechStack::getSkill).collect(Collectors.joining(",")))
+			.skills(question.getTechStackList().stream()
+				.map(QuestionTechStack::getTechStack)
+				.map(TechStack::getSkill)
+				.collect(Collectors.joining(",")))
 			.build();
 	}
 

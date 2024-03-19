@@ -2,6 +2,9 @@ package com.kernelsquare.memberapi.domain.reservation_article.dto;
 
 import com.kernelsquare.domainmysql.domain.reservation_article.entity.ReservationArticle;
 
+import lombok.Builder;
+
+@Builder
 public record CreateReservationArticleResponse(
 	Long reservationArticleId
 ) {

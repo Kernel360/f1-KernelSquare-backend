@@ -1,17 +1,15 @@
 package com.kernelsquare.memberapi.domain.alert.service;
 
+import com.kernelsquare.domainmongodb.domain.alert.command.AlertCommand;
 import com.kernelsquare.domainmongodb.domain.alert.entity.Alert;
 import com.kernelsquare.domainmongodb.domain.alert.info.AlertInfo;
 import com.kernelsquare.domainmongodb.domain.alert.repository.AlertReader;
 import com.kernelsquare.domainmongodb.domain.alert.repository.AlertStore;
-import com.kernelsquare.domainmongodb.domain.alert.command.AlertCommand;
 import com.kernelsquare.memberapi.domain.alert.dto.AlertMessage;
 import com.kernelsquare.memberapi.domain.alert.manager.SseManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 

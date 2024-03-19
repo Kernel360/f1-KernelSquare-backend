@@ -1,4 +1,4 @@
-package com.kernelsquare.memberapi.domain.alert.handler;
+package com.kernelsquare.alertapi.domain.alert.handler;
 
 import com.kernelsquare.domainmongodb.domain.alert.entity.Alert;
 import org.springframework.http.MediaType;

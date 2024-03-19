@@ -1,9 +1,7 @@
 package com.kernelsquare.domainmongodb.domain.alert.entity;
 
 import io.micrometer.common.util.StringUtils;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -14,6 +12,7 @@ import java.util.Objects;
 
 @Getter
 @Document(collection = "alert")
+@NoArgsConstructor
 public class Alert {
     @Id
     private String id;

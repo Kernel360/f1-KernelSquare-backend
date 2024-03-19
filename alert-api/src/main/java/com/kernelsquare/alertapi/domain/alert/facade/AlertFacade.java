@@ -1,10 +1,10 @@
-package com.kernelsquare.memberapi.domain.alert.facade;
+package com.kernelsquare.alertapi.domain.alert.facade;
 
 import com.kernelsquare.domainmongodb.domain.alert.info.AlertInfo;
-import com.kernelsquare.memberapi.domain.alert.service.AlertService;
-import com.kernelsquare.memberapi.domain.alert.dto.AlertDto;
-import com.kernelsquare.memberapi.domain.alert.mapper.AlertDtoMapper;
-import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
+import com.kernelsquare.alertapi.domain.alert.dto.AlertDto;
+import com.kernelsquare.alertapi.domain.alert.mapper.AlertDtoMapper;
+import com.kernelsquare.alertapi.domain.alert.service.AlertService;
+import com.kernelsquare.alertapi.domain.auth.dto.MemberAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

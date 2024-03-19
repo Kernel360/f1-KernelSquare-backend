@@ -1,8 +1,8 @@
-package com.kernelsquare.memberapi.domain.alert.manager;
+package com.kernelsquare.alertapi.domain.alert.manager;
 
 import com.kernelsquare.domainmongodb.domain.alert.entity.Alert;
-import com.kernelsquare.memberapi.domain.alert.handler.SseEmitterHandler;
-import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
+import com.kernelsquare.alertapi.domain.alert.handler.SseEmitterHandler;
+import com.kernelsquare.alertapi.domain.auth.dto.MemberAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;

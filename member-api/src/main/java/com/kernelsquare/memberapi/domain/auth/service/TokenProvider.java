@@ -68,7 +68,6 @@ public class TokenProvider implements InitializingBean {
 	private long refreshTokenValidityInSeconds;
 
 	private final RedisTemplate<String, Object> redisTemplate;
-	private final AuthenticationManagerBuilder authenticationManagerBuilder;
 	private final MemberDetailService memberDetailService;
 	private HashOperations<String, String, RefreshToken> hashOperations;
 
@@ -90,16 +89,15 @@ public class TokenProvider implements InitializingBean {
 	}
 
 	public TokenResponse createToken(Member member, LoginRequest loginRequest) {
-		UsernamePasswordAuthenticationToken authenticationToken =
-			new UsernamePasswordAuthenticationToken(member.getId(), loginRequest.password());
-		Authentication authentication = authenticationManagerBuilder.getObject()
-			.authenticate(authenticationToken);
-		String authorities = authentication.getAuthorities().stream()
+		MemberAdapter memberAdapter = (MemberAdapter) memberDetailService.loadUserByUsername(member.getId().toString());
+
+		String authorities = memberAdapter.getAuthorities().stream()
 			.map(GrantedAuthority::getAuthority)
 			.collect(Collectors.joining(","));
+
 		return TokenResponse.of(
-			createAccessToken(authentication.getName(), authorities),
-			createRefreshToken(authentication.getName()));
+			createAccessToken(memberAdapter.getUsername(), authorities),
+			createRefreshToken(memberAdapter.getUsername()));
 	}
 
 	private String createAccessToken(String sub, String roles) {
@@ -167,7 +165,7 @@ public class TokenProvider implements InitializingBean {
 			.map(SimpleGrantedAuthority::new)
 			.toList();
 
-		MemberAdapter memberAdapter = (MemberAdapter)memberDetailService.loadUserByUsername(claims.getSubject());
+		MemberAdapter memberAdapter = (MemberAdapter) memberDetailService.loadUserByUsername(claims.getSubject());
 
 		return new UsernamePasswordAuthenticationToken(memberAdapter, token, authorities);
 	}

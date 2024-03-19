@@ -18,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
@@ -49,6 +51,12 @@ public class CodingMeetingController {
         MemberAdapter memberAdapter) {
         PageResponse pageResponse = codingMeetingFacade.findAllCodingMeeting(pageable, filter, memberAdapter);
         return ResponseEntityFactory.toResponseEntity(CODING_MEETING_ALL_FOUND, pageResponse);
+    }
+
+    @GetMapping("/coding-meetings/seo")
+    public ResponseEntity<ApiResponse<List<CodingMeetingDto.FindAllCacheResponse>>> findAllCodingMeeting() {
+        List<CodingMeetingDto.FindAllCacheResponse> listResponse = codingMeetingFacade.findAllCodingMeetingList();
+        return ResponseEntityFactory.toResponseEntity(CODING_MEETING_SEO_LIST_FOUND, listResponse);
     }
 
     @PutMapping("/coding-meetings/{codingMeetingToken}")

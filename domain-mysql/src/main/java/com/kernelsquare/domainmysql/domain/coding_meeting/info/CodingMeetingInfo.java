@@ -5,6 +5,7 @@ import com.kernelsquare.domainmysql.domain.coding_meeting.entity.CodingMeeting;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -113,6 +114,24 @@ public class CodingMeetingInfo {
 
         public static TokenInfo of(CodingMeeting codingMeeting) {
             return TokenInfo.builder()
+                    .codingMeeting(codingMeeting)
+                    .build();
+        }
+    }
+
+    @Getter
+    public static class CacheInfo implements Serializable {
+        private final String codingMeetingToken;
+        private final Long memberId;
+
+        @Builder
+        public CacheInfo(CodingMeeting codingMeeting) {
+            this.memberId = codingMeeting.getId();
+            this.codingMeetingToken = codingMeeting.getCodingMeetingToken();
+        }
+
+        public static CacheInfo of(CodingMeeting codingMeeting) {
+            return CacheInfo.builder()
                     .codingMeeting(codingMeeting)
                     .build();
         }

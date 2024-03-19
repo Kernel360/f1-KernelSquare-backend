@@ -16,7 +16,9 @@ public enum CodingMeetingServiceStatus implements ServiceStatus {
     CODING_MEETING_UPDATED(5142),
     CODING_MEETING_DELETED(5143),
     CODING_MEETING_CREATED(5144),
-    CODING_MEETING_CLOSED(5145);
+    CODING_MEETING_CLOSED(5145),
+    CODING_MEETING_SEO_LIST_FOUND(5146);
+
 
     private final Integer code;
 

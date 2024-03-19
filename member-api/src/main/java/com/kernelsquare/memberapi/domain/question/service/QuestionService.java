@@ -1,10 +1,18 @@
 package com.kernelsquare.memberapi.domain.question.service;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.kernelsquare.memberapi.domain.question.dto.*;
+import jakarta.annotation.Resource;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,10 +34,6 @@ import com.kernelsquare.domainmysql.domain.question_tech_stack.repository.Questi
 import com.kernelsquare.domainmysql.domain.tech_stack.entity.TechStack;
 import com.kernelsquare.domainmysql.domain.tech_stack.repository.TechStackRepository;
 import com.kernelsquare.core.util.ImageUtils;
-import com.kernelsquare.memberapi.domain.question.dto.CreateQuestionRequest;
-import com.kernelsquare.memberapi.domain.question.dto.CreateQuestionResponse;
-import com.kernelsquare.memberapi.domain.question.dto.FindQuestionResponse;
-import com.kernelsquare.memberapi.domain.question.dto.UpdateQuestionRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -62,6 +66,7 @@ public class QuestionService {
 				.orElseThrow(() -> new BusinessException(LevelErrorCode.LEVEL_NOT_FOUND));
 			member.updateLevel(nextLevel);
 		}
+
 		return CreateQuestionResponse.from(saveQuestion);
 	}
 
@@ -101,6 +106,14 @@ public class QuestionService {
 			.toList();
 
 		return PageResponse.of(pagination, responsePages);
+	}
+
+	@Transactional(readOnly = true)
+	public List<FindAllQuestionResponse> findAllQuestionsCache() {
+
+		return questionRepository.findAll().stream()
+				.map(FindAllQuestionResponse::of)
+				.toList();
 	}
 
 	@Transactional

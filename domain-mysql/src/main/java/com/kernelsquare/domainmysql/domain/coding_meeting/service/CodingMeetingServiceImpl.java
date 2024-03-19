@@ -10,10 +10,13 @@ import com.kernelsquare.domainmysql.domain.coding_meeting.repository.CodingMeeti
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
 import com.kernelsquare.domainmysql.domain.member.repository.MemberReader;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -72,5 +75,15 @@ public class CodingMeetingServiceImpl implements CodingMeetingService{
     public Page<CodingMeetingInfo.ListInfo> findAllCodingMeeting(Pageable pageable, String filterParameter, Long memberId) {
         Page<CodingMeeting> codingMeetingPage = codingMeetingReader.findAllCodingMeeting(pageable, filterParameter, memberId);
         return codingMeetingPage.map(CodingMeetingInfo.ListInfo::of);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "coding_meeting_list")
+    public List<CodingMeetingInfo.CacheInfo> findAllCodingMeetingList() {
+        List<CodingMeeting> codingMeetingList = codingMeetingReader.findAllCodingMeetingList();
+        return codingMeetingList.stream()
+                .map(CodingMeetingInfo.CacheInfo::of)
+                .toList();
     }
 }

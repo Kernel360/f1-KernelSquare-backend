@@ -115,4 +115,10 @@ public class CodingMeetingDto {
             LocalDateTime createdDate
     ) {
     }
+
+    @Builder
+    public record FindAllCacheResponse(
+            String codingMeetingToken
+    ) {
+    }
 }

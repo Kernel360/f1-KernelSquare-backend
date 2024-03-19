@@ -13,6 +13,7 @@ import org.mapstruct.*;
 public interface CodingMeetingDtoMapper {
     CodingMeetingDto.FindResponse toFindResponse(CodingMeetingInfo.Info codingMeetingInfo);
     CodingMeetingDto.FindAllResponse toFindAllResponse(CodingMeetingInfo.ListInfo codingMeetingListInfo);
+    CodingMeetingDto.FindAllCacheResponse toFindAllCacheResponse(CodingMeetingInfo.CacheInfo codingMeetingCacheInfo);
     CodingMeetingDto.CreateResponse toCreateResponse(CodingMeetingInfo.TokenInfo codingMeetingTokenInfo);
     CodingMeetingCommand.CreateCommand toCreateCommand(CodingMeetingDto.CreateRequest request);
     CodingMeetingCommand.UpdateCommand toUpdateCommand(CodingMeetingDto.UpdateRequest request);

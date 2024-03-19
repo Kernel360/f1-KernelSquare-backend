@@ -12,6 +12,8 @@ import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.kernelsquare.memberapi.domain.auth.entity.RefreshToken;
 
+import java.time.Duration;
+
 @Configuration
 public class RedisConfig {
 	@Value("${spring.redis.serialization.class-property-type-name}")

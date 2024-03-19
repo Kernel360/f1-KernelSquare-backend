@@ -37,6 +37,13 @@ public class CodingMeetingFacade {
         return PageResponse.of(pageable, allCodingMeetingInfo, findAllResponses);
     }
 
+    public List<CodingMeetingDto.FindAllCacheResponse> findAllCodingMeetingList() {
+        List<CodingMeetingInfo.CacheInfo> allCodingMeetingInfo = codingMeetingService.findAllCodingMeetingList();
+        return allCodingMeetingInfo.stream()
+                .map(info -> codingMeetingDtoMapper.toFindAllCacheResponse(info))
+                .toList();
+    }
+
     private Long getMemberId(MemberAdapter memberAdapter) {
         if (Objects.isNull(memberAdapter)) {
             return null;

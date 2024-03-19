@@ -2,6 +2,7 @@ package com.kernelsquare.memberapi.domain.question.controller;
 
 import static com.kernelsquare.core.common_response.response.code.QuestionResponseCode.*;
 
+import com.kernelsquare.memberapi.domain.question.dto.*;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -18,14 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.kernelsquare.core.common_response.ApiResponse;
 import com.kernelsquare.core.common_response.ResponseEntityFactory;
 import com.kernelsquare.core.dto.PageResponse;
-import com.kernelsquare.memberapi.domain.question.dto.CreateQuestionRequest;
-import com.kernelsquare.memberapi.domain.question.dto.CreateQuestionResponse;
-import com.kernelsquare.memberapi.domain.question.dto.FindQuestionResponse;
-import com.kernelsquare.memberapi.domain.question.dto.UpdateQuestionRequest;
 import com.kernelsquare.memberapi.domain.question.service.QuestionService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -62,6 +61,14 @@ public class QuestionController {
 		PageResponse<FindQuestionResponse> pageResponse = questionService.findAllQuestions(pageable);
 
 		return ResponseEntityFactory.toResponseEntity(QUESTION_ALL_FOUND, pageResponse);
+	}
+
+	@GetMapping("/questions/seo")
+	public ResponseEntity<ApiResponse<List<FindAllQuestionResponse>>> findAllQuestionsCache(
+	) {
+		List<FindAllQuestionResponse> findAllResponse = questionService.findAllQuestionsCache();
+
+		return ResponseEntityFactory.toResponseEntity(QUESTION_SEO_LIST_FOUND, findAllResponse);
 	}
 
 	@PutMapping("/questions/{questionId}")

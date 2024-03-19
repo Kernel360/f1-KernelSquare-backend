@@ -50,6 +50,19 @@ jobs:
           cloud.aws.credentials.secretKey: ${{ secrets.AWS_ACCESS_SECRET }}
           custom.domain.image.baseUrl: ${{ secrets.BASE_URL }}
 
+      - name: Set up alert-api application.yml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./alert-api/src/main/resources/application.yml
+        env:
+          spring.data.mongodb.uri: ${{ secrets.MONGO_URI }}
+          spring.datasource.url: ${{ secrets.LOCAL_DB_URL }}
+          spring.datasource.username: ${{ secrets.LOCAL_DB_HOST }}
+          spring.datasource.password: ${{ secrets.LOCAL_DB_PASSWORD }}
+          spring.security.jwt.secret: ${{ secrets.JWT_SECRET_KEY }}
+          kafka.url: ${{ secrets.KAFKA_URL }}
+          custom.domain.image.baseUrl: ${{ secrets.BASE_URL }}
+
 #      - name: Set up member-api application.yml
 #        uses: microsoft/variable-substitution@v1
 #        with:
@@ -86,9 +99,14 @@ jobs:
         env:
           spring.data.mongodb.uri: ${{ secrets.MONGO_URI }}
 
-      - name: Build with Gradle
+      - name: Build member-api with Gradle
         run : |
           cd member-api
+          ./gradlew clean build -x test
+
+      - name: Build alert-api with Gradle
+        run : |
+          cd alert-api
           ./gradlew clean build -x test
 
       - name: Login to DockerHub
@@ -97,11 +115,17 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build Docker
-        run : docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/kernelsquare ./member-api
+      - name: Build member-api with Docker
+        run : docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/kernelsquare-member ./member-api
 
-      - name: Docker push
-        run : docker push ${{ secrets.DOCKERHUB_USERNAME }}/kernelsquare:latest
+      - name: Build alert-api with Docker
+        run : docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/kernelsquare-alert ./alert-api
+
+      - name: member-api Docker push
+        run : docker push ${{ secrets.DOCKERHUB_USERNAME }}/kernelsquare-member:latest
+
+      - name: alert-api Docker push
+        run : docker push ${{ secrets.DOCKERHUB_USERNAME }}/kernelsquare-alert:latest
 
   deploy:
     needs: if-merge
@@ -134,9 +158,9 @@ jobs:
           aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
           aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 80 --cidr ${{ steps.ip.outputs.ipv4 }}/32
           aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 443 --cidr ${{ steps.ip.outputs.ipv4 }}/32
-          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8000 --cidr ${{ steps.ip.outputs.ipv4 }}/32
           aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8501 --cidr ${{ steps.ip.outputs.ipv4 }}/32
           aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8502 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8503 --cidr ${{ steps.ip.outputs.ipv4 }}/32
 
       # 블루/그린 헬스체크로 변수 초기화
       - name: Blue/Green health check
@@ -178,7 +202,8 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           script_stop: true
           script: |
-            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/kernelsquare
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/kernelsquare-member
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/kernelsquare-alert
             sudo docker-compose up -d
         if: ${{ env.TARGET_UPSTREAM == 'blue' }}
 
@@ -190,7 +215,8 @@ jobs:
           key: ${{ secrets.GREEN_SSH_KEY }}
           script_stop: true
           script: |
-            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/kernelsquare
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/kernelsquare-member
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/kernelsquare-alert
             sudo docker-compose up -d
         if: ${{ env.TARGET_UPSTREAM == 'green' }}
 
@@ -198,7 +224,7 @@ jobs:
         uses: jtalk/url-health-check-action@v3
         with:
           url: http://${{ env.STOPPED_IP }}:8501/environment
-          # 총 5번 하는데, 15초의 간격을 두고함. 이때까지 응답이 정상이 아니라면 배포 실패
+          # 총 5번 하는데, 30초의 간격을 두고함. 이때까지 응답이 정상이 아니라면 배포 실패
           max-attempts: 5 # Optional, defaults to 1
           retry-delay: 30s # Optional, only applicable to max-attempts > 1
 #
@@ -206,10 +232,9 @@ jobs:
         uses: jtalk/url-health-check-action@v3
         with:
           url: http://${{ env.STOPPED_IP }}:8502/environment
-          # 총 5번 하는데, 15초의 간격을 두고함. 이때까지 응답이 정상이 아니라면 배포 실패
+          # 총 5번 하는데, 30초의 간격을 두고함. 이때까지 응답이 정상이 아니라면 배포 실패
           max-attempts: 5 # Optional, defaults to 1
           retry-delay: 30s # Optional, only applicable to max-attempts > 1
-
 
       # 엔진엑스의 프록시 변경
       - name: Change nginx upstream
@@ -237,8 +262,10 @@ jobs:
           script: |
             sudo docker stop prod1
             sudo docker stop prod2
+            sudo docker stop alert
             sudo docker rm prod1
             sudo docker rm prod2
+            sudo docker rm alert
         if: ${{ env.TARGET_UPSTREAM == 'green' }}
 
       # 기존 인스턴스 중단
@@ -252,8 +279,10 @@ jobs:
           script: |
             sudo docker stop prod1
             sudo docker stop prod2
+            sudo docker stop alert
             sudo docker rm prod1
             sudo docker rm prod2
+            sudo docker rm alert
         if: ${{ env.TARGET_UPSTREAM == 'blue' }}
 
       # 깃허브 러너 아이피를 인바운드 룰에서 제거
@@ -264,6 +293,6 @@ jobs:
           aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
           aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 80 --cidr ${{ steps.ip.outputs.ipv4 }}/32
           aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 443 --cidr ${{ steps.ip.outputs.ipv4 }}/32
-          aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8000 --cidr ${{ steps.ip.outputs.ipv4 }}/32
           aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8501 --cidr ${{ steps.ip.outputs.ipv4 }}/32
           aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8502 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+          aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8503 --cidr ${{ steps.ip.outputs.ipv4 }}/32

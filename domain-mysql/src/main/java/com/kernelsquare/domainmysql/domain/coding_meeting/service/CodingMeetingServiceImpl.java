@@ -79,7 +79,6 @@ public class CodingMeetingServiceImpl implements CodingMeetingService{
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(cacheNames = "coding_meeting_list")
     public List<CodingMeetingInfo.SeoInfo> findAllCodingMeetingSeoList() {
         List<CodingMeeting> codingMeetingList = codingMeetingReader.findAllCodingMeetingList();
         return codingMeetingList.stream()

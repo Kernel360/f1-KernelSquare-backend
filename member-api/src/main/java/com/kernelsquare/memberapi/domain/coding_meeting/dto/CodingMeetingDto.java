@@ -117,7 +117,7 @@ public class CodingMeetingDto {
     }
 
     @Builder
-    public record FindAllCacheResponse(
+    public record FindAllSeoResponse(
             String codingMeetingToken
     ) {
     }

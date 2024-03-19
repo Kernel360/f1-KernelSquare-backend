@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 
+import com.kernelsquare.memberapi.domain.question.dto.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,10 +24,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import com.kernelsquare.memberapi.domain.question.dto.CreateQuestionRequest;
-import com.kernelsquare.memberapi.domain.question.dto.CreateQuestionResponse;
-import com.kernelsquare.memberapi.domain.question.dto.FindQuestionResponse;
-import com.kernelsquare.memberapi.domain.question.dto.UpdateQuestionRequest;
 import com.kernelsquare.memberapi.domain.question.service.QuestionService;
 import com.kernelsquare.core.dto.PageResponse;
 import com.kernelsquare.core.dto.Pagination;
@@ -247,4 +244,38 @@ class QuestionControllerTest {
 		//verify
 		verify(questionService, times(1)).deleteQuestion(anyLong());
 	}
+
+	@Test
+	@DisplayName("SEO 최적화를 위한 모든 질문 조회 성공시 200 OK와 메시지를 반환한다")
+	void testFindAllQuestionsSeo() throws Exception {
+		//given
+		Question question1 = createTestQuestion(1L);
+		Question question2 = createTestQuestion(2L);
+
+		FindAllQuestionResponse findAllQuestionResponse1 = FindAllQuestionResponse.of(question1);
+		FindAllQuestionResponse findAllQuestionResponse2 = FindAllQuestionResponse.of(question2);
+
+		List<FindAllQuestionResponse> response = List.of(findAllQuestionResponse1, findAllQuestionResponse2);
+
+		doReturn(response)
+				.when(questionService)
+				.findAllQuestionsSeo();
+
+		//when & then
+		mockMvc.perform(get("/api/v1/questions/seo")
+						.with(csrf())
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON)
+						.characterEncoding("UTF-8"))
+				.andExpect(status().is(QUESTION_SEO_LIST_FOUND.getStatus().value()))
+				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.code").value(QUESTION_SEO_LIST_FOUND.getCode()))
+				.andExpect(jsonPath("$.msg").value(QUESTION_SEO_LIST_FOUND.getMsg()))
+				.andExpect(jsonPath("$.data[0].id").value(1))
+				.andExpect(jsonPath("$.data[1].id").value(2));
+
+		//verify
+		verify(questionService, times(1)).findAllQuestionsSeo();
+	}
+
 }

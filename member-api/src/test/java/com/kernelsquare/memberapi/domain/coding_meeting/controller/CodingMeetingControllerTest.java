@@ -1,9 +1,11 @@
+
 package com.kernelsquare.memberapi.domain.coding_meeting.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.kernelsquare.core.dto.PageResponse;
+import com.kernelsquare.core.util.TokenGenerator;
 import com.kernelsquare.domainmysql.domain.coding_meeting.entity.CodingMeeting;
 import com.kernelsquare.domainmysql.domain.coding_meeting.info.CodingMeetingInfo;
 import com.kernelsquare.domainmysql.domain.level.entity.Level;
@@ -99,7 +101,7 @@ public class CodingMeetingControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andDo(
                         document("coding-meetings", getDocumentResponse(), pathParameters(
-                                parameterWithName("codingMeetingToken").description("모각코 토큰")), responseFields(
+                                        parameterWithName("codingMeetingToken").description("모각코 토큰")), responseFields(
                                         fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"),
                                         fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 상태 코드"),
                                         fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답"),
@@ -355,7 +357,7 @@ public class CodingMeetingControllerTest {
                                 responseFields(
                                         fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"),
                                         fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 상태 코드")
-                        ))
+                                ))
                 );
 
         verify(codingMeetingFacade, times(1)).updateCodingMeeting(any(CodingMeetingDto.UpdateRequest.class), anyString());
@@ -417,5 +419,50 @@ public class CodingMeetingControllerTest {
                 );
 
         verify(codingMeetingFacade, times(1)).closeCodingMeeting(anyString());
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("SEO 최적화를 위한 모든 질문 조회 성공시 200 OK와 메시지를 반환한다.")
+    void testFindAllCodingMeetingSeo() throws Exception {
+        String TEST_CODING_MEETING_TOKEN_PREFIX = "cm_";
+
+        String token01 = TokenGenerator.randomCharacterWithPrefix(TEST_CODING_MEETING_TOKEN_PREFIX);
+
+        String token02 = TokenGenerator.randomCharacterWithPrefix(TEST_CODING_MEETING_TOKEN_PREFIX);
+
+        CodingMeetingDto.FindAllSeoResponse codingMeetingSeoResponse01 = CodingMeetingDto.FindAllSeoResponse.builder()
+                .codingMeetingToken(token01)
+                .build();
+
+        CodingMeetingDto.FindAllSeoResponse codingMeetingSeoResponse02 = CodingMeetingDto.FindAllSeoResponse.builder()
+                .codingMeetingToken(token02)
+                .build();
+
+        List<CodingMeetingDto.FindAllSeoResponse> response = new ArrayList<>(List.of(codingMeetingSeoResponse01, codingMeetingSeoResponse02));
+
+        doReturn(response).when(codingMeetingFacade).findAllCodingMeetingSeoList();
+
+        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/coding-meetings/seo")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+        );
+
+        resultActions
+                .andExpect(status().is(CODING_MEETING_SEO_LIST_FOUND.getStatus().value()))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andDo(
+                        document("coding-meetings/seo", getDocumentResponse(),
+                                responseFields(
+                                        fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 상태 코드"),
+                                        fieldWithPath("data[0].coding_meeting_token").type(JsonFieldType.STRING).description("모각코 토큰 01"),
+                                        fieldWithPath("data[1].coding_meeting_token").type(JsonFieldType.STRING).description("모각코 토큰 02")
+                                )
+                        ));
+
+        verify(codingMeetingFacade, times(1)).findAllCodingMeetingSeoList();
     }
 }

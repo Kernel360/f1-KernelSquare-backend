@@ -37,10 +37,10 @@ public class CodingMeetingFacade {
         return PageResponse.of(pageable, allCodingMeetingInfo, findAllResponses);
     }
 
-    public List<CodingMeetingDto.FindAllCacheResponse> findAllCodingMeetingList() {
-        List<CodingMeetingInfo.CacheInfo> allCodingMeetingInfo = codingMeetingService.findAllCodingMeetingList();
-        return allCodingMeetingInfo.stream()
-                .map(info -> codingMeetingDtoMapper.toFindAllCacheResponse(info))
+    public List<CodingMeetingDto.FindAllSeoResponse> findAllCodingMeetingSeoList() {
+        List<CodingMeetingInfo.SeoInfo> allCodingMeetingSeoInfo = codingMeetingService.findAllCodingMeetingSeoList();
+        return allCodingMeetingSeoInfo.stream()
+                .map(info -> codingMeetingDtoMapper.toFindAllSeoResponse(info))
                 .toList();
     }
 

@@ -64,9 +64,9 @@ public class QuestionController {
 	}
 
 	@GetMapping("/questions/seo")
-	public ResponseEntity<ApiResponse<List<FindAllQuestionResponse>>> findAllQuestionsCache(
+	public ResponseEntity<ApiResponse<List<FindAllQuestionResponse>>> findAllQuestionsSeo(
 	) {
-		List<FindAllQuestionResponse> findAllResponse = questionService.findAllQuestionsCache();
+		List<FindAllQuestionResponse> findAllResponse = questionService.findAllQuestionsSeo();
 
 		return ResponseEntityFactory.toResponseEntity(QUESTION_SEO_LIST_FOUND, findAllResponse);
 	}

@@ -109,7 +109,7 @@ public class QuestionService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<FindAllQuestionResponse> findAllQuestionsCache() {
+	public List<FindAllQuestionResponse> findAllQuestionsSeo() {
 
 		return questionRepository.findAll().stream()
 				.map(FindAllQuestionResponse::of)

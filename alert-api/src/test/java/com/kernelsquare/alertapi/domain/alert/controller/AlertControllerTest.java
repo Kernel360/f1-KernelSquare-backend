@@ -1,6 +1,5 @@
 package com.kernelsquare.alertapi.domain.alert.controller;
 
-import com.kernelsquare.alertapi.config.ApiDocumentUtils;
 import com.kernelsquare.alertapi.domain.alert.dto.AlertDto;
 import com.kernelsquare.alertapi.domain.alert.facade.AlertFacade;
 import com.kernelsquare.alertapi.domain.alert.manager.SseManager;
@@ -18,12 +17,9 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.restdocs.payload.PayloadDocumentation;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -31,9 +27,14 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.kernelsquare.alertapi.config.ApiDocumentUtils.getDocumentResponse;
 import static com.kernelsquare.core.common_response.response.code.AlertResponseCode.MY_ALERT_ALL_FOUND;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -76,7 +77,7 @@ class AlertControllerTest {
         //when
         ResultActions resultActions = mockMvc.perform(
             RestDocumentationRequestBuilders.get("/api/v1/alerts/sse")
-                .with(SecurityMockMvcRequestPostProcessors.user(memberAdapter))
+                .with(user(memberAdapter))
                 .contentType(MediaType.TEXT_EVENT_STREAM_VALUE)
                 .accept(MediaType.TEXT_EVENT_STREAM_VALUE)
                 .characterEncoding("UTF-8"));
@@ -84,7 +85,7 @@ class AlertControllerTest {
         //then
         resultActions.andExpect(status().isOk())
             //TODO 응답 contentType이 null이 맞나?
-            .andDo(MockMvcRestDocumentation.document("alert-subscribe"));
+            .andDo(document("alert-subscribe"));
     }
 
     @Test
@@ -128,7 +129,7 @@ class AlertControllerTest {
         //when
         ResultActions resultActions = mockMvc.perform(
             RestDocumentationRequestBuilders.get("/api/v1/alerts")
-                .with(SecurityMockMvcRequestPostProcessors.user(memberAdapter))
+                .with(user(memberAdapter))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .characterEncoding("UTF-8"));
@@ -136,17 +137,17 @@ class AlertControllerTest {
         //then
         resultActions.andExpect(status().is(MY_ALERT_ALL_FOUND.getStatus().value()))
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-            .andDo(MockMvcRestDocumentation.document("my-alert-all-found", ApiDocumentUtils.getDocumentResponse(),
-                PayloadDocumentation.responseFields(
-                    PayloadDocumentation.fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 상태 코드"),
-                    PayloadDocumentation.fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"),
-                    PayloadDocumentation.fieldWithPath("data.personal_alert_list[].recipient_id").type(JsonFieldType.STRING).description("알림 수신자 ID"),
-                    PayloadDocumentation.fieldWithPath("data.personal_alert_list[].recipient").type(JsonFieldType.STRING).description("알림 수신자 닉네임"),
-                    PayloadDocumentation.fieldWithPath("data.personal_alert_list[].sender_id").type(JsonFieldType.STRING).description("알림 송신자 ID"),
-                    PayloadDocumentation.fieldWithPath("data.personal_alert_list[].sender").type(JsonFieldType.STRING).description("알림 송신자 닉네임"),
-                    PayloadDocumentation.fieldWithPath("data.personal_alert_list[].message").type(JsonFieldType.STRING).description("알림 메시지"),
-                    PayloadDocumentation.fieldWithPath("data.personal_alert_list[].alert_type").type(JsonFieldType.STRING).description("알림 타입"),
-                    PayloadDocumentation.fieldWithPath("data.personal_alert_list[].send_time").type(JsonFieldType.STRING).description("알림 보낸 시간")
+            .andDo(document("my-alert-all-found", getDocumentResponse(),
+                responseFields(
+                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 상태 코드"),
+                    fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"),
+                    fieldWithPath("data.personal_alert_list[].recipient_id").type(JsonFieldType.STRING).description("알림 수신자 ID"),
+                    fieldWithPath("data.personal_alert_list[].recipient").type(JsonFieldType.STRING).description("알림 수신자 닉네임"),
+                    fieldWithPath("data.personal_alert_list[].sender_id").type(JsonFieldType.STRING).description("알림 송신자 ID"),
+                    fieldWithPath("data.personal_alert_list[].sender").type(JsonFieldType.STRING).description("알림 송신자 닉네임"),
+                    fieldWithPath("data.personal_alert_list[].message").type(JsonFieldType.STRING).description("알림 메시지"),
+                    fieldWithPath("data.personal_alert_list[].alert_type").type(JsonFieldType.STRING).description("알림 타입"),
+                    fieldWithPath("data.personal_alert_list[].send_time").type(JsonFieldType.STRING).description("알림 보낸 시간")
                 )));
     }
 }

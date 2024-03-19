@@ -14,6 +14,7 @@ admin-api/logs/**
 alert-api/logs/**
 member-api/member-api/logs/**
 admin-api/admin-api/logs/**
+alert-api/alert-api/logs/**
 
 ### STS ###
 .apt_generated

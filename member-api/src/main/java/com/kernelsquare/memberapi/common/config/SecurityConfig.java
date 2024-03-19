@@ -54,6 +54,7 @@ public class SecurityConfig {
 		"/ws/**",
 		"/topic/test/room",
 		"/app/test/message",
+		"/docs/**"
 	};
 
 	private final String[] hasAnyAuthorityPatterns = new String[] {
@@ -173,3 +174,5 @@ public class SecurityConfig {
 		return http.build();
 	}
 }
+
+

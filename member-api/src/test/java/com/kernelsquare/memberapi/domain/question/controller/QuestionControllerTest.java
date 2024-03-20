@@ -13,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.kernelsquare.memberapi.domain.question.dto.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,10 +37,6 @@ import com.kernelsquare.domainmysql.domain.level.entity.Level;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
 import com.kernelsquare.domainmysql.domain.question.entity.Question;
 import com.kernelsquare.memberapi.config.RestDocsControllerTest;
-import com.kernelsquare.memberapi.domain.question.dto.CreateQuestionRequest;
-import com.kernelsquare.memberapi.domain.question.dto.CreateQuestionResponse;
-import com.kernelsquare.memberapi.domain.question.dto.FindQuestionResponse;
-import com.kernelsquare.memberapi.domain.question.dto.UpdateQuestionRequest;
 import com.kernelsquare.memberapi.domain.question.service.QuestionService;
 
 @DisplayName("질문 컨트롤러 테스트")
@@ -381,5 +378,48 @@ class QuestionControllerTest extends RestDocsControllerTest {
 
 		//verify
 		verify(questionService, times(1)).deleteQuestion(anyLong());
+	}
+
+	@Test
+	@DisplayName("SEO 최적화를 위한 모든 질문 조회 성공시 200 OK와 메시지를 반환한다")
+	void testFindAllQuestionsSeo() throws Exception {
+		//given
+		Question question01 = createTestQuestion(1L);
+		Question question02 = createTestQuestion(2L);
+
+		FindQuestionIdResponse findQuestionIdResponse01 = FindQuestionIdResponse.of(question01.getId());
+		FindQuestionIdResponse findQuestionIdResponse02 = FindQuestionIdResponse.of(question02.getId());
+
+		FindAllQuestionResponse response =
+				FindAllQuestionResponse.of(List.of(findQuestionIdResponse01, findQuestionIdResponse02));
+
+		//when & then
+		doReturn(response)
+				.when(questionService)
+				.findAllQuestionsSeo();
+
+		ResultActions resultActions = mockMvc.perform(
+			RestDocumentationRequestBuilders.get("/api/v1/questions/seo")
+				.with(csrf())
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+		);
+
+		resultActions
+				.andExpect(status().is(QUESTION_SEO_LIST_FOUND.getStatus().value()))
+				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+				.andDo(
+						document("question-seo-list-found", getDocumentResponse(),
+								responseFields(
+										fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"),
+										fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 상태 코드"),
+										fieldWithPath("data.question_id_list[0].question_id").type(JsonFieldType.NUMBER).description("질문 아이디 01"),
+										fieldWithPath("data.question_id_list[1].question_id").type(JsonFieldType.NUMBER).description("질문 아이디 02")
+								)
+						));
+
+		//verify
+		verify(questionService, times(1)).findAllQuestionsSeo();
 	}
 }

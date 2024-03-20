@@ -468,4 +468,48 @@ class CodingMeetingControllerTest extends RestDocsControllerTest {
 		//verify
 		verify(codingMeetingFacade, times(1)).closeCodingMeeting(anyString());
 	}
+
+	@Test
+	@WithMockUser
+	@DisplayName("SEO 최적화를 위한 모든 질문 조회 성공시 200 OK와 메시지를 반환한다.")
+	void testFindAllCodingMeetingSeo() throws Exception {
+		String token01 = "cm_wnjefonwdo3";
+		String token02 = "cm_qeuofjwi40f";
+
+		CodingMeetingDto.FindSeoResponse response01 = CodingMeetingDto.FindSeoResponse.builder()
+				.codingMeetingToken(token01)
+				.build();
+
+		CodingMeetingDto.FindSeoResponse response02 = CodingMeetingDto.FindSeoResponse.builder()
+				.codingMeetingToken(token02)
+				.build();
+
+		CodingMeetingDto.FindAllSeoResponse response = CodingMeetingDto.FindAllSeoResponse.builder()
+				.codingMeetingTokenList(List.of(response01, response02))
+				.build();
+
+		doReturn(response).when(codingMeetingFacade).findAllCodingMeetingSeoList();
+
+		ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/coding-meetings/seo")
+				.with(csrf())
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+		);
+
+		resultActions
+				.andExpect(status().is(CODING_MEETING_SEO_LIST_FOUND.getStatus().value()))
+				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+				.andDo(
+						document("coding-meeting-seo-list-found", getDocumentResponse(),
+								responseFields(
+										fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"),
+										fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 상태 코드"),
+										fieldWithPath("data.coding_meeting_token_list[0].coding_meeting_token").type(JsonFieldType.STRING).description("모각코 토큰 01"),
+										fieldWithPath("data.coding_meeting_token_list[1].coding_meeting_token").type(JsonFieldType.STRING).description("모각코 토큰 02")
+								)
+						));
+
+		verify(codingMeetingFacade, times(1)).findAllCodingMeetingSeoList();
+	}
 }

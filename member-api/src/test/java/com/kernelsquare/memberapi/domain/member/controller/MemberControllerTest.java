@@ -8,6 +8,9 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
+import com.kernelsquare.memberapi.domain.auth.dto.MemberAdaptorInstance;
+import com.kernelsquare.memberapi.domain.member.dto.UpdateMemberNicknameRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -243,6 +246,55 @@ class MemberControllerTest extends RestDocsControllerTest {
 
 		//verify
 		verify(memberService, times(1)).deleteMember(anyLong());
+		verifyNoMoreInteractions(memberService);
+	}
+
+	@Test
+	@DisplayName("회원 닉네임 수정 성공 시, 200 OK와 메시지를 반환한다")
+	void testUpdateMemberNickname() throws Exception {
+		//given
+		Member member = Member.builder()
+				.id(1L)
+				.email("test@email.com")
+				.nickname("커널스")
+				.build();
+
+		MemberAdapter memberAdapter = new MemberAdapter(MemberAdaptorInstance.of(member));
+
+		Long memberId = memberAdapter.getMember().getId();
+		String newNickname = "NewNick";
+
+		String jsonRequest = "{\"member_id\": " + memberId + ", \"nickname\": \"" + newNickname + "\"}";
+
+		given(memberService.updateMemberNickname(any(UpdateMemberNicknameRequest.class) ,anyLong())).willReturn(FindMemberResponse.from(testMember));
+		//when
+		ResultActions resultActions = mockMvc.perform(
+				RestDocumentationRequestBuilders.put("/api/v1/members/nick")
+						.with(csrf())
+						.with(user(memberAdapter))
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON)
+						.characterEncoding("UTF-8")
+						.content(jsonRequest));
+
+		//then
+		resultActions
+				.andExpect(status().is(MEMBER_NICKNAME_UPDATED.getStatus().value()))
+				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+				.andDo(document("member-nickname-updated", getDocumentRequest(), getDocumentResponse()
+						, responseFields(
+								fieldWithPath("code").type(JsonFieldType.NUMBER).description("커스텀 응답 코드"),
+								fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"),
+								fieldWithPath("data.member_id").type(JsonFieldType.NUMBER).description("회원 ID"),
+								fieldWithPath("data.nickname").type(JsonFieldType.STRING).description("회원 닉네임"),
+								fieldWithPath("data.experience").type(JsonFieldType.NUMBER).description("회원 경험치"),
+								fieldWithPath("data.introduction").type(JsonFieldType.STRING).description("회원 소개"),
+								fieldWithPath("data.image_url").type(JsonFieldType.STRING).description("회원 프로필 이미지 URL"),
+								fieldWithPath("data.level").type(JsonFieldType.NUMBER).description("회원 레벨 ID")
+						)));
+
+		//verify
+		verify(memberService, times(1)).updateMemberNickname(any(UpdateMemberNicknameRequest.class) ,anyLong());
 		verifyNoMoreInteractions(memberService);
 	}
 }

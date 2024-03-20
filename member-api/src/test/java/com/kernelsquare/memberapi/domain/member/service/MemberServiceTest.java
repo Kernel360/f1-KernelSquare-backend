@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 
 import java.util.Optional;
 
+import com.kernelsquare.memberapi.domain.member.dto.UpdateMemberNicknameRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -254,6 +255,62 @@ public class MemberServiceTest {
 		verify(memberRepository, times(1)).findById(anyLong());
 	}
 
+	@Test
+	@DisplayName("회원 닉네임 수정 테스트")
+	void testUpdateMemberNickname() throws Exception {
+		//given
+		Long testMemberId = 1L;
+
+		String newNickname = "IamNewJeans";
+
+		UpdateMemberNicknameRequest updateMemberNicknameRequest = UpdateMemberNicknameRequest
+				.builder()
+				.memberId(1L)
+				.nickname(newNickname)
+				.build();
+
+		Member member = createTestMember();
+		Optional<Member> optionalMember = Optional.of(member);
+		Member updatedMember = Member.builder()
+				.nickname(newNickname)
+				.imageUrl(member.getImageUrl())
+				.level(member.getLevel())
+				.email(member.getEmail())
+				.authorities(member.getAuthorities())
+				.password(member.getPassword())
+				.build();
+		Optional<Member> optionalUpdatedMember = Optional.of(updatedMember);
+
+		doReturn(optionalMember)
+				.when(memberRepository)
+				.findById(anyLong());
+
+		memberService.updateMemberNickname(updateMemberNicknameRequest, testMemberId);
+
+		doReturn(optionalUpdatedMember)
+				.when(memberRepository)
+				.findById(anyLong());
+
+		//when
+		Optional<Member> optionalFoundMember = memberRepository.findById(testMemberId);
+
+//		FindMemberResponse findMemberResponse = memberService.findMember(testMemberId);
+
+		//then
+		assertThat(optionalFoundMember.get().getNickname()).isEqualTo(newNickname);
+
+//		assertThat(findMemberResponse.nickname()).isEqualTo(newNickname);
+//		assertThat(findMemberResponse.introduction()).isEqualTo(member.getIntroduction());
+//		assertThat(findMemberResponse.experience()).isEqualTo(member.getExperience());
+//		assertThat(findMemberResponse.imageUrl().length()).isGreaterThan(member.getImageUrl().length());
+//		assertThat(findMemberResponse.imageUrl()).endsWith(member.getImageUrl());
+//		assertThat(findMemberResponse.memberId()).isEqualTo(testMemberId);
+
+		//verify
+		verify(memberRepository, times(2)).findById(anyLong());
+	}
+
+
 	private Member createTestMember() {
 		return Member
 			.builder()
@@ -261,6 +318,7 @@ public class MemberServiceTest {
 			.nickname("hongjugwang")
 			.email("jugwang@naver.com")
 			.password("hashedPassword")
+			.level(Level.builder().id(1L).build())
 			.experience(10000L)
 			.introduction("hi, i'm hongjugwang.")
 			.imageUrl("s3:qwe12fasdawczx")

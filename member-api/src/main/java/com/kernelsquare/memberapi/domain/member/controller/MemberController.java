@@ -63,7 +63,7 @@ public class MemberController {
 		return ResponseEntityFactory.toResponseEntity(MEMBER_DELETED);
 	}
 
-	@PutMapping("/members/nick")
+	@PutMapping("/members/nickname")
 	public ResponseEntity<ApiResponse<FindMemberResponse>> updateMemberNickname(
 			@Valid @RequestBody
 			UpdateMemberNicknameRequest updateNicknameRequest,

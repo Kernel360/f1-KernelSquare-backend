@@ -1,0 +1,60 @@
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toc-title: 목차
+:toclevels: 4
+:sectlinks:
+
+//NOTE: ""
+//TIP: ""
+//IMPORTANT: ""
+//CAUTION: ""
+//WARNING: ""
+
+ifeval::["{snippets}/{docname}/curl-request.adoc" != ""]
+:snippets: build/generated-snippets
+
+= 모든 개인 알림 조회
+
+== Request
+
+ifeval::["{snippets}/{docname}/curl-request.adoc" != ""]
+=== Curl-Request
+include::{snippets}/{docname}/curl-request.adoc[]
+endif::[]
+
+ifeval::["{snippets}/{docname}/http-request.adoc" != ""]
+=== Http-Request
+include::{snippets}/{docname}/http-request.adoc[]
+endif::[]
+
+ifeval::["{snippets}/{docname}/request-body.adoc" != ""]
+=== Request-Body
+include::{snippets}/{docname}/request-body.adoc[]
+endif::[]
+
+ifeval::["{snippets}/{docname}/request-parameters.adoc" == ""]
+=== Request-Parameters
+include::{snippets}/{docname}/request-parameters.adoc[]
+endif::[]
+
+== Response
+ifeval::["{snippets}/{docname}/http-response.adoc" != ""]
+=== Http-Response
+include::{snippets}/{docname}/http-response.adoc[]
+endif::[]
+
+ifeval::["{snippets}/{docname}/response-body.adoc" != ""]
+=== Response-Body
+include::{snippets}/{docname}/response-body.adoc[]
+endif::[]
+
+ifeval::["{snippets}/{docname}/response-fields.adoc" != ""]
+=== Response-Fields
+include::{snippets}/{docname}/response-fields.adoc[]
+endif::[]
+endif::[]
+
+=== link:index.html[전체 API 목록]
+=== link:alert-api-index.html[Alert API 목록]

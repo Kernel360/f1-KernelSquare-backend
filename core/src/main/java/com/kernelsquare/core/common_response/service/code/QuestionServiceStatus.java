@@ -15,7 +15,7 @@ public enum QuestionServiceStatus implements ServiceStatus {
 	QUESTION_ALL_FOUND(2142),
 	QUESTION_UPDATED(2143),
 	QUESTION_DELETED(2144),
-	QUESTION_SEO_LIST_FOUND(2155);
+	QUESTION_SEO_LIST_FOUND(2145);
 
 	private final Integer code;
 

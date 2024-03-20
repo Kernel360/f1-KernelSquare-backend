@@ -425,21 +425,20 @@ public class CodingMeetingControllerTest {
     @WithMockUser
     @DisplayName("SEO 최적화를 위한 모든 질문 조회 성공시 200 OK와 메시지를 반환한다.")
     void testFindAllCodingMeetingSeo() throws Exception {
-        String TEST_CODING_MEETING_TOKEN_PREFIX = "cm_";
+        String token01 = "cm_wnjefonwdo3";
+        String token02 = "cm_qeuofjwi40f";
 
-        String token01 = TokenGenerator.randomCharacterWithPrefix(TEST_CODING_MEETING_TOKEN_PREFIX);
-
-        String token02 = TokenGenerator.randomCharacterWithPrefix(TEST_CODING_MEETING_TOKEN_PREFIX);
-
-        CodingMeetingDto.FindAllSeoResponse codingMeetingSeoResponse01 = CodingMeetingDto.FindAllSeoResponse.builder()
+        CodingMeetingDto.FindSeoResponse response01 = CodingMeetingDto.FindSeoResponse.builder()
                 .codingMeetingToken(token01)
                 .build();
 
-        CodingMeetingDto.FindAllSeoResponse codingMeetingSeoResponse02 = CodingMeetingDto.FindAllSeoResponse.builder()
+        CodingMeetingDto.FindSeoResponse response02 = CodingMeetingDto.FindSeoResponse.builder()
                 .codingMeetingToken(token02)
                 .build();
 
-        List<CodingMeetingDto.FindAllSeoResponse> response = new ArrayList<>(List.of(codingMeetingSeoResponse01, codingMeetingSeoResponse02));
+        CodingMeetingDto.FindAllSeoResponse response = CodingMeetingDto.FindAllSeoResponse.builder()
+                .codingMeetingTokenList(List.of(response01, response02))
+                .build();
 
         doReturn(response).when(codingMeetingFacade).findAllCodingMeetingSeoList();
 
@@ -454,12 +453,12 @@ public class CodingMeetingControllerTest {
                 .andExpect(status().is(CODING_MEETING_SEO_LIST_FOUND.getStatus().value()))
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andDo(
-                        document("coding-meetings/seo", getDocumentResponse(),
+                        document("coding-meeting-seo-list-found", getDocumentResponse(),
                                 responseFields(
                                         fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"),
                                         fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 상태 코드"),
-                                        fieldWithPath("data[0].coding_meeting_token").type(JsonFieldType.STRING).description("모각코 토큰 01"),
-                                        fieldWithPath("data[1].coding_meeting_token").type(JsonFieldType.STRING).description("모각코 토큰 02")
+                                        fieldWithPath("data.coding_meeting_token_list[0].coding_meeting_token").type(JsonFieldType.STRING).description("모각코 토큰 01"),
+                                        fieldWithPath("data.coding_meeting_token_list[1].coding_meeting_token").type(JsonFieldType.STRING).description("모각코 토큰 02")
                                 )
                         ));
 

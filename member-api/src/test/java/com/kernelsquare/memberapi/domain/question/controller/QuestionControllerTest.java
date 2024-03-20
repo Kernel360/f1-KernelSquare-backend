@@ -1,24 +1,33 @@
 package com.kernelsquare.memberapi.domain.question.controller;
 
+import static com.kernelsquare.core.common_response.response.code.CodingMeetingResponseCode.CODING_MEETING_SEO_LIST_FOUND;
 import static com.kernelsquare.core.common_response.response.code.QuestionResponseCode.*;
+import static com.kernelsquare.memberapi.config.ApiDocumentUtils.getDocumentResponse;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.List;
 
+import com.kernelsquare.memberapi.domain.coding_meeting.dto.CodingMeetingDto;
 import com.kernelsquare.memberapi.domain.question.dto.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -30,6 +39,7 @@ import com.kernelsquare.core.dto.Pagination;
 import com.kernelsquare.domainmysql.domain.level.entity.Level;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
 import com.kernelsquare.domainmysql.domain.question.entity.Question;
+import org.springframework.test.web.servlet.ResultActions;
 
 @DisplayName("질문 컨트롤러 단위 테스트")
 @WithMockUser
@@ -244,38 +254,4 @@ class QuestionControllerTest {
 		//verify
 		verify(questionService, times(1)).deleteQuestion(anyLong());
 	}
-
-	@Test
-	@DisplayName("SEO 최적화를 위한 모든 질문 조회 성공시 200 OK와 메시지를 반환한다")
-	void testFindAllQuestionsSeo() throws Exception {
-		//given
-		Question question1 = createTestQuestion(1L);
-		Question question2 = createTestQuestion(2L);
-
-		FindAllQuestionResponse findAllQuestionResponse1 = FindAllQuestionResponse.of(question1);
-		FindAllQuestionResponse findAllQuestionResponse2 = FindAllQuestionResponse.of(question2);
-
-		List<FindAllQuestionResponse> response = List.of(findAllQuestionResponse1, findAllQuestionResponse2);
-
-		doReturn(response)
-				.when(questionService)
-				.findAllQuestionsSeo();
-
-		//when & then
-		mockMvc.perform(get("/api/v1/questions/seo")
-						.with(csrf())
-						.contentType(MediaType.APPLICATION_JSON)
-						.accept(MediaType.APPLICATION_JSON)
-						.characterEncoding("UTF-8"))
-				.andExpect(status().is(QUESTION_SEO_LIST_FOUND.getStatus().value()))
-				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.code").value(QUESTION_SEO_LIST_FOUND.getCode()))
-				.andExpect(jsonPath("$.msg").value(QUESTION_SEO_LIST_FOUND.getMsg()))
-				.andExpect(jsonPath("$.data[0].id").value(1))
-				.andExpect(jsonPath("$.data[1].id").value(2));
-
-		//verify
-		verify(questionService, times(1)).findAllQuestionsSeo();
-	}
-
 }

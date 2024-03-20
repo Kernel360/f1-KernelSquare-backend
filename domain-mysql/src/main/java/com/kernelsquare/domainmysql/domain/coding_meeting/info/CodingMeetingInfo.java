@@ -122,11 +122,9 @@ public class CodingMeetingInfo {
     @Getter
     public static class SeoInfo implements Serializable {
         private final String codingMeetingToken;
-        private final Long memberId;
 
         @Builder
         public SeoInfo(CodingMeeting codingMeeting) {
-            this.memberId = codingMeeting.getId();
             this.codingMeetingToken = codingMeeting.getCodingMeetingToken();
         }
 

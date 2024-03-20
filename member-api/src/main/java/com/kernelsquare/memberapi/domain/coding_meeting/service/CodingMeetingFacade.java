@@ -37,11 +37,9 @@ public class CodingMeetingFacade {
         return PageResponse.of(pageable, allCodingMeetingInfo, findAllResponses);
     }
 
-    public List<CodingMeetingDto.FindAllSeoResponse> findAllCodingMeetingSeoList() {
-        List<CodingMeetingInfo.SeoInfo> allCodingMeetingSeoInfo = codingMeetingService.findAllCodingMeetingSeoList();
-        return allCodingMeetingSeoInfo.stream()
-                .map(info -> codingMeetingDtoMapper.toFindAllSeoResponse(info))
-                .toList();
+    public CodingMeetingDto.FindAllSeoResponse findAllCodingMeetingSeoList() {
+        List<CodingMeetingInfo.TokenInfo> allCodingMeetingSeoInfo = codingMeetingService.findAllCodingMeetingSeoList();
+        return CodingMeetingDto.FindAllSeoResponse.builder().codingMeetingTokenList(codingMeetingDtoMapper.toFindAllSeoResponse(allCodingMeetingSeoInfo)).build();
     }
 
     private Long getMemberId(MemberAdapter memberAdapter) {

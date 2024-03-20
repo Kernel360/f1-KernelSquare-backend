@@ -1,18 +1,11 @@
 package com.kernelsquare.memberapi.domain.question.service;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.kernelsquare.memberapi.domain.question.dto.*;
-import jakarta.annotation.Resource;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -109,11 +102,11 @@ public class QuestionService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<FindAllQuestionResponse> findAllQuestionsSeo() {
-
-		return questionRepository.findAll().stream()
-				.map(FindAllQuestionResponse::of)
-				.toList();
+	public FindAllQuestionResponse findAllQuestionsSeo() {
+		return FindAllQuestionResponse.of(questionRepository.findAll().stream()
+				.map(Question::getId)
+				.map(FindQuestionIdResponse::of)
+				.toList());
 	}
 
 	@Transactional

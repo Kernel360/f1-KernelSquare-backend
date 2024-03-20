@@ -2,6 +2,7 @@ package com.kernelsquare.memberapi.domain.coding_meeting.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.kernelsquare.core.constants.TimeResponseFormat;
+import com.kernelsquare.domainmysql.domain.coding_meeting.info.CodingMeetingInfo;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -117,8 +118,14 @@ public class CodingMeetingDto {
     }
 
     @Builder
-    public record FindAllSeoResponse(
+    public record FindSeoResponse(
             String codingMeetingToken
+    ) {
+    }
+
+    @Builder
+    public record FindAllSeoResponse(
+            List<FindSeoResponse> codingMeetingTokenList
     ) {
     }
 }

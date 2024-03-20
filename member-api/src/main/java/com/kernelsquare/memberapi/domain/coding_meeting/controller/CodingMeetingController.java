@@ -54,8 +54,8 @@ public class CodingMeetingController {
     }
 
     @GetMapping("/coding-meetings/seo")
-    public ResponseEntity<ApiResponse<List<CodingMeetingDto.FindAllSeoResponse>>> findAllCodingMeetingSeo() {
-        List<CodingMeetingDto.FindAllSeoResponse> listResponse = codingMeetingFacade.findAllCodingMeetingSeoList();
+    public ResponseEntity<ApiResponse<CodingMeetingDto.FindAllSeoResponse>> findAllCodingMeetingSeo() {
+        CodingMeetingDto.FindAllSeoResponse listResponse = codingMeetingFacade.findAllCodingMeetingSeoList();
         return ResponseEntityFactory.toResponseEntity(CODING_MEETING_SEO_LIST_FOUND, listResponse);
     }
 

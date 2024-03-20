@@ -14,5 +14,5 @@ public interface CodingMeetingService {
     void deleteCodingMeeting(String codingMeetingToken);
     CodingMeetingInfo.Info findCodingMeeting(String codingMeetingToken);
     Page<CodingMeetingInfo.ListInfo> findAllCodingMeeting(Pageable pageable, String filterParameter, Long memberId);
-    List<CodingMeetingInfo.SeoInfo> findAllCodingMeetingSeoList();
+    List<CodingMeetingInfo.TokenInfo> findAllCodingMeetingSeoList();
 }

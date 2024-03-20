@@ -1,16 +1,15 @@
 package com.kernelsquare.memberapi.domain.question.dto;
 
-import com.kernelsquare.domainmysql.domain.question.entity.Question;
-
-import java.io.Serializable;
+import java.util.List;
 
 public record FindAllQuestionResponse(
-        Long id
-) implements Serializable {
+        List<FindQuestionIdResponse> questionIdList
+) {
 
-    public static FindAllQuestionResponse of(Question question) {
+    public static FindAllQuestionResponse of(List<FindQuestionIdResponse> questionIdList) {
         return new FindAllQuestionResponse(
-                question.getId()
+                questionIdList
         );
     }
 }
+

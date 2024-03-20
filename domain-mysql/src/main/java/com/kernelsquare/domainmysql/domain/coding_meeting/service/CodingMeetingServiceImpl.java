@@ -79,10 +79,10 @@ public class CodingMeetingServiceImpl implements CodingMeetingService{
 
     @Override
     @Transactional(readOnly = true)
-    public List<CodingMeetingInfo.SeoInfo> findAllCodingMeetingSeoList() {
+    public List<CodingMeetingInfo.TokenInfo> findAllCodingMeetingSeoList() {
         List<CodingMeeting> codingMeetingList = codingMeetingReader.findAllCodingMeetingList();
         return codingMeetingList.stream()
-                .map(CodingMeetingInfo.SeoInfo::of)
+                .map(CodingMeetingInfo.TokenInfo::of)
                 .toList();
     }
 }

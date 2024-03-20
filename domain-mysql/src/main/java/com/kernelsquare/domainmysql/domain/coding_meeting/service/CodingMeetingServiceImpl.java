@@ -10,7 +10,6 @@ import com.kernelsquare.domainmysql.domain.coding_meeting.repository.CodingMeeti
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
 import com.kernelsquare.domainmysql.domain.member.repository.MemberReader;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;

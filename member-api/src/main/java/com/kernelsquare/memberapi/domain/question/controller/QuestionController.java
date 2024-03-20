@@ -24,8 +24,6 @@ import com.kernelsquare.memberapi.domain.question.service.QuestionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.kernelsquare.core.dto.PageResponse;
-import com.kernelsquare.core.util.TokenGenerator;
 import com.kernelsquare.domainmysql.domain.coding_meeting.entity.CodingMeeting;
 import com.kernelsquare.domainmysql.domain.coding_meeting.info.CodingMeetingInfo;
 import com.kernelsquare.domainmysql.domain.level.entity.Level;

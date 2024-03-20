@@ -1,0 +1,28 @@
+ifndef::snippets[]
+:basedir: {docdir}/../../../
+:snippets: build/generated-snippets
+:sources-root: {basedir}/src
+:resources: {sources-root}/main/resources
+:resources-test: {sources-root}/test/resources
+:java: {sources-root}/main/java
+:java-test: {sources-root}/test/java
+endif::[]
+= Auth API 목록
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toc-title: 명세 목록
+:toclevels: 5
+:sectlinks:
+
+=== link:index.html[전체 API 명세 보기]
+
+|===
+|이름 |Http Method |API Endpoint
+|link:login-success.html[로그인] |POST |/api/v1/auth/login
+|link:sign-up-success.html[회원가입] |POST |/api/v1/auth/signup
+|link:access-token-reissued.html[액세스 토큰 재발급] |POST |/api/v1/auth/reissue
+|link:email-unique-validated.html[닉네임 중복 확인] |POST |/api/v1/auth/check/nickname
+|link:nickname-unique-validated.html[이메일 중복 확인] |POST |/api/v1/auth/check/email
+|link:logout-success.html[로그아웃] |POST |/api/v1/auth/logout

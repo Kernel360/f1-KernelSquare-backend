@@ -12,7 +12,6 @@ import java.util.Objects;
 
 @Getter
 @Document(collection = "alert")
-@NoArgsConstructor
 public class Alert {
     @Id
     private String id;

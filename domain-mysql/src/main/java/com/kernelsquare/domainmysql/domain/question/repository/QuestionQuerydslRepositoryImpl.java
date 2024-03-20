@@ -20,7 +20,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class QuestionQuerydslImpl implements QuestionQuerydsl {
+public class QuestionQuerydslRepositoryImpl implements QuestionQuerydslRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override

@@ -15,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class QuestionReaderImpl implements QuestionReader {
     private final QuestionRepository questionRepository;
-    private final QuestionQuerydsl questionQuerydsl;
+    private final QuestionQuerydslRepository questionQuerydslRepository;
 
     @Override
     public Question findQuestion(Long questionId) {
@@ -25,7 +25,7 @@ public class QuestionReaderImpl implements QuestionReader {
 
     @Override
     public Page<FindAllQuestions> findAllQuestions(Pageable pageable) {
-        return questionQuerydsl.findAllQuestions(pageable);
+        return questionQuerydslRepository.findAllQuestions(pageable);
     }
 
     @Override

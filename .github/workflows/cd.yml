@@ -102,12 +102,12 @@ jobs:
       - name: Build member-api with Gradle
         run : |
           cd member-api
-          ./gradlew clean build -x test
+          ./gradlew clean build
 
       - name: Build alert-api with Gradle
         run : |
           cd alert-api
-          ./gradlew clean build -x test
+          ./gradlew clean build
 
       - name: Login to DockerHub
         uses: docker/login-action@v1

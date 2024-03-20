@@ -3,6 +3,7 @@ plugins {
     id 'org.springframework.boot' version '3.2.0'
     id 'io.spring.dependency-management' version '1.1.4'
     id 'org.asciidoctor.jvm.convert' version '3.3.2'
+    id 'application'
 }
 
 group = 'com.kernelsquare'
@@ -16,6 +17,7 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+    asciidoctorExt
 }
 
 repositories {
@@ -56,25 +58,30 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
-}
-
-asciidoctor {
-    dependsOn test
-}
-
-bootJar {
-    dependsOn asciidoctor
-    from('$/html5') {
-        into 'static/docs'
-    }
+    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
 
-tasks.named('bootJar') {
-    enabled = true
+asciidoctor {
+    dependsOn test
+}
+
+task copyHTML(type: Copy) {
+    dependsOn tasks.findByName("asciidoctor")
+    from file("build/docs/asciidoc")
+    into file("src/main/resources/static/docs")
+}
+
+tasks.bootJar {
+    dependsOn tasks.asciidoctor
+    dependsOn tasks.getByName("copyHTML")
+}
+
+tasks.build {
+    dependsOn(tasks.asciidoctor, tasks.copyHTML)
 }
 
 tasks.named('jar') {

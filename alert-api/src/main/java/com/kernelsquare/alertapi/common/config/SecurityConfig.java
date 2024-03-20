@@ -30,6 +30,7 @@ public class SecurityConfig {
 	private final String[] permitAllPatterns = new String[] {
 		"/actuator",
 		"/actuator/**",
+		"/docs/**",
 	};
 
 	private final String[] hasAnyAuthorityPatterns = new String[] {

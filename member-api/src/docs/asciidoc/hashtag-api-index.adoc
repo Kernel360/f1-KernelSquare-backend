@@ -1,0 +1,24 @@
+ifndef::snippets[]
+:basedir: {docdir}/../../../
+:snippets: build/generated-snippets
+:sources-root: {basedir}/src
+:resources: {sources-root}/main/resources
+:resources-test: {sources-root}/test/resources
+:java: {sources-root}/main/java
+:java-test: {sources-root}/test/java
+endif::[]
+= Hashtag API 목록
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toc-title: 명세 목록
+:toclevels: 5
+:sectlinks:
+
+=== link:index.html[전체 API 명세 보기]
+
+|===
+|이름 |Http Method |API Endpoint
+|link:hashtag-all-found.html[모든 해시태그 목록 조회] |GET |/api/v1/hashtags
+|link:hashtag-deleted.html[해시태그 삭제] |DELETE |/api/v1/hashtags/{hashtagId}

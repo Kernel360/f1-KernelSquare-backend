@@ -1,0 +1,25 @@
+ifndef::snippets[]
+:basedir: {docdir}/../../../
+:snippets: build/generated-snippets
+:sources-root: {basedir}/src
+:resources: {sources-root}/main/resources
+:resources-test: {sources-root}/test/resources
+:java: {sources-root}/main/java
+:java-test: {sources-root}/test/java
+endif::[]
+= Alert API 목록
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toc-title: 명세 목록
+:toclevels: 5
+:sectlinks:
+
+=== link:index.html[전체 API 명세 보기]
+
+|===
+|이름 |Http Method |API Endpoint
+|link:alert-subscribe.html[SSE 연결] |GET |/api/v1/alerts/sse
+|link:alert-all-found.html[모든 개인 알림 조회] |GET |/api/v1/coding-meeting-comments/{codingMeetingToken}
+

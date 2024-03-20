@@ -1,10 +1,11 @@
 package com.kernelsquare.memberapi.domain.member.controller;
 
-import static com.kernelsquare.core.common_response.error.code.MemberErrorCode.*;
 import static com.kernelsquare.core.common_response.response.code.MemberResponseCode.*;
+import static com.kernelsquare.memberapi.config.ApiDocumentUtils.*;
 import static org.mockito.BDDMockito.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import org.junit.jupiter.api.DisplayName;
@@ -13,27 +14,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kernelsquare.core.common_response.error.exception.BusinessException;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.kernelsquare.domainmysql.domain.level.entity.Level;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
+import com.kernelsquare.memberapi.config.RestDocsControllerTest;
 import com.kernelsquare.memberapi.domain.member.dto.FindMemberResponse;
 import com.kernelsquare.memberapi.domain.member.dto.UpdateMemberIntroductionRequest;
 import com.kernelsquare.memberapi.domain.member.dto.UpdateMemberProfileRequest;
 import com.kernelsquare.memberapi.domain.member.service.MemberService;
 
-@DisplayName("회원 컨트롤러 단위 테스트")
+@DisplayName("회원 컨트롤러 테스트")
+@WithMockUser
 @WebMvcTest(MemberController.class)
-public class MemberControllerTest {
+class MemberControllerTest extends RestDocsControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 	@MockBean
 	private MemberService memberService;
 
-	private ObjectMapper objectMapper = new ObjectMapper();
+	private ObjectMapper objectMapper = new ObjectMapper().setPropertyNamingStrategy(
+		PropertyNamingStrategies.SNAKE_CASE);
 
 	private Level testLevel = Level.builder()
 		.id(1L)
@@ -43,6 +50,7 @@ public class MemberControllerTest {
 
 	private Member testMember = Member
 		.builder()
+		.id(1L)
 		.nickname("hongjugwang")
 		.email("jugwang@naver.com")
 		.password("hashedPassword")
@@ -55,7 +63,6 @@ public class MemberControllerTest {
 	private Long testMemberId = 1L;
 
 	@Test
-	@WithMockUser
 	@DisplayName("회원 프로필 수정 성공 시, 200 OK와 메시지를 반환한다")
 	void testUpdateMemberProfile() throws Exception {
 		//given
@@ -69,20 +76,31 @@ public class MemberControllerTest {
 
 		String jsonRequest = objectMapper.writeValueAsString(request);
 
-		//when & then
-		mockMvc.perform(put("/api/v1/members/" + testMemberId + "/profile")
+		//when
+		ResultActions resultActions = mockMvc.perform(
+			RestDocumentationRequestBuilders.put("/api/v1/members/" + testMemberId + "/profile")
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
-				.content(jsonRequest))
+				.content(jsonRequest));
+
+		//then
+		resultActions
 			.andExpect(status().is(MEMBER_PROFILE_UPDATED.getStatus().value()))
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.code").value(MEMBER_PROFILE_UPDATED.getCode()))
-			.andExpect(jsonPath("$.msg").value(MEMBER_PROFILE_UPDATED.getMsg()));
+			.andDo(document("member-profile-updated", getDocumentRequest(), getDocumentResponse()
+				, requestFields(
+					fieldWithPath("image_url").type(JsonFieldType.STRING).description("프로필 이미지 URL")
+				),
+				responseFields(
+					fieldWithPath("code").type(JsonFieldType.NUMBER).description("커스텀 응답 코드"),
+					fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지")
+				)));
 
 		//verify
 		verify(memberService, times(1)).updateMemberProfile(anyLong(), any(UpdateMemberProfileRequest.class));
+		verifyNoMoreInteractions(memberService);
 	}
 
 	@Test
@@ -90,128 +108,141 @@ public class MemberControllerTest {
 	@DisplayName("회원 소개 수정 성공 시, 200 OK와 메시지를 반환한다")
 	void testUpdateMemberIntroduction() throws Exception {
 		//given
-		String newIntroduction = "bye, i'm hongjugwang.";
+		String newIntroduction = "hi, i'm hongjugwang. nice to meet you.";
 
 		UpdateMemberIntroductionRequest request = new UpdateMemberIntroductionRequest(newIntroduction);
+
+		String jsonRequest = objectMapper.writeValueAsString(request);
 
 		doNothing()
 			.when(memberService)
 			.updateMemberIntroduction(anyLong(), any(UpdateMemberIntroductionRequest.class));
 
-		String jsonRequest = objectMapper.writeValueAsString(request);
-
-		//when & then
-		mockMvc.perform(put("/api/v1/members/" + testMemberId + "/introduction")
+		//when
+		ResultActions resultActions = mockMvc.perform(
+			RestDocumentationRequestBuilders.put("/api/v1/members/" + testMemberId + "/introduction")
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
-				.content(jsonRequest))
+				.content(jsonRequest));
+
+		//then
+		resultActions
 			.andExpect(status().is(MEMBER_INTRODUCTION_UPDATED.getStatus().value()))
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.code").value(MEMBER_INTRODUCTION_UPDATED.getCode()))
-			.andExpect(jsonPath("$.msg").value(MEMBER_INTRODUCTION_UPDATED.getMsg()));
+			.andDo(document("member-introduction-updated", getDocumentRequest(), getDocumentResponse()
+				, requestFields(
+					fieldWithPath("introduction").type(JsonFieldType.STRING).description("회원 소개")
+				),
+				responseFields(
+					fieldWithPath("code").type(JsonFieldType.NUMBER).description("커스텀 응답 코드"),
+					fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지")
+				)));
 
 		//verify
-		verify(memberService, times(1)).updateMemberIntroduction(anyLong(), any(UpdateMemberIntroductionRequest.class));
+		verify(memberService, times(1))
+			.updateMemberIntroduction(anyLong(), any(UpdateMemberIntroductionRequest.class));
+		verifyNoMoreInteractions(memberService);
 	}
 
 	@Test
-	@WithMockUser
 	@DisplayName("회원 비밀번호 수정 성공 시, 200 OK와 메시지를 반환한다")
 	void testUpdateMemberPassword() throws Exception {
 		//given
-		String newPassword = "new_hashed_password";
+		String newPassword = "newPassword";
+
+		String jsonRequest = "{\"password\": \"" + newPassword + "\"}";
 
 		doNothing()
 			.when(memberService)
 			.updateMemberPassword(anyLong(), anyString());
 
-		//when & then
-		mockMvc.perform(put("/api/v1/members/" + testMemberId + "/password")
+		//when
+		ResultActions resultActions = mockMvc.perform(
+			RestDocumentationRequestBuilders.put("/api/v1/members/" + testMemberId + "/password")
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
-				.content(newPassword))
+				.content(jsonRequest));
+
+		//then
+		resultActions
 			.andExpect(status().is(MEMBER_PASSWORD_UPDATED.getStatus().value()))
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.code").value(MEMBER_PASSWORD_UPDATED.getCode()))
-			.andExpect(jsonPath("$.msg").value(MEMBER_PASSWORD_UPDATED.getMsg()));
+			.andDo(document("member-password-updated", getDocumentRequest(), getDocumentResponse()
+				, requestFields(
+					fieldWithPath("password").type(JsonFieldType.STRING).description("회원 비밀번호")
+				),
+				responseFields(
+					fieldWithPath("code").type(JsonFieldType.NUMBER).description("커스텀 응답 코드"),
+					fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지")
+				)));
 
 		//verify
 		verify(memberService, times(1)).updateMemberPassword(anyLong(), anyString());
+		verifyNoMoreInteractions(memberService);
 	}
 
 	@Test
-	@WithMockUser
-	@DisplayName("존재하지 않는 회원 정보 조회 시, 404 Not Found와 이유를 반환한다.")
-	void testFindMemberDoNotExist() throws Exception {
-		//given
-		doThrow(new BusinessException(MEMBER_NOT_FOUND))
-			.when(memberService)
-			.findMember(anyLong());
-
-		//when & then
-		mockMvc.perform(get("/api/v1/members/" + testMemberId)
-				.with(csrf())
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8"))
-			.andExpect(status().is(MEMBER_NOT_FOUND.getStatus().value()))
-			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.code").value(MEMBER_NOT_FOUND.getCode()))
-			.andExpect(jsonPath("$.msg").value(MEMBER_NOT_FOUND.getMsg()));
-
-		//verify
-		verify(memberService, times(1)).findMember(anyLong());
-	}
-
-	@Test
-	@WithMockUser
-	@DisplayName("회원 정보 조회 시, 200 OK, 메시지, 회원정보를 반환한다.")
+	@DisplayName("회원 조회 성공 시, 200 OK와 회원 정보를 반환한다")
 	void testFindMember() throws Exception {
 		//given
-		doReturn(FindMemberResponse.from(testMember))
-			.when(memberService)
-			.findMember(anyLong());
+		given(memberService.findMember(anyLong())).willReturn(FindMemberResponse.from(testMember));
 
-		//when & then
-		mockMvc.perform(get("/api/v1/members/" + testMemberId)
-				.with(csrf())
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8"))
+		//when
+		ResultActions resultActions = mockMvc.perform(
+			RestDocumentationRequestBuilders.get("/api/v1/members/" + testMemberId)
+				.accept(MediaType.APPLICATION_JSON));
+
+		//then
+		resultActions
 			.andExpect(status().is(MEMBER_FOUND.getStatus().value()))
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.code").value(MEMBER_FOUND.getCode()))
-			.andExpect(jsonPath("$.msg").value(MEMBER_FOUND.getMsg()));
+			.andDo(document("member-found", getDocumentRequest(), getDocumentResponse()
+				, responseFields(
+					fieldWithPath("code").type(JsonFieldType.NUMBER).description("커스텀 응답 코드"),
+					fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"),
+					fieldWithPath("data.member_id").type(JsonFieldType.NUMBER).description("회원 ID"),
+					fieldWithPath("data.nickname").type(JsonFieldType.STRING).description("회원 닉네임"),
+					fieldWithPath("data.experience").type(JsonFieldType.NUMBER).description("회원 경험치"),
+					fieldWithPath("data.introduction").type(JsonFieldType.STRING).description("회원 소개"),
+					fieldWithPath("data.image_url").type(JsonFieldType.STRING).description("회원 프로필 이미지 URL"),
+					fieldWithPath("data.level").type(JsonFieldType.NUMBER).description("회원 레벨 ID")
+				)));
 
 		//verify
 		verify(memberService, times(1)).findMember(anyLong());
+		verifyNoMoreInteractions(memberService);
 	}
 
 	@Test
-	@WithMockUser
-	@DisplayName("회원 탈퇴 성공 시, 200 OK와 메시지를 반환한다.")
+	@DisplayName("회원 탈퇴 성공 시, 200 OK와 메시지를 반환한다")
 	void testDeleteMember() throws Exception {
 		//given
 		doNothing()
 			.when(memberService)
 			.deleteMember(anyLong());
 
-		//when & then
-		mockMvc.perform(delete("/api/v1/members/" + testMemberId)
+		//when
+		ResultActions resultActions = mockMvc.perform(
+			RestDocumentationRequestBuilders.delete("/api/v1/members/" + testMemberId)
 				.with(csrf())
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8"))
+				.accept(MediaType.APPLICATION_JSON));
+
+		//then
+		resultActions
 			.andExpect(status().is(MEMBER_DELETED.getStatus().value()))
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.code").value(MEMBER_DELETED.getCode()))
-			.andExpect(jsonPath("$.msg").value(MEMBER_DELETED.getMsg()));
+			.andDo(document("member-deleted", getDocumentRequest(), getDocumentResponse()
+				, responseFields(
+					fieldWithPath("code").type(JsonFieldType.NUMBER).description("커스텀 응답 코드"),
+					fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지")
+				)));
 
 		//verify
 		verify(memberService, times(1)).deleteMember(anyLong());
+		verifyNoMoreInteractions(memberService);
 	}
 }

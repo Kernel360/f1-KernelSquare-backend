@@ -122,8 +122,8 @@ jobs:
       - name: Deploy and Run
         uses: appleboy/ssh-action@master
         with:
+          username: ${{ secrets.DEV_SSH_USER }}
           host: ${{ secrets.DEV_IP }}
-          username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.DEV_SSH_KEY }}
           script: |
             sudo docker stop prod1-dev || true

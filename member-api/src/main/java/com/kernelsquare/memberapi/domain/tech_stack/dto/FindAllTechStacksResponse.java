@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.kernelsquare.domainmysql.domain.tech_stack.entity.TechStack;
 
-public record   FindAllTechStacksResponse(
+public record FindAllTechStacksResponse(
 	List<TechStack> skills
 ) {
 	public static FindAllTechStacksResponse from(List<TechStack> skills) {

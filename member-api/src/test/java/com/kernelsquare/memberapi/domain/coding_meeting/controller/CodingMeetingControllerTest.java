@@ -477,37 +477,38 @@ class CodingMeetingControllerTest extends RestDocsControllerTest {
 		String token02 = "cm_qeuofjwi40f";
 
 		CodingMeetingDto.FindSeoResponse response01 = CodingMeetingDto.FindSeoResponse.builder()
-				.codingMeetingToken(token01)
-				.build();
+			.codingMeetingToken(token01)
+			.build();
 
 		CodingMeetingDto.FindSeoResponse response02 = CodingMeetingDto.FindSeoResponse.builder()
-				.codingMeetingToken(token02)
-				.build();
+			.codingMeetingToken(token02)
+			.build();
 
 		CodingMeetingDto.FindAllSeoResponse response = CodingMeetingDto.FindAllSeoResponse.builder()
-				.codingMeetingTokenList(List.of(response01, response02))
-				.build();
+			.codingMeetingTokenList(List.of(response01, response02))
+			.build();
 
 		doReturn(response).when(codingMeetingFacade).findAllCodingMeetingSeoList();
 
 		ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/coding-meetings/seo")
-				.with(csrf())
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8")
+			.with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.accept(MediaType.APPLICATION_JSON)
+			.characterEncoding("UTF-8")
 		);
 
 		resultActions
-				.andExpect(status().is(CODING_MEETING_SEO_LIST_FOUND.getStatus().value()))
-				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-				.andDo(
-						document("coding-meeting-seo-list-found", getDocumentResponse(),
-								responseFields(
-										fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"),
-										fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 상태 코드"),
-										fieldWithPath("data.coding_meeting_token_list[].coding_meeting_token").type(JsonFieldType.STRING).description("모각코 토큰 리스트")
-								)
-						));
+			.andExpect(status().is(CODING_MEETING_SEO_LIST_FOUND.getStatus().value()))
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andDo(
+				document("coding-meeting-seo-list-found", getDocumentResponse(),
+					responseFields(
+						fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"),
+						fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 상태 코드"),
+						fieldWithPath("data.coding_meeting_token_list[].coding_meeting_token").type(JsonFieldType.STRING).description("모각코 토큰 리스트")
+					)
+				)
+			);
 
 		verify(codingMeetingFacade, times(1)).findAllCodingMeetingSeoList();
 	}

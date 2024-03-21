@@ -407,16 +407,17 @@ class QuestionControllerTest extends RestDocsControllerTest {
 		);
 
 		resultActions
-				.andExpect(status().is(QUESTION_SEO_LIST_FOUND.getStatus().value()))
-				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-				.andDo(
-						document("question-seo-list-found", getDocumentResponse(),
-								responseFields(
-										fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"),
-										fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 상태 코드"),
-										fieldWithPath("data.question_id_list[].question_id").type(JsonFieldType.NUMBER).description("질문 아이디")
-								)
-						));
+			.andExpect(status().is(QUESTION_SEO_LIST_FOUND.getStatus().value()))
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andDo(
+				document("question-seo-list-found", getDocumentResponse(),
+					responseFields(
+						fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"),
+						fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 상태 코드"),
+						fieldWithPath("data.question_id_list[].question_id").type(JsonFieldType.NUMBER).description("질문 아이디")
+					)
+				)
+			);
 
 		//verify
 		verify(questionService, times(1)).findAllQuestionsSeo();

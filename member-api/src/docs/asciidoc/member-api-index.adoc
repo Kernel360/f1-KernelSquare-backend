@@ -23,5 +23,6 @@ endif::[]
 |link:member-profile-updated.html[회원 프로필 사진 수정] |PUT |/api/v1/members/{memberId}/profile
 |link:member-introduction-updated.html[회원 소개 수정] |PUT |/api/v1/members/{memberId}/introduction
 |link:member-password-updated.html[회원 비밀번호 수정] |PUT |/api/v1/members/{memberId}/password
+|link:member-nickname-updated.html[회원 닉네임 수정] |PUT |/api/v1/members/nickname
 |link:member-found.html[회원 조회] |GET |/api/v1/members/{memberId}
 |link:member-deleted.html[회원 탈퇴] |DELETE |/api/v1/members/{memberId}

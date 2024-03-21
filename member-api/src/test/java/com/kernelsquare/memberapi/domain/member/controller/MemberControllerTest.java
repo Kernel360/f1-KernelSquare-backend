@@ -269,7 +269,7 @@ class MemberControllerTest extends RestDocsControllerTest {
 		given(memberService.updateMemberNickname(any(UpdateMemberNicknameRequest.class) ,anyLong())).willReturn(FindMemberResponse.from(testMember));
 		//when
 		ResultActions resultActions = mockMvc.perform(
-				RestDocumentationRequestBuilders.put("/api/v1/members/nick")
+				RestDocumentationRequestBuilders.put("/api/v1/members/nickname")
 						.with(csrf())
 						.with(user(memberAdapter))
 						.contentType(MediaType.APPLICATION_JSON)

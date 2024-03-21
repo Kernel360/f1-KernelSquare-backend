@@ -16,7 +16,6 @@ endif::[]
 :toclevels: 5
 :sectlinks:
 
-* link:alert-api-index.html[Alert API 목록]
 * link:answer-api-index.html[Answer API 목록]
 * link:auth-api-index.html[Auth API 목록]
 * link:coding-meeting-api-index.html[CodingMeeting API 목록]

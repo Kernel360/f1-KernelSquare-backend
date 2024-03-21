@@ -37,6 +37,11 @@ public class CodingMeetingFacade {
         return PageResponse.of(pageable, allCodingMeetingInfo, findAllResponses);
     }
 
+    public CodingMeetingDto.FindAllSeoResponse findAllCodingMeetingSeoList() {
+        List<CodingMeetingInfo.TokenInfo> allCodingMeetingSeoInfo = codingMeetingService.findAllCodingMeetingSeoList();
+        return CodingMeetingDto.FindAllSeoResponse.builder().codingMeetingTokenList(codingMeetingDtoMapper.toFindAllSeoResponse(allCodingMeetingSeoInfo)).build();
+    }
+
     private Long getMemberId(MemberAdapter memberAdapter) {
         if (Objects.isNull(memberAdapter)) {
             return null;

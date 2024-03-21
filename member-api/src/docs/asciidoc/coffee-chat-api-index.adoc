@@ -1,0 +1,27 @@
+ifndef::snippets[]
+:basedir: {docdir}/../../../
+:snippets: build/generated-snippets
+:sources-root: {basedir}/src
+:resources: {sources-root}/main/resources
+:resources-test: {sources-root}/test/resources
+:java: {sources-root}/main/java
+:java-test: {sources-root}/test/java
+endif::[]
+= Coffee Chat API 목록
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toc-title: 명세 목록
+:toclevels: 5
+:sectlinks:
+
+=== link:index.html[전체 API 명세 보기]
+
+|===
+|이름 |Http Method |API Endpoint
+|link:coffee-chat-room-created.html[커피챗 채팅방 생성] |POST |/api/v1/coffechat/rooms
+|link:room-entry-success.html[커피챗 채팅방 입장] |POST |/api/v1/coffechat/rooms/enter
+|link:coffee-chat-room-leave.html[커피챗 채팅방 퇴장] |POST |/api/v1/coffechat/rooms/{roomId}
+|link:chat-history-found.html[커피챗 채팅방 메시지 목록 조회] |GET |/api/v1/coffechat/rooms/{roomId}
+|link:coffee-chat-request-finished.html[커피챗 요청 완료] |POST |/api/v1/coffechat/requests/{memberId}/

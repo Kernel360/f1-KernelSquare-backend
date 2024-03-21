@@ -1,7 +1,10 @@
 package com.kernelsquare.memberapi.domain.tech_stack.controller;
 
 import static com.kernelsquare.core.common_response.response.code.TechStackResponseCode.*;
+import static com.kernelsquare.memberapi.config.ApiDocumentUtils.*;
 import static org.mockito.BDDMockito.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -18,10 +21,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kernelsquare.memberapi.config.RestDocsControllerTest;
 import com.kernelsquare.memberapi.domain.tech_stack.dto.FindAllTechStacksResponse;
 import com.kernelsquare.memberapi.domain.tech_stack.service.TechStackService;
 import com.kernelsquare.domainmysql.domain.tech_stack.entity.TechStack;
@@ -29,7 +36,7 @@ import com.kernelsquare.domainmysql.domain.tech_stack.entity.TechStack;
 @DisplayName("기술 스택 컨트롤러 단위 테스트")
 @WithMockUser
 @WebMvcTest(TechStackController.class)
-class TechStackControllerTest {
+class TechStackControllerTest extends RestDocsControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 	@MockBean
@@ -63,19 +70,28 @@ class TechStackControllerTest {
 
 		given(techStackService.findAllTechStacks(any(Pageable.class))).willReturn(response);
 
-		//when & then
-		mockMvc.perform(get("/api/v1/techs")
-				.with(csrf())
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8"))
+		//when
+		ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/techs")
+			.with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.accept(MediaType.APPLICATION_JSON)
+			.characterEncoding("UTF-8"));
+
+		//then
+		resultActions
 			.andExpect(status().is(TECH_STACK_ALL_FOUND.getStatus().value()))
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.code").value(TECH_STACK_ALL_FOUND.getCode()))
-			.andExpect(jsonPath("$.msg").value(TECH_STACK_ALL_FOUND.getMsg()))
-			.andExpect(jsonPath("$.data.pagination.total_page").value(1))
-			.andExpect(jsonPath("$.data.pagination.pageable").value(pageable.getPageSize()))
-			.andExpect(jsonPath("$.data.pagination.is_end").value(true));
+			.andDo(document("tech-stack-all-found", getDocumentRequest(), getDocumentResponse(),
+				responseFields(
+					fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
+					fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"),
+					fieldWithPath("data.pagination.total_page").type(JsonFieldType.NUMBER)
+						.description("검색된 기술 스택의 총 페이지 수"),
+					fieldWithPath("data.pagination.pageable").type(JsonFieldType.NUMBER)
+						.description("한 페이지에 보여질 기술 스택의 개수"),
+					fieldWithPath("data.pagination.is_end").type(JsonFieldType.BOOLEAN).description("마지막 페이지 여부"),
+					fieldWithPath("data.list").type(JsonFieldType.ARRAY).description("기술 스택 목록")
+				)));
 
 		//verify
 		verify(techStackService, times(1)).findAllTechStacks(any(Pageable.class));

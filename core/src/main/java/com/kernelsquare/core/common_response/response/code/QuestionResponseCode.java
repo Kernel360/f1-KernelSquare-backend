@@ -13,7 +13,8 @@ public enum QuestionResponseCode implements ResponseCode {
 	QUESTION_FOUND(HttpStatus.OK, QuestionServiceStatus.QUESTION_FOUND, "질문 조회 성공"),
 	QUESTION_ALL_FOUND(HttpStatus.OK, QuestionServiceStatus.QUESTION_ALL_FOUND, "모든 질문 조회 성공"),
 	QUESTION_UPDATED(HttpStatus.OK, QuestionServiceStatus.QUESTION_UPDATED, "질문 수정 성공"),
-	QUESTION_DELETED(HttpStatus.OK, QuestionServiceStatus.QUESTION_DELETED, "질문 삭제 성공");
+	QUESTION_DELETED(HttpStatus.OK, QuestionServiceStatus.QUESTION_DELETED, "질문 삭제 성공"),
+	QUESTION_SEO_LIST_FOUND(HttpStatus.OK, QuestionServiceStatus.QUESTION_SEO_LIST_FOUND, "질문 SEO 리스트 조회 성공");
 
 	private final HttpStatus httpStatus;
 	private final ServiceStatus serviceStatus;

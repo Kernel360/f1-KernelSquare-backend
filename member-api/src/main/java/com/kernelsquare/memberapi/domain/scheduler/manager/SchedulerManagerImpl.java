@@ -72,7 +72,7 @@ public class SchedulerManagerImpl implements ScheculerManager {
                     Rank rank = rankReader.findRank(rankName);
                     answer.updateRank(rank);
 
-                    alertService.storeAndSendAlert(alertDtoMapper.of(AlertDto.RankAnswerAlert.of(question, answer, rank)));
+                    alertService.sendToBroker(alertDtoMapper.from(AlertDto.RankAnswerAlert.of(question, answer, rank)));
 
                     rankName += 1L;
                 }

@@ -11,13 +11,6 @@ spring:
   flyway:
     enabled: false
 
-  security:
-    jwt:
-      header: Authorization
-      secret: ${JWT_SECRET_KEY}
-      access-token-validity-in-seconds: 3600     # 1시간
-      refresh-token-validity-in-seconds: 1_209_600  # 2주
-
   jpa:
     hibernate:
       ddl-auto: create
@@ -35,14 +28,6 @@ spring:
   sql:
     init:
       mode: never
-
-  jackson:
-    property-naming-strategy: SNAKE_CASE
-
-  data:
-    redis:
-      host: localhost
-      port: 6380
 
 logging.level:
   org.hibernate.SQL: debug

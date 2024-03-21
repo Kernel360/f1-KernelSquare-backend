@@ -15,7 +15,6 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
@@ -34,13 +33,13 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.kernelsquare.core.dto.PageResponse;
 import com.kernelsquare.domainmysql.domain.notice.entity.Notice;
 import com.kernelsquare.domainmysql.domain.notice.info.NoticeInfo;
+import com.kernelsquare.memberapi.config.RestDocsControllerTest;
 import com.kernelsquare.memberapi.domain.notice.dto.NoticeDto;
 import com.kernelsquare.memberapi.domain.notice.service.NoticeFacade;
 
 @DisplayName("공지 컨트롤러 테스트")
 @WebMvcTest(NoticeController.class)
-@AutoConfigureRestDocs(uriScheme = "https", uriHost = "docs.api.com")
-public class NoticeControllerTest {
+class NoticeControllerTest extends RestDocsControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 	@MockBean
@@ -67,11 +66,12 @@ public class NoticeControllerTest {
 		doReturn(response).when(noticeFacade).findNotice(anyString());
 
 		//when
-		ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/notices/" + requestToken)
-			.with(csrf())
-			.contentType(MediaType.APPLICATION_JSON)
-			.accept(MediaType.APPLICATION_JSON)
-			.characterEncoding("UTF-8"));
+		ResultActions resultActions = mockMvc.perform(
+			RestDocumentationRequestBuilders.get("/api/v1/notices/" + requestToken)
+				.with(csrf())
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8"));
 		//then
 		resultActions.andExpect(status().is(NOTICE_FOUND.getStatus().value()))
 			.andDo(document("notice-found", getDocumentResponse(),

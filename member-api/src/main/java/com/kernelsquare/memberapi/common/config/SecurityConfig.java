@@ -54,6 +54,7 @@ public class SecurityConfig {
 		"/ws/**",
 		"/topic/test/room",
 		"/app/test/message",
+		"/docs/**"
 	};
 
 	private final String[] hasAnyAuthorityPatterns = new String[] {
@@ -125,6 +126,7 @@ public class SecurityConfig {
 			.requestMatchers(HttpMethod.PUT, "/api/v1/members/{memberId}/profile").hasRole("USER")
 			.requestMatchers(HttpMethod.PUT, "/api/v1/members/{memberId}/password").hasRole("USER")
 			.requestMatchers(HttpMethod.PUT, "/api/v1/members/{memberId}/introduction").hasRole("USER")
+			.requestMatchers(HttpMethod.PUT, "/api/v1/members/nickname").hasRole("USER")
 			.requestMatchers(HttpMethod.POST, "/api/v1/questions/**").hasRole("USER")
 			.requestMatchers(HttpMethod.PUT, "/api/v1/questions/{questionId}").hasRole("USER")
 			.requestMatchers(HttpMethod.DELETE, "/api/v1/questions/{questionId}").hasRole("USER")
@@ -173,3 +175,5 @@ public class SecurityConfig {
 		return http.build();
 	}
 }
+
+

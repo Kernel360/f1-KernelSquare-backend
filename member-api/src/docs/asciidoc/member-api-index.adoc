@@ -1,0 +1,28 @@
+ifndef::snippets[]
+:basedir: {docdir}/../../../
+:snippets: build/generated-snippets
+:sources-root: {basedir}/src
+:resources: {sources-root}/main/resources
+:resources-test: {sources-root}/test/resources
+:java: {sources-root}/main/java
+:java-test: {sources-root}/test/java
+endif::[]
+= Member API 목록
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toc-title: 명세 목록
+:toclevels: 5
+:sectlinks:
+
+=== link:index.html[전체 API 명세 보기]
+
+|===
+|이름 |Http Method |API Endpoint
+|link:member-profile-updated.html[회원 프로필 사진 수정] |PUT |/api/v1/members/{memberId}/profile
+|link:member-introduction-updated.html[회원 소개 수정] |PUT |/api/v1/members/{memberId}/introduction
+|link:member-password-updated.html[회원 비밀번호 수정] |PUT |/api/v1/members/{memberId}/password
+|link:member-nickname-updated.html[회원 닉네임 수정] |PUT |/api/v1/members/nickname
+|link:member-found.html[회원 조회] |GET |/api/v1/members/{memberId}
+|link:member-deleted.html[회원 탈퇴] |DELETE |/api/v1/members/{memberId}

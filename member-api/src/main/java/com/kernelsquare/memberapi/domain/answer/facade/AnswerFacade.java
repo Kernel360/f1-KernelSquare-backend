@@ -20,6 +20,6 @@ public class AnswerFacade {
 
     public void createAnswer(AnswerDto.CreateRequest request, Long questionId, MemberAdapter memberAdapter) {
         AnswerInfo answerInfo = answerService.createAnswer(answerDtoMapper.toCommand(request, questionId, memberAdapter));
-        alertService.storeAndSendAlert(alertDtoMapper.from(answerInfo));
+        alertService.sendToBroker(alertDtoMapper.from(answerInfo));
     }
 }

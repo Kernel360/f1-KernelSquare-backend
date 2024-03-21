@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Objects;
 
 @Component
@@ -31,6 +32,11 @@ public class CodingMeetingReaderImpl implements CodingMeetingReader{
             case "owned" -> codingMeetingRepository.findAllByMemberId(pageable, isMemberIdNotNull(memberId));
             default -> throw new BusinessException(CodingMeetingErrorCode.FILTER_PARAMETER_NOT_VALID);
         };
+    }
+
+    @Override
+    public List<CodingMeeting> findAllCodingMeetingList() {
+        return codingMeetingRepository.findAll();
     }
 
     private Long isMemberIdNotNull(Long memberId) {

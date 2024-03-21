@@ -19,6 +19,6 @@ public class CoffeeChatFacade {
 
     public void sendCoffeeChatRequest(MemberAdapter memberAdapter, Long memberId) {
         CoffeeChatInfo coffeeChatInfo = coffeeChatService.coffeeChatRequest(coffeeChatDtoMapper.toCommand(memberAdapter, memberId));
-        alertService.storeAndSendAlert(alertDtoMapper.from(coffeeChatInfo));
+        alertService.sendToBroker(alertDtoMapper.from(coffeeChatInfo));
     }
 }

@@ -11,12 +11,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      redis:
-        image: redis:latest
-        ports:
-          - 6379:6379
-
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -49,13 +43,6 @@ jobs:
         env:
           spring.data.mongodb.uri: ${{ secrets.MONGO_TEST_URI }}
 
-      - name: Set up domain-mysql test application.yml
-        uses: microsoft/variable-substitution@v1
-        with:
-          files: ./domain-mysql/src/test/resources/application.yml
-        env:
-          spring.security.jwt.secret: ${{ secrets.JWT_SECRET_KEY }}
-
       - name: Set up member-api test application.yml
         uses: microsoft/variable-substitution@v1
         with:
@@ -74,14 +61,6 @@ jobs:
 
       - name: Run chmod to make gradlew executable
         run: chmod +x ./gradlew
-
-      - name: Docker Compose For Test
-        run: |
-          touch docker-compose.yml
-          echo "${{ secrets.CI_DOCKER_COMPOSE }}" > docker-compose.yml
-          echo docker-compose.yml
-          docker-compose up -d
-          docker ps
 
       - name: Test with Gradle
         run: ./gradlew test

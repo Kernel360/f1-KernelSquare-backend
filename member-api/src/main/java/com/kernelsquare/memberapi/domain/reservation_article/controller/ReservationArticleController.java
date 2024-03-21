@@ -32,7 +32,6 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class ReservationArticleController {
-
 	private final ReservationArticleService reservationArticleService;
 
 	@PostMapping("/coffeechat/posts")

@@ -9,7 +9,6 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.time.LocalDateTime;
@@ -19,10 +18,8 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -39,6 +36,7 @@ import com.kernelsquare.domainmysql.domain.level.entity.Level;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
 import com.kernelsquare.domainmysql.domain.member_answer_vote.entity.MemberAnswerVote;
 import com.kernelsquare.domainmysql.domain.question.entity.Question;
+import com.kernelsquare.memberapi.config.RestDocsControllerTest;
 import com.kernelsquare.memberapi.domain.answer.dto.AnswerDto;
 import com.kernelsquare.memberapi.domain.answer.dto.FindAllAnswerResponse;
 import com.kernelsquare.memberapi.domain.answer.dto.FindAnswerResponse;
@@ -49,20 +47,10 @@ import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
 import com.kernelsquare.memberapi.domain.auth.dto.MemberAdaptorInstance;
 import com.kernelsquare.memberapi.domain.chatgpt.service.ChatGptService;
 
-@DisplayName("답변 컨트롤러 단위 테스트")
+@DisplayName("답변 컨트롤러 테스트")
 @WebMvcTest(AnswerController.class)
-@Import(AnswerController.class)
-@AutoConfigureRestDocs(uriScheme = "https", uriHost = "docs.api.com")
-public class AnswerControllerTest {
+class AnswerControllerTest extends RestDocsControllerTest {
 	private final Long testQuestionId = 1L;
-	private final Question testQuestion = Question
-		.builder()
-		.id(testQuestionId)
-		.title("Test Question")
-		.content("Test Content")
-		.imageUrl("S3:TestImage")
-		.closedStatus(false)
-		.build();
 	private final Member testMember = Member
 		.builder()
 		.id(1L)
@@ -77,6 +65,14 @@ public class AnswerControllerTest {
 			.levelUpperLimit(500L)
 			.build())
 		.imageUrl("s3:qwe12fasdawczx")
+		.build();
+	private final Question testQuestion = Question
+		.builder()
+		.id(testQuestionId)
+		.title("Test Question")
+		.content("Test Content")
+		.imageUrl("S3:TestImage")
+		.closedStatus(false)
 		.build();
 	private final Answer testAnswer = Answer
 		.builder()
@@ -109,7 +105,6 @@ public class AnswerControllerTest {
 		testAnswer.getVoteCount(),
 		Long.valueOf(testMemberAnswerVote.getStatus())
 	);
-
 	private final UpdateAnswerRequest updateAnswerRequest = new UpdateAnswerRequest(
 		"Test Updated Content",
 		"Test Updated Image Url"
@@ -129,7 +124,7 @@ public class AnswerControllerTest {
 
 	@Test
 	@WithMockUser
-	@DisplayName("답변 조회 성공시, 200 OK, 메시지, 답변정보를 반환한다.")
+	@DisplayName("모든 답변 조회 성공시, 200 OK, 메시지, 답변정보를 반환한다.")
 	void testFindAllAnswers() throws Exception {
 		//given
 		answerResponseList.add(findAnswerResponse);
@@ -157,7 +152,7 @@ public class AnswerControllerTest {
 					parameterWithName("questionId").description("아이디")
 				),
 				responseFields(
-					fieldWithPath("data").description("응답"),
+					fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답"),
 					fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"),
 					fieldWithPath("code").type(JsonFieldType.NUMBER).description("커스텀 응답 코드"),
 					fieldWithPath("data.answer_responses").type(JsonFieldType.ARRAY).description("답변 리스트"),
@@ -194,7 +189,7 @@ public class AnswerControllerTest {
 
 	@Test
 	@WithMockUser
-	@DisplayName("답변 생성 성공시, 200 OK, 메시지를 반환한다.")
+	@DisplayName("답변 생성 성공 시, 200 OK와 메시지를 반환한다.")
 	void testCreateAnswer() throws Exception {
 		//given
 		AnswerDto.CreateRequest request = AnswerDto.CreateRequest.builder()
@@ -233,7 +228,7 @@ public class AnswerControllerTest {
 
 	@Test
 	@WithMockUser
-	@DisplayName("답변 수정 성공시, 200 OK, 메시지, 답변정보를 반환한다.")
+	@DisplayName("답변 수정 성공 시, 200 OK, 메시지, 답변정보를 반환한다.")
 	void testUpdateAnswer() throws Exception {
 		//given
 		MemberAdapter memberAdapter = new MemberAdapter(MemberAdaptorInstance.of(testMember));
@@ -245,26 +240,34 @@ public class AnswerControllerTest {
 			.when(answerService)
 			.updateAnswer(any(UpdateAnswerRequest.class), anyLong(), any(MemberAdapter.class));
 
-		//when & then
-		mockMvc.perform(put("/api/v1/questions/answers/" + testQuestionId)
+		//when
+		ResultActions resultActions = mockMvc.perform(
+			RestDocumentationRequestBuilders.put("/api/v1/questions/answers/" + testQuestionId)
 				.with(csrf())
 				.with(user(memberAdapter))
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
-				.content(jsonRequest))
+				.content(jsonRequest));
+
+		//then
+		resultActions
 			.andExpect(status().is(ANSWER_UPDATED.getStatus().value()))
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.code").value(ANSWER_UPDATED.getCode()))
-			.andExpect(jsonPath("$.msg").value(ANSWER_UPDATED.getMsg()));
+			.andDo(document("answer-updated", getDocumentRequest(), getDocumentResponse(),
+				requestFields(fieldWithPath("content").type(JsonFieldType.STRING).description("답변 내용"),
+					fieldWithPath("image_url").type(JsonFieldType.STRING).description("답변 이미지")),
+				responseFields(fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 상태 코드"),
+					fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"))));
 
 		//verify
-		verify(answerService, times(1)).updateAnswer(any(UpdateAnswerRequest.class), anyLong(), any(MemberAdapter.class));
+		verify(answerService, times(1)).updateAnswer(any(UpdateAnswerRequest.class), anyLong(),
+			any(MemberAdapter.class));
 	}
 
 	@Test
 	@WithMockUser
-	@DisplayName("답변 삭제 성공시, 200 OK, 메시지, 답변정보를 반환한다.")
+	@DisplayName("답변 삭제 성공 시, 200 OK, 메시지, 답변정보를 반환한다.")
 	void testDeleteAnswer() throws Exception {
 		//given
 		MemberAdapter memberAdapter = new MemberAdapter(MemberAdaptorInstance.of(testMember));
@@ -274,7 +277,7 @@ public class AnswerControllerTest {
 			.deleteAnswer(anyLong(), any(MemberAdapter.class));
 
 		//when & then
-		mockMvc.perform(delete("/api/v1/questions/answers/" + testQuestionId)
+		mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v1/questions/answers/" + testQuestionId)
 				.with(csrf())
 				.with(user(memberAdapter))
 				.contentType(MediaType.APPLICATION_JSON)
@@ -282,8 +285,9 @@ public class AnswerControllerTest {
 				.characterEncoding("UTF-8"))
 			.andExpect(status().is(ANSWER_DELETED.getStatus().value()))
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.code").value(ANSWER_DELETED.getCode()))
-			.andExpect(jsonPath("$.msg").value(ANSWER_DELETED.getMsg()));
+			.andDo(document("answer-deleted", getDocumentResponse(),
+				responseFields(fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 상태 코드"),
+					fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"))));
 
 		//verify
 		verify(answerService, times(1)).deleteAnswer(anyLong(), any(MemberAdapter.class));

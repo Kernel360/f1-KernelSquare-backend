@@ -1,0 +1,27 @@
+ifndef::snippets[]
+:basedir: {docdir}/../../../
+:snippets: build/generated-snippets
+:sources-root: {basedir}/src
+:resources: {sources-root}/main/resources
+:resources-test: {sources-root}/test/resources
+:java: {sources-root}/main/java
+:java-test: {sources-root}/test/java
+endif::[]
+= Reservation Article API 목록
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toc-title: 명세 목록
+:toclevels: 5
+:sectlinks:
+
+=== link:index.html[전체 API 명세 보기]
+
+|===
+|이름 |Http Method |API Endpoint
+|link:reservation-article-all-found.html[커피챗 예약글 전체 조회] |GET |/api/v1/coffeechat/posts
+|link:reservation-article-found.html[커피챗 예약글 조회] |GET |/api/v1/coffeechat/posts/{postId}
+|link:reservation-article-created.html[커피챗 예약글 생성] |POST |/api/v1/coffeechat/posts
+|link:reservation-article-updated.html[커피챗 예약글 수정] |PUT |/api/v1/coffeechat/posts/{postId}
+|link:reservation-article-deleted.html[커피챗 예약글 삭제] |DELETE |/api/v1/coffeechat/posts/{postId}

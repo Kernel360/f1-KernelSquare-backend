@@ -15,6 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CodingMeetingServiceImpl implements CodingMeetingService{
@@ -72,5 +74,14 @@ public class CodingMeetingServiceImpl implements CodingMeetingService{
     public Page<CodingMeetingInfo.ListInfo> findAllCodingMeeting(Pageable pageable, String filterParameter, Long memberId) {
         Page<CodingMeeting> codingMeetingPage = codingMeetingReader.findAllCodingMeeting(pageable, filterParameter, memberId);
         return codingMeetingPage.map(CodingMeetingInfo.ListInfo::of);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CodingMeetingInfo.TokenInfo> findAllCodingMeetingSeoList() {
+        List<CodingMeeting> codingMeetingList = codingMeetingReader.findAllCodingMeetingList();
+        return codingMeetingList.stream()
+                .map(CodingMeetingInfo.TokenInfo::of)
+                .toList();
     }
 }

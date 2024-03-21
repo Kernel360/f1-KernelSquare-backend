@@ -1,9 +1,11 @@
 package com.kernelsquare.memberapi.domain.auth.controller;
 
 import static com.kernelsquare.core.common_response.response.code.AuthResponseCode.*;
+import static com.kernelsquare.memberapi.config.ApiDocumentUtils.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.List;
@@ -14,15 +16,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.kernelsquare.core.type.AuthorityType;
 import com.kernelsquare.domainmysql.domain.authority.entity.Authority;
 import com.kernelsquare.domainmysql.domain.level.entity.Level;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
 import com.kernelsquare.domainmysql.domain.member_authority.entity.MemberAuthority;
+import com.kernelsquare.memberapi.config.RestDocsControllerTest;
 import com.kernelsquare.memberapi.domain.auth.dto.CheckDuplicateEmailRequest;
 import com.kernelsquare.memberapi.domain.auth.dto.CheckDuplicateNicknameRequest;
 import com.kernelsquare.memberapi.domain.auth.dto.LoginRequest;
@@ -35,7 +42,7 @@ import com.kernelsquare.memberapi.domain.auth.service.TokenProvider;
 
 @DisplayName("인증 컨트롤러 테스트")
 @WebMvcTest(AuthController.class)
-public class AuthControllerTest {
+class AuthControllerTest extends RestDocsControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 
@@ -45,7 +52,8 @@ public class AuthControllerTest {
 	@MockBean
 	private TokenProvider tokenProvider;
 
-	private ObjectMapper objectMapper = new ObjectMapper();
+	private ObjectMapper objectMapper = new ObjectMapper().setPropertyNamingStrategy(
+		PropertyNamingStrategies.SnakeCaseStrategy.INSTANCE);
 
 	@Test
 	@WithMockUser(roles = "{}")
@@ -104,18 +112,46 @@ public class AuthControllerTest {
 
 		String jsonRequest = objectMapper.writeValueAsString(loginRequest);
 
-		//when & then
-		mockMvc.perform(post("/api/v1/auth/login")
-				.with(csrf())
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8")
-				.content(jsonRequest))
+		//when
+		ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/auth/login")
+			.with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.accept(MediaType.APPLICATION_JSON)
+			.characterEncoding("UTF-8")
+			.content(jsonRequest));
+
+		//then
+		resultActions
 			.andExpect(status().is(LOGIN_SUCCESS.getStatus().value()))
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.code").value(LOGIN_SUCCESS.getCode()))
-			.andExpect(jsonPath("$.msg").value(LOGIN_SUCCESS.getMsg()));
-
+			.andDo(document("login-success",
+				getDocumentRequest(),
+				getDocumentResponse(),
+				requestFields(
+					fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
+					fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호")
+				),
+				responseFields(
+					fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
+					fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"),
+					fieldWithPath("code").type(JsonFieldType.NUMBER).description("커스텀 응답 코드"),
+					fieldWithPath("data.member_id").type(JsonFieldType.NUMBER).description("회원 아이디"),
+					fieldWithPath("data.nickname").type(JsonFieldType.STRING).description("회원 닉네임"),
+					fieldWithPath("data.experience").type(JsonFieldType.NUMBER)
+						.description("경험치"),
+					fieldWithPath("data.introduction").type(JsonFieldType.STRING)
+						.description("소개글"),
+					fieldWithPath("data.image_url").type(JsonFieldType.STRING)
+						.description("이미지 주소"),
+					fieldWithPath("data.level").type(JsonFieldType.NUMBER).description("레벨"),
+					fieldWithPath("data.roles").type(JsonFieldType.ARRAY)
+						.description("권한"),
+					fieldWithPath("data.token_dto").type(JsonFieldType.OBJECT)
+						.description("토큰 응답"),
+					fieldWithPath("data.token_dto.access_token").type(JsonFieldType.STRING).description(
+						"액세스 토큰"),
+					fieldWithPath("data.token_dto.refresh_token").type(JsonFieldType.STRING)
+						.description("리프레시 토큰"))));
 		//verify
 		verify(authService, times(1)).login(any(LoginRequest.class));
 		verify(authService, only()).login(any(LoginRequest.class));
@@ -155,17 +191,29 @@ public class AuthControllerTest {
 			.when(authService)
 			.signUp(any(SignUpRequest.class));
 
-		//when & then
-		mockMvc.perform(post("/api/v1/auth/signup")
-				.with(csrf())
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8")
-				.content(jsonRequest))
+		//when
+		ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/auth/signup")
+			.with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.accept(MediaType.APPLICATION_JSON)
+			.characterEncoding("UTF-8")
+			.content(jsonRequest));
+
+		//then
+		resultActions
 			.andExpect(status().is(SIGN_UP_SUCCESS.getStatus().value()))
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.code").value(SIGN_UP_SUCCESS.getCode()))
-			.andExpect(jsonPath("$.msg").value(SIGN_UP_SUCCESS.getMsg()));
+			.andDo(document("sign-up-success", getDocumentRequest(), getDocumentResponse()
+				, requestFields(fieldWithPath("nickname").type(JsonFieldType.STRING).description("닉네임"),
+					fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
+					fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호"))
+				, responseFields(
+					fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
+					fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"),
+					fieldWithPath("code").type(JsonFieldType.NUMBER).description("커스텀 응답 코드"),
+					fieldWithPath("data.member_id").type(JsonFieldType.NUMBER).description("회원 아이디")
+				)
+			));
 
 		//verify
 		verify(authService, times(1)).signUp(any(SignUpRequest.class));
@@ -194,17 +242,27 @@ public class AuthControllerTest {
 			.when(tokenProvider)
 			.reissueToken(any(TokenRequest.class));
 
-		//when & then
-		mockMvc.perform(post("/api/v1/auth/reissue")
-				.with(csrf())
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8")
-				.content(jsonRequest))
+		//when
+		ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/auth/reissue")
+			.with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.accept(MediaType.APPLICATION_JSON)
+			.characterEncoding("UTF-8")
+			.content(jsonRequest));
+
+		//then
+		resultActions
 			.andExpect(status().is(ACCESS_TOKEN_REISSUED.getStatus().value()))
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.code").value(ACCESS_TOKEN_REISSUED.getCode()))
-			.andExpect(jsonPath("$.msg").value(ACCESS_TOKEN_REISSUED.getMsg()));
+			.andDo(document("access-token-reissued", getDocumentRequest(), getDocumentResponse(),
+				requestFields(fieldWithPath("access_token").type(JsonFieldType.STRING).description("액세스 토큰"),
+					fieldWithPath("refresh_token").type(JsonFieldType.STRING).description("리프레시 토큰")),
+				responseFields(
+					fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
+					fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"),
+					fieldWithPath("code").type(JsonFieldType.NUMBER).description("커스텀 응답 코드"),
+					fieldWithPath("data.access_token").type(JsonFieldType.STRING).description("액세스 토큰"),
+					fieldWithPath("data.refresh_token").type(JsonFieldType.STRING).description("리프레시 토큰"))));
 
 		//verify
 		verify(tokenProvider, times(1)).reissueToken(any(TokenRequest.class));
@@ -212,7 +270,7 @@ public class AuthControllerTest {
 
 	@Test
 	@WithMockUser(roles = "{}")
-	@DisplayName("이메일 중복이 아니면, 200 OK와 정상 응답을 보낸다.")
+	@DisplayName("이메일 중복이 아닐 경우, 200 OK와 정상 응답을 보낸다.")
 	void testIsEmailUnique() throws Exception {
 		//given
 		CheckDuplicateEmailRequest checkDuplicateEmailRequest
@@ -227,17 +285,22 @@ public class AuthControllerTest {
 			.when(authService)
 			.isEmailUnique(anyString());
 
-		//when & then
-		mockMvc.perform(post("/api/v1/auth/check/email")
-				.with(csrf())
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8")
-				.content(jsonRequest))
+		//when
+		ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/auth/check/email")
+			.with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.accept(MediaType.APPLICATION_JSON)
+			.characterEncoding("UTF-8")
+			.content(jsonRequest));
+
+		//then
+		resultActions
 			.andExpect(status().is(EMAIL_UNIQUE_VALIDATED.getStatus().value()))
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.code").value(EMAIL_UNIQUE_VALIDATED.getCode()))
-			.andExpect(jsonPath("$.msg").value(EMAIL_UNIQUE_VALIDATED.getMsg()));
+			.andDo(document("email-unique-validated", getDocumentRequest(), getDocumentResponse(),
+				requestFields(fieldWithPath("email").type(JsonFieldType.STRING).description("이메일")),
+				responseFields(fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"),
+					fieldWithPath("code").type(JsonFieldType.NUMBER).description("커스텀 응답 코드"))));
 
 		//verify
 		verify(authService, times(1)).isEmailUnique(anyString());
@@ -261,17 +324,23 @@ public class AuthControllerTest {
 			.when(authService)
 			.isNicknameUnique(anyString());
 
-		//when & then
-		mockMvc.perform(post("/api/v1/auth/check/nickname")
+		//when
+		ResultActions resultActions = mockMvc.perform(
+			RestDocumentationRequestBuilders.post("/api/v1/auth/check/nickname")
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
-				.content(jsonRequest))
+				.content(jsonRequest));
+
+		//then
+		resultActions
 			.andExpect(status().is(NICKNAME_UNIQUE_VALIDATED.getStatus().value()))
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.code").value(NICKNAME_UNIQUE_VALIDATED.getCode()))
-			.andExpect(jsonPath("$.msg").value(NICKNAME_UNIQUE_VALIDATED.getMsg()));
+			.andDo(document("nickname-unique-validated", getDocumentRequest(), getDocumentResponse(),
+				requestFields(fieldWithPath("nickname").type(JsonFieldType.STRING).description("닉네임")),
+				responseFields(fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"),
+					fieldWithPath("code").type(JsonFieldType.NUMBER).description("커스텀 응답 코드"))));
 
 		//verify
 		verify(authService, times(1)).isNicknameUnique(anyString());
@@ -292,25 +361,27 @@ public class AuthControllerTest {
 
 		String jsonRequest = objectMapper.writeValueAsString(tokenRequest);
 
-		System.out.println("tokenRequest.accessToken() = " + tokenRequest.accessToken());
-		System.out.println("tokenRequest.refreshToken() = " + tokenRequest.refreshToken());
-		System.out.println("jsonRequest = " + jsonRequest);
-
 		doNothing()
 			.when(tokenProvider)
 			.logout(any(TokenRequest.class));
 
-		//when & then
-		mockMvc.perform(post("/api/v1/auth/logout")
-				.with(csrf())
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8")
-				.content(jsonRequest))
+		//when
+		ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/auth/logout")
+			.with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.accept(MediaType.APPLICATION_JSON)
+			.characterEncoding("UTF-8")
+			.content(jsonRequest));
+
+		//then
+		resultActions
 			.andExpect(status().is(LOGOUT_SUCCESS.getStatus().value()))
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.code").value(LOGOUT_SUCCESS.getCode()))
-			.andExpect(jsonPath("$.msg").value(LOGOUT_SUCCESS.getMsg()));
+			.andDo(document("logout-success", getDocumentRequest(), getDocumentResponse(),
+				requestFields(fieldWithPath("access_token").type(JsonFieldType.STRING).description("액세스 토큰"),
+					fieldWithPath("refresh_token").type(JsonFieldType.STRING).description("리프레시 토큰")),
+				responseFields(fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"),
+					fieldWithPath("code").type(JsonFieldType.NUMBER).description("커스텀 응답 코드"))));
 
 		//verify
 		verify(tokenProvider, times(1)).logout(any(TokenRequest.class));

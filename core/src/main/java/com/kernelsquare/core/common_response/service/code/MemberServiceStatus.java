@@ -7,6 +7,7 @@ public enum MemberServiceStatus implements ServiceStatus {
 	//error
 	MEMBER_NOT_FOUND(1201),
 	AUTHORITY_TYPE_NOT_VALID(1202),
+	ALREADY_SAVED_NICKNAME(1203),
 
 	//success
 	MEMBER_FOUND(1240),

@@ -10,6 +10,9 @@ import com.kernelsquare.domainmysql.domain.level.entity.Level;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
 import com.kernelsquare.domainmysql.domain.question.entity.Question;
 
+import lombok.Builder;
+
+@Builder
 public record FindQuestionResponse(
 	Long id,
 	String title,

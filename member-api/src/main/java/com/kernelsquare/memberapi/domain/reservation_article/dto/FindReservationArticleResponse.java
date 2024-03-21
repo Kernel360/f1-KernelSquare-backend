@@ -11,6 +11,9 @@ import com.kernelsquare.memberapi.domain.hashtag.dto.FindHashtagResponse;
 import com.kernelsquare.core.util.ImageUtils;
 import com.kernelsquare.memberapi.domain.reservation.dto.FindReservationResponse;
 
+import lombok.Builder;
+
+@Builder
 public record FindReservationArticleResponse(
 	Long articleId,
 	Long memberId,

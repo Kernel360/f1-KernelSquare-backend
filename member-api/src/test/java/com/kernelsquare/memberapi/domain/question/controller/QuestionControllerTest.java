@@ -391,12 +391,12 @@ class QuestionControllerTest extends RestDocsControllerTest {
 		FindQuestionIdResponse findQuestionIdResponse02 = FindQuestionIdResponse.of(question02.getId());
 
 		FindAllQuestionResponse response =
-				FindAllQuestionResponse.of(List.of(findQuestionIdResponse01, findQuestionIdResponse02));
+			FindAllQuestionResponse.of(List.of(findQuestionIdResponse01, findQuestionIdResponse02));
 
 		//when & then
 		doReturn(response)
-				.when(questionService)
-				.findAllQuestionsSeo();
+			.when(questionService)
+			.findAllQuestionsSeo();
 
 		ResultActions resultActions = mockMvc.perform(
 			RestDocumentationRequestBuilders.get("/api/v1/questions/seo")

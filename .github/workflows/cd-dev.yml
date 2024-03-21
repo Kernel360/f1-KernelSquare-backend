@@ -23,6 +23,8 @@ jobs:
 
       - name: Set up member-api application.yml
         run: echo "${{ secrets.MEMBER_APPLICATION }}" > ./member-api/src/main/resources/application.yml
+
+      - name: Upload member-api application.yml artifact
         uses: actions/upload-artifact@v2
         with:
           name: application.yml
@@ -46,6 +48,8 @@ jobs:
 
       - name: Set up domain-mysql application.yml
         run: echo "${{ secrets.APPLICATION }}" > ./domain-mysql/src/main/resources/application.yml
+
+      - name: Upload domain-mysql application.yml artifact
         uses: actions/upload-artifact@v2
         with:
           name: application.yml

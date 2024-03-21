@@ -414,8 +414,7 @@ class QuestionControllerTest extends RestDocsControllerTest {
 								responseFields(
 										fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"),
 										fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 상태 코드"),
-										fieldWithPath("data.question_id_list[0].question_id").type(JsonFieldType.NUMBER).description("질문 아이디 01"),
-										fieldWithPath("data.question_id_list[1].question_id").type(JsonFieldType.NUMBER).description("질문 아이디 02")
+										fieldWithPath("data.question_id_list[].question_id").type(JsonFieldType.NUMBER).description("질문 아이디")
 								)
 						));
 

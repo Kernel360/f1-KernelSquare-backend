@@ -505,8 +505,7 @@ class CodingMeetingControllerTest extends RestDocsControllerTest {
 								responseFields(
 										fieldWithPath("msg").type(JsonFieldType.STRING).description("응답 메시지"),
 										fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 상태 코드"),
-										fieldWithPath("data.coding_meeting_token_list[0].coding_meeting_token").type(JsonFieldType.STRING).description("모각코 토큰 01"),
-										fieldWithPath("data.coding_meeting_token_list[1].coding_meeting_token").type(JsonFieldType.STRING).description("모각코 토큰 02")
+										fieldWithPath("data.coding_meeting_token_list[].coding_meeting_token").type(JsonFieldType.STRING).description("모각코 토큰 리스트")
 								)
 						));
 

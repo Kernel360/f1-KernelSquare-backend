@@ -1,23 +1,19 @@
 package com.kernelsquare.memberapi.domain.reservation.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.kernelsquare.core.type.AuthorityType;
-import com.kernelsquare.domainmysql.domain.authority.entity.Authority;
-import com.kernelsquare.domainmysql.domain.member.entity.Member;
-import com.kernelsquare.domainmysql.domain.member_authority.entity.MemberAuthority;
-import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
-import com.kernelsquare.memberapi.domain.auth.dto.MemberAdaptorInstance;
-import com.kernelsquare.memberapi.domain.reservation.dto.AddReservationMemberRequest;
-import com.kernelsquare.memberapi.domain.reservation.dto.AddReservationMemberResponse;
-import com.kernelsquare.memberapi.domain.reservation.dto.FindAllReservationResponse;
-import com.kernelsquare.memberapi.domain.reservation.dto.FindReservationResponse;
-import com.kernelsquare.memberapi.domain.reservation.service.ReservationService;
+import static com.kernelsquare.core.common_response.response.code.ReservationResponseCode.*;
+import static com.kernelsquare.memberapi.config.ApiDocumentUtils.*;
+import static org.mockito.Mockito.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -26,24 +22,25 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static com.kernelsquare.core.common_response.response.code.ReservationResponseCode.*;
-import static com.kernelsquare.memberapi.config.ApiDocumentUtils.getDocumentRequest;
-import static com.kernelsquare.memberapi.config.ApiDocumentUtils.getDocumentResponse;
-import static org.mockito.Mockito.*;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.kernelsquare.core.type.AuthorityType;
+import com.kernelsquare.domainmysql.domain.authority.entity.Authority;
+import com.kernelsquare.domainmysql.domain.member.entity.Member;
+import com.kernelsquare.domainmysql.domain.member_authority.entity.MemberAuthority;
+import com.kernelsquare.memberapi.config.RestDocsControllerTest;
+import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
+import com.kernelsquare.memberapi.domain.auth.dto.MemberAdaptorInstance;
+import com.kernelsquare.memberapi.domain.reservation.dto.AddReservationMemberRequest;
+import com.kernelsquare.memberapi.domain.reservation.dto.AddReservationMemberResponse;
+import com.kernelsquare.memberapi.domain.reservation.dto.FindAllReservationResponse;
+import com.kernelsquare.memberapi.domain.reservation.dto.FindReservationResponse;
+import com.kernelsquare.memberapi.domain.reservation.service.ReservationService;
 
 @DisplayName("예약 컨트롤러 테스트")
 @WebMvcTest(ReservationController.class)
-@AutoConfigureRestDocs(uriScheme = "https", uriHost = "docs.api.com")
-class ReservationControllerTest {
+class ReservationControllerTest extends RestDocsControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 	@MockBean
@@ -121,7 +118,6 @@ class ReservationControllerTest {
 					fieldWithPath("data.reservation_responses").type(JsonFieldType.ARRAY).description("예약 응답 배열"),
 					fieldWithPath("data.reservation_responses[].reservation_id").type(JsonFieldType.NUMBER)
 						.description("예약 아이디"),
-					//todo : 방 아이디 type 확인 -> Null 맞음?
 					fieldWithPath("data.reservation_responses[].room_id").type(JsonFieldType.NUMBER)
 						.description("방 아이디"),
 					fieldWithPath("data.reservation_responses[].start_time").type(JsonFieldType.STRING)
@@ -244,7 +240,6 @@ class ReservationControllerTest {
 					fieldWithPath("reservation_article_id").type(JsonFieldType.NUMBER).description("예약 게시글 id"),
 					fieldWithPath("reservation_id").type(JsonFieldType.NUMBER).description("예약 아이디"),
 					fieldWithPath("member_id").type(JsonFieldType.NUMBER).description("회원 아이디"),
-					//todo : 시작 시간 type 확인 -> ARRAY 맞음?
 					fieldWithPath("reservation_start_time").type(JsonFieldType.ARRAY).description("시작 시간")
 				),
 				responseFields(

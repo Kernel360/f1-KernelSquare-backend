@@ -1,0 +1,28 @@
+ifndef::snippets[]
+:basedir: {docdir}/../../../
+:snippets: build/generated-snippets
+:sources-root: {basedir}/src
+:resources: {sources-root}/main/resources
+:resources-test: {sources-root}/test/resources
+:java: {sources-root}/main/java
+:java-test: {sources-root}/test/java
+endif::[]
+= Coding Meeting API 목록
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toc-title: 명세 목록
+:toclevels: 5
+:sectlinks:
+
+=== link:index.html[전체 API 명세 보기]
+
+|===
+|이름 |Http Method |API Endpoint
+|link:coding-meeting-found.html[단일 모각코 조회] |GET |/api/v1/coding-meetings
+|link:coding-meeting-all-found.html[모든 모각코 조회] |GET |/api/v1/coding-meetings/{codingMeetingToken}
+|link:coding-meeting-created.html[모각코 생성] |POST |/api/v1/coding-meetings
+|link:coding-meeting-updated.html[모각코 수정] |PUT |/api/v1/coding-meetings/{codingMeetingToken}
+|link:coding-meeting-deleted.html[모각코 삭제] |DELETE |/api/v1/coding-meetings/{codingMeetingToken}
+|link:coding-meeting-closed.html[모각코 마감] |PUT |/api/v1/coding-meetings/{codingMeetingToken}/status

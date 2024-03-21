@@ -1,5 +1,6 @@
 package com.kernelsquare.memberapi.domain.member.service;
 
+import com.kernelsquare.memberapi.domain.member.dto.UpdateMemberNicknameRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,5 +54,17 @@ public class MemberService {
 	private Member getMemberById(Long id) {
 		return memberRepository.findById(id)
 			.orElseThrow(() -> new BusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
+	}
+
+	@Transactional
+	public FindMemberResponse updateMemberNickname(UpdateMemberNicknameRequest updateMemberNicknameRequest, Long memberId) {
+		Member member = getMemberById(memberId);
+
+		if (memberRepository.existsByNickname(updateMemberNicknameRequest.nickname())) {
+			throw new BusinessException(MemberErrorCode.ALREADY_SAVED_NICKNAME);
+		}
+
+		member.updateNickname(updateMemberNicknameRequest.nickname());
+		return FindMemberResponse.from(member);
 	}
 }

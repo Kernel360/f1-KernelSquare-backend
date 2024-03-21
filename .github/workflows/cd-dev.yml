@@ -110,7 +110,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: admin-api Docker Image Build
-        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/kernelsquare-dev ./admin-api
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/kernelsquare-dev ./member-api
 
       - name: admin-api DockerHub Push
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/kernelsquare-dev
@@ -129,5 +129,4 @@ jobs:
             sudo docker stop prod1-dev || true
             sudo docker rm prod1-dev || true
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/kernelsquare-dev
-            sudo docker run --name prod1-dev -d -p 8501:8501 ${{ secrets.DOCKERHUB_USERNAME }}/kernelsquare-dev
-            sudo docker system prune -f
+            sudo docker-compose up -d

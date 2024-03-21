@@ -294,17 +294,8 @@ public class MemberServiceTest {
 		//when
 		Optional<Member> optionalFoundMember = memberRepository.findById(testMemberId);
 
-//		FindMemberResponse findMemberResponse = memberService.findMember(testMemberId);
-
 		//then
 		assertThat(optionalFoundMember.get().getNickname()).isEqualTo(newNickname);
-
-//		assertThat(findMemberResponse.nickname()).isEqualTo(newNickname);
-//		assertThat(findMemberResponse.introduction()).isEqualTo(member.getIntroduction());
-//		assertThat(findMemberResponse.experience()).isEqualTo(member.getExperience());
-//		assertThat(findMemberResponse.imageUrl().length()).isGreaterThan(member.getImageUrl().length());
-//		assertThat(findMemberResponse.imageUrl()).endsWith(member.getImageUrl());
-//		assertThat(findMemberResponse.memberId()).isEqualTo(testMemberId);
 
 		//verify
 		verify(memberRepository, times(2)).findById(anyLong());

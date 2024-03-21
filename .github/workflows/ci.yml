@@ -43,13 +43,6 @@ jobs:
         env:
           spring.data.mongodb.uri: ${{ secrets.MONGO_TEST_URI }}
 
-      - name: Set up domain-mysql test application.yml
-        uses: microsoft/variable-substitution@v1
-        with:
-          files: ./domain-mysql/src/test/resources/application.yml
-        env:
-          spring.security.jwt.secret: ${{ secrets.JWT_SECRET_KEY }}
-
       - name: Set up member-api test application.yml
         uses: microsoft/variable-substitution@v1
         with:

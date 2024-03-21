@@ -97,31 +97,24 @@ dependencies {
     asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 }
 
+ext {
+    snippetsDir = file('build/generated-snippets')
+}
+
 tasks.named('test') {
+    outputs.dir snippetsDir
     useJUnitPlatform()
 }
 
-asciidoctor {
+tasks.named('asciidoctor') {
+    inputs.dir snippetsDir
+    configurations 'asciidoctorExt'
     dependsOn test
 }
 
-task copyHTML(type: Copy) {
-    dependsOn tasks.findByName("asciidoctor")
-    from file("build/docs/asciidoc")
-    into file("src/main/resources/static/docs")
+bootJar {
+    dependsOn asciidoctor
+    from ("${asciidoctor.outputDir}") {
+        into 'static/docs'
+    }
 }
-
-tasks.bootJar {
-    dependsOn tasks.asciidoctor
-    dependsOn tasks.getByName("copyHTML")
-}
-
-tasks.build {
-    dependsOn(tasks.asciidoctor, tasks.copyHTML)
-}
-
-tasks.named('jar') {
-    enabled = false
-}
-
-

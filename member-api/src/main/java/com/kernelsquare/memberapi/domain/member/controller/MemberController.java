@@ -2,7 +2,10 @@ package com.kernelsquare.memberapi.domain.member.controller;
 
 import static com.kernelsquare.core.common_response.response.code.MemberResponseCode.*;
 
+import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
+import com.kernelsquare.memberapi.domain.member.dto.UpdateMemberNicknameRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -58,5 +61,14 @@ public class MemberController {
 	public ResponseEntity<ApiResponse> deleteMember(@PathVariable Long memberId) {
 		memberService.deleteMember(memberId);
 		return ResponseEntityFactory.toResponseEntity(MEMBER_DELETED);
+	}
+
+	@PutMapping("/members/nickname")
+	public ResponseEntity<ApiResponse<FindMemberResponse>> updateMemberNickname(
+			@Valid @RequestBody
+			UpdateMemberNicknameRequest updateNicknameRequest,
+			@AuthenticationPrincipal MemberAdapter memberAdapter) {
+		FindMemberResponse response = memberService.updateMemberNickname(updateNicknameRequest, memberAdapter.getMember().getId());
+		return ResponseEntityFactory.toResponseEntity(MEMBER_NICKNAME_UPDATED, response);
 	}
 }

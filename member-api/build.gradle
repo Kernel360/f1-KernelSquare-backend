@@ -120,4 +120,8 @@ tasks.build {
     dependsOn(tasks.asciidoctor, tasks.copyHTML)
 }
 
+tasks.named('jar') {
+    enabled = false
+}
+
 

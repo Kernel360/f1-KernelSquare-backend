@@ -2,6 +2,8 @@ package com.kernelsquare.domainmysql.domain.search.repository;
 
 import java.util.List;
 
+import com.kernelsquare.domainmysql.domain.coding_meeting.entity.CodingMeeting;
+import com.kernelsquare.domainmysql.domain.reservation_article.entity.ReservationArticle;
 import com.kernelsquare.domainmysql.domain.tech_stack.entity.QTechStack;
 import com.kernelsquare.domainmysql.domain.tech_stack.entity.TechStack;
 import org.springframework.data.domain.Page;
@@ -84,5 +86,15 @@ public class SearchRepositoryImpl extends QuerydslRepositorySupport implements S
 			.where(builder);
 
 		return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
+	}
+
+	@Override
+	public Page<ReservationArticle> searchReservationArticlesByKeyword(Pageable pageable, String keyword) {
+		return null;
+	}
+
+	@Override
+	public Page<CodingMeeting> searchCodingMeetingsByKeyword(Pageable pageable, String keyword) {
+		return null;
 	}
 }

@@ -26,7 +26,7 @@ public class SearchController {
 
 	@GetMapping("/search/questions")
 	public ResponseEntity<ApiResponse<SearchQuestionResponse>> searchQuestions(
-		@PageableDefault(page = 0, size = 5)
+		@PageableDefault(page = 0, size = 10)
 		Pageable pageable,
 		@RequestParam
 		String keyword
@@ -46,6 +46,30 @@ public class SearchController {
 		SearchTechStackResponse searchResults = searchService.searchTechStacks(pageable, keyword);
 
 		return ResponseEntityFactory.toResponseEntity(SEARCH_TECH_STACK_COMPLETED, searchResults);
+	}
+
+	@GetMapping("/search/questions")
+	public ResponseEntity<ApiResponse<SearchReservationArticleResponse>> searchReservationArticles(
+		@PageableDefault(page = 0, size = 10)
+		Pageable pageable,
+		@RequestParam
+		String keyword
+	) {
+		SearchReservationArticleResponse searchResults = searchService.searchReservationArticles(pageable, keyword);
+
+		return ResponseEntityFactory.toResponseEntity(SEARCH_RESERVATION_ARTICLE_COMPLETED, searchResults);
+	}
+
+	@GetMapping("/search/questions")
+	public ResponseEntity<ApiResponse<SearchCodingMeetingResponse>> searchCodingMeetings(
+		@PageableDefault(page = 0, size = 10)
+		Pageable pageable,
+		@RequestParam
+		String keyword
+	) {
+		SearchCodingMeetingResponse searchResults = searchService.searchCodingMeetings(pageable, keyword);
+
+		return ResponseEntityFactory.toResponseEntity(SEARCH_CODING_MEETING_COMPLETED, searchResults);
 	}
 }
 

@@ -78,7 +78,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         response.addCookie(cookie);
 
         // develop
-        response.sendRedirect("http://localhost:3000/oauth/github");
+        response.sendRedirect("http://dev.kernelsquare.live/oauth/github");
         // main
 //        response.sendRedirect("https://kernelsquare.live/oauth/github");
     }

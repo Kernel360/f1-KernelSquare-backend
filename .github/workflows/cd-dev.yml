@@ -22,7 +22,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Set up member-api application.yml
-        run: echo "${{ secrets.MEMBER_APPLICATION }}" > ./member-api/src/main/resources/application.yml
+        run: echo "${{ secrets.MEMBER_DEV_APPLICATION }}" > ./member-api/src/main/resources/application.yml
 
       - name: Upload member-api application.yml artifact
         uses: actions/upload-artifact@v2
@@ -47,7 +47,7 @@ jobs:
           cloud.aws.credentials.secretKey: ${{ secrets.AWS_ACCESS_SECRET }}
 
       - name: Set up domain-mysql application.yml
-        run: echo "${{ secrets.APPLICATION }}" > ./domain-mysql/src/main/resources/application.yml
+        run: echo "${{ secrets.RDB_DEV_APPLICATION }}" > ./domain-mysql/src/main/resources/application.yml
 
       - name: Upload domain-mysql application.yml artifact
         uses: actions/upload-artifact@v2

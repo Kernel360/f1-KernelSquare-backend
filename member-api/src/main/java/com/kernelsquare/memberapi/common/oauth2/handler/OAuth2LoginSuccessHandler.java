@@ -22,6 +22,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -72,11 +73,20 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         String json = new ObjectMapper().writeValueAsString(loginResponse);
         String encodedJson = Base64.getEncoder().encodeToString(json.getBytes());
 
-        Cookie cookie = new Cookie("loginResponse", encodedJson);
-        cookie.setMaxAge(600);
-        cookie.setPath("/");
-        cookie.setDomain("43.201.47.254");
-        response.addCookie(cookie);
+//        Cookie cookie = new Cookie("loginResponse", encodedJson);
+//        cookie.setMaxAge(600);
+//        cookie.setPath("/");
+//        cookie.setDomain("43.201.47.254");
+//        response.addCookie(cookie);
+
+        String cookieValue = ResponseCookie.from("loginResponse", encodedJson) // 쿠키 이름과 값 설정
+                .domain(".kernelsquare.live") // 쿠키 도메인 설정
+                .maxAge(600) // 최대 유효 시간 설정 (초 단위)
+                .path("/") // 쿠키 경로 설정
+                .build()
+                .toString(); // 최종 쿠키 문자열로 변환
+
+        response.setHeader("Set-Cookie", cookieValue); // HTTP 응답 헤더에 쿠키 추가
 
         // develop
         response.sendRedirect("http://dev.kernelsquare.live/oauth/github");

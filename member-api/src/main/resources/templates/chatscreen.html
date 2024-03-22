@@ -50,7 +50,7 @@
     var sender = /*[[${sender}]]*/ '';
     /*]]>*/
     //alert(document.title);
-    var sock = new SockJS("/kernel-square");
+    var sock = new SockJS("http://localhost:8504/kernel-square");
     var ws = Stomp.over(sock);
     var reconnect = 0;
     var vm = new Vue({
@@ -71,7 +71,7 @@
                     ('0' + now.getMinutes()).slice(-2) + ':' +
                     ('0' + now.getSeconds()).slice(-2) + '.' +
                     ('00' + now.getMilliseconds()).slice(-3) + 'Z';
-                ws.send("/app/chat/message", {}, JSON.stringify({type:'TALK', room_key:this.roomId, sender:this.sender, message:this.message, send_time:sendTime}));
+                ws.send("/app/chat/message", {}, JSON.stringify({type:'TALK', room_key:'dev', sender:this.sender, message:this.message, send_time:sendTime}));
                 this.message = '';
             },
             recvMessage: function(recv) {
@@ -86,7 +86,7 @@
                     ('0' + now.getMinutes()).slice(-2) + ':' +
                     ('0' + now.getSeconds()).slice(-2) + '.' +
                     ('00' + now.getMilliseconds()).slice(-3) + 'Z';
-                ws.send("/app/chat/message", {}, JSON.stringify({type:'LEAVE', room_key:this.roomId, sender:this.sender, send_time:sendTime}));
+                ws.send("/app/chat/message", {}, JSON.stringify({type:'LEAVE', room_key:'dev', sender:this.sender, send_time:sendTime}));
                 ws.disconnect();
             }
         }
@@ -111,7 +111,7 @@
             if(reconnect++ <= 5) {
                 setTimeout(function() {
                     console.log("connection reconnect");
-                    sock = new SockJS("/kernel-square");
+                    sock = new SockJS("http://localhost:8504/kernel-square");
                     ws = Stomp.over(sock);
                     connect();
                 },10*1000);

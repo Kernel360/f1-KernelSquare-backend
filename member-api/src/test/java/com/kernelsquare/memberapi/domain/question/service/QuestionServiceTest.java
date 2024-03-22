@@ -1,12 +1,17 @@
 package com.kernelsquare.memberapi.domain.question.service;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.*;
-
-import java.util.List;
-import java.util.Optional;
-
+import com.kernelsquare.core.dto.PageResponse;
+import com.kernelsquare.domainmysql.domain.level.entity.Level;
+import com.kernelsquare.domainmysql.domain.member.entity.Member;
+import com.kernelsquare.domainmysql.domain.member.repository.MemberRepository;
+import com.kernelsquare.domainmysql.domain.question.entity.Question;
+import com.kernelsquare.domainmysql.domain.question.info.QuestionInfo;
+import com.kernelsquare.domainmysql.domain.question.repository.QuestionReader;
+import com.kernelsquare.domainmysql.domain.question.repository.QuestionRepository;
+import com.kernelsquare.domainmysql.domain.question_tech_stack.entity.QuestionTechStack;
+import com.kernelsquare.domainmysql.domain.question_tech_stack.repository.QuestionTechStackRepository;
+import com.kernelsquare.domainmysql.domain.tech_stack.entity.TechStack;
+import com.kernelsquare.memberapi.domain.question.dto.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,17 +24,14 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import com.kernelsquare.memberapi.domain.question.dto.CreateQuestionRequest;
-import com.kernelsquare.memberapi.domain.question.dto.CreateQuestionResponse;
-import com.kernelsquare.memberapi.domain.question.dto.FindQuestionResponse;
-import com.kernelsquare.memberapi.domain.question.dto.UpdateQuestionRequest;
-import com.kernelsquare.core.dto.PageResponse;
-import com.kernelsquare.domainmysql.domain.level.entity.Level;
-import com.kernelsquare.domainmysql.domain.member.entity.Member;
-import com.kernelsquare.domainmysql.domain.member.repository.MemberRepository;
-import com.kernelsquare.domainmysql.domain.question.entity.Question;
-import com.kernelsquare.domainmysql.domain.question.repository.QuestionRepository;
-import com.kernelsquare.domainmysql.domain.question_tech_stack.repository.QuestionTechStackRepository;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.*;
 
 @DisplayName("질문 서비스 단위 테스트")
 @ExtendWith(MockitoExtension.class)
@@ -42,6 +44,8 @@ class QuestionServiceTest {
 	private MemberRepository memberRepository;
 	@Mock
 	private QuestionTechStackRepository questionTechStackRepository;
+	@Mock
+	private QuestionReader questionReader;
 
 	private Member member;
 	private Level level;
@@ -79,6 +83,27 @@ class QuestionServiceTest {
 			.imageUrl("1.jpg")
 			.levelUpperLimit(500L)
 			.build();
+	}
+
+	private QuestionInfo.FindAllQuestionsInfo createFindAllQuestions(Question question) {
+		return new QuestionInfo.FindAllQuestionsInfo(
+			question.getId(),
+			question.getTitle(),
+			question.getImageUrl(),
+			question.getViewCount(),
+			question.getClosedStatus(),
+			question.getMember().getId(),
+			question.getMember().getNickname(),
+			question.getMember().getImageUrl(),
+			question.getMember().getLevel().getName(),
+			question.getMember().getLevel().getImageUrl(),
+			question.getCreatedDate(),
+			question.getModifiedDate(),
+			question.getTechStackList().stream()
+				.map(QuestionTechStack::getTechStack)
+				.map(TechStack::getSkill)
+				.collect(Collectors.joining(","))
+		);
 	}
 
 	@BeforeEach
@@ -151,16 +176,18 @@ class QuestionServiceTest {
 		//given
 		Question question1 = createTestQuestion(1L);
 		Question question2 = createTestQuestion(2L);
-		List<Question> questions = List.of(question1, question2);
+
+		QuestionInfo.FindAllQuestionsInfo findAllQuestions1 = createFindAllQuestions(question1);
+		QuestionInfo.FindAllQuestionsInfo findAllQuestions2 = createFindAllQuestions(question2);
+
+		List<QuestionInfo.FindAllQuestionsInfo> questions = List.of(findAllQuestions1, findAllQuestions2);
 
 		Pageable pageable = PageRequest.of(0, 2);
-		Page<Question> pages = new PageImpl<>(questions, pageable, questions.size());
+		Page<QuestionInfo.FindAllQuestionsInfo> pages = new PageImpl<>(questions, pageable, questions.size());
 
-		given(questionRepository.findById(question1.getId())).willReturn(Optional.of(question1));
-
-		given(questionRepository.findById(question2.getId())).willReturn(Optional.of(question2));
-
-		given(questionRepository.findAll(any(PageRequest.class))).willReturn(pages);
+		doReturn(pages)
+			.when(questionReader)
+			.findAllQuestions(any(Pageable.class));
 
 		Integer currentPage = pageable.getPageNumber() + 1;
 
@@ -170,7 +197,7 @@ class QuestionServiceTest {
 			totalPages += 1;
 
 		//when
-		PageResponse<FindQuestionResponse> pageResponse = questionService.findAllQuestions(pageable);
+		PageResponse<QuestionDto.FindAllResponse> pageResponse = questionService.findAllQuestions(pageable);
 
 		//then
 		assertThat(pageResponse).isNotNull();
@@ -180,7 +207,7 @@ class QuestionServiceTest {
 		assertThat(pageResponse.list()).isNotNull();
 
 		//verify
-		verify(questionRepository, times(1)).findAll(any(PageRequest.class));
+		verify(questionReader, times(1)).findAllQuestions(any(Pageable.class));
 	}
 
 	@Test

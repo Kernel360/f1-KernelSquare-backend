@@ -69,34 +69,6 @@ jobs:
         env:
           spring.data.mongodb.uri: ${{ secrets.MONGO_TEST_URI }}
 
-      - name: Set up admin-api application.yml
-        uses: microsoft/variable-substitution@v1
-        with:
-          files: ./admin-api/src/main/resources/application.yml
-        env:
-          spring.datasource.url: ${{ secrets.LOCAL_DB_URL }}
-          spring.datasource.username: ${{ secrets.LOCAL_DB_HOST }}
-          spring.datasource.password: ${{ secrets.LOCAL_DB_PASSWORD }}
-          spring.security.jwt.secret: ${{ secrets.JWT_SECRET_KEY }}
-          cloud.aws.s3.bucket: ${{ secrets.S3_BUCKET_NAME }}
-          cloud.aws.region.static: ${{ secrets.S3_REGION }}
-          cloud.aws.credentials.accessKey: ${{ secrets.AWS_ACCESS_KEY }}
-          cloud.aws.credentials.secretKey: ${{ secrets.AWS_ACCESS_SECRET }}
-          custom.domain.image.baseUrl: ${{ secrets.BASE_URL }}
-
-      - name: Set up admin-api test application.yml
-        uses: microsoft/variable-substitution@v1
-        with:
-          files: ./admin-api/src/test/resources/application.yml
-        env:
-          spring.security.jwt.secret: ${{ secrets.JWT_SECRET_KEY }}
-          spring.data.mongodb.uri: ${{ secrets.MONGO_TEST_URI }}
-          custom.domain.image.baseUrl: ${{ secrets.BASE_URL }}
-          cloud.aws.s3.bucket: ${{ secrets.S3_BUCKET_NAME }}
-          cloud.aws.region.static: ${{ secrets.S3_REGION }}
-          cloud.aws.credentials.accessKey: ${{ secrets.AWS_ACCESS_KEY }}
-          cloud.aws.credentials.secretKey: ${{ secrets.AWS_ACCESS_SECRET }}
-
       - name: Build member-api with Gradle
         run: |
           cd member-api
@@ -109,10 +81,10 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: admin-api Docker Image Build
+      - name: member-api Docker Dev Image Build
         run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/kernelsquare-dev ./member-api
 
-      - name: admin-api DockerHub Push
+      - name: member-api DockerHub Dev Push
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/kernelsquare-dev
 
   deploy:

@@ -1,16 +1,15 @@
 package com.kernelsquare.memberapi.domain.question.service;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.*;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import com.kernelsquare.domainmysql.domain.question.dto.FindAllQuestions;
+import com.kernelsquare.core.dto.PageResponse;
+import com.kernelsquare.domainmysql.domain.level.entity.Level;
+import com.kernelsquare.domainmysql.domain.member.entity.Member;
+import com.kernelsquare.domainmysql.domain.member.repository.MemberRepository;
+import com.kernelsquare.domainmysql.domain.question.entity.Question;
+import com.kernelsquare.domainmysql.domain.question.info.QuestionInfo;
 import com.kernelsquare.domainmysql.domain.question.repository.QuestionReader;
+import com.kernelsquare.domainmysql.domain.question.repository.QuestionRepository;
 import com.kernelsquare.domainmysql.domain.question_tech_stack.entity.QuestionTechStack;
+import com.kernelsquare.domainmysql.domain.question_tech_stack.repository.QuestionTechStackRepository;
 import com.kernelsquare.domainmysql.domain.tech_stack.entity.TechStack;
 import com.kernelsquare.memberapi.domain.question.dto.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,13 +24,14 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import com.kernelsquare.core.dto.PageResponse;
-import com.kernelsquare.domainmysql.domain.level.entity.Level;
-import com.kernelsquare.domainmysql.domain.member.entity.Member;
-import com.kernelsquare.domainmysql.domain.member.repository.MemberRepository;
-import com.kernelsquare.domainmysql.domain.question.entity.Question;
-import com.kernelsquare.domainmysql.domain.question.repository.QuestionRepository;
-import com.kernelsquare.domainmysql.domain.question_tech_stack.repository.QuestionTechStackRepository;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.*;
 
 @DisplayName("질문 서비스 단위 테스트")
 @ExtendWith(MockitoExtension.class)
@@ -85,25 +85,25 @@ class QuestionServiceTest {
 			.build();
 	}
 
-	private FindAllQuestions createFindAllQuestions(Question question) {
-		return FindAllQuestions.builder()
-			.id(question.getId())
-			.title(question.getTitle())
-			.imageUrl(question.getImageUrl())
-			.viewCount(question.getViewCount())
-			.closedStatus(question.getClosedStatus())
-			.memberId(question.getMember().getId())
-			.nickname(question.getMember().getNickname())
-			.memberImageUrl(question.getMember().getImageUrl())
-			.level(question.getMember().getLevel().getName())
-			.levelImageUrl(question.getMember().getLevel().getImageUrl())
-			.createdDate(question.getCreatedDate())
-			.modifiedDate(question.getModifiedDate())
-			.skills(question.getTechStackList().stream()
+	private QuestionInfo.FindAllQuestionsInfo createFindAllQuestions(Question question) {
+		return new QuestionInfo.FindAllQuestionsInfo(
+			question.getId(),
+			question.getTitle(),
+			question.getImageUrl(),
+			question.getViewCount(),
+			question.getClosedStatus(),
+			question.getMember().getId(),
+			question.getMember().getNickname(),
+			question.getMember().getImageUrl(),
+			question.getMember().getLevel().getName(),
+			question.getMember().getLevel().getImageUrl(),
+			question.getCreatedDate(),
+			question.getModifiedDate(),
+			question.getTechStackList().stream()
 				.map(QuestionTechStack::getTechStack)
 				.map(TechStack::getSkill)
-				.collect(Collectors.joining(",")))
-			.build();
+				.collect(Collectors.joining(","))
+		);
 	}
 
 	@BeforeEach
@@ -177,13 +177,13 @@ class QuestionServiceTest {
 		Question question1 = createTestQuestion(1L);
 		Question question2 = createTestQuestion(2L);
 
-		FindAllQuestions findAllQuestions1 = createFindAllQuestions(question1);
-		FindAllQuestions findAllQuestions2 = createFindAllQuestions(question2);
+		QuestionInfo.FindAllQuestionsInfo findAllQuestions1 = createFindAllQuestions(question1);
+		QuestionInfo.FindAllQuestionsInfo findAllQuestions2 = createFindAllQuestions(question2);
 
-		List<FindAllQuestions> questions = List.of(findAllQuestions1, findAllQuestions2);
+		List<QuestionInfo.FindAllQuestionsInfo> questions = List.of(findAllQuestions1, findAllQuestions2);
 
 		Pageable pageable = PageRequest.of(0, 2);
-		Page<FindAllQuestions> pages = new PageImpl<>(questions, pageable, questions.size());
+		Page<QuestionInfo.FindAllQuestionsInfo> pages = new PageImpl<>(questions, pageable, questions.size());
 
 		doReturn(pages)
 			.when(questionReader)

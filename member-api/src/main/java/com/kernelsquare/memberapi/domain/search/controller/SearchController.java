@@ -2,6 +2,8 @@ package com.kernelsquare.memberapi.domain.search.controller;
 
 import static com.kernelsquare.core.common_response.response.code.SearchResponseCode.*;
 
+import com.kernelsquare.memberapi.domain.search.dto.SearchCodingMeetingResponse;
+import com.kernelsquare.memberapi.domain.search.dto.SearchReservationArticleResponse;
 import com.kernelsquare.memberapi.domain.search.dto.SearchTechStackResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -48,9 +50,9 @@ public class SearchController {
 		return ResponseEntityFactory.toResponseEntity(SEARCH_TECH_STACK_COMPLETED, searchResults);
 	}
 
-	@GetMapping("/search/questions")
+	@GetMapping("/search/coffeechat/posts")
 	public ResponseEntity<ApiResponse<SearchReservationArticleResponse>> searchReservationArticles(
-		@PageableDefault(page = 0, size = 10)
+		@PageableDefault(page = 0, size = 5)
 		Pageable pageable,
 		@RequestParam
 		String keyword
@@ -60,14 +62,16 @@ public class SearchController {
 		return ResponseEntityFactory.toResponseEntity(SEARCH_RESERVATION_ARTICLE_COMPLETED, searchResults);
 	}
 
-	@GetMapping("/search/questions")
+	@GetMapping("/search/coding-meetings")
 	public ResponseEntity<ApiResponse<SearchCodingMeetingResponse>> searchCodingMeetings(
 		@PageableDefault(page = 0, size = 10)
 		Pageable pageable,
+		@RequestParam(defaultValue = "all")
+		String filter,
 		@RequestParam
 		String keyword
 	) {
-		SearchCodingMeetingResponse searchResults = searchService.searchCodingMeetings(pageable, keyword);
+		SearchCodingMeetingResponse searchResults = searchService.searchCodingMeetings(pageable, filter, keyword);
 
 		return ResponseEntityFactory.toResponseEntity(SEARCH_CODING_MEETING_COMPLETED, searchResults);
 	}

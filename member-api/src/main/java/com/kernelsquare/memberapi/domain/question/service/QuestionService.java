@@ -12,8 +12,8 @@ import com.kernelsquare.domainmysql.domain.level.entity.Level;
 import com.kernelsquare.domainmysql.domain.level.repository.LevelRepository;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
 import com.kernelsquare.domainmysql.domain.member.repository.MemberRepository;
-import com.kernelsquare.domainmysql.domain.question.dto.FindAllQuestions;
 import com.kernelsquare.domainmysql.domain.question.entity.Question;
+import com.kernelsquare.domainmysql.domain.question.info.QuestionInfo;
 import com.kernelsquare.domainmysql.domain.question.repository.QuestionReader;
 import com.kernelsquare.domainmysql.domain.question.repository.QuestionRepository;
 import com.kernelsquare.domainmysql.domain.question_tech_stack.entity.QuestionTechStack;
@@ -80,7 +80,7 @@ public class QuestionService {
 
 		Integer currentPage = pageable.getPageNumber() + 1;
 
-		Page<FindAllQuestions> QuestionPages = questionReader.findAllQuestions(pageable);
+		Page<QuestionInfo.FindAllQuestionsInfo> QuestionPages = questionReader.findAllQuestions(pageable);
 
 		Integer totalPages = QuestionPages.getTotalPages();
 

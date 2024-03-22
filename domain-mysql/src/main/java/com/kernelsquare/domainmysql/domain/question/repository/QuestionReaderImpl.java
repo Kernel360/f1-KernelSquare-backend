@@ -2,8 +2,8 @@ package com.kernelsquare.domainmysql.domain.question.repository;
 
 import com.kernelsquare.core.common_response.error.code.QuestionErrorCode;
 import com.kernelsquare.core.common_response.error.exception.BusinessException;
-import com.kernelsquare.domainmysql.domain.question.dto.FindAllQuestions;
 import com.kernelsquare.domainmysql.domain.question.entity.Question;
+import com.kernelsquare.domainmysql.domain.question.info.QuestionInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +24,7 @@ public class QuestionReaderImpl implements QuestionReader {
     }
 
     @Override
-    public Page<FindAllQuestions> findAllQuestions(Pageable pageable) {
+    public Page<QuestionInfo.FindAllQuestionsInfo> findAllQuestions(Pageable pageable) {
         return questionQuerydslRepository.findAllQuestions(pageable);
     }
 

@@ -3,7 +3,7 @@ package com.kernelsquare.memberapi.domain.question.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.kernelsquare.core.constants.TimeResponseFormat;
 import com.kernelsquare.core.util.ImageUtils;
-import com.kernelsquare.domainmysql.domain.question.dto.FindAllQuestions;
+import com.kernelsquare.domainmysql.domain.question.info.QuestionInfo;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
@@ -35,7 +35,7 @@ public class QuestionDto {
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = TimeResponseFormat.PATTERN)
         LocalDateTime modifiedDate
     ) {
-        public static FindAllResponse of(FindAllQuestions findAllQuestions) {
+        public static FindAllResponse of(QuestionInfo.FindAllQuestionsInfo findAllQuestions) {
             return FindAllResponse.builder()
                 .id(findAllQuestions.getId())
                 .title(findAllQuestions.getTitle())

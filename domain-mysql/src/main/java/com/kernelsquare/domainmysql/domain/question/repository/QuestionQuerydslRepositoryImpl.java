@@ -2,9 +2,9 @@ package com.kernelsquare.domainmysql.domain.question.repository;
 
 import com.kernelsquare.domainmysql.domain.level.entity.QLevel;
 import com.kernelsquare.domainmysql.domain.member.entity.QMember;
-import com.kernelsquare.domainmysql.domain.question.dto.FindAllQuestions;
-import com.kernelsquare.domainmysql.domain.question.dto.QFindAllQuestions;
 import com.kernelsquare.domainmysql.domain.question.entity.QQuestion;
+import com.kernelsquare.domainmysql.domain.question.info.QQuestionInfo_FindAllQuestionsInfo;
+import com.kernelsquare.domainmysql.domain.question.info.QuestionInfo;
 import com.kernelsquare.domainmysql.domain.question_tech_stack.entity.QQuestionTechStack;
 import com.kernelsquare.domainmysql.domain.tech_stack.entity.QTechStack;
 import com.querydsl.core.types.dsl.Expressions;
@@ -24,16 +24,16 @@ public class QuestionQuerydslRepositoryImpl implements QuestionQuerydslRepositor
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<FindAllQuestions> findAllQuestions(Pageable pageable) {
+    public Page<QuestionInfo.FindAllQuestionsInfo> findAllQuestions(Pageable pageable) {
         QQuestion question = QQuestion.question;
         QMember member = QMember.member;
         QLevel level = QLevel.level;
         QQuestionTechStack questionTechStack = QQuestionTechStack.questionTechStack;
         QTechStack techStack = QTechStack.techStack;
 
-        List<FindAllQuestions> content = queryFactory
+        List<QuestionInfo.FindAllQuestionsInfo> content = queryFactory
             .select(
-                new QFindAllQuestions(
+                new QQuestionInfo_FindAllQuestionsInfo(
                     question.id,
                     question.title,
                     question.imageUrl,

@@ -12,9 +12,9 @@ import com.kernelsquare.domainmysql.domain.rank.repository.RankReader;
 import com.kernelsquare.memberapi.domain.alert.dto.AlertDto;
 import com.kernelsquare.memberapi.domain.alert.mapper.AlertDtoMapper;
 import com.kernelsquare.memberapi.domain.alert.service.AlertService;
-import com.kernelsquare.memberapi.domain.coffeechat.dto.ChatMessageResponse;
+import com.kernelsquare.memberapi.domain.coffeechat.dto.ChatMessageRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +26,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class SchedulerManagerImpl implements ScheculerManager {
-    private final SimpMessageSendingOperations sendingOperations;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
     private final CoffeeChatReader coffeeChatReader;
     private final QuestionReader questionReader;
     private final AnswerReader answerReader;
@@ -42,7 +42,7 @@ public class SchedulerManagerImpl implements ScheculerManager {
         chatRooms.forEach(chatRoom -> {
             chatRoom.deactivateRoom();
 
-            ChatMessageResponse message = ChatMessageResponse.builder()
+            ChatMessageRequest message = ChatMessageRequest.builder()
                 .type(MessageType.EXPIRE)
                 .roomKey(chatRoom.getRoomKey())
                 .sender("system")
@@ -50,7 +50,7 @@ public class SchedulerManagerImpl implements ScheculerManager {
                 .sendTime(LocalDateTime.now())
                 .build();
 
-            sendingOperations.convertAndSend("/topic/chat/room/" + message.getRoomKey(), message);
+            kafkaTemplate.send("chatting", message);
         });
     }
 

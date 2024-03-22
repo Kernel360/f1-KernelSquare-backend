@@ -75,7 +75,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         Cookie cookie = new Cookie("loginResponse", encodedJson);
         cookie.setMaxAge(600);
         cookie.setPath("/");
-        cookie.setDomain("dev.kernelsquare.live");
+        cookie.setDomain(".kernelsquare.live");
         response.addCookie(cookie);
 
         // develop

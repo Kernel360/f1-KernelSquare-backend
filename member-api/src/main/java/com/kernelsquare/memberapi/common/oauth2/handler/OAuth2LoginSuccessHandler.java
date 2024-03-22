@@ -17,11 +17,11 @@ import com.kernelsquare.memberapi.domain.auth.dto.LoginResponse;
 import com.kernelsquare.memberapi.domain.auth.dto.MemberDetails;
 import com.kernelsquare.memberapi.domain.auth.dto.TokenResponse;
 import com.kernelsquare.memberapi.domain.auth.service.TokenProvider;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -38,6 +38,9 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     private final LevelRepository levelRepository;
     private final TokenProvider tokenProvider;
     private final MemberAuthorityRepository memberAuthorityRepository;
+
+    @Value("${custom.github.redirect}")
+    private String githubRedirectUrl;
 
     @Override
     @Transactional
@@ -73,12 +76,6 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         String json = new ObjectMapper().writeValueAsString(loginResponse);
         String encodedJson = Base64.getEncoder().encodeToString(json.getBytes());
 
-//        Cookie cookie = new Cookie("loginResponse", encodedJson);
-//        cookie.setMaxAge(600);
-//        cookie.setPath("/");
-//        cookie.setDomain("43.201.47.254");
-//        response.addCookie(cookie);
-
         String cookieValue = ResponseCookie.from("loginResponse", encodedJson) // 쿠키 이름과 값 설정
                 .domain(".kernelsquare.live") // 쿠키 도메인 설정
                 .maxAge(600) // 최대 유효 시간 설정 (초 단위)
@@ -88,9 +85,6 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         response.setHeader("Set-Cookie", cookieValue); // HTTP 응답 헤더에 쿠키 추가
 
-        // develop
-        response.sendRedirect("http://dev.kernelsquare.live/oauth/github");
-        // main
-//        response.sendRedirect("https://kernelsquare.live/oauth/github");
+        response.sendRedirect(githubRedirectUrl);
     }
 }

@@ -6,9 +6,24 @@ spring:
       prod1: common, prod-db, prod1-server
       prod2: common, prod-db, prod2-server
 
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: ${SOCIAL_GITHUB_CLIENT_ID}
+            client-secret: ${SOCIAL_GITHUB_CLIENT_SECRET}
+            redirect-uri: http://dev-back.kernelsquare.live:8501/login/oauth2/code/github
+            scope:
+              - user:email
+
 server:
   env: develop
   port: 8501
+
+custom:
+  github:
+    redirect: http://dev.kernelsquare.live/oauth/github
 
 dbInfo: rds
 
@@ -71,16 +86,6 @@ spring:
       access-token-validity-in-seconds: 3600     # 1시간
       refresh-token-validity-in-seconds: 1_209_600  # 2주
 
-    oauth2:
-      client:
-        registration:
-          github:
-            client-id: ${SOCIAL_GITHUB_CLIENT_ID}
-            client-secret: ${SOCIAL_GITHUB_CLIENT_SECRET}
-            redirect-uri: http://dev-back.kernelsquare.live:8501/login/oauth2/code/github
-            scope:
-              - user:email
-
   flyway:
     enabled: false
     baseline-on-migrate: true
@@ -137,12 +142,27 @@ spring:
     activate:
       on-profile: prod1-server
 
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: ${SOCIAL_GITHUB_CLIENT_ID}
+            client-secret: ${SOCIAL_GITHUB_CLIENT_SECRET}
+            redirect-uri: https://kernelsquare.live:8501/login/oauth2/code/github
+            scope:
+              - user:email
+
 serverName: kernelsquare-prod1
 
 dbInfo: rds
 
 server:
   port: 8501
+
+custom:
+  github:
+    redirect: https://kernelsquare.live/oauth/github
 
 ---
 
@@ -151,9 +171,24 @@ spring:
     activate:
       on-profile: prod2-server
 
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: ${SOCIAL_GITHUB_CLIENT_ID}
+            client-secret: ${SOCIAL_GITHUB_CLIENT_SECRET}
+            redirect-uri: https://kernelsquare.live:8502/login/oauth2/code/github
+            scope:
+              - user:email
+
 serverName: kernelsquare-prod2
 
 dbInfo: rds
 
 server:
   port: 8502
+
+custom:
+  github:
+    redirect: https://kernelsquare.live/oauth/github

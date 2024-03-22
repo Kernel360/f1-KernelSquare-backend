@@ -1,0 +1,104 @@
+name: Java CD-DEV with Gradle
+
+on:
+  pull_request:
+    types:
+      - closed
+
+permissions:
+  contents: read
+
+jobs:
+  if-dev-merge:
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'develop'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Set up member-api application.yml
+        run: echo "${{ secrets.MEMBER_DEV_APPLICATION }}" > ./member-api/src/main/resources/application.yml
+
+      - name: Upload member-api application.yml artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: application.yml
+          path: ./member-api/src/main/resources/application.yml
+
+      - name: Set up member-api test application.yml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./member-api/src/test/resources/application.yml
+        env:
+          spring.datasource.url: ${{ secrets.TEST_DB_URL }}
+          spring.datasource.username: ${{ secrets.TEST_DB_HOST }}
+          spring.datasource.password: ${{ secrets.TEST_DB_PASSWORD }}
+          spring.security.jwt.secret: ${{ secrets.JWT_SECRET_KEY }}
+          spring.data.mongodb.uri: ${{ secrets.MONGO_TEST_URI }}
+          custom.domain.image.baseUrl: ${{ secrets.BASE_URL }}
+          cloud.aws.s3.bucket: ${{ secrets.S3_BUCKET_NAME }}
+          cloud.aws.region.static: ${{ secrets.S3_REGION }}
+          cloud.aws.credentials.accessKey: ${{ secrets.AWS_ACCESS_KEY }}
+          cloud.aws.credentials.secretKey: ${{ secrets.AWS_ACCESS_SECRET }}
+
+      - name: Set up domain-mysql application.yml
+        run: echo "${{ secrets.RDB_DEV_APPLICATION }}" > ./domain-mysql/src/main/resources/application.yml
+
+      - name: Upload domain-mysql application.yml artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: application.yml
+          path: ./domain-mysql/src/main/resources/application.yml
+
+      - name: Set up domain-mongodb application.yml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./domain-mongodb/src/main/resources/application.yml
+        env:
+          spring.data.mongodb.uri: ${{ secrets.MONGO_URI }}
+
+      - name: Set up domain-mongodb test application.yml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./domain-mongodb/src/test/resources/application.yml
+        env:
+          spring.data.mongodb.uri: ${{ secrets.MONGO_TEST_URI }}
+
+      - name: Build member-api with Gradle
+        run: |
+          cd member-api
+          chmod +x ./gradlew
+          ./gradlew clean build
+
+      - name: DockerHub Login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: member-api Docker Dev Image Build
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/kernelsquare-dev ./member-api
+
+      - name: member-api DockerHub Dev Push
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/kernelsquare-dev
+
+  deploy:
+    needs: if-dev-merge
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy and Run
+        uses: appleboy/ssh-action@master
+        with:
+          username: ${{ secrets.DEV_SSH_USER }}
+          host: ${{ secrets.DEV_IP }}
+          key: ${{ secrets.DEV_SSH_KEY }}
+          script: |
+            sudo docker stop prod1-dev || true
+            sudo docker rm prod1-dev || true
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/kernelsquare-dev
+            sudo docker-compose up -d

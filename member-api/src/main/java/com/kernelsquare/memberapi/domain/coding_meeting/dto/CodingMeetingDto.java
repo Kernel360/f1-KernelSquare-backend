@@ -115,4 +115,16 @@ public class CodingMeetingDto {
             LocalDateTime createdDate
     ) {
     }
+
+    @Builder
+    public record FindSeoResponse(
+            String codingMeetingToken
+    ) {
+    }
+
+    @Builder
+    public record FindAllSeoResponse(
+            List<FindSeoResponse> codingMeetingTokenList
+    ) {
+    }
 }

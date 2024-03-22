@@ -52,6 +52,14 @@ public class QuestionController {
 		return ResponseEntityFactory.toResponseEntity(QUESTION_ALL_FOUND, pageResponse);
 	}
 
+	@GetMapping("/questions/seo")
+	public ResponseEntity<ApiResponse<FindAllQuestionResponse>> findAllQuestionsSeo(
+	) {
+		FindAllQuestionResponse findAllResponse = questionService.findAllQuestionsSeo();
+
+		return ResponseEntityFactory.toResponseEntity(QUESTION_SEO_LIST_FOUND, findAllResponse);
+	}
+
 	@PutMapping("/questions/{questionId}")
 	public ResponseEntity<ApiResponse> updateQuestion(
 		@PathVariable

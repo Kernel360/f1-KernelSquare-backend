@@ -100,6 +100,14 @@ public class QuestionService {
 		return PageResponse.of(pagination, QuestionPagesResponse);
 	}
 
+	@Transactional(readOnly = true)
+	public FindAllQuestionResponse findAllQuestionsSeo() {
+		return FindAllQuestionResponse.of(questionRepository.findAll().stream()
+				.map(Question::getId)
+				.map(FindQuestionIdResponse::of)
+				.toList());
+	}
+
 	@Transactional
 	public void updateQuestion(Long questionId, UpdateQuestionRequest updateQuestionRequest) {
 		Question question = questionRepository.findById(questionId)

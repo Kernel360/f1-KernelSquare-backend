@@ -35,21 +35,6 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Set up admin-api application.yml
-        uses: microsoft/variable-substitution@v1
-        with:
-          files: ./admin-api/src/main/resources/application.yml
-        env:
-          spring.datasource.url: ${{ secrets.LOCAL_DB_URL }}
-          spring.datasource.username: ${{ secrets.LOCAL_DB_HOST }}
-          spring.datasource.password: ${{ secrets.LOCAL_DB_PASSWORD }}
-          spring.security.jwt.secret: ${{ secrets.JWT_SECRET_KEY }}
-          cloud.aws.s3.bucket: ${{ secrets.S3_BUCKET_NAME }}
-          cloud.aws.region.static: ${{ secrets.S3_REGION }}
-          cloud.aws.credentials.accessKey: ${{ secrets.AWS_ACCESS_KEY }}
-          cloud.aws.credentials.secretKey: ${{ secrets.AWS_ACCESS_SECRET }}
-          custom.domain.image.baseUrl: ${{ secrets.BASE_URL }}
-
 #      - name: Set up member-api application.yml
 #        uses: microsoft/variable-substitution@v1
 #        with:
@@ -86,10 +71,11 @@ jobs:
         env:
           spring.data.mongodb.uri: ${{ secrets.MONGO_URI }}
 
-      - name: Build with Gradle
+      - name: Build member-api with Gradle
         run : |
           cd member-api
-          ./gradlew clean build -x test
+          chmod +x ./gradlew
+          ./gradlew clean build
 
       - name: Login to DockerHub
         uses: docker/login-action@v1
@@ -97,10 +83,10 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build Docker
+      - name: Build member-api with Docker
         run : docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/kernelsquare ./member-api
 
-      - name: Docker push
+      - name: member-api Docker push
         run : docker push ${{ secrets.DOCKERHUB_USERNAME }}/kernelsquare:latest
 
   deploy:
@@ -134,7 +120,6 @@ jobs:
           aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
           aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 80 --cidr ${{ steps.ip.outputs.ipv4 }}/32
           aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 443 --cidr ${{ steps.ip.outputs.ipv4 }}/32
-          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8000 --cidr ${{ steps.ip.outputs.ipv4 }}/32
           aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8501 --cidr ${{ steps.ip.outputs.ipv4 }}/32
           aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8502 --cidr ${{ steps.ip.outputs.ipv4 }}/32
 
@@ -198,18 +183,17 @@ jobs:
         uses: jtalk/url-health-check-action@v3
         with:
           url: http://${{ env.STOPPED_IP }}:8501/environment
-          # 총 5번 하는데, 15초의 간격을 두고함. 이때까지 응답이 정상이 아니라면 배포 실패
+          # 총 5번 하는데, 30초의 간격을 두고함. 이때까지 응답이 정상이 아니라면 배포 실패
           max-attempts: 5 # Optional, defaults to 1
           retry-delay: 30s # Optional, only applicable to max-attempts > 1
-#
+
       - name: Check the deployed prod2 service URL
         uses: jtalk/url-health-check-action@v3
         with:
           url: http://${{ env.STOPPED_IP }}:8502/environment
-          # 총 5번 하는데, 15초의 간격을 두고함. 이때까지 응답이 정상이 아니라면 배포 실패
+          # 총 5번 하는데, 30초의 간격을 두고함. 이때까지 응답이 정상이 아니라면 배포 실패
           max-attempts: 5 # Optional, defaults to 1
           retry-delay: 30s # Optional, only applicable to max-attempts > 1
-
 
       # 엔진엑스의 프록시 변경
       - name: Change nginx upstream
@@ -264,6 +248,5 @@ jobs:
           aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
           aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 80 --cidr ${{ steps.ip.outputs.ipv4 }}/32
           aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 443 --cidr ${{ steps.ip.outputs.ipv4 }}/32
-          aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8000 --cidr ${{ steps.ip.outputs.ipv4 }}/32
           aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8501 --cidr ${{ steps.ip.outputs.ipv4 }}/32
           aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 8502 --cidr ${{ steps.ip.outputs.ipv4 }}/32

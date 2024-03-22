@@ -51,6 +51,12 @@ public class CodingMeetingController {
         return ResponseEntityFactory.toResponseEntity(CODING_MEETING_ALL_FOUND, pageResponse);
     }
 
+    @GetMapping("/coding-meetings/seo")
+    public ResponseEntity<ApiResponse<CodingMeetingDto.FindAllSeoResponse>> findAllCodingMeetingSeo() {
+        CodingMeetingDto.FindAllSeoResponse listResponse = codingMeetingFacade.findAllCodingMeetingSeoList();
+        return ResponseEntityFactory.toResponseEntity(CODING_MEETING_SEO_LIST_FOUND, listResponse);
+    }
+
     @PutMapping("/coding-meetings/{codingMeetingToken}")
     public ResponseEntity<ApiResponse> updateCodingMeeting(
         @PathVariable String codingMeetingToken,

@@ -16,8 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class Logging {
 
-	private static final String TRACE_ID_NAME = "request_id";
-
 	@Pointcut("bean(*Component)")
 	private void component() {
 	}
@@ -42,8 +40,8 @@ public class Logging {
 		String exceptionMessage = exception.getMessage();
 		String methodName = joinPoint.getSignature().toShortString();
 		Object[] args = joinPoint.getArgs();
-		log.error("[{}] [Exception] {} , exceptionName = {}, exceptionMessage = {}, args = {}",
-			MDC.get(TRACE_ID_NAME), methodName, exceptionName, exceptionMessage, args);
+		log.error("[Exception] {} , exceptionName = {}, exceptionMessage = {}, args = {}",
+				methodName, exceptionName, exceptionMessage, args);
 	}
 
 	@Around("controller() || async()")
@@ -54,7 +52,7 @@ public class Logging {
 		var methodName = joinPoint.getSignature().toShortString();
 		Object result = joinPoint.proceed();
 		var executeTime = System.currentTimeMillis() - beforeTime;
-		log.info("[{}] methodName : [{}] time = [{}ms]", MDC.get(TRACE_ID_NAME), methodName, executeTime);
+		log.info("methodName : [{}] time = [{}ms]", methodName, executeTime);
 		return result;
 	}
 }

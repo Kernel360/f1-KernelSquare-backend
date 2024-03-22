@@ -12,7 +12,8 @@ public enum CodingMeetingResponseCode implements ResponseCode{
     CODING_MEETING_UPDATED(HttpStatus.OK, CodingMeetingServiceStatus.CODING_MEETING_UPDATED, "모각코 수정 성공"),
     CODING_MEETING_DELETED(HttpStatus.OK, CodingMeetingServiceStatus.CODING_MEETING_DELETED, "모각코 삭제 성공"),
     CODING_MEETING_CREATED(HttpStatus.OK, CodingMeetingServiceStatus.CODING_MEETING_CREATED, "모각코 생성 성공"),
-    CODING_MEETING_CLOSED(HttpStatus.OK, CodingMeetingServiceStatus.CODING_MEETING_CLOSED, "모각코 마감 성공");
+    CODING_MEETING_CLOSED(HttpStatus.OK, CodingMeetingServiceStatus.CODING_MEETING_CLOSED, "모각코 마감 성공"),
+    CODING_MEETING_SEO_LIST_FOUND(HttpStatus.OK, CodingMeetingServiceStatus.CODING_MEETING_SEO_LIST_FOUND, "모각코 SEO 리스트 조회 성공");
 
     private final HttpStatus httpStatus;
     private final ServiceStatus serviceStatus;

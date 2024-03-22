@@ -1,10 +1,15 @@
 package com.kernelsquare.memberapi.domain.auth.service;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
-import java.time.LocalDateTime;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.kernelsquare.domainmysql.domain.member.entity.Member;
+import com.kernelsquare.memberapi.domain.auth.dto.LoginRequest;
+import com.kernelsquare.memberapi.domain.auth.dto.TokenRequest;
+import com.kernelsquare.memberapi.domain.auth.dto.TokenResponse;
+import com.kernelsquare.memberapi.domain.auth.entity.RefreshToken;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,17 +30,10 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.kernelsquare.memberapi.domain.auth.dto.LoginRequest;
-import com.kernelsquare.memberapi.domain.auth.dto.TokenRequest;
-import com.kernelsquare.memberapi.domain.auth.dto.TokenResponse;
-import com.kernelsquare.memberapi.domain.auth.entity.RefreshToken;
-import com.kernelsquare.domainmysql.domain.member.entity.Member;
+import java.time.LocalDateTime;
 
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 @DisplayName("토큰 생성 서비스 테스트")
 @ExtendWith(MockitoExtension.class)
@@ -66,7 +64,7 @@ public class TokenProviderTest {
 		jsonRedisSerializer.configure(objectMapper -> objectMapper
 			.registerModule(new JavaTimeModule()));
 
-		LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory();
+		LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory("13.125.190.40", 6379);
 		lettuceConnectionFactory.afterPropertiesSet();
 
 		redisTemplate.setConnectionFactory(lettuceConnectionFactory);

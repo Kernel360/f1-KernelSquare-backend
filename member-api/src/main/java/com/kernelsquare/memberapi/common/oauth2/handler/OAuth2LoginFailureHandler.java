@@ -33,7 +33,7 @@ public class OAuth2LoginFailureHandler implements AuthenticationFailureHandler {
         log.info("OAuth2 로그인에 실패했습니다. 에러 코드: {}, 에러 메시지: {}", errorCode, errorMessage);
 
         // develope
-        String redirectUrl = "https://localhost:3000/oauth/github";
+        String redirectUrl = "http://dev.kernelsquare.live/oauth/github";
         // main
 //        String redirectUrl = "https://kernelsquare.live/oauth/github";
 

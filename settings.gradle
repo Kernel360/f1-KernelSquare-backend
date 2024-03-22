@@ -3,5 +3,4 @@ include 'member-api'
 include 'core'
 include 'domain-mongodb'
 include 'domain-mysql'
-include 'admin-api'
 

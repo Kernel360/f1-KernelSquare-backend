@@ -137,10 +137,8 @@ class CoffeeChatControllerTest extends RestDocsControllerTest {
 
 		MemberAdapter memberAdapter = new MemberAdapter(MemberAdaptorInstance.of(member));
 
-		ChatRoomMember chatRoomMember = ChatRoomMember.from(member);
-
 		EnterCoffeeChatRoomResponse enterCoffeeChatRoomResponse = EnterCoffeeChatRoomResponse.of(
-			enterCoffeeChatRoomRequest.articleTitle(), chatRoom, List.of(chatRoomMember));
+			enterCoffeeChatRoomRequest.articleTitle(), chatRoom);
 
 		given(coffeeChatService.enterCoffeeChatRoom(any(EnterCoffeeChatRoomRequest.class),
 			any(MemberAdapter.class))).willReturn(enterCoffeeChatRoomResponse);
@@ -171,11 +169,6 @@ class CoffeeChatControllerTest extends RestDocsControllerTest {
 					fieldWithPath("data.article_title").type(JsonFieldType.STRING).description("게시글 제목"),
 					fieldWithPath("data.room_key").type(JsonFieldType.STRING).description("채팅방 키"),
 					fieldWithPath("data.active").type(JsonFieldType.BOOLEAN).description("활성화 여부"),
-					fieldWithPath("data.member_list").type(JsonFieldType.ARRAY).description("채팅방 멤버 리스트"),
-					fieldWithPath("data.member_list[].member_id").type(JsonFieldType.NUMBER).description("멤버 아이디"),
-					fieldWithPath("data.member_list[].nickname").type(JsonFieldType.STRING).description("멤버 닉네임"),
-					fieldWithPath("data.member_list[].member_image_url").type(JsonFieldType.STRING)
-						.description("멤버 이미지 URL"),
 					fieldWithPath("data.expiration_time").type(JsonFieldType.STRING).description("채팅방 만료 시간")
 				)));
 

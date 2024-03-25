@@ -105,8 +105,6 @@ public class AnswerServiceTest {
 		//given
 		Long foundMemberId = 1L;
 
-		Long foundQuestionId = 1L;
-
 		Long foundTestAnswerId = 1L;
 
 		Long memberId = 2L; // 본인 질문에 답변 달 수 없기에 foundMemberId 와 다르게 설정
@@ -122,7 +120,7 @@ public class AnswerServiceTest {
 		Answer foundAnswer = createTestAnswer(foundTestAnswerId, 1L, foundMember, foundQuestion);
 
 		AnswerCommand.CreateAnswer command = AnswerCommand.CreateAnswer.builder()
-			.questionId(foundQuestionId)
+			.questionId(foundQuestion.getId())
 			.content(foundAnswer.getContent())
 			.imageUrl(foundAnswer.getImageUrl())
 			.author(foundMember)
@@ -142,6 +140,7 @@ public class AnswerServiceTest {
 		assertThat(answerInfo.getRecipient()).isEqualTo(foundQuestion.getMember().getNickname());
 		assertThat(answerInfo.getSenderId()).isEqualTo(foundAnswer.getMember().getId().toString());
 		assertThat(answerInfo.getSender()).isEqualTo(foundAnswer.getMember().getNickname());
+		assertThat(answerInfo.getQuestionId()).isEqualTo(foundQuestion.getId().toString());
 		assertThat(answerInfo.getQuestionTitle()).isEqualTo(foundQuestion.getTitle());
 
 		//verify
@@ -218,6 +217,7 @@ public class AnswerServiceTest {
 	private Question createTestQuestion() {
 		return Question
 			.builder()
+			.id(2131231L)
 			.title("Test Question")
 			.content("Test Content")
 			.imageUrl("S3:TestImage")

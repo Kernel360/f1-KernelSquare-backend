@@ -9,6 +9,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -37,9 +38,11 @@ public class OAuth2LoginFailureHandler implements AuthenticationFailureHandler {
 
         log.info("OAuth2 로그인에 실패했습니다. 에러 코드: {}, 에러 메시지: {}", errorCode, errorMessage);
 
+        String redirectUrl = UriComponentsBuilder.fromUriString(githubRedirectUrl)
+                .queryParam("errorCode", errorCode)
+                .queryParam("errorMessage", URLEncoder.encode(errorMessage, StandardCharsets.UTF_8))
+                .build().toUriString();
 
-        githubRedirectUrl += "?errorCode=" + URLEncoder.encode(errorCode, StandardCharsets.UTF_8.toString()) + "&errorMessage=" + URLEncoder.encode(errorMessage, StandardCharsets.UTF_8.toString());
-
-        response.sendRedirect(githubRedirectUrl);
+        response.sendRedirect(redirectUrl);
     }
 }

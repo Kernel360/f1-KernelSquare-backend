@@ -6,7 +6,6 @@ import com.kernelsquare.domainmysql.domain.coffeechat.entity.ChatRoom;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Builder
 public record EnterCoffeeChatRoomResponse(
@@ -16,21 +15,17 @@ public record EnterCoffeeChatRoomResponse(
 
 	Boolean active,
 
-	List<ChatRoomMember> memberList,
-
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = TimeResponseFormat.PATTERN)
 	LocalDateTime expirationTime
 ) {
 	public static EnterCoffeeChatRoomResponse of(
 		String articleTitle,
-		ChatRoom chatRoom,
-		List<ChatRoomMember> chatRoomMemberList
+		ChatRoom chatRoom
 	) {
 		return EnterCoffeeChatRoomResponse.builder()
 			.articleTitle(articleTitle)
 			.roomKey(chatRoom.getRoomKey())
 			.active(chatRoom.getActive())
-			.memberList(chatRoomMemberList)
 			.expirationTime(chatRoom.getExpirationTime())
 			.build();
 	}

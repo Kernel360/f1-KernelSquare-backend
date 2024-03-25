@@ -10,15 +10,17 @@ public class AlertDto {
     public record RankAnswerAlert(
         String recipientId,
         String recipient,
+        String questionId,
         String questionTitle,
-        String rankName
+        String rank
     ) {
         public static RankAnswerAlert of(Question question, Answer answer, Rank rank) {
             return RankAnswerAlert.builder()
                 .recipientId(answer.getMember().getId().toString())
                 .recipient(answer.getMember().getNickname())
+                .questionId(question.getId().toString())
                 .questionTitle(question.getTitle())
-                .rankName(rank.getName().toString())
+                .rank(rank.getName().toString())
                 .build();
         }
     }

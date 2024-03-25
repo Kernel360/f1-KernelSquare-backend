@@ -21,9 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -32,8 +30,6 @@ public class CoffeeChatService {
 	private final MongoChatMessageRepository mongoChatMessageRepository;
 	private final ReservationRepository reservationRepository;
 	private final MemberReader memberReader;
-
-	private final ConcurrentHashMap<String, List<ChatRoomMember>> chatRoomMemberList = new ConcurrentHashMap<>();
 
 	@Transactional
 	public CreateCoffeeChatRoomResponse createCoffeeChatRoom(CreateCoffeeChatRoomRequest createCoffeeChatRoomRequest) {
@@ -57,37 +53,28 @@ public class CoffeeChatService {
 
 		switch (CoffeeChatValidation.validatePermission(reservation, memberAdapter)) {
 			case MENTOR -> {
-				return mentorEnter(enterCoffeeChatRoomRequest, chatRoom, memberAdapter);
+				return mentorEnter(enterCoffeeChatRoomRequest, chatRoom);
 			}
 			case MENTEE -> {
-				return menteeEnter(enterCoffeeChatRoomRequest, chatRoom, memberAdapter);
+				return menteeEnter(enterCoffeeChatRoomRequest, chatRoom);
 			}
 			default -> throw new BusinessException(CoffeeChatErrorCode.AUTHORITY_NOT_VALID);
 		}
 	}
 
 	public EnterCoffeeChatRoomResponse mentorEnter(EnterCoffeeChatRoomRequest enterCoffeeChatRoomRequest,
-		ChatRoom chatRoom, MemberAdapter memberAdapter) {
+		ChatRoom chatRoom) {
 
 		chatRoom.activateRoom(enterCoffeeChatRoomRequest.articleTitle());
 
-		//TODO 중복 입장에 대한 정책이 정해지면 로직 구현
-		chatRoomMemberList.computeIfAbsent(chatRoom.getRoomKey(), k -> new ArrayList<>())
-			.add(ChatRoomMember.from(memberAdapter.getMember()));
-
-		return EnterCoffeeChatRoomResponse.of(enterCoffeeChatRoomRequest.articleTitle(), chatRoom,
-			chatRoomMemberList.get(chatRoom.getRoomKey()));
+		return EnterCoffeeChatRoomResponse.of(enterCoffeeChatRoomRequest.articleTitle(), chatRoom);
 	}
 
 	public EnterCoffeeChatRoomResponse menteeEnter(EnterCoffeeChatRoomRequest enterCoffeeChatRoomRequest,
-		ChatRoom chatRoom, MemberAdapter memberAdapter) {
+		ChatRoom chatRoom) {
 		CoffeeChatValidation.validateChatRoomActive(chatRoom);
 
-		//TODO 중복 입장에 대한 정책이 정해지면 로직 구현
-		chatRoomMemberList.get(chatRoom.getRoomKey()).add(ChatRoomMember.from(memberAdapter.getMember()));
-
-		return EnterCoffeeChatRoomResponse.of(enterCoffeeChatRoomRequest.articleTitle(), chatRoom,
-			chatRoomMemberList.get(chatRoom.getRoomKey()));
+		return EnterCoffeeChatRoomResponse.of(enterCoffeeChatRoomRequest.articleTitle(), chatRoom);
 	}
 
 	@Transactional

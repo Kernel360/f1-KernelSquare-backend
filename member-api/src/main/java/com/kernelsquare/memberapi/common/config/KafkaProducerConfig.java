@@ -23,6 +23,7 @@ public class KafkaProducerConfig {
 		config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, url);
 		config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
 		config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+		config.put(JsonSerializer.TYPE_MAPPINGS, "ChatMessageRequest:com.kernelsquare.memberapi.domain.coffeechat.dto.ChatMessageRequest");
 		return new DefaultKafkaProducerFactory<>(config);
 	}
 

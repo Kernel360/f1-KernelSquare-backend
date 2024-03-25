@@ -12,6 +12,7 @@ public class AnswerInfo {
     private final String recipient;
     private final String senderId;
     private final String sender;
+    private final String questionId;
     private final String questionTitle;
 
     public static AnswerInfo from(Question question, Member answerAuthor) {
@@ -20,6 +21,7 @@ public class AnswerInfo {
             .recipient(question.getMember().getNickname())
             .senderId(answerAuthor.getId().toString())
             .sender(answerAuthor.getNickname())
+            .questionId(question.getId().toString())
             .questionTitle(question.getTitle())
             .build();
     }

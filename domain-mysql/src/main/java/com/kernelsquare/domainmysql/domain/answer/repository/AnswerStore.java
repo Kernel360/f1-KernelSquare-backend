@@ -10,7 +10,7 @@ public interface AnswerStore {
 
     Answer store(Answer answer);
 
-    void upRank(Rank rank, Long answerId);
+    void updateRank(Rank rank, Long answerId);
 
     void delete(Long answerId);
 }

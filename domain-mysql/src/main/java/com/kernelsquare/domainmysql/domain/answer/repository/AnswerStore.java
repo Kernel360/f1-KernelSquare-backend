@@ -1,6 +1,7 @@
 package com.kernelsquare.domainmysql.domain.answer.repository;
 
 import com.kernelsquare.domainmysql.domain.answer.entity.Answer;
+import com.kernelsquare.domainmysql.domain.rank.entity.Rank;
 
 public interface AnswerStore {
     void upVote(Long answerId);
@@ -8,6 +9,8 @@ public interface AnswerStore {
     void downVote(Long answerId);
 
     Answer store(Answer answer);
+
+    void upRank(Rank rank, Long answerId);
 
     void delete(Long answerId);
 }

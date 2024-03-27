@@ -4,6 +4,7 @@ import com.kernelsquare.core.type.MessageType;
 import com.kernelsquare.domainmysql.domain.answer.entity.Answer;
 import com.kernelsquare.domainmysql.domain.answer.repository.AnswerReader;
 import com.kernelsquare.domainmysql.domain.answer.repository.AnswerRepository;
+import com.kernelsquare.domainmysql.domain.answer.repository.AnswerStore;
 import com.kernelsquare.domainmysql.domain.coffeechat.entity.ChatRoom;
 import com.kernelsquare.domainmysql.domain.coffeechat.repository.CoffeeChatReader;
 import com.kernelsquare.domainmysql.domain.question.entity.Question;
@@ -31,7 +32,7 @@ public class SchedulerManagerImpl implements ScheculerManager {
     private final CoffeeChatReader coffeeChatReader;
     private final QuestionReader questionReader;
     private final AnswerReader answerReader;
-    private final AnswerRepository answerRepository;
+    private final AnswerStore answerStore;
     private final RankReader rankReader;
     private final AlertService alertService;
     private final AlertDtoMapper alertDtoMapper;
@@ -73,7 +74,7 @@ public class SchedulerManagerImpl implements ScheculerManager {
             for (Answer answer : answers) {
                 Rank rank = rankReader.findRank(rankName);
 
-                answerRepository.updateAnswerRank(rank, answer.getId());
+                answerStore.upRank(rank, answer.getId());
 
                 alertService.sendToBroker(alertDtoMapper.from(AlertDto.RankAnswerAlert.of(question, answer, rank)));
 

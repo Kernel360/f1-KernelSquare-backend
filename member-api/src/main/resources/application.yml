@@ -133,7 +133,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: *
+        include: '*'
 
   metrics:
     distribution:

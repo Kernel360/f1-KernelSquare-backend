@@ -2,6 +2,7 @@ package com.kernelsquare.domainmysql.domain.answer.repository;
 
 import java.util.List;
 
+import com.kernelsquare.domainmysql.domain.rank.entity.Rank;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -26,4 +27,8 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
 	List<Answer> findAnswersByQuestionIdSortedByVoteCount(@Param("questionId") Long questionId, @Param("answerBot") String answerBot);
 
 	Boolean existsByMemberNicknameAndQuestionId(String nickname, Long questionId);
+
+	@Modifying
+	@Query("UPDATE Answer a SET a.rank = :rank WHERE a.id = :answerId")
+	void updateAnswerRank(@Param("rank") Rank rank, @Param("answerId") Long answerId);
 }

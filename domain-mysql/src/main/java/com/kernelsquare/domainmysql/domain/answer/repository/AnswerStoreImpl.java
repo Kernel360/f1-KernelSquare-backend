@@ -26,7 +26,7 @@ public class AnswerStoreImpl implements AnswerStore {
     }
 
     @Override
-    public void updateRank(Rank rank, Long answerId) {
+    public void updateAnswerRank(Rank rank, Long answerId) {
         answerRepository.updateAnswerRank(rank, answerId);
     }
 

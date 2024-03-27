@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.kernelsquare.memberapi.domain.chatgpt.facade.ChatGptFacade;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,7 +115,7 @@ class AnswerControllerTest extends RestDocsControllerTest {
 	@MockBean
 	private AnswerService answerService;
 	@MockBean
-	private ChatGptService chatGptService;
+	private ChatGptFacade chatGptFacade;
 	private List<FindAnswerResponse> answerResponseList = new ArrayList<>();
 	private FindAllAnswerResponse answerResponseListDto;
 	@MockBean

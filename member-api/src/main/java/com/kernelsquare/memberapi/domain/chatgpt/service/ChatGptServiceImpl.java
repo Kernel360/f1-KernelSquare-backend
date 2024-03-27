@@ -3,6 +3,7 @@ package com.kernelsquare.memberapi.domain.chatgpt.service;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import com.kernelsquare.domainmysql.domain.answer.info.AnswerInfo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +41,7 @@ public class ChatGptServiceImpl implements ChatGptService {
 	@SneakyThrows({URISyntaxException.class})
 	@Transactional
 	@Override
-	public void createChatGptAnswer(Long questionId) {
+	public AnswerInfo createChatGptAnswer(Long questionId) {
 		if (answerRepository.existsByMemberNicknameAndQuestionId(KernelSquareBotConstants.KERNEL_SQUARE_AI_INTERN, questionId)) {
 			throw new BusinessException(KernelSquareBotErrorCode.ANSWER_ALREADY_EXIST);
 		}
@@ -67,5 +68,7 @@ public class ChatGptServiceImpl implements ChatGptService {
 			.build();
 
 		answerRepository.save(answer);
+
+		return AnswerInfo.from(question, member);
 	}
 }

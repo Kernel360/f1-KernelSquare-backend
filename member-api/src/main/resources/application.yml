@@ -133,7 +133,14 @@ management:
   endpoints:
     web:
       exposure:
-        include: prometheus, health, info, metrics, tempo
+        include: *
+
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: 'true'
 
 ---
 

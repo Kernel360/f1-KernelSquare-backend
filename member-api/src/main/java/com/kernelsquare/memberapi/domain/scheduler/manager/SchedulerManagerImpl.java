@@ -3,6 +3,8 @@ package com.kernelsquare.memberapi.domain.scheduler.manager;
 import com.kernelsquare.core.type.MessageType;
 import com.kernelsquare.domainmysql.domain.answer.entity.Answer;
 import com.kernelsquare.domainmysql.domain.answer.repository.AnswerReader;
+import com.kernelsquare.domainmysql.domain.answer.repository.AnswerRepository;
+import com.kernelsquare.domainmysql.domain.answer.repository.AnswerStore;
 import com.kernelsquare.domainmysql.domain.coffeechat.entity.ChatRoom;
 import com.kernelsquare.domainmysql.domain.coffeechat.repository.CoffeeChatReader;
 import com.kernelsquare.domainmysql.domain.question.entity.Question;
@@ -30,6 +32,7 @@ public class SchedulerManagerImpl implements ScheculerManager {
     private final CoffeeChatReader coffeeChatReader;
     private final QuestionReader questionReader;
     private final AnswerReader answerReader;
+    private final AnswerStore answerStore;
     private final RankReader rankReader;
     private final AlertService alertService;
     private final AlertDtoMapper alertDtoMapper;
@@ -63,19 +66,20 @@ public class SchedulerManagerImpl implements ScheculerManager {
         questions.stream()
             .filter(question -> question.getCreatedDate().toLocalDate().isBefore(LocalDate.now().minusDays(7)))
             .forEach(question -> {
-                question.closeQuestion();
-                List<Answer> answers = answerReader.findAnswersTop3(question.getId());
+            question.closeQuestion();
+            List<Answer> answers = answerReader.findAnswersTop3(question.getId());
 
-                Long rankName = 1L;
+            Long rankName = 1L;
 
-                for (Answer answer : answers) {
-                    Rank rank = rankReader.findRank(rankName);
-                    answer.updateRank(rank);
+            for (Answer answer : answers) {
+                Rank rank = rankReader.findRank(rankName);
 
-                    alertService.sendToBroker(alertDtoMapper.from(AlertDto.RankAnswerAlert.of(question, answer, rank)));
+                answerStore.updateAnswerRank(rank, answer.getId());
 
-                    rankName += 1L;
-                }
-            });
+                alertService.sendToBroker(alertDtoMapper.from(AlertDto.RankAnswerAlert.of(question, answer, rank)));
+
+                rankName += 1L;
+            }
+        });
     }
 }

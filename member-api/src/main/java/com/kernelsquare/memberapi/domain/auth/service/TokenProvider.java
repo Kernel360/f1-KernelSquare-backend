@@ -157,13 +157,9 @@ public class TokenProvider implements InitializingBean {
 	public Authentication getAuthentication(String token) {
 		Claims claims = parseClaims(token);
 
-		List<? extends GrantedAuthority> authorities = Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
-			.map(SimpleGrantedAuthority::new)
-			.toList();
+		MemberAdapter memberAdapter = (MemberAdapter) memberDetailService.loadUserByUsername(claims.getSubject());
 
-		MemberAdapter memberAdapter = (MemberAdapter)memberDetailService.loadUserByUsername(claims.getSubject());
-
-		return new UsernamePasswordAuthenticationToken(memberAdapter, token, authorities);
+		return new UsernamePasswordAuthenticationToken(memberAdapter, token, memberAdapter.getAuthorities());
 	}
 
 	private Claims parseClaims(String token) {

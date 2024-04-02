@@ -24,6 +24,7 @@ public class AuthInfo {
                 .memberId(memberInfo.getId())
                 .nickname(memberInfo.getNickname())
                 .experience(memberInfo.getExperience())
+                .introduction(memberInfo.getIntroduction())
                 .imageUrl(memberInfo.getImageUrl())
                 .level(memberInfo.getLevel())
                 .roles(roles)

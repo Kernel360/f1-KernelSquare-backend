@@ -27,7 +27,6 @@ public class AuthController {
 	private final TokenProvider tokenProvider;
 	private final AuthFacade authFacade;
 
-	@LogExecutionTime
 	@PostMapping("/auth/login")
 	public ResponseEntity<ApiResponse<AuthDto.LoginResponse>> login(
 		final @RequestBody @Validated(ValidationSequence.class) AuthDto.LoginRequest request) {

@@ -41,10 +41,10 @@ public class AuthService {
 	private final AuthValidation authValidation;
 
 	@Transactional
-	public AuthInfo.LoginInfo login(final AuthCommand.LoginMember request) {
-		Member findMember = memberReader.findMember(request.email());
+	public AuthInfo.LoginInfo login(final AuthCommand.LoginMember command) {
+		Member findMember = memberReader.findMember(command.email());
 
-		authValidation.validatePassword(request.password(), findMember.getPassword());
+		authValidation.validatePassword(command.password(), findMember.getPassword());
 
 		addExperience(findMember);
 

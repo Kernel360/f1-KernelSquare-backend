@@ -1,10 +1,24 @@
 package com.kernelsquare.memberapi.domain.auth.service;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
-import java.util.Optional;
-
+import com.kernelsquare.core.common_response.error.code.AuthErrorCode;
+import com.kernelsquare.core.common_response.error.exception.BusinessException;
+import com.kernelsquare.core.type.AuthorityType;
+import com.kernelsquare.core.util.ImageUtils;
+import com.kernelsquare.domainmysql.domain.auth.command.AuthCommand;
+import com.kernelsquare.domainmysql.domain.auth.info.AuthInfo;
+import com.kernelsquare.domainmysql.domain.authority.entity.Authority;
+import com.kernelsquare.domainmysql.domain.authority.repository.AuthorityRepository;
+import com.kernelsquare.domainmysql.domain.level.entity.Level;
+import com.kernelsquare.domainmysql.domain.level.repository.LevelRepository;
+import com.kernelsquare.domainmysql.domain.member.entity.Member;
+import com.kernelsquare.domainmysql.domain.member.info.MemberInfo;
+import com.kernelsquare.domainmysql.domain.member.repository.MemberReader;
+import com.kernelsquare.domainmysql.domain.member.repository.MemberRepository;
+import com.kernelsquare.domainmysql.domain.member_authority.entity.MemberAuthority;
+import com.kernelsquare.domainmysql.domain.member_authority.repository.MemberAuthorityRepository;
+import com.kernelsquare.memberapi.domain.auth.dto.SignUpRequest;
+import com.kernelsquare.memberapi.domain.auth.dto.SignUpResponse;
+import com.kernelsquare.memberapi.domain.auth.validation.AuthValidation;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,20 +30,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.kernelsquare.memberapi.domain.auth.dto.LoginRequest;
-import com.kernelsquare.memberapi.domain.auth.dto.SignUpRequest;
-import com.kernelsquare.memberapi.domain.auth.dto.SignUpResponse;
-import com.kernelsquare.core.common_response.error.code.AuthErrorCode;
-import com.kernelsquare.core.common_response.error.exception.BusinessException;
-import com.kernelsquare.core.type.AuthorityType;
-import com.kernelsquare.domainmysql.domain.authority.entity.Authority;
-import com.kernelsquare.domainmysql.domain.authority.repository.AuthorityRepository;
-import com.kernelsquare.domainmysql.domain.level.entity.Level;
-import com.kernelsquare.domainmysql.domain.level.repository.LevelRepository;
-import com.kernelsquare.domainmysql.domain.member.entity.Member;
-import com.kernelsquare.domainmysql.domain.member.repository.MemberRepository;
-import com.kernelsquare.domainmysql.domain.member_authority.entity.MemberAuthority;
-import com.kernelsquare.domainmysql.domain.member_authority.repository.MemberAuthorityRepository;
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.*;
 
 @DisplayName("인증 서비스 테스트")
 @ExtendWith(MockitoExtension.class)
@@ -44,6 +50,12 @@ public class AuthServiceTest {
 	private AuthorityRepository authorityRepository;
 	@Mock
 	private MemberAuthorityRepository memberAuthorityRepository;
+	@Mock
+	private MemberReader memberReader;
+	@Mock
+	private AuthValidation authValidation;
+	@Mock
+	private TokenProvider tokenProvider;
 
 	@Spy
 	private PasswordEncoder passwordEncoder = Mockito.spy(BCryptPasswordEncoder.class);
@@ -54,11 +66,6 @@ public class AuthServiceTest {
 		//given
 		String testEmail = "inthemeantime@name.com";
 		String testPassword = "letmego";
-
-		LoginRequest loginRequest = LoginRequest.builder()
-			.email(testEmail)
-			.password(testPassword)
-			.build();
 
 		Level level = Level.builder()
 			.id(1L)
@@ -76,30 +83,68 @@ public class AuthServiceTest {
 			.experience(1000L)
 			.level(level)
 			.imageUrl("s3:myface")
+			.authorities(List.of(
+				MemberAuthority.builder()
+					.member(Member.builder().build())
+					.authority(Authority.builder().authorityType(AuthorityType.ROLE_USER).build())
+					.build()))
 			.build();
 
-		Optional<Member> optionalMember = Optional.of(member);
 		Optional<Level> optionalLevel = Optional.of(level);
-
-		doReturn(optionalMember)
-			.when(memberRepository)
-			.findByEmail(anyString());
 
 		doReturn(optionalLevel)
 			.when(levelRepository)
 			.findByName(anyLong());
 
+		AuthCommand.LoginMember command = AuthCommand.LoginMember.builder()
+			.email(testEmail)
+			.password(testPassword)
+			.build();
+
+		doNothing()
+			.when(authValidation)
+			.validatePassword(anyString(), anyString());
+
+		doReturn(member)
+			.when(memberReader)
+			.findMember(anyString());
+
+		List<String> roles = member.getAuthorities().stream()
+			.map(MemberAuthority::getAuthority)
+			.map(Authority::getAuthorityType)
+			.map(AuthorityType::getDescription)
+			.toList();
+
+		String accessToken = "dawdawdawd";
+		String refreshToken = "ghsefaefaseg";
+
+		AuthInfo.LoginInfo loginInfo = AuthInfo.LoginInfo.of(MemberInfo.from(member), roles, accessToken, refreshToken);
+
+		doReturn(loginInfo)
+			.when(tokenProvider)
+			.createToken(any(MemberInfo.class));
+
 		//when
-		Member loginMember = authService.login(loginRequest);
+		AuthInfo.LoginInfo response = authService.login(command);
 
 		//then
-		assertThat(loginMember.getEmail()).isEqualTo(testEmail);
-		assertThat(passwordEncoder.matches(loginRequest.password(), loginMember.getPassword())).isTrue();
+		assertThat(response.memberId()).isEqualTo(member.getId());
+		assertThat(response.level()).isEqualTo(member.getLevel().getName());
+		assertThat(response.imageUrl()).isEqualTo(ImageUtils.makeImageUrl(member.getImageUrl()));
+		assertThat(response.introduction()).isEqualTo(member.getIntroduction());
+		assertThat(response.experience()).isNotEqualTo(member.getExperience());
+		assertThat(response.nickname()).isEqualTo(member.getNickname());
+		assertThat(response.roles()).isEqualTo(roles);
+		assertThat(response.accessToken()).isEqualTo(accessToken);
+		assertThat(response.refreshToken()).isEqualTo(refreshToken);
 
 		//verify
-		verify(memberRepository, only()).findByEmail(anyString());
-		verify(memberRepository, times(1)).findByEmail(anyString());
-		verify(passwordEncoder, times(2)).matches(anyString(), anyString());
+		verify(memberReader, only()).findMember(anyString());
+		verify(memberReader, times(1)).findMember(anyString());
+		verify(authValidation, only()).validatePassword(anyString(), anyString());
+		verify(authValidation, times(1)).validatePassword(anyString(), anyString());
+		verify(tokenProvider, only()).createToken(any(MemberInfo.class));
+		verify(tokenProvider, times(1)).createToken(any(MemberInfo.class));
 	}
 
 	@Test

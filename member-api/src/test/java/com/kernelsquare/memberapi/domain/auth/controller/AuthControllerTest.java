@@ -1,15 +1,18 @@
 package com.kernelsquare.memberapi.domain.auth.controller;
 
-import static com.kernelsquare.core.common_response.response.code.AuthResponseCode.*;
-import static com.kernelsquare.memberapi.config.ApiDocumentUtils.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import java.util.List;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.kernelsquare.core.type.AuthorityType;
+import com.kernelsquare.core.util.ImageUtils;
+import com.kernelsquare.domainmysql.domain.authority.entity.Authority;
+import com.kernelsquare.domainmysql.domain.level.entity.Level;
+import com.kernelsquare.domainmysql.domain.member.entity.Member;
+import com.kernelsquare.domainmysql.domain.member_authority.entity.MemberAuthority;
+import com.kernelsquare.memberapi.config.RestDocsControllerTest;
+import com.kernelsquare.memberapi.domain.auth.dto.*;
+import com.kernelsquare.memberapi.domain.auth.facade.AuthFacade;
+import com.kernelsquare.memberapi.domain.auth.service.AuthService;
+import com.kernelsquare.memberapi.domain.auth.service.TokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,23 +25,17 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.kernelsquare.core.type.AuthorityType;
-import com.kernelsquare.domainmysql.domain.authority.entity.Authority;
-import com.kernelsquare.domainmysql.domain.level.entity.Level;
-import com.kernelsquare.domainmysql.domain.member.entity.Member;
-import com.kernelsquare.domainmysql.domain.member_authority.entity.MemberAuthority;
-import com.kernelsquare.memberapi.config.RestDocsControllerTest;
-import com.kernelsquare.memberapi.domain.auth.dto.CheckDuplicateEmailRequest;
-import com.kernelsquare.memberapi.domain.auth.dto.CheckDuplicateNicknameRequest;
-import com.kernelsquare.memberapi.domain.auth.dto.LoginRequest;
-import com.kernelsquare.memberapi.domain.auth.dto.SignUpRequest;
-import com.kernelsquare.memberapi.domain.auth.dto.SignUpResponse;
-import com.kernelsquare.memberapi.domain.auth.dto.TokenRequest;
-import com.kernelsquare.memberapi.domain.auth.dto.TokenResponse;
-import com.kernelsquare.memberapi.domain.auth.service.AuthService;
-import com.kernelsquare.memberapi.domain.auth.service.TokenProvider;
+import java.util.List;
+
+import static com.kernelsquare.core.common_response.response.code.AuthResponseCode.*;
+import static com.kernelsquare.memberapi.config.ApiDocumentUtils.getDocumentRequest;
+import static com.kernelsquare.memberapi.config.ApiDocumentUtils.getDocumentResponse;
+import static org.mockito.Mockito.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DisplayName("인증 컨트롤러 테스트")
 @WebMvcTest(AuthController.class)
@@ -51,6 +48,9 @@ class AuthControllerTest extends RestDocsControllerTest {
 
 	@MockBean
 	private TokenProvider tokenProvider;
+
+	@MockBean
+	private AuthFacade authFacade;
 
 	private ObjectMapper objectMapper = new ObjectMapper().setPropertyNamingStrategy(
 		PropertyNamingStrategies.SnakeCaseStrategy.INSTANCE);
@@ -102,13 +102,24 @@ class AuthControllerTest extends RestDocsControllerTest {
 			.refreshToken("ghsefaefaseg")
 			.build();
 
-		doReturn(member)
-			.when(authService)
-			.login(any(LoginRequest.class));
+		AuthDto.LoginResponse response = AuthDto.LoginResponse.builder()
+			.memberId(member.getId())
+			.nickname(member.getNickname())
+			.experience(member.getExperience())
+			.introduction(member.getIntroduction())
+			.imageUrl(ImageUtils.makeImageUrl(member.getImageUrl()))
+			.level(member.getLevel().getName())
+			.roles(member.getAuthorities().stream()
+				.map(MemberAuthority::getAuthority)
+				.map(Authority::getAuthorityType)
+				.map(AuthorityType::getDescription)
+				.toList())
+			.tokenDto(tokenResponse)
+			.build();
 
-		doReturn(tokenResponse)
-			.when(tokenProvider)
-			.createToken(any(Member.class), any(LoginRequest.class));
+		doReturn(response)
+			.when(authFacade)
+			.login(any(AuthDto.LoginRequest.class));
 
 		String jsonRequest = objectMapper.writeValueAsString(loginRequest);
 
@@ -153,10 +164,8 @@ class AuthControllerTest extends RestDocsControllerTest {
 					fieldWithPath("data.token_dto.refresh_token").type(JsonFieldType.STRING)
 						.description("리프레시 토큰"))));
 		//verify
-		verify(authService, times(1)).login(any(LoginRequest.class));
-		verify(authService, only()).login(any(LoginRequest.class));
-		verify(tokenProvider, times(1)).createToken(any(Member.class), any(LoginRequest.class));
-		verify(tokenProvider, only()).createToken(any(Member.class), any(LoginRequest.class));
+		verify(authFacade, times(1)).login(any(AuthDto.LoginRequest.class));
+		verify(authFacade, only()).login(any(AuthDto.LoginRequest.class));
 	}
 
 	@Test

@@ -1,31 +1,21 @@
 package com.kernelsquare.memberapi.domain.auth.controller;
 
 
-import static com.kernelsquare.core.common_response.response.code.AuthResponseCode.*;
-
 import com.kernelsquare.core.annotations.LogExecutionTime;
+import com.kernelsquare.core.common_response.ApiResponse;
+import com.kernelsquare.core.common_response.ResponseEntityFactory;
+import com.kernelsquare.core.validation.ValidationSequence;
+import com.kernelsquare.memberapi.domain.auth.dto.*;
 import com.kernelsquare.memberapi.domain.auth.facade.AuthFacade;
+import com.kernelsquare.memberapi.domain.auth.service.AuthService;
+import com.kernelsquare.memberapi.domain.auth.service.TokenProvider;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import com.kernelsquare.core.common_response.ApiResponse;
-import com.kernelsquare.core.common_response.ResponseEntityFactory;
-import com.kernelsquare.core.validation.ValidationSequence;
-import com.kernelsquare.domainmysql.domain.member.entity.Member;
-import com.kernelsquare.memberapi.domain.auth.dto.*;
-import com.kernelsquare.memberapi.domain.auth.service.AuthService;
-import com.kernelsquare.memberapi.domain.auth.service.TokenProvider;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import static com.kernelsquare.core.common_response.response.code.AuthResponseCode.*;
 
@@ -36,17 +26,6 @@ public class AuthController {
 	private final AuthService authService;
 	private final TokenProvider tokenProvider;
 	private final AuthFacade authFacade;
-
-//	@LogExecutionTime
-//	@PostMapping("/auth/login")
-//	public ResponseEntity<ApiResponse<LoginResponse>> login(
-//		final @RequestBody @Validated(ValidationSequence.class) LoginRequest loginRequest) {
-//		Member member = authService.login(loginRequest);
-//		TokenResponse tokenResponse = tokenProvider.createToken(member, loginRequest);
-//		LoginResponse loginResponse = LoginResponse.of(member, tokenResponse);
-//
-//		return ResponseEntityFactory.toResponseEntity(LOGIN_SUCCESS, loginResponse);
-//	}
 
 	@LogExecutionTime
 	@PostMapping("/auth/login")

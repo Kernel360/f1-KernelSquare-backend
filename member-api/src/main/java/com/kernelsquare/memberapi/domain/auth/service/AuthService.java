@@ -1,37 +1,33 @@
 package com.kernelsquare.memberapi.domain.auth.service;
 
-import java.util.List;
-
-import com.kernelsquare.core.annotations.LogExecutionTime;
-import com.kernelsquare.domainmysql.domain.auth.command.AuthCommand;
-import com.kernelsquare.domainmysql.domain.member.info.MemberInfo;
-import com.kernelsquare.domainmysql.domain.member.repository.MemberReader;
-import com.kernelsquare.memberapi.domain.auth.validation.AuthValidation;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.kernelsquare.core.common_response.error.code.AuthErrorCode;
 import com.kernelsquare.core.common_response.error.code.AuthorityErrorCode;
 import com.kernelsquare.core.common_response.error.code.LevelErrorCode;
 import com.kernelsquare.core.common_response.error.exception.BusinessException;
 import com.kernelsquare.core.type.AuthorityType;
 import com.kernelsquare.core.util.ExperiencePolicy;
+import com.kernelsquare.domainmysql.domain.auth.command.AuthCommand;
+import com.kernelsquare.domainmysql.domain.auth.info.AuthInfo;
 import com.kernelsquare.domainmysql.domain.authority.entity.Authority;
 import com.kernelsquare.domainmysql.domain.authority.repository.AuthorityRepository;
 import com.kernelsquare.domainmysql.domain.level.entity.Level;
 import com.kernelsquare.domainmysql.domain.level.repository.LevelRepository;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
+import com.kernelsquare.domainmysql.domain.member.info.MemberInfo;
+import com.kernelsquare.domainmysql.domain.member.repository.MemberReader;
 import com.kernelsquare.domainmysql.domain.member.repository.MemberRepository;
 import com.kernelsquare.domainmysql.domain.member_authority.entity.MemberAuthority;
 import com.kernelsquare.domainmysql.domain.member_authority.repository.MemberAuthorityRepository;
 import com.kernelsquare.memberapi.domain.auth.dto.SignUpRequest;
 import com.kernelsquare.memberapi.domain.auth.dto.SignUpResponse;
-
+import com.kernelsquare.memberapi.domain.auth.validation.AuthValidation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Slf4j
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -41,38 +37,18 @@ public class AuthService {
 	private final AuthorityRepository authorityRepository;
 	private final LevelRepository levelRepository;
 	private final MemberReader memberReader;
+	private final TokenProvider tokenProvider;
+	private final AuthValidation authValidation;
 
-	@LogExecutionTime
 	@Transactional
-	public MemberInfo login(final AuthCommand.LoginMember request) {
-		var startTime = System.currentTimeMillis();
+	public AuthInfo.LoginInfo login(final AuthCommand.LoginMember request) {
 		Member findMember = memberReader.findMember(request.email());
-		var executionTime = System.currentTimeMillis() - startTime;
-		log.info("findMember executed in " + executionTime + "ms");
 
-		startTime = System.currentTimeMillis();
-//		if (!passwordEncoder.matches(loginRequest.password(), findMember.getPassword())) {
-//			throw new BusinessException(AuthErrorCode.INVALID_PASSWORD);
-//		}
-		AuthValidation.validatePassword(request.password(), findMember.getPassword(), passwordEncoder);
-		executionTime = System.currentTimeMillis() - startTime;
-		log.info("addExperience executed in " + executionTime + "ms");
+		authValidation.validatePassword(request.password(), findMember.getPassword());
 
-//		findMember.addExperience(ExperiencePolicy.MEMBER_DAILY_ATTENDED.getReward());
-//		if (findMember.isExperienceExceed(findMember.getExperience())) {
-//			findMember.updateExperience(findMember.getExperience() - findMember.getLevel().getLevelUpperLimit());
-//			Level nextLevel = levelRepository.findByName(findMember.getLevel().getName() + 1)
-//				.orElseThrow(() -> new BusinessException(LevelErrorCode.LEVEL_NOT_FOUND));
-//			findMember.updateLevel(nextLevel);
-//		}
-
-
-		startTime = System.currentTimeMillis();
 		addExperience(findMember);
-		executionTime = System.currentTimeMillis() - startTime;
-		log.info("addExperience executed in " + executionTime + "ms");
 
-		return MemberInfo.from(findMember);
+		return tokenProvider.createToken(MemberInfo.from(findMember));
 	}
 
 	@Transactional

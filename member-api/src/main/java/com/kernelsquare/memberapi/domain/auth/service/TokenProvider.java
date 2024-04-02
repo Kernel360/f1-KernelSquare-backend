@@ -84,9 +84,6 @@ public class TokenProvider implements InitializingBean {
 	@LogExecutionTime
 	public AuthInfo.LoginInfo createToken(MemberInfo memberInfo) {
 		MemberAdapter memberAdapter = (MemberAdapter) memberDetailService.loadUserByUsername(memberInfo.getId().toString());
-//		String authorities = memberAdapter.getAuthorities().stream()
-//			.map(GrantedAuthority::getAuthority)
-//			.collect(Collectors.joining(","));
 
 		List<String> authorities = memberAdapter.getAuthorities().stream()
 			.map(GrantedAuthority::getAuthority)

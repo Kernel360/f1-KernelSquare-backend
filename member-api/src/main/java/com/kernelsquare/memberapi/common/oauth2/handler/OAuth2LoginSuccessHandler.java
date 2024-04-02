@@ -3,19 +3,17 @@ package com.kernelsquare.memberapi.common.oauth2.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.kernelsquare.core.common_response.error.code.LevelErrorCode;
-import com.kernelsquare.core.common_response.error.code.MemberErrorCode;
 import com.kernelsquare.core.common_response.error.exception.BusinessException;
 import com.kernelsquare.core.util.ExperiencePolicy;
+import com.kernelsquare.domainmysql.domain.auth.info.AuthInfo;
 import com.kernelsquare.domainmysql.domain.level.entity.Level;
 import com.kernelsquare.domainmysql.domain.level.repository.LevelRepository;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
-import com.kernelsquare.domainmysql.domain.member.repository.MemberRepository;
-import com.kernelsquare.domainmysql.domain.member_authority.entity.MemberAuthority;
-import com.kernelsquare.domainmysql.domain.member_authority.repository.MemberAuthorityRepository;
-import com.kernelsquare.memberapi.domain.auth.dto.LoginRequest;
-import com.kernelsquare.memberapi.domain.auth.dto.LoginResponse;
+import com.kernelsquare.domainmysql.domain.member.info.MemberInfo;
+import com.kernelsquare.domainmysql.domain.member.repository.MemberReader;
+import com.kernelsquare.memberapi.domain.auth.dto.AuthDto;
 import com.kernelsquare.memberapi.domain.auth.dto.MemberDetails;
-import com.kernelsquare.memberapi.domain.auth.dto.TokenResponse;
+import com.kernelsquare.memberapi.domain.auth.mapper.AuthDtoMapper;
 import com.kernelsquare.memberapi.domain.auth.service.TokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,15 +27,14 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Base64;
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
-    private final MemberRepository memberRepository;
     private final LevelRepository levelRepository;
     private final TokenProvider tokenProvider;
-    private final MemberAuthorityRepository memberAuthorityRepository;
+    private final MemberReader memberReader;
+    private final AuthDtoMapper authDtoMapper;
 
     @Value("${custom.github.redirect}")
     private String githubRedirectUrl;
@@ -48,19 +45,11 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         MemberDetails oAuth2User = (MemberDetails) authentication.getPrincipal();
         String email = oAuth2User.getEmail();
-        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new BusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
+        Member member = memberReader.findMember(email);
 
-        List<MemberAuthority> memberAuthorities = memberAuthorityRepository.findAllByMember(member);
+        AuthInfo.LoginInfo loginInfo = tokenProvider.createToken(MemberInfo.from(member));
 
-
-        LoginRequest loginRequest = LoginRequest.builder()
-                .email(email)
-                .password("password")
-                .build();
-
-        TokenResponse tokenResponse = tokenProvider.createToken(member, loginRequest);
-
-        LoginResponse loginResponse = LoginResponse.of(member, tokenResponse, memberAuthorities);
+        AuthDto.LoginResponse loginResponse = authDtoMapper.of(loginInfo);
 
         member.addExperience(ExperiencePolicy.MEMBER_DAILY_ATTENDED.getReward());
         if (member.isExperienceExceed(member.getExperience())) {
@@ -77,7 +66,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         String encodedJson = Base64.getEncoder().encodeToString(json.getBytes());
 
         String cookieValue = ResponseCookie.from("loginResponse", encodedJson) // 쿠키 이름과 값 설정
-                .domain(".kernelsquare.live") // 쿠키 도메인 설정
+                .domain(".kernelsquare.live") // 쿠키 도메인 설정 / 로컬에서 돌리실 땐 .localhost로 변경하셔야 합니다.
                 .maxAge(600) // 최대 유효 시간 설정 (초 단위)
                 .path("/") // 쿠키 경로 설정
                 .build()

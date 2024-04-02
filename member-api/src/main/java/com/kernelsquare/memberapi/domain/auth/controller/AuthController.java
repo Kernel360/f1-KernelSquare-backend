@@ -1,7 +1,6 @@
 package com.kernelsquare.memberapi.domain.auth.controller;
 
 
-import com.kernelsquare.core.annotations.LogExecutionTime;
 import com.kernelsquare.core.common_response.ApiResponse;
 import com.kernelsquare.core.common_response.ResponseEntityFactory;
 import com.kernelsquare.core.validation.ValidationSequence;

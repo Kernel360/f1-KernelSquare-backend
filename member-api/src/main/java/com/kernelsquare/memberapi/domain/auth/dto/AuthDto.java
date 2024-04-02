@@ -11,6 +11,7 @@ import lombok.Builder;
 import java.util.List;
 
 public class AuthDto {
+    @Builder
     public record LoginRequest(
         @NotBlank(message = AuthValidationMessage.EMAIL_NOT_BLANK, groups = ValidationGroups.NotBlankGroup.class)
         @Size(min = 5, max = 40, message = AuthValidationMessage.EMAIL_SIZE, groups = ValidationGroups.SizeGroup.class)

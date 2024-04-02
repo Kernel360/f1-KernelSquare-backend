@@ -92,7 +92,7 @@ class AuthControllerTest extends RestDocsControllerTest {
 		List<MemberAuthority> memberAuthorityList = List.of(memberAuthority);
 		member.initAuthorities(memberAuthorityList);
 
-		LoginRequest loginRequest = LoginRequest.builder()
+		AuthDto.LoginRequest loginRequest = AuthDto.LoginRequest.builder()
 			.email("jugwang@naver.com")
 			.password("hashedPassword")
 			.build();

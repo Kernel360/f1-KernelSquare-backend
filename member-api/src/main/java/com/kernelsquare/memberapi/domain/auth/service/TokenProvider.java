@@ -66,7 +66,6 @@ public class TokenProvider implements InitializingBean {
 	private long refreshTokenValidityInSeconds;
 
 	private final RedisTemplate<Long, RefreshToken> redisTemplate;
-	private final AuthenticationManagerBuilder authenticationManagerBuilder;
 	private final MemberDetailService memberDetailService;
 
 	@Override

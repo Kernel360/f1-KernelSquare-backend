@@ -3,6 +3,8 @@ package com.kernelsquare.memberapi.domain.auth.controller;
 
 import static com.kernelsquare.core.common_response.response.code.AuthResponseCode.*;
 
+import com.kernelsquare.core.annotations.LogExecutionTime;
+import com.kernelsquare.memberapi.domain.auth.facade.AuthFacade;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -33,15 +35,27 @@ import static com.kernelsquare.core.common_response.response.code.AuthResponseCo
 public class AuthController {
 	private final AuthService authService;
 	private final TokenProvider tokenProvider;
+	private final AuthFacade authFacade;
 
+//	@LogExecutionTime
+//	@PostMapping("/auth/login")
+//	public ResponseEntity<ApiResponse<LoginResponse>> login(
+//		final @RequestBody @Validated(ValidationSequence.class) LoginRequest loginRequest) {
+//		Member member = authService.login(loginRequest);
+//		TokenResponse tokenResponse = tokenProvider.createToken(member, loginRequest);
+//		LoginResponse loginResponse = LoginResponse.of(member, tokenResponse);
+//
+//		return ResponseEntityFactory.toResponseEntity(LOGIN_SUCCESS, loginResponse);
+//	}
+
+	@LogExecutionTime
 	@PostMapping("/auth/login")
-	public ResponseEntity<ApiResponse<LoginResponse>> login(
-		final @RequestBody @Validated(ValidationSequence.class) LoginRequest loginRequest) {
-		Member member = authService.login(loginRequest);
-		TokenResponse tokenResponse = tokenProvider.createToken(member, loginRequest);
-		LoginResponse loginResponse = LoginResponse.of(member, tokenResponse);
+	public ResponseEntity<ApiResponse<AuthDto.LoginResponse>> login(
+		final @RequestBody @Validated(ValidationSequence.class) AuthDto.LoginRequest request) {
 
-		return ResponseEntityFactory.toResponseEntity(LOGIN_SUCCESS, loginResponse);
+		AuthDto.LoginResponse response = authFacade.login(request);
+
+		return ResponseEntityFactory.toResponseEntity(LOGIN_SUCCESS, response);
 	}
 
 	@PostMapping("/auth/signup")

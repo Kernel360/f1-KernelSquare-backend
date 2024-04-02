@@ -14,6 +14,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.kernelsquare.core.annotations.LogExecutionTime;
+import com.kernelsquare.domainmysql.domain.auth.info.AuthInfo;
+import com.kernelsquare.domainmysql.domain.member.info.MemberInfo;
+import com.kernelsquare.memberapi.domain.auth.dto.*;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -22,6 +26,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -30,10 +35,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.kernelsquare.core.common_response.error.exception.BusinessException;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
-import com.kernelsquare.memberapi.domain.auth.dto.LoginRequest;
-import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
-import com.kernelsquare.memberapi.domain.auth.dto.TokenRequest;
-import com.kernelsquare.memberapi.domain.auth.dto.TokenResponse;
 import com.kernelsquare.memberapi.domain.auth.entity.RefreshToken;
 
 import io.jsonwebtoken.Claims;
@@ -80,17 +81,22 @@ public class TokenProvider implements InitializingBean {
 		redisTemplate.opsForValue().getOperations().delete(refreshToken.getMemberId());
 	}
 
-	public TokenResponse createToken(Member member, LoginRequest loginRequest) {
-		UsernamePasswordAuthenticationToken authenticationToken =
-			new UsernamePasswordAuthenticationToken(member.getId(), loginRequest.password());
-		Authentication authentication = authenticationManagerBuilder.getObject()
-			.authenticate(authenticationToken);
-		String authorities = authentication.getAuthorities().stream()
+	@LogExecutionTime
+	public AuthInfo.LoginInfo createToken(MemberInfo memberInfo) {
+		MemberAdapter memberAdapter = (MemberAdapter) memberDetailService.loadUserByUsername(memberInfo.getId().toString());
+//		String authorities = memberAdapter.getAuthorities().stream()
+//			.map(GrantedAuthority::getAuthority)
+//			.collect(Collectors.joining(","));
+
+		List<String> authorities = memberAdapter.getAuthorities().stream()
 			.map(GrantedAuthority::getAuthority)
-			.collect(Collectors.joining(","));
-		return TokenResponse.of(
-			createAccessToken(authentication.getName(), authorities),
-			createRefreshToken(authentication.getName()));
+			.toList();
+
+		return AuthInfo.LoginInfo.of(
+			memberInfo,
+			authorities,
+			createAccessToken(memberAdapter.getUsername(), String.join(",", authorities)),
+			createRefreshToken(memberAdapter.getUsername()));
 	}
 
 	private String createAccessToken(String sub, String roles) {

@@ -34,13 +34,33 @@
 | 예약된 시간이 되면 예약한 사람은 1대1 채팅방에 입장할 수 있습니다. | 제목, 장소, 인원 수, 시간, 내용을 적으면 모각코를 생성할 수 있습니다. 참가할 사람은 댓글로 남길 수 있습니다. |
 
 ## 기술스택
+<div>
+  <img src="https://img.shields.io/badge/openjdk-437291?style=flat&logo=openjdk&logoColor=white"/>
+  <img src="https://img.shields.io/badge/springboot-6DB33F?style=flat&logo=springboot&logoColor=white"/>
+  <img src="https://img.shields.io/badge/mysql-4479A1?style=flat&logo=mysql&logoColor=white"/>
+  <img src="https://img.shields.io/badge/redis-DC382D?style=flat&logo=redis&logoColor=white"/>
+  <img src="https://img.shields.io/badge/flyway-CC0200?style=flat&logo=flyway&logoColor=white"/>
+  <img src="https://img.shields.io/badge/amazons3-569A31?style=flat&logo=amazons3&logoColor=white"/>
+  <img src="https://img.shields.io/badge/mongodb-47A248?style=flat&logo=mongodb&logoColor=white"/>
+  <img src="https://img.shields.io/badge/apachekafka-231F20?style=flat&logo=apachekafka&logoColor=white"/>
+  <img src="https://img.shields.io/badge/amazonec2-FF9900?style=flat&logo=amazonec2&logoColor=white" />
+  <img src="https://img.shields.io/badge/docker-2496ED?style=flat&logo=docker&logoColor=white"/>
+  <img src="https://img.shields.io/badge/githubactions-2088FF?style=flat&logo=githubactions&logoColor=white"/>
+  <img src="https://img.shields.io/badge/prometheus-E6522C?style=flat&logo=prometheus&logoColor=white"/>
+  <img src="https://img.shields.io/badge/grafana-F46800?style=flat&logo=grafana&logoColor=white"/>
+</div>
+
 
 ## 아키텍처
 - 멀티모듈
+
 ![멀티모듈_all](https://github.com/Kernel360/f1-KernelSquare-backend/assets/97713997/2536ac8b-80d3-47c5-92f4-5e550a25a4cd)
 
 
+
 - 전체 인프라
+
+![전체인프라](https://github.com/Kernel360/f1-KernelSquare-backend/assets/97713997/8bdc7830-58ca-454d-b2c6-e59d559ff785)
 
 ## 팀원
 <table>

@@ -8,8 +8,7 @@ import com.kernelsquare.memberapi.domain.answer.dto.UpdateAnswerRequest;
 import com.kernelsquare.memberapi.domain.answer.facade.AnswerFacade;
 import com.kernelsquare.memberapi.domain.answer.service.AnswerService;
 import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
-import com.kernelsquare.memberapi.domain.chatgpt.service.ChatGptService;
-
+import com.kernelsquare.memberapi.domain.chatgpt.facade.ChatGptFacade;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +24,7 @@ public class AnswerController {
 
 	private final AnswerService answerService;
 	private final AnswerFacade answerFacade;
-	private final ChatGptService chatGptService;
+	private final ChatGptFacade chatGptFacade;
 
 	@GetMapping("/questions/{questionId}/answers")
 	public ResponseEntity<ApiResponse<FindAllAnswerResponse>> findAllAnswer(
@@ -49,7 +48,7 @@ public class AnswerController {
 	public ResponseEntity<ApiResponse> createAnswerWithChatGpt(
 		@PathVariable Long questionId
 	) {
-		chatGptService.createChatGptAnswer(questionId);
+		chatGptFacade.createChatGptAnswer(questionId);
 		return ResponseEntityFactory.toResponseEntity(AUTOMATED_ANSWER_CREATED);
 	}
 

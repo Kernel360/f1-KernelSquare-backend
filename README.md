@@ -60,7 +60,7 @@
 
 - 전체 인프라
 
-![전체인프라](https://github.com/Kernel360/f1-KernelSquare-backend/assets/97713997/8bdc7830-58ca-454d-b2c6-e59d559ff785)
+![전체인프라2](https://github.com/Kernel360/f1-KernelSquare-backend/assets/97713997/25de0c61-b20f-41fe-8a1b-12d1a84c728c)
 
 ## 팀원
 <table>

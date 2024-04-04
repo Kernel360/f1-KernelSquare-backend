@@ -130,13 +130,13 @@ class AuthRequestDtoTest {
 	@DisplayName("유효한 로그인 요청에 대한 테스트")
 	void validLoginRequest() {
 		// given
-		LoginRequest loginRequest = LoginRequest.builder()
+		AuthDto.LoginRequest loginRequest = AuthDto.LoginRequest.builder()
 			.email("valid@example.com")
 			.password("ValidPassword123")
 			.build();
 
 		// when
-		Set<ConstraintViolation<LoginRequest>> violations = validator.validate(loginRequest, ValidationSequence.class);
+		Set<ConstraintViolation<AuthDto.LoginRequest>> violations = validator.validate(loginRequest, ValidationSequence.class);
 
 		// then
 		assertThat(violations).isEmpty();

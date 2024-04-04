@@ -3,8 +3,15 @@ package com.kernelsquare.memberapi.domain.auth.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.kernelsquare.core.type.AuthorityType;
+import com.kernelsquare.domainmysql.domain.auth.info.AuthInfo;
+import com.kernelsquare.domainmysql.domain.authority.entity.Authority;
+import com.kernelsquare.domainmysql.domain.level.entity.Level;
 import com.kernelsquare.domainmysql.domain.member.entity.Member;
-import com.kernelsquare.memberapi.domain.auth.dto.LoginRequest;
+import com.kernelsquare.domainmysql.domain.member.info.MemberInfo;
+import com.kernelsquare.domainmysql.domain.member_authority.entity.MemberAuthority;
+import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
+import com.kernelsquare.memberapi.domain.auth.dto.MemberAdaptorInstance;
 import com.kernelsquare.memberapi.domain.auth.dto.TokenRequest;
 import com.kernelsquare.memberapi.domain.auth.dto.TokenResponse;
 import com.kernelsquare.memberapi.domain.auth.entity.RefreshToken;
@@ -24,13 +31,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -44,7 +47,7 @@ public class TokenProviderTest {
 	private RedisTemplate<Long, RefreshToken> redisTemplate = spy(RedisTemplate.class);
 
 	@Mock
-	private AuthenticationManagerBuilder authenticationManagerBuilder;
+	private MemberDetailService memberDetailService;
 
 	private String secret = "dGVzdF9zZWNyZXRfdGVzdF9zZWNyZXRfdGVzdF9zZWNyZXRfdGVzdF9zZWNyZXRfdGVzdF9zZWNyZXRfdGVzdF9zZWNyZXRfdGVzdF9zZWNyZXRfdGVzdF9zZWNyZXRfdGVzdF9zZWNyZXRfdGVzdF9zZWNyZXRf";
 
@@ -64,6 +67,7 @@ public class TokenProviderTest {
 		jsonRedisSerializer.configure(objectMapper -> objectMapper
 			.registerModule(new JavaTimeModule()));
 
+		/* dev datahub가 사라지면 localhost에 맞춰야함 */
 		LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory("13.125.190.40", 6379);
 		lettuceConnectionFactory.afterPropertiesSet();
 
@@ -77,64 +81,47 @@ public class TokenProviderTest {
 	@DisplayName("jwt 생성 테스트")
 	void testCreateToken() throws Exception {
 		//given
-		String email = "jugwang@naver.com";
-		String password = "hashed_password";
-
-		Member member = Member
-			.builder()
+		Level level = Level.builder()
 			.id(1L)
-			.nickname("hongjugwang")
-			.email(email)
-			.password(password)
-			.experience(10000L)
-			.introduction("hi, i'm hongjugwang.")
-			.imageUrl("s3:qwe12fasdawczx")
+			.name(1L)
+			.imageUrl("s3:whatever")
+			.levelUpperLimit(500L)
 			.build();
 
-		LoginRequest loginRequest = LoginRequest.builder()
-			.email(email)
-			.password(password)
+		Member member = Member.builder()
+			.id(1L)
+			.nickname("machine")
+			.email("awdag@nsavasc.om")
+			.password("hashed")
+			.experience(1200L)
+			.introduction("basfas")
+			.authorities(List.of(
+				MemberAuthority.builder()
+					.member(Member.builder().build())
+					.authority(Authority.builder().authorityType(AuthorityType.ROLE_USER).build())
+					.build()))
+			.imageUrl("agawsc")
+			.level(level)
 			.build();
 
-		RefreshToken refreshToken = RefreshToken.builder()
-			.memberId(member.getId())
-			.refreshToken("awdawdawdawdawd")
-			.createdDate(LocalDateTime.now())
-			.expirationDate(LocalDateTime.now().plusDays(10))
-			.build();
+		MemberAdapter memberAdapter = new MemberAdapter(MemberAdaptorInstance.of(member));
 
-		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-			new UsernamePasswordAuthenticationToken(member.getId(), password);
-
-		Authentication authentication = mock(Authentication.class);
-
-		AuthenticationManager authenticationManager = mock(AuthenticationManager.class);
-
-		doReturn(authenticationManager)
-			.when(authenticationManagerBuilder)
-			.getObject();
-
-		doReturn(authentication)
-			.when(authenticationManager)
-			.authenticate(usernamePasswordAuthenticationToken);
-
-		doReturn(String.valueOf(member.getId()))
-			.when(authentication)
-			.getName();
+		doReturn(memberAdapter)
+			.when(memberDetailService)
+			.loadUserByUsername(anyString());
 
 		//when
-		TokenResponse tokenResponse = tokenProvider.createToken(member, loginRequest);
+		AuthInfo.LoginInfo loginInfo = tokenProvider.createToken(MemberInfo.from(member));
 
 		RefreshToken createdRefreshToken = objectMapper.readValue(Decoders.BASE64
-			.decode(tokenResponse.refreshToken()), RefreshToken.class);
+			.decode(loginInfo.refreshToken()), RefreshToken.class);
 
 		//then
 		assertThat(createdRefreshToken.getMemberId()).isEqualTo(member.getId());
 
 		//verify
-		verify(authenticationManagerBuilder, times(1)).getObject();
-		verify(authenticationManager, times(1)).authenticate(any(Authentication.class));
-		verify(authentication, times(2)).getName();
+		verify(memberDetailService, only()).loadUserByUsername(anyString());
+		verify(memberDetailService, times(1)).loadUserByUsername(anyString());
 	}
 
 	@Test

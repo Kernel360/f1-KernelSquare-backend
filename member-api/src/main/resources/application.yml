@@ -13,7 +13,7 @@ spring:
           github:
             client-id: ${SOCIAL_GITHUB_CLIENT_ID}
             client-secret: ${SOCIAL_GITHUB_CLIENT_SECRET}
-            redirect-uri: http://dev-back.kernelsquare.live:8501/login/oauth2/code/github
+            redirect-uri: http://localhost:8501/login/oauth2/code/github
             scope:
               - user:email
 
@@ -23,7 +23,7 @@ server:
 
 custom:
   github:
-    redirect: http://dev.kernelsquare.live/oauth/github
+    redirect: http://localhost:3000/oauth/github
 
 dbInfo: rds
 

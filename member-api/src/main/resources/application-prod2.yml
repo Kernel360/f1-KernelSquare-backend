@@ -10,7 +10,7 @@ spring:
           github:
             client-id: ENC(66P9N3wtvCajPG+go6PfTyX93lPHVjwx1E/soPaKe8C1v6EYP5DYGTcbKfhk0vSE7yOO4tN1aM3E8QvX3dQ6Cg==)
             client-secret: ENC(oeI907n31VpY63HGp2WEzN4WX9dAdUktP57hj6lEYnvWIVMECUNzALVOEGJgecLGoFzcN8sAOo8Ew5KZrmOit+mH2J7x5OXZiuGkhhJ031g=)
-            redirect-uri: https://kernelsquare.live:8000/login/oauth2/code/github
+            redirect-uri: ENC(07XBSlAlpOcNxm9iKpe2P63qgWmjRyFP9mK4TGb5ocvaj7OSLcPx5O92LTP0OVRe8eAeJz9Tg5Zwn42ZP/EGQsRLBI/drqFH3QG1nfdawQMzhd8Drt4wx55sUJpjqgUa)
             scope:
               - user:email
 
@@ -36,6 +36,8 @@ kafka:
 custom:
   github:
     redirect: https://kernelsquare.live/oauth/github
+  cookie:
+    domain: .kernelsquare.live
 
 dbInfo: rds
 

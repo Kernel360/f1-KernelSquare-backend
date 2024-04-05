@@ -38,6 +38,8 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     @Value("${custom.github.redirect}")
     private String githubRedirectUrl;
+    @Value("${custom.cookie.domain}")
+    private String cookieDomain;
 
     @Override
     @Transactional
@@ -66,7 +68,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         String encodedJson = Base64.getEncoder().encodeToString(json.getBytes());
 
         String cookieValue = ResponseCookie.from("loginResponse", encodedJson) // 쿠키 이름과 값 설정
-                .domain(".kernelsquare.live") // 쿠키 도메인 설정 / 로컬에서 돌리실 땐 .localhost로 변경하셔야 합니다.
+                .domain(cookieDomain) // 쿠키 도메인 설정 / 로컬에서 돌리실 땐 .localhost로 변경하셔야 합니다.
                 .maxAge(600) // 최대 유효 시간 설정 (초 단위)
                 .path("/") // 쿠키 경로 설정
                 .build()

@@ -1,0 +1,45 @@
+spring:
+  config:
+    activate:
+      on-profile: blue-server
+
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: ENC(66P9N3wtvCajPG+go6PfTyX93lPHVjwx1E/soPaKe8C1v6EYP5DYGTcbKfhk0vSE7yOO4tN1aM3E8QvX3dQ6Cg==)
+            client-secret: ENC(oeI907n31VpY63HGp2WEzN4WX9dAdUktP57hj6lEYnvWIVMECUNzALVOEGJgecLGoFzcN8sAOo8Ew5KZrmOit+mH2J7x5OXZiuGkhhJ031g=)
+            redirect-uri: https://kernelsquare.live:8000/login/oauth2/code/github
+            scope:
+              - user:email
+
+  datasource:
+    url: ENC(TsnGO0t3jrI5tGUbtsCMCuS6nqR+2NfsGgUgqNmVxZ2Z92wdUXKxKD2Co7LrOoMLObya/Zf9E4dhxplg53QjOey3ggadTJyKpt7yv1Svrew0OI6e7vtckzsMbq/9hZaTCUUC20Z2b2lbwcHNo28Iojfi+9Jhrdxy56Hk1Pef5YquTXcicOt2Bmds9MV2bO2ECVVIMjiBh89myT+Dza4yfJnr9g0s2vU68GGAiJWVlA2at9xzAuZOenUsGXlPpIH/67us7WiphwEU3IYK+784yQ==)
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ENC(vo+sZllavQ5dUMAS+k1SsGSJf5BrTZtXzqnaX4bN0GMTEy68fNhJQRj8j5odRvUx)
+    password: ENC(Wy92J68MUYaK1KYa7MFDLaFId5UjF7aXXwVtm1gAzaWf6N9x62XpTfX4+7775DbS)
+
+  redis:
+    serialization:
+      class-property-type-name: RefreshToken.class
+    host: ENC(5eptbYrX+rj/3RJc4u9yGNtitdm9H2Wokuv5E6+SnP314pR2pa/EA6MfaPluTn2H)
+    port: ENC(dmzvcvQsEjm4GgMNlnmICsHBgBW1FaPIUTTD9sLsZWf8wzfQQN2VGdeOBJ0fRD80)
+
+  data:
+    mongodb:
+      uri: ENC(AjN7dXKqXwotJaOKS8TpDtDYfXpx37ixGFQz88TkgbbNYloxQEKJ7vK5P+FicD1DXz/4S/rOXTkAfZPhXonjP2iIcOV+MwkBpPopbBdV6mWCOy4ryRLaKpWqmVpjAM+wYxY2D2i9m3CAvsu26Z14Ww==)
+
+kafka:
+  url: ENC(un1AzYxYHfE5fZ+ihKn86ql8bmN1iz+2R3e4QHyuTJfdmlrgre0oUhJLYEghwz7G)
+
+custom:
+  github:
+    redirect: https://kernelsquare.live/oauth/github
+
+dbInfo: rds
+
+serverName: kernelsquare-blue
+
+server:
+  port: 8501

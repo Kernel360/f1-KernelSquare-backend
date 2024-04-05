@@ -1,0 +1,81 @@
+spring:
+  config:
+    activate:
+      on-profile: common
+
+  # file upload max size (파일 업로드 크기 설정)
+  servlet:
+    multipart:
+      max-file-size: 3MB
+      max-request-size: 3MB
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+
+    database: mysql
+
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+
+  security:
+    jwt:
+      header: Authorization
+      secret: ENC(B9+O8/5Znce3YNtU3zb15rR6Ig4XXg4d6TNFWkoiwW87dhQbzDEj3k448xZ7PA4u5bMnor2v2Kkecraik4EYRpH4EJ7+NO2tMSS3MTVBa3tjrK4T/j8ow2D6Dlto5sGkr8ZzRAgG9aI7q3XoW/fH/Vd8zkoag5Cr/Nb8R4QisHFu6xZrRqyI9AWQpql9XwB3r7sbG60KJcpgqdyBFIPFQqt/Wop1hui0O+qV7Z4dcpl1Bd/ltOO/BAWXA/WkiNFirxX0ukqE+MVpSZzC+GSTrXPDI7d/5Ni4ogl5mZVsGWvUrbsZDfmcpjh6/LDr5ueH)
+      access-token-validity-in-seconds: 3600     # 1시간
+      refresh-token-validity-in-seconds: 1_209_600  # 2주
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    out-of-order: true
+
+logging.level:
+  org.hibernate.SQL: debug
+  #  org.hibernate.type: trace
+  org.springframework.security: debug
+  org.springframework.security.oauth2.client: DEBUG
+
+cloud:
+  aws:
+    s3:
+      bucket: ENC(qD/YT8BAdU8FKYGrnygLwy1fVqbLj/pdQ7TfZ/FlcmJfsSr31jWx/STL6Iu0hHMf7KV8H06h3lIs/ZWqqOA2hA==)
+    stack.auto: false
+    region.static: ENC(eSw8LvaoqFtNzUZGdLGhqoOSCREQiVx+WeA6PetDmZhHD/6MCdy2E+nh2OMfs32Y)
+    credentials:
+      accessKey: ENC(9rkpZikIni9Q8mNUfcxIswXsAing8qy1Y/lTAM4gcPHEByFi8f1h9ppdWwwM7YmYjPv1GZK3lu2CANEKGPpWrA==)
+      secretKey: ENC(NjYRuv06ZZnSseaAbB61v/dm+tPpzK9PymzlizhC28z0G/5aEQJI4rLFBoLN7V6GjHbpnje1S9N7aXZQ/9GWQyUfPbJ0XMkSNCGGSsW1hDw=)
+
+custom:
+  domain:
+    image:
+      baseUrl: ENC(UGLM7Z+GxC2FNA4Uh/k5aVS9QoN3fe/tFOmqJbhvpz2bsL3eL6Vl4hsGfm2zTx6fLFx+3X6BdrmYZtvu9P7vc/Ibh8DGVerG8RUtvin3Jh8Y7wlZUiImhiIeUoseuLc9)
+
+chatgpt:
+  rest-api-key: ENC(XGxK+KInkxgcbVeMcfNoWshBRtO66Oi76LV17SvwWi/t4bxtLDuP7Gj3knzLQT1rSjoT7rLYnKqxFC9keR4hYSIsegqKENoym6p2JAMWnBWQ0pINyR837BzG89uivsQV)
+  chat-api-url: https://api.openai.com/v1/chat/completions
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: 'true'
+
+jasypt:
+  encryptor:
+    bean: jasyptEncryptorAES
+  password: ${JASYPT_PASSWORD}

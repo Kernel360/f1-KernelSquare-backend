@@ -1,11 +1,13 @@
 package com.kernelsquare.domainmongodb.domain.coffeechat.repository;
 
+import com.kernelsquare.domainmongodb.common.config.TestJasyptConfig;
 import com.kernelsquare.domainmongodb.domain.coffeechat.entity.MongoChatMessage;
 import com.kernelsquare.domainmongodb.domain.coffeechat.entity.MongoMessageType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.context.annotation.Import;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -15,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("몽고 DB 단위 테스트")
 @DataMongoTest
+@Import(TestJasyptConfig.class)
 class MongoChatMessageRepositoryTest {
     @Autowired
     private MongoChatMessageRepository mongoChatMessageRepository;

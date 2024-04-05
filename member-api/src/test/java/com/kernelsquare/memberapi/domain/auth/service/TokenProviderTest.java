@@ -67,8 +67,7 @@ public class TokenProviderTest {
 		jsonRedisSerializer.configure(objectMapper -> objectMapper
 			.registerModule(new JavaTimeModule()));
 
-		/* dev datahub가 사라지면 localhost에 맞춰야함 */
-		LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory("13.125.190.40", 6379);
+		LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory();
 		lettuceConnectionFactory.afterPropertiesSet();
 
 		redisTemplate.setConnectionFactory(lettuceConnectionFactory);

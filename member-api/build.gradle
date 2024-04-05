@@ -44,6 +44,7 @@ dependencies {
     implementation project(":domain-mysql")
     implementation project(":domain-mongodb")
     implementation project(":domain-redis")
+    implementation project(":domain-kafka")
 
     //Security
     implementation 'org.springframework.boot:spring-boot-starter-security'

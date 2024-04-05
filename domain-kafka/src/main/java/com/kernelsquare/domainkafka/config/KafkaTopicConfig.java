@@ -1,4 +1,4 @@
-package com.kernelsquare.memberapi.common.config;
+package com.kernelsquare.domainkafka.config;
 
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -9,6 +9,9 @@ import org.springframework.kafka.core.KafkaAdmin;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.kernelsquare.domainkafka.constants.KafkaConstants.ALERT_TOPIC;
+import static com.kernelsquare.domainkafka.constants.KafkaConstants.CHATTING_TOPIC;
 
 @Configuration
 public class KafkaTopicConfig {
@@ -24,11 +27,11 @@ public class KafkaTopicConfig {
 
     @Bean
     public NewTopic chatTopic() {
-        return new NewTopic("chatting",1, (short)1);
+        return new NewTopic(CHATTING_TOPIC,1, (short)1);
     }
 
     @Bean
     public NewTopic alertTopic() {
-        return new NewTopic("alert",1, (short)1);
+        return new NewTopic(ALERT_TOPIC,1, (short)1);
     }
 }

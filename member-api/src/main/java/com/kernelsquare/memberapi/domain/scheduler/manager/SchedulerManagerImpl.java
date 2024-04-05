@@ -1,9 +1,10 @@
 package com.kernelsquare.memberapi.domain.scheduler.manager;
 
 import com.kernelsquare.core.type.MessageType;
+import com.kernelsquare.domainkafka.domain.chatting.entity.ChatMessage;
+import com.kernelsquare.domainkafka.domain.chatting.repository.ChatMessageSender;
 import com.kernelsquare.domainmysql.domain.answer.entity.Answer;
 import com.kernelsquare.domainmysql.domain.answer.repository.AnswerReader;
-import com.kernelsquare.domainmysql.domain.answer.repository.AnswerRepository;
 import com.kernelsquare.domainmysql.domain.answer.repository.AnswerStore;
 import com.kernelsquare.domainmysql.domain.coffeechat.entity.ChatRoom;
 import com.kernelsquare.domainmysql.domain.coffeechat.repository.CoffeeChatReader;
@@ -14,9 +15,7 @@ import com.kernelsquare.domainmysql.domain.rank.repository.RankReader;
 import com.kernelsquare.memberapi.domain.alert.dto.AlertDto;
 import com.kernelsquare.memberapi.domain.alert.mapper.AlertDtoMapper;
 import com.kernelsquare.memberapi.domain.alert.service.AlertService;
-import com.kernelsquare.memberapi.domain.coffeechat.dto.ChatMessageRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +27,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class SchedulerManagerImpl implements ScheculerManager {
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final ChatMessageSender chatMessageSender;
     private final CoffeeChatReader coffeeChatReader;
     private final QuestionReader questionReader;
     private final AnswerReader answerReader;
@@ -45,7 +44,7 @@ public class SchedulerManagerImpl implements ScheculerManager {
         chatRooms.forEach(chatRoom -> {
             chatRoom.deactivateRoom();
 
-            ChatMessageRequest message = ChatMessageRequest.builder()
+            ChatMessage message = ChatMessage.builder()
                 .type(MessageType.EXPIRE)
                 .roomKey(chatRoom.getRoomKey())
                 .sender("system")
@@ -53,7 +52,7 @@ public class SchedulerManagerImpl implements ScheculerManager {
                 .sendTime(LocalDateTime.now())
                 .build();
 
-            kafkaTemplate.send("chatting", message);
+            chatMessageSender.send(message);
         });
     }
 

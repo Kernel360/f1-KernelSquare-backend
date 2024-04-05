@@ -8,7 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 	"com.kernelsquare.memberapi",
 	"com.kernelsquare.domainmysql",
 	"com.kernelsquare.domainmongodb",
-	"com.kernelsquare.domainredis"})
+	"com.kernelsquare.domainredis",
+	"com.kernelsquare.domainkafka"})
 public class MemberApiApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(MemberApiApplication.class, args);

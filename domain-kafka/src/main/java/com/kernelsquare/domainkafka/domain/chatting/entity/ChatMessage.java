@@ -1,4 +1,4 @@
-package com.kernelsquare.memberapi.domain.coffeechat.dto;
+package com.kernelsquare.domainkafka.domain.chatting.entity;
 
 import com.kernelsquare.core.type.MessageType;
 import lombok.AllArgsConstructor;
@@ -13,8 +13,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatMessageRequest {
-
+public class ChatMessage {
     private MessageType type;
 
     private String roomKey;
@@ -29,7 +28,7 @@ public class ChatMessageRequest {
 
     private LocalDateTime sendTime;
 
-    private List<ChatRoomMember> memberList;
+    private List<?> memberList;
 
     public void setMessage(String message) {
         this.message = message;

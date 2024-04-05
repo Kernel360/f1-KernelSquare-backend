@@ -1,4 +1,4 @@
-package com.kernelsquare.memberapi.common.config;
+package com.kernelsquare.domainkafka.config;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -18,17 +18,17 @@ public class KafkaProducerConfig {
 	@Value("${kafka.url}")
 	private String url;
 	@Bean
-	public ProducerFactory<String, Object> producerFactory() {
+	public ProducerFactory<String, ?> producerFactory() {
 		Map<String, Object> config = new HashMap<>();
 		config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, url);
 		config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
 		config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-		config.put(JsonSerializer.TYPE_MAPPINGS, "ChatMessageRequest:com.kernelsquare.memberapi.domain.coffeechat.dto.ChatMessageRequest");
+		config.put(JsonSerializer.TYPE_MAPPINGS, "ChatMessage:com.kernelsquare.domainkafka.domain.chatting.entity.ChatMessage");
 		return new DefaultKafkaProducerFactory<>(config);
 	}
 
 	@Bean
-	public KafkaTemplate<String, Object> kafkaTemplate() {
+	public KafkaTemplate<String, ?> kafkaTemplate() {
 		return new KafkaTemplate<>(producerFactory());
 	}
 }

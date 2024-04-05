@@ -20,15 +20,13 @@ spring:
     username: ENC(vo+sZllavQ5dUMAS+k1SsGSJf5BrTZtXzqnaX4bN0GMTEy68fNhJQRj8j5odRvUx)
     password: ENC(Wy92J68MUYaK1KYa7MFDLaFId5UjF7aXXwVtm1gAzaWf6N9x62XpTfX4+7775DbS)
 
-  redis:
-    serialization:
-      class-property-type-name: RefreshToken.class
-    host: ENC(5eptbYrX+rj/3RJc4u9yGNtitdm9H2Wokuv5E6+SnP314pR2pa/EA6MfaPluTn2H)
-    port: ENC(dmzvcvQsEjm4GgMNlnmICsHBgBW1FaPIUTTD9sLsZWf8wzfQQN2VGdeOBJ0fRD80)
-
   data:
     mongodb:
       uri: ENC(AjN7dXKqXwotJaOKS8TpDtDYfXpx37ixGFQz88TkgbbNYloxQEKJ7vK5P+FicD1DXz/4S/rOXTkAfZPhXonjP2iIcOV+MwkBpPopbBdV6mWCOy4ryRLaKpWqmVpjAM+wYxY2D2i9m3CAvsu26Z14Ww==)
+
+    redis:
+      host: ENC(5eptbYrX+rj/3RJc4u9yGNtitdm9H2Wokuv5E6+SnP314pR2pa/EA6MfaPluTn2H)
+      port: ENC(dmzvcvQsEjm4GgMNlnmICsHBgBW1FaPIUTTD9sLsZWf8wzfQQN2VGdeOBJ0fRD80)
 
 kafka:
   url: ENC(un1AzYxYHfE5fZ+ihKn86ql8bmN1iz+2R3e4QHyuTJfdmlrgre0oUhJLYEghwz7G)

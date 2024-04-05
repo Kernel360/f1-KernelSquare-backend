@@ -23,6 +23,12 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
+      - name: Set up DataHub with Docker
+        run: |
+          echo ${{ secrets.CI_DOCKER_COMPOSE }} > docker-compose.yml
+          docker-compose up -d
+          docker ps
+
       - name: Test domain-mysql with Gradle
         run: |
           cd domain-mysql

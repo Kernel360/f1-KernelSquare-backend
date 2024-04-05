@@ -23,31 +23,34 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
+      - name: Test domain-mysql with Gradle
+        run: |
+          cd domain-mysql
+          chmod +x ./gradlew
+          ./gradlew test
+
       - name: Set up domain-mongodb test application.yml
         uses: microsoft/variable-substitution@v1
         with:
           files: ./domain-mongodb/src/test/resources/application.yml
         env:
-          spring.data.mongodb.uri: ${{ secrets.MONGO_TEST_URI }}
+          jasypt.password: ${{ secrets.JASYPT_PASSWORD }}
 
-      - name: Set up member-api test application.yml
+      - name: Test domain-mongodb with Gradle
+        run: |
+          cd domain-mongodb
+          chmod +x ./gradlew
+          ./gradlew test
+
+      - name: Set up member-api application-common.yml
         uses: microsoft/variable-substitution@v1
         with:
-          files: ./member-api/src/test/resources/application.yml
+          files: ./member-api/src/main/resources/application.yml
         env:
-          spring.datasource.url: ${{ secrets.TEST_DB_URL }}
-          spring.datasource.username: ${{ secrets.TEST_DB_HOST }}
-          spring.datasource.password: ${{ secrets.TEST_DB_PASSWORD }}
-          spring.security.jwt.secret: ${{ secrets.JWT_SECRET_KEY }}
-          spring.data.mongodb.uri: ${{ secrets.MONGO_TEST_URI }}
-          custom.domain.image.baseUrl: ${{ secrets.BASE_URL }}
-          cloud.aws.s3.bucket: ${{ secrets.S3_BUCKET_NAME }}
-          cloud.aws.region.static: ${{ secrets.S3_REGION }}
-          cloud.aws.credentials.accessKey: ${{ secrets.AWS_ACCESS_KEY }}
-          cloud.aws.credentials.secretKey: ${{ secrets.AWS_ACCESS_SECRET }}
+          jasypt.password: ${{ secrets.JASYPT_PASSWORD }}
 
-      - name: Run chmod to make gradlew executable
-        run: chmod +x ./gradlew
-
-      - name: Test with Gradle
-        run: ./gradlew test
+      - name: Build member-api with Gradle
+        run: |
+          cd member-api
+          chmod +x ./gradlew
+          ./gradlew build

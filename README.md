@@ -1,37 +1,116 @@
 # f1-KernelSquare
----
-### 프로젝트 기획 및 목적
-- 지속가능한 성장을 위한 개발자 커뮤니티
+지속가능한 성장을 위한 개발자 커뮤니티 [KernelSquare](https://kernelsquare.live)
+
+## 프로젝트 목적 및 기획
+- 소통을 통해 꾸준한 성장을 도모하는 개발자들을 위한 공간을 제공하기 위함
 - Stack Overflow를 벤치마크한 Q & A 서비스
 - 예약 시스템 기반 멘토와 멘티 1:1 커피챗 서비스
+- 정해진 장소와 시간에 모여서 각자 코딩하는 모각코 서비스
 
-### 배포 주소(로그인 필요시, 테스트 계정 기입)
-- 주소 : https://kernelsquare.live
-- ID : test@email.com
-- PW : Qwerasdf1234!
+## 프로젝트 소개
+| 렌딩 페이지 | 회원가입 |
+| --- | --- |
+| ![렌딩페이지_gif](https://github.com/Kernel360/f1-KernelSquare-backend/assets/97713997/2c1f91e7-e9a3-4449-94ef-10467a52d06e) | ![회원가입_gif](https://github.com/Kernel360/f1-KernelSquare-backend/assets/97713997/cdce8833-d566-4f7d-84f1-b02a2f8fe641) |
+| 커널스퀘어의 서비스에 관심을 가질 수 있도록 합니다. | 정보를 조건에 맞게 입력하고 이메일과 닉네임 중복확인 통과되면 회원가입을 할 수 있습니다. |
 
-### 주요기능
-- 로그인, 회원가입
-- 질문, 답변남기기, 답변에 투표 (Upvote, Downvote)
-- 마이페이지, 프로필 사진, 자기소개, 레벨업 (로그인, 질문 작성, 답변 작성)
-- 커피챗 생성 기능, 예약(멘티), 채팅(STOMP Websocket통신)
+| 로그인 | 마이페이지 |
+| --- | --- |
+| ![로그인_gif](https://github.com/Kernel360/f1-KernelSquare-backend/assets/97713997/49d75024-d7b7-4be1-a9b7-9ea541d8a886) | ![마이페이지_gif](https://github.com/Kernel360/f1-KernelSquare-backend/assets/97713997/bb93e5aa-aafa-4866-ae06-2fc6fad5b8f7) |
+| 이메일과 비밀번호를 입력하는 일반 로그인과 깃허브 소셜 로그인을 지원합니다. | 회원 정보를 볼 수 있는 마이페이지입니다. 본인이라면 프로필 사진, 닉네임, 자기소개를 변경할 수 있습니다. |
 
-### 기능 작성시 상세한 기획/정책/규칙 작성
+| 질문 | 답변 |
+| --- | --- |
+| ![질문생성_gif](https://github.com/Kernel360/f1-KernelSquare-backend/assets/97713997/2250e06d-f807-408d-ad82-11808da768bc) | ![답변생성_gif](https://github.com/Kernel360/f1-KernelSquare-backend/assets/97713997/312a3e79-194e-453b-a38f-07c19dd5b90a) |
+| 제목, 기술 스택, 내용을 입력하여 질문을 생성할 수 있습니다. 질문을 등록하면 잠시 후 AI가 답변을 해줍니다. | 질문에 답변할 수 있습니다. 다른 사람의 답변에 투표를 할 수 있습니다. |
 
-- 회원가입 -> 이메일 -> 이메일 형식이어야함, 한글 사용 불가,  6 ~ 40자로 입력해야 함, 중복 허용 x -> 닉네임  -> 숫자와 특수문자는 사용불가, 중복 허용 x, 2 ~ 8자로 입력해야 함 -> 비밀번호 -> 영문 대소문자, 특수문자, 숫자 각 1자씩 들어가야 함, 8 ~ 16자로 입력해야 함
-- 멤버 -> 자기소개는 마크다운 문법 포함 300자까지 가능, 닉네임 변경 불가
-- 이미지 -> 파일 크기 1~10 MB으로 제한
-- 질문 -> 로그인 해야 질문 작성 가능
-- 답변 -> 로그인 해야 답변 작성 가능, 한 질문에 하나의 답변만 가능, 본인 답변에 투표 불가, 본인 질문에 답변 불가
-- 커피챗 글 생성 -> 멘토 권한을 가진 멤버만 생성 가능, 현재 날짜로부터 7일 뒤부터 다음달 같은 날짜 전까지 생성 날짜 선택 가능, 선택한 날짜를 포함한 연속된 3일까지만 생성 가능, 멘토링 시간 선택은 30분 단위로 10개까지 선택 가능, 생성된 커피챗 글은 멘티가 예약할 수 있는 기간이 아니면 삭제 가능
-- 커피챗 글 멘토링 신청 -> 멘티는 멘토링 시작 날짜의 6일 전부터 2일 전까지만 신청 가능, 해당 커피챗 글에 한번만 멘토링 신청 가능, 신청한 멘토링은 시작 날짜 24시간 전까지 취소  가능
-- 채팅방 -> 활성화된 채팅방에 30분마다 채팅방 만료 메시지를 보내게 되면, 채팅방이 닫힘
+| 알림 | 커피챗 |
+| --- | --- |
+| ![알림_gif](https://github.com/Kernel360/f1-KernelSquare-backend/assets/97713997/02fbe714-0fbd-4cf6-b6fa-fa7d65e6d842) | ![커피챗_gif](https://github.com/Kernel360/f1-KernelSquare-backend/assets/97713997/6b7b28c0-1f33-4450-8865-91e3b627d387) |
+| 자신의 질문에 답변이 달렸을 때, 자신의 답변이 랭킹에 들었을 때, 커피챗 요청이 들어왔을 때 알림이 옵니다. | 멘토 자격을 가진 사용자가 커피챗을 생성할 수 있고 다른 사용자는 생성된 커피챗을 열린 시간에 예약할 수 있습니다. |
 
-### 아키텍처
-- 멀티모듈로 나누어 개발을 진행하고 있습니다. 아키텍처는 아래 그림과 같고 현재 배포되어있는 서비스는 주로 Member-api 모듈에서 동작하는 코드입니다. 대부분의 CRUD 기능으로 생긴 데이터는 MySQL로 저장이되고 채팅 내용은 MongoDB에 저장이됩니다.
+| 채팅 | 모각코 |
+| --- | --- |
+| ![채팅_gif](https://github.com/Kernel360/f1-KernelSquare-backend/assets/97713997/c7c13359-b8d4-4a11-800b-105de5403fa8) | ![모각코_gif](https://github.com/Kernel360/f1-KernelSquare-backend/assets/97713997/56c529b2-1b8b-42f6-a4f5-6d396d66ffa6) |
+| 예약된 시간이 되면 예약한 사람은 1대1 채팅방에 입장할 수 있습니다. | 제목, 장소, 인원 수, 시간, 내용을 적으면 모각코를 생성할 수 있습니다. 참가할 사람은 댓글로 남길 수 있습니다. |
 
-![멀티모듈](https://github.com/Kernel360/KBE_final-project/assets/92242326/a217e0af-a1bd-4f4c-be5e-dd383762b1cc)
+<br>
 
-### 그 외 정보들
-- Spring Rest Docs 도입 검토중
-- 서비스 코드 리팩터링에 대한 조언 필요
+## 기술스택
+#### 언어
+<div>
+  <img src="https://img.shields.io/badge/openjdk-437291?style=flat&logo=openjdk&logoColor=white"/>
+</div>
+<br>
+
+#### 웹 프레임워크
+<div>
+  <img src="https://img.shields.io/badge/springboot-6DB33F?style=flat&logo=springboot&logoColor=white"/>
+</div>
+<br>
+
+#### 데이터
+<div>
+  <img src="https://img.shields.io/badge/mysql-4479A1?style=flat&logo=mysql&logoColor=white"/>
+  <img src="https://img.shields.io/badge/redis-DC382D?style=flat&logo=redis&logoColor=white"/>
+  <img src="https://img.shields.io/badge/flyway-CC0200?style=flat&logo=flyway&logoColor=white"/>
+  <img src="https://img.shields.io/badge/amazons3-569A31?style=flat&logo=amazons3&logoColor=white"/>
+  <img src="https://img.shields.io/badge/mongodb-47A248?style=flat&logo=mongodb&logoColor=white"/>
+  <img src="https://img.shields.io/badge/apachekafka-231F20?style=flat&logo=apachekafka&logoColor=white"/>
+</div>
+<br>
+
+#### 클라우드
+<div>
+  <img src="https://img.shields.io/badge/amazonec2-FF9900?style=flat&logo=amazonec2&logoColor=white"/>
+  <img src="https://img.shields.io/badge/docker-2496ED?style=flat&logo=docker&logoColor=white"/>
+  <img src="https://img.shields.io/badge/nginx-009639?style=flat&logo=nginx&logoColor=white"/>
+</div>
+<br>
+
+#### CI/CD
+<div>
+  <img src="https://img.shields.io/badge/githubactions-2088FF?style=flat&logo=githubactions&logoColor=white"/>
+</div>
+<br>
+
+#### 모니터링
+<div>
+  <img src="https://img.shields.io/badge/prometheus-E6522C?style=flat&logo=prometheus&logoColor=white"/>
+  <img src="https://img.shields.io/badge/grafana-F46800?style=flat&logo=grafana&logoColor=white"/>
+</div>
+<br>
+
+## 아키텍처
+- 멀티모듈
+
+![멀티모듈_all](https://github.com/Kernel360/f1-KernelSquare-backend/assets/97713997/2536ac8b-80d3-47c5-92f4-5e550a25a4cd)
+
+
+
+- 전체 인프라
+
+![전체인프라2](https://github.com/Kernel360/f1-KernelSquare-backend/assets/97713997/25de0c61-b20f-41fe-8a1b-12d1a84c728c)
+
+## 팀원
+<table>
+  <tr>
+    <td align="center" width="120px">
+<!--       <a href="">  
+        <img src="" alt="" />
+      </a> -->
+      <h4>김원상</h2>
+    </td>
+   <td align="center" width="120px">
+      <h4>문찬욱</h2>
+    </td>
+    <td align="center" width="120px">
+      <h4>홍주광</h2>
+    </td>
+    <td align="center" width="120px">
+      <h4>고병룡</h2>
+    </td>
+  </tr>
+</table>
+
+## admin 레포지토리(어드민, 알림, 채팅, 모니터링)
+[KernelSquare-Admin](https://github.com/Kernel360/f1-KernelSquare-admin-backend)

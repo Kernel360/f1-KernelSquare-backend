@@ -1,52 +1,40 @@
 package com.kernelsquare.memberapi.domain.auth.service;
 
-import static com.kernelsquare.core.common_response.error.code.TokenErrorCode.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.kernelsquare.core.common_response.error.exception.BusinessException;
+import com.kernelsquare.domainmysql.domain.auth.info.AuthInfo;
+import com.kernelsquare.domainmysql.domain.member.info.MemberInfo;
+import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
+import com.kernelsquare.memberapi.domain.auth.dto.TokenRequest;
+import com.kernelsquare.memberapi.domain.auth.dto.TokenResponse;
+import com.kernelsquare.memberapi.domain.auth.entity.RefreshToken;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.io.Encoders;
+import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.stereotype.Component;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.kernelsquare.core.common_response.error.exception.BusinessException;
-import com.kernelsquare.domainmysql.domain.member.entity.Member;
-import com.kernelsquare.memberapi.domain.auth.dto.LoginRequest;
-import com.kernelsquare.memberapi.domain.auth.dto.MemberAdapter;
-import com.kernelsquare.memberapi.domain.auth.dto.TokenRequest;
-import com.kernelsquare.memberapi.domain.auth.dto.TokenResponse;
-import com.kernelsquare.memberapi.domain.auth.entity.RefreshToken;
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Header;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.UnsupportedJwtException;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.io.Encoders;
-import io.jsonwebtoken.security.Keys;
-import lombok.RequiredArgsConstructor;
+import static com.kernelsquare.core.common_response.error.code.TokenErrorCode.*;
 
 @Component
 @RequiredArgsConstructor
@@ -65,7 +53,6 @@ public class TokenProvider implements InitializingBean {
 	private long refreshTokenValidityInSeconds;
 
 	private final RedisTemplate<Long, RefreshToken> redisTemplate;
-	private final AuthenticationManagerBuilder authenticationManagerBuilder;
 	private final MemberDetailService memberDetailService;
 
 	@Override
@@ -80,17 +67,18 @@ public class TokenProvider implements InitializingBean {
 		redisTemplate.opsForValue().getOperations().delete(refreshToken.getMemberId());
 	}
 
-	public TokenResponse createToken(Member member, LoginRequest loginRequest) {
-		UsernamePasswordAuthenticationToken authenticationToken =
-			new UsernamePasswordAuthenticationToken(member.getId(), loginRequest.password());
-		Authentication authentication = authenticationManagerBuilder.getObject()
-			.authenticate(authenticationToken);
-		String authorities = authentication.getAuthorities().stream()
+	public AuthInfo.LoginInfo createToken(MemberInfo memberInfo) {
+		MemberAdapter memberAdapter = (MemberAdapter) memberDetailService.loadUserByUsername(memberInfo.getId().toString());
+
+		List<String> authorities = memberAdapter.getAuthorities().stream()
 			.map(GrantedAuthority::getAuthority)
-			.collect(Collectors.joining(","));
-		return TokenResponse.of(
-			createAccessToken(authentication.getName(), authorities),
-			createRefreshToken(authentication.getName()));
+			.toList();
+
+		return AuthInfo.LoginInfo.of(
+			memberInfo,
+			authorities,
+			createAccessToken(memberAdapter.getUsername(), String.join(",", authorities)),
+			createRefreshToken(memberAdapter.getUsername()));
 	}
 
 	private String createAccessToken(String sub, String roles) {
@@ -154,13 +142,9 @@ public class TokenProvider implements InitializingBean {
 	public Authentication getAuthentication(String token) {
 		Claims claims = parseClaims(token);
 
-		List<? extends GrantedAuthority> authorities = Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
-			.map(SimpleGrantedAuthority::new)
-			.toList();
+		MemberAdapter memberAdapter = (MemberAdapter) memberDetailService.loadUserByUsername(claims.getSubject());
 
-		MemberAdapter memberAdapter = (MemberAdapter)memberDetailService.loadUserByUsername(claims.getSubject());
-
-		return new UsernamePasswordAuthenticationToken(memberAdapter, token, authorities);
+		return new UsernamePasswordAuthenticationToken(memberAdapter, token, memberAdapter.getAuthorities());
 	}
 
 	private Claims parseClaims(String token) {

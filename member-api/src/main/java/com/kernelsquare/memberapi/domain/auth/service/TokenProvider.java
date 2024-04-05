@@ -58,7 +58,7 @@ public class TokenProvider implements InitializingBean {
 	private final RefreshTokenStore refreshTokenStore;
 
 	@Override
-	public void afterPropertiesSet() throws Exception {
+	public void afterPropertiesSet() {
 		byte[] keyBytes = Decoders.BASE64.decode(secret);
 		this.key = Keys.hmacShaKeyFor(keyBytes);
 	}
@@ -190,8 +190,8 @@ public class TokenProvider implements InitializingBean {
 		validateReissueToken(refreshToken, findIdByAccessToken);
 
 		return TokenResponse.builder()
-			.accessToken(createAccessToken(String.valueOf(refreshToken.getMemberId()), claims.get("auth").toString()))
-			.refreshToken(createRefreshToken(String.valueOf(refreshToken.getMemberId())))
+			.accessToken(createAccessToken(refreshToken.getMemberId(), claims.get("auth").toString()))
+			.refreshToken(tokenRequest.refreshToken())
 			.build();
 	}
 
@@ -199,8 +199,7 @@ public class TokenProvider implements InitializingBean {
 	 * Reissued Token 유효성 검증을 수행
 	 **/
 	private void validateReissueToken(RefreshToken refreshToken, String accessTokenId) {
-		if (!refreshToken.getExpirationDate().isAfter(LocalDateTime.now())) {
-//			redisTemplate.opsForValue().getOperations().delete(refreshToken.getMemberId());
+		if (refreshToken.getExpirationDate().isBefore(LocalDateTime.now())) {
 			refreshTokenStore.delete(refreshToken);
 			throw new BusinessException(EXPIRED_LOGIN_INFO);
 		}

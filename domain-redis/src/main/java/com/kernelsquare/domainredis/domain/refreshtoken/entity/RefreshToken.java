@@ -2,10 +2,12 @@ package com.kernelsquare.domainredis.domain.refreshtoken.entity;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
+@NoArgsConstructor
 public class RefreshToken {
     private String memberId;
 

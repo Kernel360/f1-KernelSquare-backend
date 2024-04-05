@@ -3,5 +3,5 @@ spring:
     active: local
     group:
       local: common, local-server
-      blue: common, blue-server
-      green: common, green-server
+      prod1: common, prod1-server
+      prod2: common, prod2-server

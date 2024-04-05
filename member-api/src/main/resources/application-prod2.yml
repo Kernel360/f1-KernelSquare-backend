@@ -1,7 +1,7 @@
 spring:
   config:
     activate:
-      on-profile: green-server
+      on-profile: prod2-server
 
   security:
     oauth2:

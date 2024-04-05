@@ -51,7 +51,7 @@ jobs:
       - name: Set up member-api application-common.yml
         uses: microsoft/variable-substitution@v1
         with:
-          files: ./member-api/src/main/resources/application.yml
+          files: ./member-api/src/main/resources/application-common.yml
         env:
           jasypt.password: ${{ secrets.JASYPT_PASSWORD }}
 

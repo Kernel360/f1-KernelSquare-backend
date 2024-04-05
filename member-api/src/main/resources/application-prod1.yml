@@ -1,7 +1,7 @@
 spring:
   config:
     activate:
-      on-profile: blue-server
+      on-profile: prod1-server
 
   security:
     oauth2:

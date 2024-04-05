@@ -25,6 +25,12 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
+      - name: Set up DataHub with Docker
+        run: |
+          echo "${{ secrets.CI_DOCKER_COMPOSE }}" > docker-compose.yml
+          docker-compose up -d
+          docker ps
+
       - name: Set up member-api application-common.yml
         uses: microsoft/variable-substitution@v1
         with:

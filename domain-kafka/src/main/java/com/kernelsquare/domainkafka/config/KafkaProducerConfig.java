@@ -17,13 +17,14 @@ import java.util.Map;
 public class KafkaProducerConfig {
 	@Value("${kafka.url}")
 	private String url;
+
 	@Bean
 	public ProducerFactory<String, ?> producerFactory() {
 		Map<String, Object> config = new HashMap<>();
 		config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, url);
 		config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
 		config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-		config.put(JsonSerializer.TYPE_MAPPINGS, "ChatMessage:com.kernelsquare.domainkafka.domain.chatting.entity.ChatMessage");
+		config.put(JsonSerializer.TYPE_MAPPINGS, "ChatMessage:com.kernelsquare.domainkafka.domain.chatting.entity.ChatMessage, Alert:com.kernelsquare.domainkafka.domain.alert.entity.Alert");
 		return new DefaultKafkaProducerFactory<>(config);
 	}
 

@@ -1,13 +1,10 @@
-package com.kernelsquare.domainmongodb.domain.alert.entity;
+package com.kernelsquare.domainkafka.domain.alert.entity;
 
 import com.kernelsquare.core.util.TokenGenerator;
 import io.micrometer.common.util.StringUtils;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.security.InvalidParameterException;
 import java.time.LocalDateTime;
@@ -15,14 +12,11 @@ import java.util.Map;
 import java.util.Objects;
 
 @Getter
-@Document(collection = "alert")
 public class Alert {
     private final String ALERT_PREFIX = "alt_";
 
-    @Id
     private String id;
 
-    @Indexed
     private String recipientId;
 
     private String recipient;

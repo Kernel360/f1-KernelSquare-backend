@@ -43,6 +43,9 @@ dependencies {
     implementation project(":core")
     implementation project(":domain-mysql")
     implementation project(":domain-mongodb")
+    implementation project(":domain-redis")
+    implementation project(":domain-kafka")
+    implementation project(":domain-s3")
 
     //Security
     implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -58,17 +61,9 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     annotationProcessor "org.mapstruct:mapstruct-processor:1.4.2.Final"
 
-    //S3
-    implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.3.1'
-
-    //AOP
-    implementation 'org.springframework.boot:spring-boot-starter-aop'
-
+    //Monitoring
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'io.micrometer:micrometer-registry-prometheus'
-
-    //kafka
-    implementation 'org.springframework.kafka:spring-kafka'
 
     //FeignClient
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.1.0'
@@ -101,4 +96,8 @@ bootJar {
     from ("${asciidoctor.outputDir}") {
         into 'static/docs'
     }
+}
+
+tasks.named('jar') {
+    enabled = false
 }

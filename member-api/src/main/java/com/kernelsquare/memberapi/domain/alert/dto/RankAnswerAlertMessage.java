@@ -1,7 +1,7 @@
 package com.kernelsquare.memberapi.domain.alert.dto;
 
 import com.kernelsquare.core.constants.SystemConstants;
-import com.kernelsquare.domainmongodb.domain.alert.entity.Alert;
+import com.kernelsquare.domainkafka.domain.alert.entity.Alert;
 import lombok.Builder;
 
 import java.util.HashMap;

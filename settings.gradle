@@ -3,4 +3,6 @@ include 'member-api'
 include 'core'
 include 'domain-mongodb'
 include 'domain-mysql'
-
+include 'domain-redis'
+include 'domain-kafka'
+include 'domain-s3'

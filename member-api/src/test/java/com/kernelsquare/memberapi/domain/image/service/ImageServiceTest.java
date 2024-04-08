@@ -1,13 +1,7 @@
 package com.kernelsquare.memberapi.domain.image.service;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.*;
-
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-
+import com.kernelsquare.domains3.domain.image.repository.ImageStore;
+import com.kernelsquare.memberapi.domain.image.dto.UploadImageResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,12 +10,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.DeleteObjectRequest;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectResult;
-import com.kernelsquare.memberapi.domain.image.dto.UploadImageResponse;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.*;
 
 @DisplayName("이미지 서비스 통합 테스트")
 @ExtendWith(MockitoExtension.class)
@@ -29,11 +23,11 @@ class ImageServiceTest {
 	@InjectMocks
 	private ImageService imageService;
 	@Mock
-	private AmazonS3Client amazonS3Client;
+	private ImageStore imageStore;
 
 	@Test
 	@DisplayName("이미지 업로드 테스트")
-	void testUploadImage() throws MalformedURLException {
+	void testUploadImage() {
 		// given
 		String category = "question";
 
@@ -44,25 +38,20 @@ class ImageServiceTest {
 			"Hello, World!".getBytes()
 		);
 
-		PutObjectResult mockPutObjectResult = new PutObjectResult();
+		String imageUrl = "https://test-bucket.s3.amazonaws.com/" + category + "/" + file.getOriginalFilename();
 
-		URL mockUrl = new URL("https://test-bucket.s3.amazonaws.com/hello.png");
-
-		given(
-			amazonS3Client.putObject(any(), anyString(), any(InputStream.class), any(ObjectMetadata.class))).willReturn(
-			mockPutObjectResult);
-		given(amazonS3Client.getUrl(any(), anyString())).willReturn(mockUrl);
+		doReturn(imageUrl)
+			.when(imageStore)
+			.store(category, file);
 
 		// when
 		UploadImageResponse uploadImageResponse = imageService.uploadImage(category, file);
 
 		// then
-		assertThat(uploadImageResponse.imageUrl()).isEqualTo(mockUrl.toString());
+		assertThat(uploadImageResponse.imageUrl()).isEqualTo(imageUrl);
 
 		//verify
-		verify(amazonS3Client, times(1)).putObject(any(), anyString(), any(InputStream.class),
-			any(ObjectMetadata.class));
-		verify(amazonS3Client, times(1)).getUrl(any(), anyString());
+		verify(imageStore, times(1)).store(anyString(), any(MultipartFile.class));
 	}
 
 	@Test
@@ -75,6 +64,6 @@ class ImageServiceTest {
 		imageService.deleteImage(imageUrl);
 
 		// then
-		verify(amazonS3Client, times(1)).deleteObject(any(DeleteObjectRequest.class));
+		verify(imageStore, times(1)).delete(anyString());
 	}
 }

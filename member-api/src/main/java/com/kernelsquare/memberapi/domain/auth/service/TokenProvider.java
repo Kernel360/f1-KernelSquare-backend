@@ -110,7 +110,7 @@ public class TokenProvider implements InitializingBean {
 			.memberId(sub)
 			.build();
 
-		refreshTokenStore.save(refreshToken);
+		refreshTokenStore.store(refreshToken);
 		return Encoders.BASE64.encode(toJsonString(refreshToken).getBytes());
 	}
 

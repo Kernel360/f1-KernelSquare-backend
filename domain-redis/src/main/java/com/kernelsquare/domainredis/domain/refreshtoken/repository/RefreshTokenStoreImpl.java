@@ -21,7 +21,7 @@ public class RefreshTokenStoreImpl implements RefreshTokenStore {
     }
 
     @Override
-    public void save(RefreshToken refreshToken) {
+    public void store(RefreshToken refreshToken) {
         redisTemplate.opsForValue().set(REFRESHTOKEN_PREFIX + refreshToken.getMemberId(), refreshToken, RefreshTokenTTL, TimeUnit.SECONDS);
     }
 }

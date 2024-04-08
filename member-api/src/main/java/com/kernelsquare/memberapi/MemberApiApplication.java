@@ -9,7 +9,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 	"com.kernelsquare.domainmysql",
 	"com.kernelsquare.domainmongodb",
 	"com.kernelsquare.domainredis",
-	"com.kernelsquare.domainkafka"})
+	"com.kernelsquare.domainkafka",
+	"com.kernelsquare.domains3"})
 public class MemberApiApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(MemberApiApplication.class, args);

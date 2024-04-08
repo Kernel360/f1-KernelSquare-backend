@@ -1,9 +1,7 @@
-package com.kernelsquare.domainmysql.domain;
+package com.kernelsquare.domainmysql;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class DomainMysqlApplicationTests {
-	public void contextLoads() {
-	}
 }

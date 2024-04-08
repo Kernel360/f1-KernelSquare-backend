@@ -104,3 +104,7 @@ bootJar {
         into 'static/docs'
     }
 }
+
+tasks.named('jar') {
+    enabled = false
+}
